@@ -1,49 +1,36 @@
-name: Deploy Astro Static Site
+name: Deploy to Company Server
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
+  build-and-deploy:
+    runs-on: self-hosted  # 使用自托管 Runner
+    
     steps:
-      # 1. Checkout 私有仓库
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      # 2. 安装 Node & pnpm 并构建 Astro
-      - name: Setup Node and Build
+          node-version: '20'
+          cache: 'pnpm'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build documentation
+        run: pnpm build
+      
+      - name: Deploy to web server
         run: |
-          npm install -g pnpm
-          pnpm install
-          pnpm run build
-
-      # 3. 测试 SSH 连接
-      - name: Test SSH
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: 43.173.119.58
-          port: 22735
-          username: root
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            echo "SSH connection works!"
-            whoami
-
-      # 4. 上传 dist 到服务器
-      - name: Deploy dist via SSH
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: 43.173.119.58
-          port: 22735
-          username: root
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            mkdir -p /var/www/scraper-webui-docs
-            rsync -av --delete ./dist/ /var/www/scraper-webui-docs/
-            echo "Deployment completed: $(date)"
+          # 将构建产物复制到 Web 服务器目录
+          cp -r ./dist/* /var/www/docs/
+          # 或者使用 rsync 进行增量同步
+          # rsync -avz --delete ./dist/ /var/www/docs/
