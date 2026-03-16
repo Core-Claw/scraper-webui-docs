@@ -33,4 +33,4 @@ jobs:
           # 将构建产物复制到 Web 服务器目录
           cp -r ./dist/* /var/www/docs/
           # 或者使用 rsync 进行增量同步
-          # rsync -avz --delete ./dist/ /var/www/docs/
+
