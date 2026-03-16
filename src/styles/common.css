@@ -1,0 +1,109 @@
+:root {
+    --sl-font: IBM Plex Sans Variable, sans-serif;
+    --sl-content-width: 65rem;
+    --sl-color-bg-nav: #fff;
+    --sl-nav-gap: 1rem;
+}
+
+select {
+    outline: none;
+}
+
+.site-title span {
+    color: #000;
+}
+
+.sl-container {
+    margin-left: 0;
+}
+
+.large {
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+@media (min-width: 72rem) and (max-width: 99.999rem) {
+    :root {
+        --sl-content-width: 10000rem;
+        --sl-content-pad-x: 1rem;
+        --sl-mobile-toc-height: 3rem;
+    }
+    .lg\:sl-hidden {
+        display: block;
+    }
+    .lg\:sl-flex {
+        display: flex;
+    }
+    .lg\:sl-block {
+        display: flex;
+    }
+    .right-sidebar-panel > .sl-container {
+        width: calc(var(--sl-sidebar-width) - 2 * var(--sl-sidebar-pad-x));
+    }
+    .content-panel > .sl-container {
+        margin-inline: 0;
+    }
+}
+
+@media (min-width: 100rem) {
+    :root {
+        --sl-content-pad-x: 1.5rem;
+        --sl-mobile-toc-height: 0rem;
+    }
+    .lg\:sl-hidden {
+        display: none;
+    }
+    .lg\:sl-flex {
+        display: flex;
+    }
+    .lg\:sl-block {
+        display: block;
+    }
+    .right-sidebar-panel > .sl-container {
+        max-width: calc(
+            (
+                (
+                        100vw - var(--sl-sidebar-width) - 2 *
+                            var(--sl-content-pad-x) - 2 *
+                            var(--sl-sidebar-pad-x)
+                    ) *
+                    0.25 /* MAGIC NUMBER 🥲 */
+            )
+        );
+    }
+    .content-panel > .sl-container {
+        margin-inline: var(--sl-content-margin-inline, auto);
+    }
+}
+
+.expressive-code .frame pre {
+    --code-background: #f9f9fa;
+}
+
+.sl-markdown-content code:not(:where(.not-content *)) {
+    border-radius: 6px;
+}
+
+.expressive-code .frame {
+    overflow: hidden;
+}
+.expressive-code .frame.is-terminal {
+    .header {
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    pre {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+}
+
+.expressive-code .frame pre {
+    border-radius: 6px;
+}
+
+.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+    vertical-align: top;
+}

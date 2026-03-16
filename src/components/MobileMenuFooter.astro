@@ -1,0 +1,19 @@
+---
+import LanguageSelect from 'virtual:starlight/components/LanguageSelect'
+---
+
+<div class="mobile-preferences sl-flex">
+	<LanguageSelect />
+</div>
+
+<style>
+	@layer starlight.core {
+		.mobile-preferences {
+			justify-content: end;
+			flex-wrap: wrap;
+			border-top: 1px solid var(--sl-color-gray-6);
+			column-gap: 1rem;
+			padding: 0.5rem 0;
+		}
+	}
+</style>

@@ -1,0 +1,26 @@
+{
+    "name": "starlight",
+    "type": "module",
+    "version": "0.0.1",
+    "scripts": {
+        "dev": "astro dev",
+        "start": "astro dev",
+        "build": "astro build",
+        "preview": "astro preview",
+        "astro": "astro"
+    },
+    "dependencies": {
+        "@astrojs/starlight": "^0.38.0",
+        "@fontsource-variable/ibm-plex-sans": "^5.2.8",
+        "astro": "^6.0.1",
+        "sharp": "^0.34.2",
+        "starlight-image-zoom": "^0.14.1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.4",
+        "eslint": "^9.39.4",
+        "eslint-plugin-vue": "^10.8.0",
+        "globals": "^17.4.0",
+        "prettier": "3.8.1"
+    }
+}

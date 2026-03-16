@@ -1,0 +1,209 @@
+---
+title: HTTP/Socks5 Network  Proxy
+description: To ensure stable access to target websites worldwide, the platform provides an encrypted network channel (proxy server) at runtime.
+---
+
+import { Steps } from '@astrojs/starlight/components'
+
+### 🌐 Proxy Environment Overview
+
+To ensure stable access to target websites worldwide, the platform provides an encrypted network channel (proxy server) at runtime.
+
+**You do not need to purchase, deploy, or maintain proxies yourself.**
+
+Simply read the proxy credentials injected by the platform and configure them correctly in your HTTP requests.
+
+### 📌 Proxy Configuration
+
+- **Protocol**: `SOCKS5`
+- **Endpoint**: `proxy-inner.cafescraper.com:6000`
+- **Authentication**:
+    - **Environment Variable**: `PROXY_AUTH`
+    - **Format**: `username:password`
+- **Cost**: **Built-in and free — no extra payment or manual setup required**
+
+### 🐍 Python Example
+
+```python
+import os
+import requests
+
+# 1. Proxy service address
+proxyDomain = "proxy-inner.cafescraper.com:6000"
+
+#
+2. Get proxy credentials(automatically injected by the platform)
+try:
+proxyAuth = os.environ.get("PROXY_AUTH")
+print(f "Proxy credentials: {proxyAuth}")
+except Exceptionas e:
+    print(f "Failed to get proxy credentials: {e}")
+proxyAuth = None
+
+# 3. Build proxy URL
+proxy_url = f "socks5://{proxyAuth}@{proxyDomain}"
+if proxyAuthelseNone
+print(f "Proxy URL: {proxy_url}")
+
+# 4. Example request
+target_url = "https://ipinfo.io/ip"#
+Example endpoint
+
+try:
+proxies = None
+if proxy_url:
+    proxies = {
+        "http": proxy_url,
+        "https": proxy_url
+    }
+
+response = requests.get(
+    target_url,
+    proxies = proxies,
+    timeout = 30,
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    }
+)
+
+print(f "Status code: {response.status_code}")
+print(f "Response body: {response.text}")
+
+except Exceptionas e:
+    print(f "Request failed: {e}")
+```
+
+### 🧱 Go Example
+
+```go
+// 1. Proxy service address
+proxyDomain :="proxy-inner.cafescraper.com:6000"
+
+// 2. Get proxy credentials
+proxyAuth := os.Getenv("PROXY_AUTH")
+cafesdk.Log.Info(ctx, fmt.Sprintf("Proxy credentials: %s", proxyAuth))
+
+// 3. Build proxy URL
+var proxyURLstring
+if proxyAuth !="" {
+	proxyURL = fmt.Sprintf("socks5://%s@%s", proxyAuth, proxyDomain)
+}
+cafesdk.Log.Info(ctx, fmt.Sprintf("Proxy URL: %s", proxyURL))
+
+// 4. Create HTTP client
+httpClient := &http.Client{
+	Timeout: time.Second *30,
+}
+
+// 5. Configure transport if proxy is enabled
+if proxyURL !="" {
+    proxyParsed, err := url.Parse(proxyURL)
+    if err !=nil {
+        cafesdk.Log.Error(ctx, fmt.Sprintf("Failed to parse proxy URL: %v", err))
+        return
+    }
+
+    httpClient.Transport = &http.Transport{
+        Proxy: http.ProxyURL(proxyParsed),
+        TLSClientConfig: &tls.Config{
+            InsecureSkipVerify:true, // OK for testing; disable in production
+        },
+    }
+
+    cafesdk.Log.Info(ctx, "SOCKS5 proxy configured")
+
+// 6. Example request
+targetURL :="https://ipinfo.io/ip"
+req, err := http.NewRequestWithContext(ctx,"GET", targetURL,nil)
+if err !=nil {
+    cafesdk.Log.Error(ctx, fmt.Sprintf("Failed to create request: %v", err))
+    return
+}
+
+resp, err := httpClient.Do(req)
+if err !=nil {
+    cafesdk.Log.Error(ctx, fmt.Sprintf("Request failed: %v", err))
+    return
+}
+defer resp.Body.Close()
+
+body, _ := io.ReadAll(resp.Body)
+ip := strings.TrimSpace(string(body))
+
+cafesdk.Log.Info(ctx, fmt.Sprintf("Status code: %d", resp.StatusCode))
+cafesdk.Log.Info(ctx, fmt.Sprintf("Current exit IP: %s", ip))
+```
+
+### 🟢 Node.js Example
+
+<Steps>
+
+1.  Dependencies
+    ```sh
+    npm install axios socks-proxy-agent
+    ```
+2.  Code Example
+
+    ````js
+    import axiosfrom'axios'
+    import {SocksProxyAgent }from'socks-proxy-agent'
+
+        // 1. Proxy service address
+        const proxyDomain ='proxy-inner.cafescraper.com:6000'
+
+        // 2. Get proxy credentials
+        let proxyAuth =null
+        try {
+            proxyAuth = process.env.PROXY_AUTH ||null
+            await cafesdk.log.info(`Proxy credentials: ${proxyAuth}`)
+        } catch (err) {
+            await cafesdk.log.error(`Failed to get proxy credentials: ${err.message}`)
+        }
+
+        // 3. Build proxy URL
+        const proxyUrl = proxyAuth
+            ?`socks5://${proxyAuth}@${proxyDomain}`
+            :null
+
+        await cafesdk.log.info(`Proxy URL: ${proxyUrl}`)
+
+        // 4. 创建 HTTP Client
+        let axiosConfig = {
+            timeout:30000,
+            headers: {
+                'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+            }
+        }
+
+        // 5. 如果存在代理，配置 Agent
+        if (proxyUrl) {
+            const agent =newSocksProxyAgent(proxyUrl)
+            axiosConfig.httpAgent = agent
+            axiosConfig.httpsAgent = agent
+            axiosConfig.proxy = false// 必须关闭 axios 默认代理
+            await cafesdk.log.info('SOCKS5 proxy configured')
+        }
+
+        // 6. 示例业务请求
+        try {
+            const targetUrl ='https://ipinfo.io/ip'
+            await cafesdk.log.info(`Requesting: ${targetUrl}`)
+
+            const response = await axios.get(targetUrl, axiosConfig)
+
+            await cafesdk.log.info(`Status code: ${response.status}`)
+            await cafesdk.log.info(`Current exit IP: ${response.data.trim()}`)
+        } catch (err) {
+            await cafesdk.log.error(`Request failed: ${err.message}`)
+        }
+        ```
+
+    </Steps>
+    ````
+
+:::note[Notes]
+
+- ❗ Never hard-code proxy usernames or passwords
+- ❗ Always use the platform-injected `PROXY_AUTH`
+- ❗ In Node.js, `proxy = false` must be set , otherwise the SOCKS proxy will not take effect
+  :::
