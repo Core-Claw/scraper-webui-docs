@@ -95,34 +95,34 @@ httpClient := &http.Client{
 
 // 5. 如果存在代理，配置 Transport
 if proxyURL !="" {
-    proxyParsed, err := url.Parse(proxyURL)
-    if err !=nil {
-        cafesdk.Log.Error(ctx, fmt.Sprintf("解析代理URL失败: %v", err))
-        return
-    }
+	proxyParsed, err := url.Parse(proxyURL)
+if err !=nil {
+		cafesdk.Log.Error(ctx, fmt.Sprintf("解析代理URL失败: %v", err))
+return
+	}
 
-    httpClient.Transport = &http.Transport{
-        Proxy: http.ProxyURL(proxyParsed),
-        TLSClientConfig: &tls.Config{
-            InsecureSkipVerify:true,// 测试环境可用，生产建议关闭
-        },
-    }
+	httpClient.Transport = &http.Transport{
+		Proxy: http.ProxyURL(proxyParsed),
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify:true,// 测试环境可用，生产建议关闭
+		},
+	}
 
-    cafesdk.Log.Info(ctx,"已配置代理客户端")
+	cafesdk.Log.Info(ctx,"已配置代理客户端")
 }
 
 // 6. 示例业务请求
 targetURL :="https://ipinfo.io/ip"
 req, err := http.NewRequestWithContext(ctx,"GET", targetURL,nil)
 if err !=nil {
-    cafesdk.Log.Error(ctx, fmt.Sprintf("创建请求失败: %v", err))
-    return
+	cafesdk.Log.Error(ctx, fmt.Sprintf("创建请求失败: %v", err))
+return
 }
 
 resp, err := httpClient.Do(req)
 if err !=nil {
-    cafesdk.Log.Error(ctx, fmt.Sprintf("请求失败: %v", err))
-    return
+	cafesdk.Log.Error(ctx, fmt.Sprintf("请求失败: %v", err))
+return
 }
 defer resp.Body.Close()
 
@@ -143,7 +143,7 @@ cafesdk.Log.Info(ctx, fmt.Sprintf("当前出口 IP: %s", ip))
     ```
 2.  示例代码：
 
-    ````js
+    ```js
     import axiosfrom'axios'
     import {SocksProxyAgent }from'socks-proxy-agent'
 
@@ -195,10 +195,10 @@ cafesdk.Log.Info(ctx, fmt.Sprintf("当前出口 IP: %s", ip))
         } catch (err) {
             await cafesdk.log.error(`请求失败: ${err.message}`)
         }
-        ```
 
-    </Steps>
-    ````
+    ```
+
+</Steps>
 
 :::note[注意事项]
 

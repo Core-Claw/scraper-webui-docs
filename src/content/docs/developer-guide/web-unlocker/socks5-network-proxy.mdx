@@ -77,53 +77,54 @@ except Exceptionas e:
 
 ```go
 // 1. Proxy service address
-proxyDomain :="proxy-inner.cafescraper.com:6000"
+proxyDomain := "proxy-inner.cafescraper.com:6000"
 
 // 2. Get proxy credentials
 proxyAuth := os.Getenv("PROXY_AUTH")
 cafesdk.Log.Info(ctx, fmt.Sprintf("Proxy credentials: %s", proxyAuth))
 
 // 3. Build proxy URL
-var proxyURLstring
-if proxyAuth !="" {
+var proxyURL string
+if proxyAuth != "" {
 	proxyURL = fmt.Sprintf("socks5://%s@%s", proxyAuth, proxyDomain)
 }
 cafesdk.Log.Info(ctx, fmt.Sprintf("Proxy URL: %s", proxyURL))
 
 // 4. Create HTTP client
 httpClient := &http.Client{
-	Timeout: time.Second *30,
+	Timeout: time.Second * 30,
 }
 
 // 5. Configure transport if proxy is enabled
-if proxyURL !="" {
-    proxyParsed, err := url.Parse(proxyURL)
-    if err !=nil {
-        cafesdk.Log.Error(ctx, fmt.Sprintf("Failed to parse proxy URL: %v", err))
-        return
-    }
+if proxyURL != "" {
+	proxyParsed, err := url.Parse(proxyURL)
+	if err != nil {
+		cafesdk.Log.Error(ctx, fmt.Sprintf("Failed to parse proxy URL: %v", err))
+		return
+	}
 
-    httpClient.Transport = &http.Transport{
-        Proxy: http.ProxyURL(proxyParsed),
-        TLSClientConfig: &tls.Config{
-            InsecureSkipVerify:true, // OK for testing; disable in production
-        },
-    }
+	httpClient.Transport = &http.Transport{
+		Proxy: http.ProxyURL(proxyParsed),
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true, // OK for testing; disable in production
+		},
+	}
 
-    cafesdk.Log.Info(ctx, "SOCKS5 proxy configured")
+	cafesdk.Log.Info(ctx, "SOCKS5 proxy configured")
+}
 
 // 6. Example request
-targetURL :="https://ipinfo.io/ip"
-req, err := http.NewRequestWithContext(ctx,"GET", targetURL,nil)
-if err !=nil {
-    cafesdk.Log.Error(ctx, fmt.Sprintf("Failed to create request: %v", err))
-    return
+targetURL := "https://ipinfo.io/ip"
+req, err := http.NewRequestWithContext(ctx, "GET", targetURL, nil)
+if err != nil {
+	cafesdk.Log.Error(ctx, fmt.Sprintf("Failed to create request: %v", err))
+	return
 }
 
 resp, err := httpClient.Do(req)
-if err !=nil {
-    cafesdk.Log.Error(ctx, fmt.Sprintf("Request failed: %v", err))
-    return
+if err != nil {
+	cafesdk.Log.Error(ctx, fmt.Sprintf("Request failed: %v", err))
+	return
 }
 defer resp.Body.Close()
 
@@ -137,16 +138,14 @@ cafesdk.Log.Info(ctx, fmt.Sprintf("Current exit IP: %s", ip))
 ### 🟢 Node.js Example
 
 <Steps>
-
 1.  Dependencies
     ```sh
     npm install axios socks-proxy-agent
     ```
 2.  Code Example
-
     ````js
-    import axiosfrom'axios'
-    import {SocksProxyAgent }from'socks-proxy-agent'
+        import axiosfrom'axios'
+        import {SocksProxyAgent }from'socks-proxy-agent'
 
         // 1. Proxy service address
         const proxyDomain ='proxy-inner.cafescraper.com:6000'
@@ -196,12 +195,12 @@ cafesdk.Log.Info(ctx, fmt.Sprintf("Current exit IP: %s", ip))
         } catch (err) {
             await cafesdk.log.error(`Request failed: ${err.message}`)
         }
-        ```
+
+    ````
 
 </Steps>
-````
 
-:::note[Notes]
+    :::note[Notes]
 
 - ❗ Never hard-code proxy usernames or passwords
 - ❗ Always use the platform-injected `PROXY_AUTH`
