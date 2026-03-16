@@ -1,0 +1,33 @@
+name: Deploy Astro Static Site
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: 43.173.119.58
+		  port: 22735
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            mkdir -p /home/scraper-webui-docs
+            cd /home/scraper-webui-docs
+            if [ -d ".git" ]; then
+              git reset --hard
+              git pull origin main
+            else
+              git clone https://github.com/CafeScraper/scraper-webui-docs.git .
+            fi
+            npm install -g pnpm
+            pnpm install
+            pnpm run build
