@@ -3,32 +3,35 @@ name: Deploy Astro Static Site
 on:
   push:
     branches:
-      - main
+      - main  # 监听 main 分支的 push
 
-# job
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # 1️⃣ Checkout 私有仓库
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # 可访问私有仓库
 
+      # 2️⃣ 安装 Node & pnpm 并构建 Astro
+      - name: Setup Node and build Astro
+        run: |
+          npm install -g pnpm
+          pnpm install
+          pnpm run build
+
+      # 3️⃣ 通过 SSH 上传 dist 到服务器 Nginx 目录
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: 43.173.119.58
-		  port: 22735
-          username: root
-          key: ${{ secrets.SSH_KEY }}
+          host: 43.173.119.58       # 你的服务器 IP
+          port: 22735               # 你的 SSH 端口
+          username: root            # 登录用户名
+          key: ${{ secrets.SSH_KEY }}  # GitHub Secrets 中 SSH 私钥
           script: |
-            mkdir -p /home/scraper-webui-docs
-            cd /home/scraper-webui-docs
-            if [ -d ".git" ]; then
-              git reset --hard
-              git pull origin main
-            else
-              git clone https://github.com/CafeScraper/scraper-webui-docs.git .
-            fi
-            npm install -g pnpm
-            pnpm install
-            pnpm run build
+            mkdir -p /var/www/scraper-webui-docs
+            rsync -av --delete ./dist/ /var/www/scraper-webui-docs/
+            echo "部署完成: $(date)"
