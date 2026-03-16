@@ -1,9 +1,9 @@
-name: Deploy Astro Static Site
+name: Deploy Astro Static Site (Enhanced)
 
 on:
   push:
     branches:
-      - main  # 监听 main 分支的 push
+      - main  # 监听 main 分支
 
 jobs:
   deploy:
@@ -14,24 +14,44 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # 可访问私有仓库
+          token: ${{ secrets.GITHUB_TOKEN }}  # 私有仓库访问
 
-      # 2️⃣ 安装 Node & pnpm 并构建 Astro
-      - name: Setup Node and build Astro
+      # 2️⃣ 安装 Node & pnpm
+      - name: Setup Node and pnpm
         run: |
+          echo "Installing pnpm..."
           npm install -g pnpm
+
+      # 3️⃣ 构建 Astro
+      - name: Build Astro
+        run: |
+          echo "Installing dependencies..."
           pnpm install
+          echo "Running build..."
           pnpm run build
 
-      # 3️⃣ 通过 SSH 上传 dist 到服务器 Nginx 目录
-      - name: Deploy via SSH
+      # 4️⃣ SSH 连接测试
+      - name: Test SSH connection
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: 43.173.119.58       # 你的服务器 IP
-          port: 22735               # 你的 SSH 端口
-          username: root            # 登录用户名
-          key: ${{ secrets.SSH_KEY }}  # GitHub Secrets 中 SSH 私钥
+          host: 43.173.119.58
+          port: 22735
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "SSH connection successful!"
+            whoami
+
+      # 5️⃣ 部署 dist 到服务器
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: 43.173.119.58
+          port: 22735
+          username: root
+          key: ${{ secrets.SSH_KEY }}
           script: |
             mkdir -p /var/www/scraper-webui-docs
+            echo "Syncing files..."
             rsync -av --delete ./dist/ /var/www/scraper-webui-docs/
-            echo "部署完成: $(date)"
+            echo "Deployment completed: $(date)"
