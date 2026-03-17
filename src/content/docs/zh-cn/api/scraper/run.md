@@ -1,5 +1,5 @@
 ---
-title: 开始运行
+title: 运行 Scraper
 sidebar:
     order: 4
 ---
@@ -55,10 +55,11 @@ sidebar:
 
 | 参数                       | 示例值 | 类型   | 必填 | 描述                                                            |
 | -------------------------- | ------ | ------ | ---- | --------------------------------------------------------------- |
+| proxy_region               | CH     | string | 是   | 执行节点 [查看帮助](/zh-cn/api/proxy/)                          |
 | cpus                       | 0.125  | number | 是   | 容器 CPU 核心数 [查看帮助](/zh-cn/api/device-configuration/)    |
 | memory                     | 512    | number | 是   | 容器内存大小（MB） [查看帮助](/zh-cn/api/device-configuration/) |
 | execute_limit_time_seconds | 1800   | number | 是   | 容器执行超时（秒）                                              |
-| max_total_charge           | 0      | number | 是   | 最大消耗费用（美元）                                            |
+| max_total_charge           | 0      | number | 是   | 最大消耗费用（$）                                               |
 | max_total_traffic          | 0      | number | 是   | 最大消耗流量（MB）                                              |
 
 #### custom 参数说明

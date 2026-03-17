@@ -93,9 +93,58 @@ export default defineConfig({
                         'zh-CN': 'API',
                     },
                     collapsed: true,
-                    autogenerate: {
-                        directory: 'api',
-                    },
+                    items: [
+                        {
+                            label: 'Basic Information',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': '基础信息',
+                            },
+                            autogenerate: {
+                                directory: 'api/basic',
+                            },
+                        },
+                        {
+                            label: 'Scraper',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': 'Scraper',
+                            },
+                            autogenerate: {
+                                directory: 'api/scraper',
+                            },
+                        },
+                        {
+                            label: 'Runs',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': 'Runs',
+                            },
+                            autogenerate: {
+                                directory: 'api/run',
+                            },
+                        },
+                        {
+                            label: 'Tasks',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': 'Tasks',
+                            },
+                            autogenerate: {
+                                directory: 'api/task',
+                            },
+                        },
+                        {
+                            label: 'Account Information',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': '账户信息',
+                            },
+                            autogenerate: {
+                                directory: 'api/account',
+                            },
+                        },
+                    ],
                 },
                 {
                     label: 'Partnership & Promotion',

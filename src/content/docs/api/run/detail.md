@@ -1,6 +1,6 @@
 ---
-title: 获取详情
-description: 获取运行详情
+title: Run Detail
+description: Get the detail of a Scraper task
 sidebar:
     order: 8
 ---

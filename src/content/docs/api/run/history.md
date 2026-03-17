@@ -1,6 +1,6 @@
 ---
-title: 历史记录
-description: 获取任务的运行记录
+title: Run History
+description: Get the history of Scraper tasks
 sidebar:
     order: 7
 ---

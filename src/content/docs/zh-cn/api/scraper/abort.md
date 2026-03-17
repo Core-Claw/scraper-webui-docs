@@ -1,5 +1,5 @@
 ---
-title: 终止运行
+title: 终止 Scraper
 description: 终止正在运行的 Scraper 任务
 sidebar:
     order: 5
@@ -37,8 +37,8 @@ sidebar:
 
 #### 参数说明
 
-| 参数    | 示例值   | 类型    | 描述                                    |
-| ------- | -------- | ------- | --------------------------------------- |
-| code    | 0        | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
-| message | success` | String  | -                                       |
-| data    | null     | Null    | -                                       |
+| 参数    | 示例值  | 类型    | 描述                                    |
+| ------- | ------- | ------- | --------------------------------------- |
+| code    | 0       | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
+| message | success | String  | -                                       |
+| data    | null    | Null    | -                                       |

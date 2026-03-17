@@ -1,6 +1,6 @@
 ---
-title: 重新运行
-description: 重新运行Run。
+title: Re-run
+description: Re-run a Scraper task
 sidebar:
     order: 6
 ---
