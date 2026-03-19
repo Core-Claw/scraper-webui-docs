@@ -1,0 +1,114 @@
+---
+title: FAQ
+description: Frequently asked questions about CafeScraper
+---
+
+import { CardGrid, Card } from '@astrojs/starlight/components';
+
+# Frequently Asked Questions
+
+<CardGrid stagger>
+	<Card title="General" icon="help">
+		What is CafeScraper and how does it work?
+	</Card>
+	<Card title="Account" icon="user">
+		Registration, security, and account management.
+	</Card>
+	<Card title="Payment" icon="credit-card">
+		Pricing, billing, and refunds.
+	</Card>
+	<Card title="Technical" icon="code">
+		Troubleshooting and error codes.
+	</Card>
+</CardGrid>
+
+## General Questions
+
+### What is CafeScraper?
+
+CafeScraper is a cloud-based web scraping platform that allows you to extract data from websites without managing infrastructure. We provide pre-built scrapers and tools for developers to build custom scrapers.
+
+### How does CafeScraper work?
+
+1. **Find or Build**: Choose a pre-built scraper or create your own
+2. **Configure**: Set input parameters for your scraping task
+3. **Run**: Execute the scraper in our cloud infrastructure
+4. **Get Data**: Download results or access via API
+
+### Is web scraping legal?
+
+Web scraping is generally legal for public data, but regulations vary by jurisdiction. Always:
+- Check the website's Terms of Service
+- Respect robots.txt
+- Don't scrape personal data without consent
+- Use rate limiting to avoid overloading servers
+
+## Account Questions
+
+### How do I create an account?
+
+1. Go to [CafeScraper](https://cafescraper.com)
+2. Click "Sign Up"
+3. Enter your email and create a password
+4. Verify your email address
+
+### How do I reset my password?
+
+Click "Forgot Password" on the login page and follow the instructions sent to your email.
+
+### Can I change my email address?
+
+Yes, go to Account Settings > Profile to update your email address. You'll need to verify the new email.
+
+## Payment Questions
+
+### How is pricing calculated?
+
+CafeScraper uses a usage-based pricing model:
+- **Compute Units**: Charged per scraper run based on execution time
+- **Data Transfer**: Charged per GB of data transferred
+- **Storage**: Charged per GB/month for stored data
+
+See [Pricing Rules](/user-guide/scraper-pricing-rules/) for details.
+
+### What payment methods do you accept?
+
+We accept:
+- Credit/Debit Cards (Visa, Mastercard, American Express)
+- PayPal
+- Bank Transfer (for enterprise accounts)
+
+### How do I get a refund?
+
+Contact our support team within 7 days of purchase. Refunds are processed on a case-by-case basis. See our [Terms of Service](/platform-policies/terms-of-service/) for details.
+
+## Technical Questions
+
+### Why is my scraper failing?
+
+Common causes:
+- **Anti-bot protection**: Enable Web Unlocker
+- **Invalid input**: Check your parameters
+- **Website changes**: The target site may have changed
+- **Rate limiting**: Reduce request frequency
+
+Check the run logs for specific error messages.
+
+### How do I debug my scraper?
+
+1. Check the run logs in the dashboard
+2. Use the preview feature to see screenshots
+3. Test with minimal input parameters
+4. Contact support if issues persist
+
+### What are the rate limits?
+
+API rate limits vary by plan:
+- **Free**: 100 requests/minute
+- **Pro**: 500 requests/minute
+- **Enterprise**: Custom limits
+
+## Need More Help?
+
+- [Contact Support](mailto:support@cafescraper.com)
+- [View Documentation](/getting-started/)
