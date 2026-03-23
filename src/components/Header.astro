@@ -1,0 +1,109 @@
+---
+import config from 'virtual:starlight/user-config'
+import SiteTitle from '@astrojs/starlight/components/SiteTitle.astro'
+import Search from '@astrojs/starlight/components/Search.astro'
+import LanguageSelect from '@astrojs/starlight/components/LanguageSelect.astro'
+import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro'
+
+const shouldRenderSearch = config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro'
+---
+
+<div class="header">
+	<div class="title-wrapper sl-flex">
+		<div class="site-title-animated">
+			<SiteTitle />
+		</div>
+	</div>
+	<div class="sl-flex search-ml-auto print:hidden">
+		{shouldRenderSearch && <Search />}
+	</div>
+	<div class="sl-hidden md:sl-flex print:hidden right-group">
+		<ThemeSelect />
+		<LanguageSelect />
+	</div>
+</div>
+
+<style>
+	@keyframes gradient-shift {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+
+	.site-title-animated :global(.site-title) {
+		background: linear-gradient(135deg, #8B5CF6, #A855F7, #C084FC, #A855F7, #8B5CF6);
+		background-size: 300% 300%;
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+		animation: gradient-shift 6s ease infinite;
+	}
+
+	:global(:root[data-theme='dark']) .site-title-animated :global(.site-title) {
+		background: linear-gradient(135deg, #A78BFA, #C084FC, #E879F9, #C084FC, #A78BFA);
+		background-size: 300% 300%;
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+		animation: gradient-shift 6s ease infinite;
+	}
+
+	@layer starlight.core {
+		.header {
+			display: flex;
+			gap: var(--sl-nav-gap);
+			justify-content: space-between;
+			align-items: center;
+			height: 100%;
+		}
+
+		.search-ml-auto {
+			margin-left: auto;
+			margin-right: 1rem;
+		}
+
+		.title-wrapper {
+			overflow: clip;
+			padding: 0.25rem;
+			margin: -0.25rem;
+			min-width: 0;
+		}
+
+		.right-group {
+			gap: 0.75rem;
+			align-items: center;
+		}
+
+		@media (min-width: 50rem) {
+			:global(:root[data-has-sidebar]) {
+				--__sidebar-pad: calc(2 * var(--sl-nav-pad-x));
+			}
+			:global(:root:not([data-has-toc])) {
+				--__toc-width: 0rem;
+			}
+			.header {
+				--__sidebar-width: max(0rem, var(--sl-content-inline-start, 0rem) - var(--sl-nav-pad-x));
+				--__main-column-fr: calc(
+					(
+							100% + var(--__sidebar-pad, 0rem) - var(--__toc-width, var(--sl-sidebar-width)) -
+								(2 * var(--__toc-width, var(--sl-nav-pad-x))) - var(--sl-content-inline-start, 0rem) -
+								var(--sl-content-width)
+						) /
+						2
+				);
+				display: grid;
+				grid-template-columns:
+					minmax(calc(var(--__sidebar-width) + max(0rem, var(--__main-column-fr) - var(--sl-nav-gap))), auto)
+					1fr
+					auto;
+				align-content: center;
+			}
+		}
+	}
+</style>

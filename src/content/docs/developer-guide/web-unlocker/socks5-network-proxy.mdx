@@ -1,0 +1,192 @@
+---
+title: HTTP/Socks5 Network Proxy
+description: To ensure stable access to target websites worldwide, the platform provides an encrypted network channel (proxy server) at runtime.
+---
+
+### Proxy Environment Overview
+
+To ensure stable access to target websites worldwide, the platform provides an encrypted network channel (proxy server) at runtime.
+
+**You do not need to purchase, deploy, or maintain proxies yourself.**
+
+Simply read the proxy credentials injected by the platform and configure them correctly in your HTTP requests.
+
+### Proxy Configuration
+
+- **Protocol**: `SOCKS5`
+- **Endpoint**: `proxy-inner.cafescraper.com:6000`
+- **Authentication**:
+    - **Environment Variable**: `PROXY_AUTH`
+    - **Format**: `username:password`
+- **Cost**: **Built-in and free — no extra payment or manual setup required**
+
+### Python Example
+
+```python
+import os
+import requests
+
+# 1. Proxy service address
+proxyDomain = "proxy-inner.cafescraper.com:6000"
+
+# 2. Get proxy credentials (automatically injected by the platform)
+try:
+    proxyAuth = os.environ.get("PROXY_AUTH")
+    print(f"Proxy credentials: {proxyAuth}")
+except Exception as e:
+    print(f"Failed to get proxy credentials: {e}")
+    proxyAuth = None
+
+# 3. Build proxy URL
+proxyUrl = f"socks5://{proxyAuth}@{proxyDomain}" if proxyAuth else None
+print(f"Proxy URL: {proxyUrl}")
+
+# 4. Create session with proxy
+session = requests.Session()
+if proxyUrl:
+    session.proxies = {
+        "http": proxyUrl,
+        "https": proxyUrl
+    }
+    print("SOCKS5 proxy configured")
+
+# 5. Example request
+targetUrl = "https://ipinfo.io/ip"
+response = session.get(targetUrl, timeout=30)
+print(f"Status code: {response.status_code}")
+print(f"Current exit IP: {response.text.strip()}")
+```
+
+### Go Example
+
+```go
+package main
+
+import (
+    "context"
+    "crypto/tls"
+    "fmt"
+    "net/http"
+    "net/url"
+    "os"
+    "time"
+)
+
+func main() {
+    ctx := context.Background()
+
+    // 1. Proxy service address
+    proxyDomain := "proxy-inner.cafescraper.com:6000"
+
+    // 2. Get proxy credentials
+    proxyAuth := os.Getenv("PROXY_AUTH")
+    fmt.Printf("Proxy credentials: %s\n", proxyAuth)
+
+    // 3. Build proxy URL
+    var proxyURL string
+    if proxyAuth != "" {
+        proxyURL = fmt.Sprintf("socks5://%s@%s", proxyAuth, proxyDomain)
+    }
+    fmt.Printf("Proxy URL: %s\n", proxyURL)
+
+    // 4. Create HTTP client
+    httpClient := &http.Client{
+        Timeout: time.Second * 30,
+    }
+
+    // 5. Configure transport if proxy is enabled
+    if proxyURL != "" {
+        proxyParsed, err := url.Parse(proxyURL)
+        if err != nil {
+            fmt.Printf("Failed to parse proxy URL: %v\n", err)
+            return
+        }
+
+        httpClient.Transport = &http.Transport{
+            Proxy: http.ProxyURL(proxyParsed),
+            TLSClientConfig: &tls.Config{
+                InsecureSkipVerify: true,
+            },
+        }
+        fmt.Println("SOCKS5 proxy configured")
+    }
+
+    // 6. Example request
+    targetURL := "https://ipinfo.io/ip"
+    req, err := http.NewRequestWithContext(ctx, "GET", targetURL, nil)
+    if err != nil {
+        fmt.Printf("Failed to create request: %v\n", err)
+        return
+    }
+
+    resp, err := httpClient.Do(req)
+    if err != nil {
+        fmt.Printf("Request failed: %v\n", err)
+        return
+    }
+    defer resp.Body.Close()
+
+    fmt.Printf("Status code: %d\n", resp.StatusCode)
+}
+```
+
+### Node.js Example
+
+```javascript
+const axios = require('axios')
+const { SocksProxyAgent } = require('socks-proxy-agent')
+
+async function main() {
+    // 1. Proxy service address
+    const proxyDomain = 'proxy-inner.cafescraper.com:6000'
+
+    // 2. Get proxy credentials (automatically injected by the platform)
+    const proxyAuth = process.env.PROXY_AUTH
+    console.log(`Proxy credentials: ${proxyAuth}`)
+
+    // 3. Build proxy URL
+    const proxyUrl = proxyAuth
+        ? `socks5://${proxyAuth}@${proxyDomain}`
+        : null
+
+    console.log(`Proxy URL: ${proxyUrl}`)
+
+    // 4. Create HTTP Client
+    let axiosConfig = {
+        timeout: 30000,
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        }
+    }
+
+    // 5. Configure Agent if proxy exists
+    if (proxyUrl) {
+        const agent = new SocksProxyAgent(proxyUrl)
+        axiosConfig.httpAgent = agent
+        axiosConfig.httpsAgent = agent
+        axiosConfig.proxy = false // Must disable axios default proxy
+        console.log('SOCKS5 proxy configured')
+    }
+
+    // 6. Example request
+    try {
+        const targetUrl = 'https://ipinfo.io/ip'
+        console.log(`Requesting: ${targetUrl}`)
+
+        const response = await axios.get(targetUrl, axiosConfig)
+
+        console.log(`Status code: ${response.status}`)
+        console.log(`Current exit IP: ${response.data.trim()}`)
+    } catch (err) {
+        console.error(`Request failed: ${err.message}`)
+    }
+}
+
+main()
+```
+
+:::note[Notes]
+- Never hard-code proxy usernames or passwords
+- Always use the platform-injected `PROXY_AUTH`
+- In Node.js, `proxy = false` must be set, otherwise the SOCKS proxy will not work
+:::
