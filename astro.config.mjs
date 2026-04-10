@@ -44,7 +44,7 @@ export default defineConfig({
                 './src/styles/common.css',
                 '@fontsource-variable/ibm-plex-sans/index.css',
             ],
-            favicon: '/favicon.jpg',
+            favicon: '/logo.png',
             sidebar: [
                 {
                     label: 'About CoreClaw',
