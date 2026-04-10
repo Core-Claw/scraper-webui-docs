@@ -1,0 +1,297 @@
+---
+/**
+ * Banner component with Breadcrumb navigation
+ * Shows complete navigation path with valid links only
+ */
+import type { Props } from '@astrojs/starlight/props'
+
+const { entry } = Astro.locals.starlightRoute
+
+// Simple language detection from URL
+function getLanguageFromURL(path: string): string {
+	const langMatch = path.match(/^\/([a-z]{2}-[a-z]{2}|[a-z]{2})\//)
+	return langMatch ? langMatch[1] : 'en'
+}
+
+const lang = getLanguageFromURL(Astro.url.pathname)
+
+// Get current page title
+const pageTitle = entry?.data?.title || ''
+
+// Labels based on language
+const homeLabel = lang === 'zh-cn' ? '首页' : 'Home'
+const homeHref = lang === 'zh-cn' ? '/zh-cn/' : '/'
+
+// Define category info - all categories now have index pages
+// Labels must match astro.config.mjs sidebar translations
+const categoryConfig: Record<
+	string,
+	{
+		label: string
+		labelZh: string
+		hasIndex: boolean
+		subCategories?: Record<string, { label: string; labelZh: string; hasIndex?: boolean }>
+	}
+> = {
+	'getting-started': {
+		label: 'Getting Started',
+		labelZh: '快速开始',
+		hasIndex: true,
+	},
+	'user-guide': {
+		label: 'User Guide',
+		labelZh: '用户指南',
+		hasIndex: true,
+	},
+	'developer-guide': {
+		label: 'Developer Guide',
+		labelZh: '开发者指南',
+		hasIndex: true,
+		subCategories: {
+			'web-unlocker': { label: 'Web Unlocker', labelZh: '网页解锁器', hasIndex: true },
+			worker: { label: 'Worker', labelZh: 'Worker', hasIndex: true },
+			framework: { label: 'Framework', labelZh: '数据采集框架', hasIndex: true },
+		},
+	},
+	api: {
+		label: 'API',
+		labelZh: 'API',
+		hasIndex: true,
+		subCategories: {
+			basic: { label: 'Basic Information', labelZh: '基础信息', hasIndex: true },
+			worker: { label: 'Worker', labelZh: 'Worker', hasIndex: true },
+			run: { label: 'Runs', labelZh: 'Runs', hasIndex: true },
+			task: { label: 'Tasks', labelZh: 'Tasks', hasIndex: true },
+			account: { label: 'Account Information', labelZh: '账户信息', hasIndex: true },
+		},
+	},
+	faq: {
+		label: 'FAQ',
+		labelZh: '常见问题',
+		hasIndex: true,
+		subCategories: {
+			'payment-problem': { label: 'Payment FAQ', labelZh: '支付问题', hasIndex: true },
+		},
+	},
+	'partnership-promotion': {
+		label: 'Partnership & Promotion',
+		labelZh: '推广合作',
+		hasIndex: true,
+	},
+	'platform-policies': {
+		label: 'Platform Policies',
+		labelZh: '平台政策',
+		hasIndex: true,
+	},
+}
+
+// Parse entry id to get path parts
+// Handle both English (developer-guide/...) and Chinese (zh-cn/developer-guide/...) formats
+const entryId = entry?.id || ''
+let rawPathParts = entryId
+	.replace(/\/index$/, '')
+	.replace(/\.mdx?$/, '')
+	.split('/')
+	.filter(Boolean)
+
+// Skip the locale prefix for Chinese pages (zh-cn)
+// English: ['developer-guide', 'framework', 'use-drissionpage']
+// Chinese: ['zh-cn', 'developer-guide', 'framework', 'use-drissionpage']
+const pathParts = lang === 'zh-cn' && rawPathParts[0] === 'zh-cn' ? rawPathParts.slice(1) : rawPathParts
+
+// Build breadcrumb items
+const breadcrumbItems: { label: string; href?: string }[] = []
+
+// Check if this is a category index page or the home page
+const isHomePage = !entry?.id || entry?.id === 'index' || entry?.id === 'zh-cn/index'
+const isSplashPage = entry?.data?.template === 'splash'
+const isCategoryIndex = entryId.endsWith('/index') || entryId.endsWith('/index.mdx')
+
+// Don't show breadcrumb on home page or splash pages
+const shouldShowBreadcrumb = !isHomePage && !isSplashPage
+
+// Build breadcrumbs based on path structure
+if (pathParts.length > 0 && !isCategoryIndex) {
+	const categorySlug = pathParts[0]
+	const category = categoryConfig[categorySlug]
+
+	if (category) {
+		// Add main category (only link if has index)
+		breadcrumbItems.push({
+			label: lang === 'zh-cn' ? category.labelZh : category.label,
+			href:
+				category.hasIndex ?
+					lang === 'zh-cn' ?
+						`/zh-cn/${categorySlug}/`
+					:	`/${categorySlug}/`
+				:	undefined,
+		})
+
+		// Add sub-category if exists (for nested paths like developer-guide/script/...)
+		if (pathParts.length > 1 && category.subCategories) {
+			const subSlug = pathParts[1]
+			const subCategory = category.subCategories[subSlug]
+
+			if (subCategory) {
+				const subHasIndex = subCategory.hasIndex !== false
+				breadcrumbItems.push({
+					label: lang === 'zh-cn' ? subCategory.labelZh : subCategory.label,
+					href:
+						subHasIndex ?
+							lang === 'zh-cn' ?
+								`/zh-cn/${categorySlug}/${subSlug}/`
+							:	`/${categorySlug}/${subSlug}/`
+						:	undefined,
+				})
+			}
+		}
+	}
+}
+---
+
+{
+	shouldShowBreadcrumb && pageTitle && (
+		<nav
+			class="breadcrumb"
+			aria-label="Breadcrumb">
+			<ol class="breadcrumb-list">
+				<li class="breadcrumb-item">
+					<a
+						href={homeHref}
+						class="breadcrumb-link">
+						{homeLabel}
+					</a>
+					<svg
+						class="breadcrumb-separator"
+						viewBox="0 0 16 16"
+						fill="currentColor"
+						aria-hidden="true">
+						<path
+							fill-rule="evenodd"
+							d="M5.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L8.94 8 5.22 4.28a.75.75 0 0 1 0-1.06Z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+				</li>
+				{breadcrumbItems.map(item => (
+					<li class="breadcrumb-item">
+						{item.href ?
+							<a
+								href={item.href}
+								class="breadcrumb-link">
+								{item.label}
+							</a>
+						:	<span class="breadcrumb-text">{item.label}</span>}
+						<svg
+							class="breadcrumb-separator"
+							viewBox="0 0 16 16"
+							fill="currentColor"
+							aria-hidden="true">
+							<path
+								fill-rule="evenodd"
+								d="M5.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L8.94 8 5.22 4.28a.75.75 0 0 1 0-1.06Z"
+								clip-rule="evenodd"
+							/>
+						</svg>
+					</li>
+				))}
+				<li class="breadcrumb-item">
+					<span
+						class="breadcrumb-current"
+						aria-current="page">
+						{pageTitle}
+					</span>
+				</li>
+			</ol>
+		</nav>
+	)
+}
+
+<style>
+	.breadcrumb {
+		padding: 0.75rem 1.5rem 0;
+		max-width: var(--sl-content-width);
+		margin: 0 auto;
+	}
+
+	.breadcrumb-list {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-size: 0.8125rem;
+	}
+
+	.breadcrumb-item {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+	}
+
+	.breadcrumb-link {
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+		transition: color 0.2s ease;
+		border-radius: 4px;
+		padding: 0.125rem 0.375rem;
+		margin: -0.125rem -0.375rem;
+	}
+
+	.breadcrumb-link:hover {
+		color: hsl(var(--cafe-primary-hsl));
+		background-color: hsla(var(--cafe-primary-hsl), 0.08);
+	}
+
+	.breadcrumb-text {
+		color: var(--sl-color-gray-3);
+		padding: 0.125rem 0.375rem;
+		margin: -0.125rem -0.375rem;
+	}
+
+	.breadcrumb-current {
+		color: var(--sl-color-text);
+		font-weight: 500;
+		padding: 0.125rem 0.375rem;
+		margin: -0.125rem -0.375rem;
+		border-radius: 4px;
+		background-color: hsla(var(--cafe-primary-hsl), 0.08);
+	}
+
+	.breadcrumb-separator {
+		width: 0.875rem;
+		height: 0.875rem;
+		color: var(--sl-color-gray-4);
+		flex-shrink: 0;
+	}
+
+	/* Dark mode adjustments */
+	:global(:root[data-theme='dark']) .breadcrumb-link {
+		color: var(--sl-color-gray-3);
+	}
+
+	:global(:root[data-theme='dark']) .breadcrumb-link:hover {
+		color: hsl(var(--cafe-primary-hsl));
+	}
+
+	:global(:root[data-theme='dark']) .breadcrumb-current {
+		color: var(--sl-color-text);
+	}
+
+	:global(:root[data-theme='dark']) .breadcrumb-separator {
+		color: var(--sl-color-gray-5);
+	}
+
+	/* Mobile adjustments */
+	@media (max-width: 50rem) {
+		.breadcrumb {
+			padding: 0.5rem 1rem 0;
+		}
+
+		.breadcrumb-list {
+			font-size: 0.75rem;
+		}
+	}
+</style>

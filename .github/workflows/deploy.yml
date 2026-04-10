@@ -1,0 +1,36 @@
+name: Deploy to Company Server
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted  # 使用自托管 Runner
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build documentation
+        run: pnpm build
+      
+      - name: Deploy to web server
+        run: |
+          # 将构建产物复制到 Web 服务器目录
+          sudo cp -r ./dist/* /var/www/docs/
+          # 或者使用 rsync 进行增量同步
+
