@@ -31,7 +31,7 @@ export default defineConfig({
                 {
                     icon: 'github',
                     label: 'GitHub',
-                    href: 'https://github.com/Cafe-scraper',
+                    href: 'https://github.com/Core-Claw',
                 },
             ],
             components: {

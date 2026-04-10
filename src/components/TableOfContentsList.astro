@@ -54,14 +54,14 @@ const { toc, isMobile = false, depth = 0 } = Astro.props
 		transform: translateY(-50%);
 		width: 3px;
 		height: 0;
-		background: hsl(var(--cafe-primary-hsl));
+		background: hsl(var(--core-primary-hsl));
 		border-radius: 2px;
 		transition: height 0.2s ease;
 	}
 
 	a:hover {
-		color: hsl(var(--cafe-primary-hsl));
-		background-color: hsla(var(--cafe-primary-hsl), 0.06);
+		color: hsl(var(--core-primary-hsl));
+		background-color: hsla(var(--core-primary-hsl), 0.06);
 		padding-left: calc(0.5rem * var(--depth) + 1rem);
 	}
 
@@ -70,15 +70,15 @@ const { toc, isMobile = false, depth = 0 } = Astro.props
 	}
 
 	a[aria-current='true'] {
-		color: hsl(var(--cafe-primary-hsl));
+		color: hsl(var(--core-primary-hsl));
 		font-weight: 500;
-		background-color: hsla(var(--cafe-primary-hsl), 0.1);
+		background-color: hsla(var(--core-primary-hsl), 0.1);
 		padding-left: calc(0.5rem * var(--depth) + 1rem);
 	}
 
 	a[aria-current='true']::before {
 		height: 70%;
-		background: linear-gradient(180deg, var(--cafe-gradient-1), var(--cafe-gradient-2));
+		background: linear-gradient(180deg, var(--core-gradient-1), var(--core-gradient-2));
 	}
 
 	/* Dark mode */
@@ -87,12 +87,12 @@ const { toc, isMobile = false, depth = 0 } = Astro.props
 	}
 
 	:global(:root[data-theme='dark']) a:hover {
-		color: hsl(var(--cafe-primary-hsl));
-		background-color: hsla(var(--cafe-primary-hsl), 0.1);
+		color: hsl(var(--core-primary-hsl));
+		background-color: hsla(var(--core-primary-hsl), 0.1);
 	}
 
 	:global(:root[data-theme='dark']) a[aria-current='true'] {
-		background-color: hsla(var(--cafe-primary-hsl), 0.15);
+		background-color: hsla(var(--core-primary-hsl), 0.15);
 	}
 
 	/* Nested items */

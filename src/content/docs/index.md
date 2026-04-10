@@ -24,16 +24,16 @@ template: splash
 		text-align: center;
 		padding: 3rem 1rem;
 		margin-bottom: 2rem;
-		background: linear-gradient(135deg, hsla(var(--cafe-primary-hsl), 0.06) 0%, hsla(var(--cafe-secondary-hsl), 0.04) 100%);
-		border-radius: var(--cafe-radius);
-		border: 1px solid hsla(var(--cafe-primary-hsl), 0.1);
+		background: linear-gradient(135deg, hsla(var(--core-primary-hsl), 0.06) 0%, hsla(var(--core-secondary-hsl), 0.04) 100%);
+		border-radius: var(--core-radius);
+		border: 1px solid hsla(var(--core-primary-hsl), 0.1);
 	}
 	
 	.hero-title {
 		font-size: 2.5rem;
 		font-weight: 700;
 		margin: 0 0 1rem;
-		background: linear-gradient(135deg, var(--cafe-gradient-1), var(--cafe-gradient-2));
+		background: linear-gradient(135deg, var(--core-gradient-1), var(--core-gradient-2));
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
@@ -60,7 +60,7 @@ template: splash
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.75rem 1.5rem;
-		border-radius: var(--cafe-radius);
+		border-radius: var(--core-radius);
 		font-weight: 600;
 		text-decoration: none;
 		transition: all 0.2s ease;
@@ -68,32 +68,32 @@ template: splash
 	}
 	
 	.hero-btn-primary {
-		background: linear-gradient(135deg, var(--cafe-gradient-1), var(--cafe-gradient-2));
+		background: linear-gradient(135deg, var(--core-gradient-1), var(--core-gradient-2));
 		color: white !important;
-		box-shadow: 0 4px 12px hsla(var(--cafe-primary-hsl), 0.3);
+		box-shadow: 0 4px 12px hsla(var(--core-primary-hsl), 0.3);
 		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 	}
 	
 	.hero-btn-primary:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 6px 20px hsla(var(--cafe-primary-hsl), 0.4);
+		box-shadow: 0 6px 20px hsla(var(--core-primary-hsl), 0.4);
 		color: white !important;
 	}
 	
 	.hero-btn-secondary {
 		background: transparent;
-		color: hsl(var(--cafe-primary-hsl));
-		border: 1px solid hsla(var(--cafe-primary-hsl), 0.3);
+		color: hsl(var(--core-primary-hsl));
+		border: 1px solid hsla(var(--core-primary-hsl), 0.3);
 	}
 	
 	.hero-btn-secondary:hover {
-		background: hsla(var(--cafe-primary-hsl), 0.08);
-		border-color: hsl(var(--cafe-primary-hsl));
+		background: hsla(var(--core-primary-hsl), 0.08);
+		border-color: hsl(var(--core-primary-hsl));
 	}
 	
 	:global(:root[data-theme='dark']) .hero-section {
-		background: linear-gradient(135deg, hsla(var(--cafe-primary-hsl), 0.1) 0%, hsla(var(--cafe-secondary-hsl), 0.06) 100%);
-		border-color: hsla(var(--cafe-primary-hsl), 0.15);
+		background: linear-gradient(135deg, hsla(var(--core-primary-hsl), 0.1) 0%, hsla(var(--core-secondary-hsl), 0.06) 100%);
+		border-color: hsla(var(--core-primary-hsl), 0.15);
 	}
 	
 	:global(:root[data-theme='dark']) .hero-subtitle {
@@ -226,7 +226,7 @@ For those who want full control over their data pipelines:
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="https://github.com/Cafe-Worker" class="quick-link" target="_blank">
+	<a href="https://github.com/core-claw" class="quick-link" target="_blank">
 		<div class="quick-link-content">
 			<span class="quick-link-title">GitHub Community</span>
 			<span class="quick-link-desc">Join our open-source community</span>

@@ -15,5 +15,5 @@ Template 内部发生的情况可以在 Template 运行日志的 Template 运行
 
 ## 数据保留
 
-CafeScarper 会保留你所有的运行记录
+CoreClaw 会保留你所有的运行记录
 ![](@/assets/docs/img_9.jpg)

@@ -29,10 +29,10 @@ description: Why Playwright is chosen as the recommended page scraping framework
 ```python
 try:
     Auth = os.environ.get("PROXY_AUTH")
-    CafeSDK.Log.info(f"Current browser authentication info: {Auth}")
+    CoreSDK.Log.info(f"Current browser authentication info: {Auth}")
 except Exception as e:
     #Detect other unknown anomalies
-    CafeSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
+    CoreSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
     Auth = None
 return
 
@@ -45,12 +45,12 @@ rest_item = {
 }
 
 async with async_playwright() as playwright:
-    CafeSDK.Log.info(f"Requested URL: {url}")
+    CoreSDK.Log.info(f"Requested URL: {url}")
 
 try:
     browser = await playwright.chromium.connect_over_cdp(browser_url)
 except Exception as e:
-    CafeSDK.Log.info(f"[Error] Failed to connect fingerprint browser: {e}")
+    CoreSDK.Log.info(f"[Error] Failed to connect fingerprint browser: {e}")
     rest_item['resp_status'] = "403"
     await asyncio.sleep(5)
     await browser.close()
@@ -68,9 +68,9 @@ try:
     html = await page.content()
     rest_item["html"] = html
 except Exception as e:
-    CafeSDK.Log.info(f"[Error] Failed to retrieve page HTML: {e}")
+    CoreSDK.Log.info(f"[Error] Failed to retrieve page HTML: {e}")
     rest_item['resp_status'] = "500"
-    CafeSDK.Result.push_data(rest_item)
+    CoreSDK.Result.push_data(rest_item)
     await asyncio.sleep(5)
     await browser.close()
 ```
@@ -89,13 +89,13 @@ from lxml import etree
 from urllib.parse import urlparse,urlencode
 from playwright.async_api import async_playwright
 
-from sdk import CafeSDK
+from sdk import CoreSDK
 
 async def run():
-    CafeSDK.Log.info("🚀 Init...")
-    CafeSDK.Log.info("====================================================")
-    CafeSDK.Log.info("🚀 CoreClaw Playwright Browser Scrape Demo")
-    CafeSDK.Log.info("====================================================")
+    CoreSDK.Log.info("🚀 Init...")
+    CoreSDK.Log.info("====================================================")
+    CoreSDK.Log.info("🚀 CoreClaw Playwright Browser Scrape Demo")
+    CoreSDK.Log.info("====================================================")
     headers = [
         {
             "label": "url",
@@ -113,17 +113,17 @@ async def run():
             "format": "text",
         }
     ]
-    res = CafeSDK.Result.set_table_header(headers)
+    res = CoreSDK.Result.set_table_header(headers)
 
-    input_json_dict = CafeSDK.Parameter.get_input_json_dict()
-    CafeSDK.Log.debug(f"======input_json_dict====== {input_json_dict}")
+    input_json_dict = CoreSDK.Parameter.get_input_json_dict()
+    CoreSDK.Log.debug(f"======input_json_dict====== {input_json_dict}")
     url = input_json_dict['url']
 
     try:
         Auth = os.environ.get("PROXY_AUTH")
-        CafeSDK.Log.info(f"Current browser authentication info: {Auth}")
+        CoreSDK.Log.info(f"Current browser authentication info: {Auth}")
     except Exception as e:
-        CafeSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
+        CoreSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
         Auth = None
         return
 
@@ -132,11 +132,11 @@ async def run():
     rest_item = {"url": url, "html": "", "resp_status": "200"}
 
     async with async_playwright() as playwright:
-        CafeSDK.Log.info(f"Requested URL: {url}")
+        CoreSDK.Log.info(f"Requested URL: {url}")
         try:
             browser = await playwright.chromium.connect_over_cdp(browser_url)
         except Exception as e:
-            CafeSDK.Log.info(f"[Error] Failed to connect fingerprint browser: {e}")
+            CoreSDK.Log.info(f"[Error] Failed to connect fingerprint browser: {e}")
             rest_item['resp_status'] = "403"
             await asyncio.sleep(5)
             await browser.close()
@@ -148,9 +148,9 @@ async def run():
             html = await page.content()
             rest_item["html"] = html
         except Exception as e:
-            CafeSDK.Log.info(f"[Error] Failed to retrieve page HTML: {e}")
+            CoreSDK.Log.info(f"[Error] Failed to retrieve page HTML: {e}")
             rest_item['resp_status'] = "500"
-        CafeSDK.Result.push_data(rest_item)
+        CoreSDK.Result.push_data(rest_item)
         await asyncio.sleep(5)
         await browser.close()
 

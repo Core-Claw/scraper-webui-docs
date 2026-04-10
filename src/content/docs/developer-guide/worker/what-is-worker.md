@@ -47,6 +47,6 @@ It also automatically generates well-structured table headers for easy data anal
 
 | 类型    | 地址                                         |
 | ------- | -------------------------------------------- |
-| Python  | https://github.com/CoreClaw/PythonScirptDemo |
-| Go      | https://github.com/CoreClaw/GoScirptDemo     |
-| Node.js | https://github.com/CoreClaw/NodeScirptDemo   |
+| Python  | https://github.com/Core-Claw/PythonScirptDemo |
+| Go      | https://github.com/Core-Claw/GoScirptDemo     |
+| Node.js | https://github.com/Core-Claw/NodeScirptDemo   |

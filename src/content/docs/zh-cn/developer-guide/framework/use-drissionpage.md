@@ -27,24 +27,24 @@ description: 在现代 Web 数据采集场景下，平台为何推荐使用 Dris
 ```python
 try:
     Auth = os.environ.get("PROXY_AUTH")
-    CafeSDK.Log.info(f"当前获取的浏览器认证信息: {Auth}")
+    CoreSDK.Log.info(f"当前获取的浏览器认证信息: {Auth}")
 except Exception as e:
     # 捕获其他未知异常
-    CafeSDK.Log.error(f"当前获取浏览器认证信息失败: {e}")
+    CoreSDK.Log.error(f"当前获取浏览器认证信息失败: {e}")
     Auth = None
     return
 
 browser_url = f"ws://chrome-ws-inner.coreclaw.com/ws?apiKey={Auth}"
 rest_item = {"url": url, "html": "", "resp_status": "200"}
-CafeSDK.Log.info(f"开始连接指纹浏览器")
+CoreSDK.Log.info(f"开始连接指纹浏览器")
 # 初始化浏览器实例
 co = ChromiumOptions()
 co.set_address(browser_url)
 try:
     browser = Chromium(co)
-    CafeSDK.Log.info(f"连接指纹浏览器成功")
+    CoreSDK.Log.info(f"连接指纹浏览器成功")
 except Exception as e:
-    CafeSDK.Log.error(f"连接指纹浏览器失败")
+    CoreSDK.Log.error(f"连接指纹浏览器失败")
     rest_item["resp_status"] = "403"
     return
 ```
@@ -60,9 +60,9 @@ try:
     page.wait.doc_loaded()
     html = page.html
     rest_item["html"] = html
-    CafeSDK.Result.push_data(rest_item)
+    CoreSDK.Result.push_data(rest_item)
 except Exception as e:
-    CafeSDK.Log.info(f"[错误] 获取浏览器html失败: {e}")
+    CoreSDK.Log.info(f"[错误] 获取浏览器html失败: {e}")
     rest_item["resp_status"] = "500"
 ```
 
@@ -81,13 +81,13 @@ from urllib.parse import urlparse,urlencode
 import hashlib
 from DrissionPage import ChromiumOptions, Chromium, errors
 
-from sdk import CafeSDK
+from sdk import CoreSDK
 
 async def run():
-    CafeSDK.Log.info("🚀 Init...")
-    CafeSDK.Log.info("====================================================")
-    CafeSDK.Log.info("🚀 CoreClaw TikTok Shop Information Worker")
-    CafeSDK.Log.info("====================================================")
+    CoreSDK.Log.info("🚀 Init...")
+    CoreSDK.Log.info("====================================================")
+    CoreSDK.Log.info("🚀 CoreClaw TikTok Shop Information Worker")
+    CoreSDK.Log.info("====================================================")
     headers = [
         {
             "label": "url",
@@ -105,32 +105,32 @@ async def run():
             "format": "text",
         }
     ]
-    res = CafeSDK.Result.set_table_header(headers)
+    res = CoreSDK.Result.set_table_header(headers)
 
-    input_json_dict = CafeSDK.Parameter.get_input_json_dict()
-    CafeSDK.Log.debug(f"======input_json_dict====== {input_json_dict}")
+    input_json_dict = CoreSDK.Parameter.get_input_json_dict()
+    CoreSDK.Log.debug(f"======input_json_dict====== {input_json_dict}")
     url = input_json_dict['url']
 
     try:
         Auth = os.environ.get("PROXY_AUTH")
-        CafeSDK.Log.info(f"当前获取的浏览器认证信息: {Auth}")
+        CoreSDK.Log.info(f"当前获取的浏览器认证信息: {Auth}")
     except Exception as e:
         # 捕获其他未知异常
-        CafeSDK.Log.error(f"当前获取浏览器认证信息失败: {e}")
+        CoreSDK.Log.error(f"当前获取浏览器认证信息失败: {e}")
         Auth = None
         return
 
     browser_url = f"ws://chrome-ws-inner.coreclaw.com/ws?apiKey={Auth}"
     rest_item = {"url": url, "html": "", "resp_status": "200"}
-    CafeSDK.Log.info(f"开始连接指纹浏览器")
+    CoreSDK.Log.info(f"开始连接指纹浏览器")
     # 初始化浏览器实例
     co = ChromiumOptions()
     co.set_address(browser_url)
     try:
         browser = Chromium(co)
-        CafeSDK.Log.info(f"连接指纹浏览器成功")
+        CoreSDK.Log.info(f"连接指纹浏览器成功")
     except Exception as e:
-        CafeSDK.Log.error(f"连接指纹浏览器失败")
+        CoreSDK.Log.error(f"连接指纹浏览器失败")
         rest_item["resp_status"] = "403"
         return
 
@@ -140,9 +140,9 @@ async def run():
         page.wait.doc_loaded()
         html = page.html
         rest_item["html"] = html
-        CafeSDK.Result.push_data(rest_item)
+        CoreSDK.Result.push_data(rest_item)
     except Exception as e:
-        CafeSDK.Log.info(f"[错误] 获取浏览器html失败: {e}")
+        CoreSDK.Log.info(f"[错误] 获取浏览器html失败: {e}")
         rest_item["resp_status"] = "500"
 
 if __name__ == "__main__":
@@ -180,7 +180,7 @@ if element:
 ```python
 # 获取所有匹配元素
 product_items = page.eles('.product-item')
-CafeSDK.Log.info(f"找到 {len(product_items)} 个商品")
+CoreSDK.Log.info(f"找到 {len(product_items)} 个商品")
 
 # 遍历处理
 products_data = []

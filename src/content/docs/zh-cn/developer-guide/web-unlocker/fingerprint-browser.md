@@ -31,15 +31,15 @@ sidebar:
 ```python
 try:
     Auth = os.environ.get("PROXY_AUTH")
-    CafeSDK.Log.info(f"当前获取的浏览器认证信息: {Auth}")
+    CoreSDK.Log.info(f"当前获取的浏览器认证信息: {Auth}")
 except Exception as e:
-    CafeSDK.Log.error(f"当前获取浏览器认证信息失败: {e}")
+    CoreSDK.Log.error(f"当前获取浏览器认证信息失败: {e}")
     Auth = None
 
 # 代理浏览器 WebSocket 地址
 browser_url = f'ws://{Auth}@chrome-ws-inner.coreclaw.com'
 
-CafeSDK.Log.info(f"使用代理浏览器地址: {browser_url}")
+CoreSDK.Log.info(f"使用代理浏览器地址: {browser_url}")
 
 # ✅ 使用 ipinfo 验证测试
 test_url = "https://ipinfo.io/ip"
@@ -53,11 +53,11 @@ status, soup = await company_overview.fetch_with_playwright(test_url)
 # 打印抓取结果
 if soup:
     ip_text = soup.get_text(strip=True)
-    CafeSDK.Log.info(f"当前代理出口 IP: {ip_text}")
+    CoreSDK.Log.info(f"当前代理出口 IP: {ip_text}")
 else:
-    CafeSDK.Log.error("未获取到页面内容")
+    CoreSDK.Log.error("未获取到页面内容")
 
-CafeSDK.Log.info(f"请求状态码: {status}")
+CoreSDK.Log.info(f"请求状态码: {status}")
 ```
 
 ### 🧱 Go 示例
@@ -67,19 +67,19 @@ ctx := context.Background()
 
 // 读取 PROXY_AUTH
 auth := os.Getenv("PROXY_AUTH")
-CafeSDK.Log.Info(fmt.Sprintf("当前获取的浏览器认证信息: %s", auth))
+coresdk.Log.Info(fmt.Sprintf("当前获取的浏览器认证信息: %s", auth))
 
 // 拼接代理浏览器 WS 地址
 browserURL := "ws://chrome-ws-inner.coreclaw.com"
 if auth != "" {
 	browserURL = fmt.Sprintf("ws://%s@chrome-ws-inner.coreclaw.com", auth)
 }
-CafeSDK.Log.Info(ctx, "使用代理浏览器地址: %s", browserURL)
+coresdk.Log.Info(ctx, "使用代理浏览器地址: %s", browserURL)
 
 // 启动 Playwright
 pw, err := playwright.Run()
 if err != nil {
-	CafeSDK.Log.Error(ctx, "Playwright 启动失败: %v", err)
+	coresdk.Log.Error(ctx, "Playwright 启动失败: %v", err)
 	return
 }
 defer playwright.Stop()
@@ -87,7 +87,7 @@ defer playwright.Stop()
 // 连接代理浏览器
 browser, err := pw.Chromium.ConnectOverCDP(browserURL)
 if err != nil {
-	CafeSDK.Log.Error(ctx, "连接代理浏览器失败: %v", err)
+	coresdk.Log.Error(ctx, "连接代理浏览器失败: %v", err)
 	return
 }
 defer browser.Close()
@@ -95,14 +95,14 @@ defer browser.Close()
 // 创建页面
 page, err := browser.NewPage()
 if err != nil {
-	CafeSDK.Log.Error(ctx, "创建页面失败: %v", err)
+	coresdk.Log.Error(ctx, "创建页面失败: %v", err)
 	return
 }
 
 // 访问 ipinfo 验证出口 IP
 resp, err := page.Goto("https://ipinfo.io/ip")
 if err != nil {
-	CafeSDK.Log.Error(ctx, "页面访问失败: %v", err)
+	coresdk.Log.Error(ctx, "页面访问失败: %v", err)
 	return
 }
 
@@ -110,12 +110,12 @@ page.WaitForLoadState("networkidle")
 
 content, err := page.TextContent("body")
 if err != nil {
-	CafeSDK.Log.Error(ctx, "获取页面内容失败: %v", err)
+	coresdk.Log.Error(ctx, "获取页面内容失败: %v", err)
 	return
 }
 
-CafeSDK.Log.Info(ctx, "当前代理出口 IP: %s", content)
-CafeSDK.Log.Info(ctx, "请求状态码: %d", resp.Status())
+coresdk.Log.Info(ctx, "当前代理出口 IP: %s", content)
+coresdk.Log.Info(ctx, "请求状态码: %d", resp.Status())
 ```
 
 ### 🟢 Node.js 示例

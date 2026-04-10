@@ -13,8 +13,32 @@ sidebar:
 ├── README.md               # 项目说明文档
 ├── input_schema.json       # UI模板配置文件
 ├── sdk.py                  # sdk文件
-├── sdk_pd2.py
-├── sdk_pd2_grpc.py
+├── sdk_pb2.py
+├── sdk_pb2_grpc.py
+```
+
+```
+以Node.js项目根目录为例：
+├── main.js                 # 主入口文件
+├── package.json            # Node.js依赖包列表
+├── README.md               # 项目说明文档
+├── input_schema.json       # UI模板配置文件
+├── sdk.js                  # sdk文件
+├── sdk_pb.js
+├── sdk_grpc_pb.js
+```
+
+```
+以Go项目根目录为例：
+├── main.go                 # 主入口文件
+├── go.mod                  # Go模块文件
+├── go.sum                  # Go依赖校验
+├── README.md               # 项目说明文档
+├── input_schema.json       # UI模板配置文件
+├── GoSdk/                  # sdk目录
+│   ├── sdk.go
+│   ├── sdk.pb.go
+│   └── sdk_grpc.pb.go
 ```
 
 ### 核心入口文件
@@ -27,6 +51,7 @@ sidebar:
 
 - **package.json**（Node.js 项目）
 - **requirements.txt**（Python 项目）
+- **go.mod**（Go 项目）
 - 用于声明项目运行所需的所有依赖包
 
 ### 输入配置文件（input_schema.json）

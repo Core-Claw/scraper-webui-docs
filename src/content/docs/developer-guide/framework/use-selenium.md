@@ -35,9 +35,9 @@ which can be accessed in Remote mode.
 ```python
 try:
     Auth = os.environ.get("PROXY_AUTH")
-    CafeSDK.Log.info(f"Current browser auth info: {Auth}")
+    CoreSDK.Log.info(f"Current browser auth info: {Auth}")
 except Exception as e:
-    CafeSDK.Log.error(f"Failed to get browser auth info: {e}")
+    CoreSDK.Log.error(f"Failed to get browser auth info: {e}")
     Auth = None
     return
 
@@ -53,14 +53,14 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 chrome_options.add_argument('--disable-gpu')
 chrome_options.add_argument('--window-size=1920,1080')
 
-CafeSDK.Log.info(f"Requested URL: {url}")
+CoreSDK.Log.info(f"Requested URL: {url}")
 try:
     driver = webdriver.Remote(
         command_executor=browser_url,
         options=chrome_options
     )
 except Exception as e:
-    CafeSDK.Log.info(f"[Error] Failed to connect to fingerprint browser: {e}")
+    CoreSDK.Log.info(f"[Error] Failed to connect to fingerprint browser: {e}")
     rest_item['resp_status'] = "403"
     return
 ```
@@ -78,10 +78,10 @@ try:
     html = driver.page_source
     rest_item["html"] = html
 except Exception as e:
-    CafeSDK.Log.info(f"[Error] Failed to get page HTML: {e}")
+    CoreSDK.Log.info(f"[Error] Failed to get page HTML: {e}")
     rest_item['resp_status'] = "500"
 
-CafeSDK.Result.push_data(rest_item)
+CoreSDK.Result.push_data(rest_item)
 ```
 
 ---
@@ -95,26 +95,26 @@ import os
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-from sdk import CafeSDK
+from sdk import CoreSDK
 
 async def run():
-    CafeSDK.Log.info("🚀 Init...")
-    CafeSDK.Log.info("====================================================")
-    CafeSDK.Log.info("🚀 CoreClaw Selenium Browser Scrape Demo")
-    CafeSDK.Log.info("====================================================")
+    CoreSDK.Log.info("🚀 Init...")
+    CoreSDK.Log.info("====================================================")
+    CoreSDK.Log.info("🚀 CoreClaw Selenium Browser Scrape Demo")
+    CoreSDK.Log.info("====================================================")
 
     headers = [
         {"label": "url", "key": "url", "format": "text"},
         {"label": "html", "key": "html", "format": "text"},
         {"label": "resp_status", "key": "resp_status", "format": "text"},
     ]
-    CafeSDK.Result.set_table_header(headers)
+    CoreSDK.Result.set_table_header(headers)
 
-    input_json_dict = CafeSDK.Parameter.get_input_json_dict()
+    input_json_dict = CoreSDK.Parameter.get_input_json_dict()
     url = input_json_dict['url']
 
     Auth = os.environ.get("PROXY_AUTH")
-    CafeSDK.Log.info(f"Current browser auth info: {Auth}")
+    CoreSDK.Log.info(f"Current browser auth info: {Auth}")
 
     browser_url = f'http://{Auth}@chrome-http-inner.coreclaw.com'
     rest_item = {"url": url, "html": "", "resp_status": "200"}
@@ -131,7 +131,7 @@ async def run():
             options=chrome_options
         )
     except Exception as e:
-        CafeSDK.Log.info(f"[Error] Failed to connect fingerprint browser: {e}")
+        CoreSDK.Log.info(f"[Error] Failed to connect fingerprint browser: {e}")
         rest_item['resp_status'] = "403"
         return
 
@@ -142,10 +142,10 @@ async def run():
         )
         rest_item["html"] = driver.page_source
     except Exception as e:
-        CafeSDK.Log.info(f"[Error] Failed to retrieve HTML: {e}")
+        CoreSDK.Log.info(f"[Error] Failed to retrieve HTML: {e}")
         rest_item['resp_status'] = "500"
 
-    CafeSDK.Result.push_data(rest_item)
+    CoreSDK.Result.push_data(rest_item)
 
 if __name__ == "__main__":
     asyncio.run(run())

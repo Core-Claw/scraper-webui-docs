@@ -13,8 +13,32 @@ Example using a Python project root directory:
 ├── README.md               # Project documentation
 ├── input_schema.json       # UI Script configuration file
 ├── sdk.py                  # SDK file
-├── sdk_pd2.py
-├── sdk_pd2_grpc.py
+├── sdk_pb2.py
+├── sdk_pb2_grpc.py
+```
+
+```
+Example using a Node.js project root directory:
+├── main.js                 # Main entry file
+├── package.json            # Node.js dependency list
+├── README.md               # Project documentation
+├── input_schema.json       # UI Script configuration file
+├── sdk.js                  # SDK file
+├── sdk_pb.js
+├── sdk_grpc_pb.js
+```
+
+```
+Example using a Go project root directory:
+├── main.go                 # Main entry file
+├── go.mod                  # Go module file
+├── go.sum                  # Go dependency checksum
+├── README.md               # Project documentation
+├── input_schema.json       # UI Script configuration file
+├── GoSdk/                  # SDK directory
+│   ├── sdk.go
+│   ├── sdk.pb.go
+│   └── sdk_grpc.pb.go
 ```
 
 ### Core Entry File
@@ -27,6 +51,7 @@ Example using a Python project root directory:
 
 - **package.json**（Node.js projects）
 - **requirements.txt**（Python projects）
+- **go.mod**（Go projects）
 - Used to declare all dependencies required to run the project
 
 ### Configuration Files(input_schema.json)

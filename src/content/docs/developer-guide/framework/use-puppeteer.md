@@ -31,16 +31,16 @@ Its core capabilities include:
 let auth = null
 try {
     auth = process.env.PROXY_AUTH || null
-    await cafesdk.log.info(`Browser authentication info: ${auth}`)
+    await coresdk.log.info(`Browser authentication info: ${auth}`)
 } catch (err) {
-    await cafesdk.log.error(
+    await coresdk.log.error(
         `Failed to obtain browser authentication info: ${err.message}`
     )
     auth = null
 }
 
 let browser_url = `ws://${auth}@chrome-ws-inner.coreclaw.com`
-await cafesdk.log.info(`Fingerprint browser endpoint: ${browser_url}`)
+await coresdk.log.info(`Fingerprint browser endpoint: ${browser_url}`)
 ```
 
 ---
@@ -49,7 +49,7 @@ await cafesdk.log.info(`Fingerprint browser endpoint: ${browser_url}`)
 
 ```js
 url = inputJson?.url
-await cafesdk.log.info(`Processing URL: ${url}`)
+await coresdk.log.info(`Processing URL: ${url}`)
 
 let browser = await puppeteer.connect({
     browserWSEndpoint: browser_url,
@@ -75,7 +75,7 @@ let result = {
 #!/usr/bin/env node
 'use strict'
 
-const cafesdk = require('./sdk')
+const coresdk = require('./sdk')
 const puppeteer = require('puppeteer-core')
 
 async function run() {
@@ -88,11 +88,11 @@ async function run() {
             { label: 'resp_status', key: 'resp_status', format: 'text' },
         ]
 
-        await cafesdk.result.setTableHeader(headers)
+        await coresdk.result.setTableHeader(headers)
 
         // 2. Retrieve input parameters
-        const inputJson = await cafesdk.parameter.getInputJSONObject()
-        await cafesdk.log.debug(
+        const inputJson = await coresdk.parameter.getInputJSONObject()
+        await coresdk.log.debug(
             `Input parameters: ${JSON.stringify(inputJson)}`
         )
 
@@ -100,20 +100,20 @@ async function run() {
         let auth = null
         try {
             auth = process.env.PROXY_AUTH || null
-            await cafesdk.log.info(`Browser authentication info: ${auth}`)
+            await coresdk.log.info(`Browser authentication info: ${auth}`)
         } catch (err) {
-            await cafesdk.log.error(
+            await coresdk.log.error(
                 `Failed to obtain browser authentication info: ${err.message}`
             )
             auth = null
         }
 
         let browser_url = `ws://${auth}@chrome-ws-inner.coreclaw.com`
-        await cafesdk.log.info(`Fingerprint browser endpoint: ${browser_url}`)
+        await coresdk.log.info(`Fingerprint browser endpoint: ${browser_url}`)
 
         // 4. Business logic
         url = inputJson?.url
-        await cafesdk.log.info(`Processing URL: ${url}`)
+        await coresdk.log.info(`Processing URL: ${url}`)
 
         let browser = await puppeteer.connect({
             browserWSEndpoint: browser_url,
@@ -131,11 +131,11 @@ async function run() {
         }
 
         // 5. Push results to the platform
-        await cafesdk.result.pushData(result)
+        await coresdk.result.pushData(result)
 
-        await cafesdk.log.info('Script execution completed')
+        await coresdk.log.info('Script execution completed')
     } catch (err) {
-        await cafesdk.log.error(`Script execution error: ${err.message}`)
+        await coresdk.log.error(`Script execution error: ${err.message}`)
 
         const errorResult = {
             url: url,
@@ -143,7 +143,7 @@ async function run() {
             resp_status: '500',
         }
 
-        await cafesdk.result.pushData(errorResult)
+        await coresdk.result.pushData(errorResult)
         throw err
     }
 }

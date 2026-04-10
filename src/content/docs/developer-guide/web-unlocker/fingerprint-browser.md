@@ -33,15 +33,15 @@ This mechanism effectively reduces failures and account-linking risks caused by 
 ```python
 try:
     Auth = os.environ.get("PROXY_AUTH")
-    CafeSDK.Log.info(f"Current browser auth info: {Auth}")
+    CoreSDK.Log.info(f"Current browser auth info: {Auth}")
 except Exception as e:
-    CafeSDK.Log.error(f"Failed to get browser auth info: {e}")
+    CoreSDK.Log.error(f"Failed to get browser auth info: {e}")
     Auth = None
 
 # Remote fingerprint browser WebSocket address
 browser_url = f'ws://{Auth}@chrome-ws-inner.coreclaw.com'
 
-CafeSDK.Log.info(f"Using remote browser address: {browser_url}")
+CoreSDK.Log.info(f"Using remote browser address: {browser_url}")
 
 # Verify outbound IP via ipinfo
 test_url = "https://ipinfo.io/ip"
@@ -55,11 +55,11 @@ status, soup = await company_overview.fetch_with_playwright(test_url)
 # Output result
 if soup:
     ip_text = soup.get_text(strip=True)
-    CafeSDK.Log.info(f"Current outbound IP: {ip_text}")
+    CoreSDK.Log.info(f"Current outbound IP: {ip_text}")
 else:
-    CafeSDK.Log.error("Failed to retrieve page content")
+    CoreSDK.Log.error("Failed to retrieve page content")
 
-CafeSDK.Log.info(f"Response status code: {status}")
+CoreSDK.Log.info(f"Response status code: {status}")
 ```
 
 ## Go Example
@@ -69,19 +69,19 @@ ctx := context.Background()
 
 // Read PROXY_AUTH
 auth := os.Getenv("PROXY_AUTH")
-CafeSDK.Log.Info(fmt.Sprintf("Current browser auth info: %s", auth))
+coresdk.Log.Info(fmt.Sprintf("Current browser auth info: %s", auth))
 
 // Build remote browser WS address
 browserURL := "ws://chrome-ws-inner.coreclaw.com"
 if auth != "" {
     browserURL = fmt.Sprintf("ws://%s@chrome-ws-inner.coreclaw.com", auth)
 }
-CafeSDK.Log.Info(ctx, "Using remote browser address: %s", browserURL)
+coresdk.Log.Info(ctx, "Using remote browser address: %s", browserURL)
 
 // Start Playwright
 pw, err := playwright.Run()
 if err != nil {
-    CafeSDK.Log.Error(ctx, "Failed to start Playwright: %v", err)
+    coresdk.Log.Error(ctx, "Failed to start Playwright: %v", err)
     return
 }
 defer playwright.Stop()
@@ -89,7 +89,7 @@ defer playwright.Stop()
 // Connect to remote fingerprint browser
 browser, err := pw.Chromium.ConnectOverCDP(browserURL)
 if err != nil {
-    CafeSDK.Log.Error(ctx, "Failed to connect to browser: %v", err)
+    coresdk.Log.Error(ctx, "Failed to connect to browser: %v", err)
     return
 }
 defer browser.Close()
@@ -97,14 +97,14 @@ defer browser.Close()
 // Create page
 page, err := browser.NewPage()
 if err != nil {
-    CafeSDK.Log.Error(ctx, "Failed to create page: %v", err)
+    coresdk.Log.Error(ctx, "Failed to create page: %v", err)
     return
 }
 
 // Visit ipinfo to verify outbound IP
 resp, err := page.Goto("https://ipinfo.io/ip")
 if err != nil {
-    CafeSDK.Log.Error(ctx, "Page navigation failed: %v", err)
+    coresdk.Log.Error(ctx, "Page navigation failed: %v", err)
     return
 }
 
@@ -112,12 +112,12 @@ page.WaitForLoadState("networkidle")
 
 content, err := page.TextContent("body")
 if err != nil {
-    CafeSDK.Log.Error(ctx, "Failed to get page content: %v", err)
+    coresdk.Log.Error(ctx, "Failed to get page content: %v", err)
     return
 }
 
-CafeSDK.Log.Info(ctx, "Current outbound IP: %s", content)
-CafeSDK.Log.Info(ctx, "Response status code: %d", resp.Status())
+coresdk.Log.Info(ctx, "Current outbound IP: %s", content)
+coresdk.Log.Info(ctx, "Response status code: %d", resp.Status())
 ```
 
 ## Node.js Example

@@ -74,14 +74,14 @@ proxyDomain := "proxy-inner.coreclaw.com:6000"
 
 // 2. 获取代理认证信息
 proxyAuth := os.Getenv("PROXY_AUTH")
-cafesdk.Log.Info(ctx, fmt.Sprintf("代理认证信息: %s", proxyAuth))
+coresdk.Log.Info(ctx, fmt.Sprintf("代理认证信息: %s", proxyAuth))
 
 // 3. 拼接代理 URL
 var proxyURL string
 if proxyAuth != "" {
     proxyURL = fmt.Sprintf("socks5://%s@%s", proxyAuth, proxyDomain)
 }
-cafesdk.Log.Info(ctx, fmt.Sprintf("代理地址: %s", proxyURL))
+coresdk.Log.Info(ctx, fmt.Sprintf("代理地址: %s", proxyURL))
 
 // 4. 创建 HTTP Client
 httpClient := &http.Client{
@@ -92,7 +92,7 @@ httpClient := &http.Client{
 if proxyURL != "" {
     proxyParsed, err := url.Parse(proxyURL)
     if err != nil {
-        cafesdk.Log.Error(ctx, fmt.Sprintf("解析代理URL失败: %v", err))
+        coresdk.Log.Error(ctx, fmt.Sprintf("解析代理URL失败: %v", err))
         return
     }
 
@@ -103,20 +103,20 @@ if proxyURL != "" {
         },
     }
 
-    cafesdk.Log.Info(ctx, "已配置代理客户端")
+    coresdk.Log.Info(ctx, "已配置代理客户端")
 }
 
 // 6. 示例业务请求
 targetURL := "https://ipinfo.io/ip"
 req, err := http.NewRequestWithContext(ctx, "GET", targetURL, nil)
 if err != nil {
-    cafesdk.Log.Error(ctx, fmt.Sprintf("创建请求失败: %v", err))
+    coresdk.Log.Error(ctx, fmt.Sprintf("创建请求失败: %v", err))
     return
 }
 
 resp, err := httpClient.Do(req)
 if err != nil {
-    cafesdk.Log.Error(ctx, fmt.Sprintf("请求失败: %v", err))
+    coresdk.Log.Error(ctx, fmt.Sprintf("请求失败: %v", err))
     return
 }
 defer resp.Body.Close()
@@ -124,8 +124,8 @@ defer resp.Body.Close()
 body, _ := io.ReadAll(resp.Body)
 ip := strings.TrimSpace(string(body))
 
-cafesdk.Log.Info(ctx, fmt.Sprintf("响应状态码: %d", resp.StatusCode))
-cafesdk.Log.Info(ctx, fmt.Sprintf("当前出口 IP: %s", ip))
+coresdk.Log.Info(ctx, fmt.Sprintf("响应状态码: %d", resp.StatusCode))
+coresdk.Log.Info(ctx, fmt.Sprintf("当前出口 IP: %s", ip))
 ```
 
 ### Node.js 示例
@@ -149,15 +149,15 @@ const proxyDomain = 'proxy-inner.coreclaw.com:6000'
 let proxyAuth = null
 try {
     proxyAuth = process.env.PROXY_AUTH || null
-    await cafesdk.log.info(`代理认证信息: ${proxyAuth}`)
+    await coresdk.log.info(`代理认证信息: ${proxyAuth}`)
 } catch (err) {
-    await cafesdk.log.error(`获取代理认证信息失败: ${err.message}`)
+    await coresdk.log.error(`获取代理认证信息失败: ${err.message}`)
 }
 
 // 3. 拼接代理 URL
 const proxyUrl = proxyAuth ? `socks5://${proxyAuth}@${proxyDomain}` : null
 
-await cafesdk.log.info(`代理地址: ${proxyUrl}`)
+await coresdk.log.info(`代理地址: ${proxyUrl}`)
 
 // 4. 创建 HTTP Client
 let axiosConfig = {
@@ -173,20 +173,20 @@ if (proxyUrl) {
     axiosConfig.httpAgent = agent
     axiosConfig.httpsAgent = agent
     axiosConfig.proxy = false
-    await cafesdk.log.info('已配置 SOCKS5 代理')
+    await coresdk.log.info('已配置 SOCKS5 代理')
 }
 
 // 6. 示例业务请求
 try {
     const targetUrl = 'https://ipinfo.io/ip'
-    await cafesdk.log.info(`开始请求: ${targetUrl}`)
+    await coresdk.log.info(`开始请求: ${targetUrl}`)
 
     const response = await axios.get(targetUrl, axiosConfig)
 
-    await cafesdk.log.info(`响应状态码: ${response.status}`)
-    await cafesdk.log.info(`当前出口 IP: ${response.data.trim()}`)
+    await coresdk.log.info(`响应状态码: ${response.status}`)
+    await coresdk.log.info(`当前出口 IP: ${response.data.trim()}`)
 } catch (err) {
-    await cafesdk.log.error(`请求失败: ${err.message}`)
+    await coresdk.log.error(`请求失败: ${err.message}`)
 }
 ```
 

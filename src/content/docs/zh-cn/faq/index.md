@@ -157,7 +157,7 @@ description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户
 如果您找不到需要的答案，我们的支持团队随时为您服务：
 
 - **电子邮件**：support@coreclaw.com
-- **GitHub**：[提交问题](https://github.com/Cafe-scraper)
+- **GitHub**：[提交问题](https://github.com/Core-Claw)
 - **响应时间**：通常在工作日内 24 小时内回复
 
 <style>
@@ -186,28 +186,28 @@ description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户
 		align-items: center;
 		text-align: center;
 		padding: 1.5rem 1rem;
-		background: linear-gradient(135deg, hsla(var(--cafe-primary-hsl), 0.05), hsla(var(--cafe-secondary-hsl), 0.08));
-		border: 1px solid hsla(var(--cafe-primary-hsl), 0.12);
-		border-radius: var(--cafe-radius);
+		background: linear-gradient(135deg, hsla(var(--core-primary-hsl), 0.05), hsla(var(--core-secondary-hsl), 0.08));
+		border: 1px solid hsla(var(--core-primary-hsl), 0.12);
+		border-radius: var(--core-radius);
 		text-decoration: none;
 		transition: all 0.3s ease;
 	}
 
 	.faq-category:hover {
 		transform: translateY(-4px);
-		box-shadow: var(--cafe-shadow-lg);
-		border-color: hsla(var(--cafe-primary-hsl), 0.3);
-		background: linear-gradient(135deg, hsla(var(--cafe-primary-hsl), 0.1), hsla(var(--cafe-secondary-hsl), 0.12));
+		box-shadow: var(--core-shadow-lg);
+		border-color: hsla(var(--core-primary-hsl), 0.3);
+		background: linear-gradient(135deg, hsla(var(--core-primary-hsl), 0.1), hsla(var(--core-secondary-hsl), 0.12));
 	}
 
 	:global(:root[data-theme='dark']) .faq-category {
-		background: linear-gradient(135deg, hsla(var(--cafe-primary-hsl), 0.08), hsla(var(--cafe-secondary-hsl), 0.12));
-		border-color: hsla(var(--cafe-primary-hsl), 0.2);
+		background: linear-gradient(135deg, hsla(var(--core-primary-hsl), 0.08), hsla(var(--core-secondary-hsl), 0.12));
+		border-color: hsla(var(--core-primary-hsl), 0.2);
 	}
 
 	:global(:root[data-theme='dark']) .faq-category:hover {
-		background: linear-gradient(135deg, hsla(var(--cafe-primary-hsl), 0.15), hsla(var(--cafe-secondary-hsl), 0.18));
-		border-color: hsla(var(--cafe-primary-hsl), 0.4);
+		background: linear-gradient(135deg, hsla(var(--core-primary-hsl), 0.15), hsla(var(--core-secondary-hsl), 0.18));
+		border-color: hsla(var(--core-primary-hsl), 0.4);
 	}
 
 	.faq-category-icon {
@@ -216,7 +216,7 @@ description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: linear-gradient(135deg, var(--cafe-gradient-1), var(--cafe-gradient-2));
+		background: linear-gradient(135deg, var(--core-gradient-1), var(--core-gradient-2));
 		border-radius: 12px;
 		margin-bottom: 0.75rem;
 		color: white;
@@ -226,7 +226,7 @@ description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户
 		margin: 0 0 0.25rem;
 		font-size: 0.95rem;
 		font-weight: 600;
-		background: linear-gradient(135deg, var(--cafe-gradient-1), var(--cafe-gradient-2));
+		background: linear-gradient(135deg, var(--core-gradient-1), var(--core-gradient-2));
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
@@ -250,24 +250,24 @@ description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户
 	}
 
 	.faq-item {
-		background: hsla(var(--cafe-primary-hsl), 0.03);
-		border: 1px solid hsla(var(--cafe-primary-hsl), 0.1);
-		border-radius: var(--cafe-radius);
+		background: hsla(var(--core-primary-hsl), 0.03);
+		border: 1px solid hsla(var(--core-primary-hsl), 0.1);
+		border-radius: var(--core-radius);
 		overflow: hidden;
 		transition: all 0.2s ease;
 	}
 
 	.faq-item:hover {
-		border-color: hsla(var(--cafe-primary-hsl), 0.2);
+		border-color: hsla(var(--core-primary-hsl), 0.2);
 	}
 
 	:global(:root[data-theme='dark']) .faq-item {
-		background: hsla(var(--cafe-primary-hsl), 0.05);
-		border-color: hsla(var(--cafe-primary-hsl), 0.15);
+		background: hsla(var(--core-primary-hsl), 0.05);
+		border-color: hsla(var(--core-primary-hsl), 0.15);
 	}
 
 	:global(:root[data-theme='dark']) .faq-item:hover {
-		border-color: hsla(var(--cafe-primary-hsl), 0.25);
+		border-color: hsla(var(--core-primary-hsl), 0.25);
 	}
 
 	.faq-item summary {
@@ -278,7 +278,7 @@ description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: hsl(var(--cafe-primary-hsl));
+		color: hsl(var(--core-primary-hsl));
 		transition: background 0.2s ease;
 		text-align: left;
 	}
@@ -291,7 +291,7 @@ description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户
 		content: '+';
 		font-size: 1.25rem;
 		font-weight: 300;
-		color: hsl(var(--cafe-primary-hsl));
+		color: hsl(var(--core-primary-hsl));
 		flex-shrink: 0;
 		margin-left: 1rem;
 		transition: transform 0.2s ease;
@@ -302,7 +302,7 @@ description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户
 	}
 
 	.faq-item summary:hover {
-		background: hsla(var(--cafe-primary-hsl), 0.05);
+		background: hsla(var(--core-primary-hsl), 0.05);
 	}
 
 	.faq-answer {

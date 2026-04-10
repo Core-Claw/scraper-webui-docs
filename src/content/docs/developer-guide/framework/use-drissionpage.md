@@ -27,25 +27,25 @@ It operates the browser engine directly via the **Chromium DevTools Protocol (CD
 ```python
 try:
     Auth = os.environ.get("PROXY_AUTH")
-    CafeSDK.Log.info(f"Current browser authentication info: {Auth}")
+    CoreSDK.Log.info(f"Current browser authentication info: {Auth}")
 except Exception as e:
-    CafeSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
+    CoreSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
     Auth = None
     return
 
 browser_url = f"ws://chrome-ws-inner.coreclaw.com/ws?apiKey={Auth}"
 rest_item = {"url": url, "html": "", "resp_status": "200"}
 
-CafeSDK.Log.info("Connecting to fingerprint browser...")
+CoreSDK.Log.info("Connecting to fingerprint browser...")
 
 co = ChromiumOptions()
 co.set_address(browser_url)
 
 try:
     browser = Chromium(co)
-    CafeSDK.Log.info("Fingerprint browser connected successfully")
+    CoreSDK.Log.info("Fingerprint browser connected successfully")
 except Exception:
-    CafeSDK.Log.error("Failed to connect to fingerprint browser")
+    CoreSDK.Log.error("Failed to connect to fingerprint browser")
     rest_item["resp_status"] = "403"
     return
 ```
@@ -61,9 +61,9 @@ try:
     page.wait.doc_loaded()
     html = page.html
     rest_item["html"] = html
-    CafeSDK.Result.push_data(rest_item)
+    CoreSDK.Result.push_data(rest_item)
 except Exception as e:
-    CafeSDK.Log.info(f"[Error] Failed to retrieve page HTML: {e}")
+    CoreSDK.Log.info(f"[Error] Failed to retrieve page HTML: {e}")
     rest_item["resp_status"] = "500"
 ```
 
@@ -82,13 +82,13 @@ from urllib.parse import urlparse, urlencode
 import hashlib
 from DrissionPage import ChromiumOptions, Chromium, errors
 
-from sdk import CafeSDK
+from sdk import CoreSDK
 
 async def run():
-    CafeSDK.Log.info("🚀 Init...")
-    CafeSDK.Log.info("====================================================")
-    CafeSDK.Log.info("🚀 CoreClaw TikTok Shop Information Scraper")
-    CafeSDK.Log.info("====================================================")
+    CoreSDK.Log.info("🚀 Init...")
+    CoreSDK.Log.info("====================================================")
+    CoreSDK.Log.info("🚀 CoreClaw TikTok Shop Information Scraper")
+    CoreSDK.Log.info("====================================================")
 
     headers = [
         {"label": "url", "key": "url", "format": "text"},
@@ -96,31 +96,31 @@ async def run():
         {"label": "resp_status", "key": "resp_status", "format": "text"},
     ]
 
-    CafeSDK.Result.set_table_header(headers)
+    CoreSDK.Result.set_table_header(headers)
 
-    input_json_dict = CafeSDK.Parameter.get_input_json_dict()
-    CafeSDK.Log.debug(f"======input_json_dict====== {input_json_dict}")
+    input_json_dict = CoreSDK.Parameter.get_input_json_dict()
+    CoreSDK.Log.debug(f"======input_json_dict====== {input_json_dict}")
     url = input_json_dict['url']
 
     try:
         Auth = os.environ.get("PROXY_AUTH")
-        CafeSDK.Log.info(f"Current browser authentication info: {Auth}")
+        CoreSDK.Log.info(f"Current browser authentication info: {Auth}")
     except Exception as e:
-        CafeSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
+        CoreSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
         return
 
     browser_url = f"ws://chrome-ws-inner.coreclaw.com/ws?apiKey={Auth}"
     rest_item = {"url": url, "html": "", "resp_status": "200"}
 
-    CafeSDK.Log.info("Connecting to fingerprint browser...")
+    CoreSDK.Log.info("Connecting to fingerprint browser...")
     co = ChromiumOptions()
     co.set_address(browser_url)
 
     try:
         browser = Chromium(co)
-        CafeSDK.Log.info("Fingerprint browser connected successfully")
+        CoreSDK.Log.info("Fingerprint browser connected successfully")
     except Exception:
-        CafeSDK.Log.error("Failed to connect to fingerprint browser")
+        CoreSDK.Log.error("Failed to connect to fingerprint browser")
         rest_item["resp_status"] = "403"
         return
 
@@ -130,9 +130,9 @@ async def run():
         page.wait.doc_loaded()
         html = page.html
         rest_item["html"] = html
-        CafeSDK.Result.push_data(rest_item)
+        CoreSDK.Result.push_data(rest_item)
     except Exception as e:
-        CafeSDK.Log.info(f"[Error] Failed to retrieve page HTML: {e}")
+        CoreSDK.Log.info(f"[Error] Failed to retrieve page HTML: {e}")
         rest_item["resp_status"] = "500"
 
 if __name__ == "__main__":
@@ -170,7 +170,7 @@ if element:
 ```python
 # Retrieve all matching elements
 product_items = page.eles('.product-item')
-CafeSDK.Log.info(f"Found {len(product_items)} products")
+CoreSDK.Log.info(f"Found {len(product_items)} products")
 
 products_data = []
 for item in product_items:
