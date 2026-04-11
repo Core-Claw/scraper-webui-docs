@@ -56,7 +56,7 @@ CoreClaw 官方文档网站，基于 [Astro](https://astro.build) 和 [Starlight
 - **API** - API 文档
 - **Partnership & Promotion** - 推广合作
 - **Platform Policies** - 平台政策
-- **FAQ** - 常见问题
+- **FAQ** -  常见问题
 
 ## 👀 了解更多
 
