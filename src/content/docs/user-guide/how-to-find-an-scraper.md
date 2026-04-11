@@ -1,30 +1,30 @@
 ---
-title: How to Find an Template
-description: The platform provides two entry points for discovering scripts, allowing users to choose based on their usage scenario
+title: How to Find a Worker
+description: The platform provides two entry points for discovering Workers based on different usage scenarios.
 ---
 
-## 1. Script Discovery Entry Points
+## 1. Worker Discovery Entry Points
 
-The platform provides **two entry points for discovering scripts**, allowing users to choose based on their usage scenario:
+The platform provides **two entry points for discovering Workers**, allowing users to choose based on their usage scenario:
 
-1. Official Template Store
-2. Console Template Menu
+1. Official Worker Store
+2. Console Worker Menu
 
-Both entry points display the same script information and support script browsing and search.
+Both entry points display the same Worker information and support browsing and search.
 
 ---
 
-## 2. Finding Scripts in the Official Template Store
+## 2. Finding Workers in the Official Worker Store
 
-##### 2.1 Access the Template Store
+##### 2.1 Access the Worker Store
 
-Users visit the official platform website and navigate to the **Template Store** page via the navigation bar or related entry points.
+Users visit the official platform website and navigate to the **Worker Store** page via the navigation bar or related entry points.
 
 ![](@/assets/docs/img_26.jpg)
 
-##### 2.2 Browse Script Categories
+##### 2.2 Browse Worker Categories
 
-On the **Template Store** page, scripts are typically organized by functionality or application scenarios, such as:
+On the **Worker Store** page, Workers are typically organized by functionality or application scenarios, such as:
 
 - Website data collection
 - Search engines
@@ -32,59 +32,59 @@ On the **Template Store** page, scripts are typically organized by functionality
 - Social media
 - General-purpose data collection tools
 
-Users can quickly browse scripts of a specific type by selecting a category.
+Users can quickly browse Workers of a specific type by selecting a category.
 
 ![](@/assets/docs/img_27.jpg)
 
-##### 2.3 Script Search (Fuzzy Search)
+##### 2.3 Worker Search
 
-The **Template Store** supports script search via the search box, including:
+The **Worker Store** supports search through the search box, including:
 
-- Fuzzy search by **script name**
-- Fuzzy search by **script description / keywords**
+- Fuzzy search by **Worker name**
+- Fuzzy search by **Worker description / keywords**
 
-After entering keywords, the system automatically matches and displays relevant scripts.
+After entering keywords, the system automatically matches and displays relevant Workers.
 
 ---
 
-## 3. Finding Scripts via the Console Template Menu
+## 3. Finding Workers via the Console Worker Menu
 
-##### 3.1 Access the Template Page
+##### 3.1 Access the Worker Page
 
-After logging in to the console, click **Template** in the left-side menu to enter the script management page.
+After logging in to the console, click **Worker** in the left-side menu to enter the Worker management page.
 
 ![](@/assets/docs/img_28.jpg)
 
-##### 3.2 View the Script List
+##### 3.2 View the Worker List
 
-On the Template page, users can view all available scripts provided by the platform, including:
+On the Worker page, users can view all available Workers provided by the platform, including:
 
-- Script name
-- Script summary
-- Script status
+- Worker name
+- Worker summary
+- Worker status
 - Supported features
 
-##### 3.3 Script Search (Fuzzy Search)
+##### 3.3 Worker Search
 
-The Template page also supports search functionality, including:
+The Worker page also supports search functionality, including:
 
-- Fuzzy search by script name
-- Fuzzy search by **script content** / **description keywords**
+- Fuzzy search by Worker name
+- Fuzzy search by **Worker content** / **description keywords**
 
-Search results are updated in real time, helping users quickly locate the desired script.
+Search results are updated in real time, helping users quickly locate the desired Worker.
 
 ![](@/assets/docs/img_29.jpg)
 
 ---
 
-## 4. Viewing Script Details
+## 4. Viewing Worker Details
 
-Whether in the **Template Store** or the **Console Template page**, users can click any script to access its detail page, where they can review:
+Whether in the **Worker Store** or the **Console Worker page**, users can click any Worker to access its detail page, where they can review:
 
-- Script functionality description
+- Worker functionality description
 - Supported use cases
 - Required input parameters
 - Output data structure
 - Usage examples
 
-Users can determine whether a script meets their data collection requirements based on the details provided.
+Users can determine whether a Worker meets their data collection requirements based on the details provided.

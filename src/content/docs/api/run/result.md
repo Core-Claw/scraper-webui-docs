@@ -1,17 +1,17 @@
 ---
 title: Run Result
-description: Get the result of a Worker task
+description: Get the results of a Worker run.
 sidebar:
     order: 9
 ---
 
-**请求方式：** `POST`
+**Method:** `POST`
 
-**请求地址：** `/api/v1/run/result/list`
+**Endpoint:** `/api/v1/run/result/list`
 
-使用 **Content-Type: application/json** 发送请求体。
+Send the request body with **Content-Type: application/json**.
 
-## 请求示例
+## Request Example
 
 ```json
 {
@@ -21,15 +21,15 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Parameters
 
-| 参数      | 示例值                     | 参数类型 | 是否必填 | 参数描述     |
-| --------- | -------------------------- | -------- | -------- | ------------ |
-| page      | 1                          | Integer  | 是       | 当前页码     |
-| page_size | 20                         | Integer  | 是       | 每页数量     |
-| run_slug  | 01KKBBRYX3NTK8HRZ2C6HD0JNM | String   | 是       | 运行唯一标识 |
+| Parameter | Example                    | Type    | Required | Description           |
+| --------- | -------------------------- | ------- | -------- | --------------------- |
+| page      | 1                          | Integer | Yes      | Current page number   |
+| page_size | 20                         | Integer | Yes      | Items per page        |
+| run_slug  | 01KKBBRYX3NTK8HRZ2C6HD0JNM | String  | Yes      | Unique run identifier |
 
-## 响应示例
+## Response Example
 
 ```json
 {
@@ -39,19 +39,19 @@ sidebar:
         "count": 4,
         "headers": [
             {
-                "label": "标题v1",
+                "label": "title",
                 "key": "title",
                 "format": "text"
             },
             {
-                "label": "时间",
+                "label": "publish_time",
                 "key": "publish_time",
                 "format": "text"
             }
         ],
         "list": [
             {
-                "title": "太平洋彼岸传佳音，美国中国总商会授予圣奥重磅大奖",
+                "title": "Example Article Title",
                 "publish_time": "2026-01-19"
             }
         ]
@@ -59,21 +59,21 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Response Fields
 
-| 参数       | 示例值  | 参数类型 | 参数描述                                |
-| ---------- | ------- | -------- | --------------------------------------- |
-| code       | 0       | Integer  | [查看帮助](/zh-cn/api/base/#全局状态码) |
-| message    | success | String   | 错误描述                                |
-| data       | -       | Object   | -                                       |
-| └─ count   | 4       | Integer  | 记录总条数                              |
-| └─ headers | -       | Array    | 采集数据的表头                          |
-| └─ list    | -       | Array    | 采集数据的记录集                        |
+| Parameter | Example | Type    | Description            |
+| --------- | ------- | ------- | ---------------------- |
+| code      | 0       | Integer | Global status code     |
+| message   | success | String  | Response message       |
+| data      | -       | Object  | Response payload       |
+| count     | 4       | Integer | Total record count     |
+| headers   | -       | Array   | Result table headers   |
+| list      | -       | Array   | Result record list     |
 
-##### headers 参数说明
+##### `headers` Fields
 
-| 参数   | 示例值 | 参数类型 | 参数描述 |
-| ------ | ------ | -------- | -------- |
-| label  | -      | String   | 别名     |
-| key    | -      | String   | 键名     |
-| format | -      | String   | 类型     |
+| Parameter | Example | Type   | Description      |
+| --------- | ------- | ------ | ---------------- |
+| label     | -       | String | Display label    |
+| key       | -       | String | Field key        |
+| format    | -       | String | Field format     |

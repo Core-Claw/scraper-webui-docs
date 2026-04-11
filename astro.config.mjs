@@ -77,6 +77,13 @@ export default defineConfig({
                     },
                     items: [
                         {
+                            label: 'Developer Guide Overview',
+                            slug: 'developer-guide',
+                            translations: {
+                                'zh-CN': '开发者指南概览',
+                            },
+                        },
+                        {
                             label: 'Web Unlocker',
                             translations: {
                                 'zh-CN': '网页解锁器',

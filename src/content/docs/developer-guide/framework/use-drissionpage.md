@@ -16,7 +16,7 @@ It operates the browser engine directly via the **Chromium DevTools Protocol (CD
 - DOM manipulation
 - User behavior simulation
 
-> DrissionPage is **not a browser simulator**, It **uses a real browser directly**.
+> DrissionPage is **not a browser simulator**. It **uses a real browser directly**.
 
 ---
 

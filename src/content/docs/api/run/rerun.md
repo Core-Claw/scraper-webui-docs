@@ -1,17 +1,17 @@
 ---
 title: Re-run
-description: Re-run a Worker task
+description: Re-run a Worker task.
 sidebar:
     order: 6
 ---
 
-**请求方式：** `POST`
+**Method:** `POST`
 
-**请求地址：** `/api/v1/rerun`
+**Endpoint:** `/api/v1/rerun`
 
-使用 **Content-Type: application/json** 发送请求体。
+Send the request body with **Content-Type: application/json**.
 
-## 请求示例
+## Request Example
 
 ```json
 {
@@ -20,14 +20,14 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Parameters
 
-| 参数         | 必须 | 说明           |
-| ------------ | ---- | -------------- |
-| run_slug     | 是   | run 唯一标识符 |
-| callback_url | 否   | 回调 URL       |
+| Parameter    | Required | Description                     |
+| ------------ | -------- | ------------------------------- |
+| run_slug     | Yes      | Unique run identifier           |
+| callback_url | No       | Optional callback URL           |
 
-## 响应示例
+## Response Example
 
 ```json
 {
@@ -37,10 +37,10 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Response Fields
 
-| 参数    | 示例值  | 类型    | 说明                                    |
-| ------- | ------- | ------- | --------------------------------------- |
-| code    | 0       | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
-| message | success | String  | -                                       |
-| data    | null    | Null    | -                                       |
+| Parameter | Example | Type    | Description        |
+| --------- | ------- | ------- | ------------------ |
+| code      | 0       | Integer | Global status code |
+| message   | success | String  | Response message   |
+| data      | null    | Null    | Empty payload      |

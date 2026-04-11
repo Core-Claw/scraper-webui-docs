@@ -58,7 +58,7 @@ API is a custom service; please contact platform customer support for details
 
 ---
 
-## III、常见问题
+## III. Frequently Asked Questions
 
 ##### ❓ Why is the download button disabled?
 

@@ -1,17 +1,17 @@
 ---
 title: Start Task
-description: Start a Worker task
+description: Start a Task.
 sidebar:
     order: 9
 ---
 
-**请求方式：** `POST`
+**Method:** `POST`
 
-**请求地址：** `/api/v1/task/run`
+**Endpoint:** `/api/v1/task/run`
 
-使用 **Content-Type: application/json** 发送请求体。
+Send the request body with **Content-Type: application/json**.
 
-## 请求示例
+## Request Example
 
 ```json
 {
@@ -20,14 +20,14 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Parameters
 
-| 参数           | 示例值                             | 类型   | 必填 | 描述                         |
-| -------------- | ---------------------------------- | ------ | ---- | ---------------------------- |
-| `task_slug`    | `01KK0DS99CJG4ZEC11VDXZ8Y2Q`       | String | 是   | 任务唯一标识                 |
-| `callback_url` | `https://your-domain.com/callback` | String | 是   | 回调 URL(接收Task结果的地址) |
+| Parameter    | Example                            | Type   | Required | Description                              |
+| ------------ | ---------------------------------- | ------ | -------- | ---------------------------------------- |
+| task_slug    | 01KK0DS99CJG4ZEC11VDXZ8Y2Q          | String | Yes      | Unique task identifier                   |
+| callback_url | https://your-domain.com/callback   | String | Yes      | Callback URL for receiving Task results  |
 
-## 响应示例
+## Response Example
 
 ```json
 {
@@ -39,16 +39,16 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Response Fields
 
-| 参数        | 示例值                     | 类型    | 描述                                    |
-| ----------- | -------------------------- | ------- | --------------------------------------- |
-| code        | 0                          | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
-| message     | success                    | String  | -                                       |
-| data        | -                          | Object  | -                                       |
-| └─ run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行的唯一标识                          |
+| Parameter | Example                    | Type    | Description           |
+| --------- | -------------------------- | ------- | --------------------- |
+| code      | 0                          | Integer | Global status code    |
+| message   | success                    | String  | Response message      |
+| data      | -                          | Object  | Response payload      |
+| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | Unique run identifier |
 
-## 错误响应
+## Error Response
 
 ```json
 {
@@ -58,10 +58,10 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Error Fields
 
-| 参数名  | 示例值                    | 类型    | 描述                                    |
-| ------- | ------------------------- | ------- | --------------------------------------- |
-| code    | 70001                     | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
-| message | Run record does not exist | String  | 错误描述                                |
-| data    | null                      | Null    | -                                       |
+| Parameter | Example                   | Type    | Description         |
+| --------- | ------------------------- | ------- | ------------------- |
+| code      | 70001                     | Integer | Error code          |
+| message   | Run record does not exist | String  | Error description   |
+| data      | null                      | Null    | Empty payload       |

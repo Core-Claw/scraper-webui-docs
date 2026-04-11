@@ -43,7 +43,7 @@ description: CoreClaw 完整 API 文档
 ## 快速链接
 
 <div class="quick-links">
-	<a href="/zh-cn/api/base/" class="quick-link">
+	<a href="/zh-cn/api/basic/" class="quick-link">
 		<div class="quick-link-content">
 			<span class="quick-link-title">API 基础 URL</span>
 			<span class="quick-link-desc">基础 URL 和身份验证详情</span>
@@ -57,14 +57,14 @@ description: CoreClaw 完整 API 文档
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="/zh-cn/api/proxy/" class="quick-link">
+	<a href="/zh-cn/api/basic/proxy/" class="quick-link">
 		<div class="quick-link-content">
 			<span class="quick-link-title">代理配置</span>
 			<span class="quick-link-desc">为您的爬虫配置代理</span>
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="/zh-cn/api/device-configuration/" class="quick-link">
+	<a href="/zh-cn/api/basic/device-configuration/" class="quick-link">
 		<div class="quick-link-content">
 			<span class="quick-link-title">设备配置</span>
 			<span class="quick-link-desc">配置爬虫的设备设置</span>

@@ -64,7 +64,7 @@ sidebar:
 
 | 参数    | 示例值  | 类型    | 说明                                    |
 | ------- | ------- | ------- | --------------------------------------- |
-| code    | 0       | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
+| code    | 0       | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
 | message | success | String  | 错误描述                                |
 | data    | -       | Object  | -                                       |
 
@@ -99,6 +99,6 @@ sidebar:
 
 | 参数    | 示例值                     | 类型    | 描述                                    |
 | ------- | -------------------------- | ------- | --------------------------------------- |
-| code    | 4000                       | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
+| code    | 4000                       | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
 | message | Invalid request parameters | String  | 错误描述                                |
 | data    | null                       | Null    | -                                       |

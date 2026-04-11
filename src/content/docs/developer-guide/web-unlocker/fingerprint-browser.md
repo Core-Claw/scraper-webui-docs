@@ -1,6 +1,6 @@
 ---
 title: Fingerprint Browser
-description: 指纹浏览器
+description: Fingerprint browser configuration and usage guide
 sidebar:
     order: 2
 ---

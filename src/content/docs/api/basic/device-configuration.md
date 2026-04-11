@@ -1,21 +1,22 @@
 ---
 title: CPU Configuration
-description: Configuration
+description: Available CPU and memory configurations for Worker runs.
 sidebar:
     order: 2
 ---
 
-## 内存及CPU
+## Memory and CPU
 
-更大的内存意味着更强的CPU性能。
+Higher memory allocations usually provide stronger CPU performance.
 
-**说明**：以下为所有可用设备及内存。
+**Note**: The following table lists all available device configurations and memory options.
 
-| 内存  | CPU   |
-| ----- | ----- |
-| 512   | 0.125 |
-| 1024  | 0.250 |
-| 2048  | 0.500 |
-| 4096  | 1.000 |
-| 8192  | 2.000 |
-| 16384 | 4.000 |
+| Memory | CPU   |
+| ------ | ----- |
+| 512    | 0.125 |
+| 1024   | 0.250 |
+| 2048   | 0.500 |
+| 4096   | 1.000 |
+| 8192   | 2.000 |
+| 16384  | 4.000 |
+

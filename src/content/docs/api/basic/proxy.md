@@ -1,13 +1,14 @@
 ---
 title: Execution Node
-description: Execution Node
+description: Available execution node region codes.
 sidebar:
     order: 3
 ---
 
-**说明**：以下为所有可用的执行节点代码及其对应的国家/地区名称。
+**Note**: The table below lists all available execution node codes and their corresponding country or region names.
 
-| 代码 | 国家/地区名称            | 代码 | 国家/地区名称                                | 代码 | 国家/地区名称                        |
+| Code | Country / Region Name | Code | Country / Region Name | Code | Country / Region Name |
+
 | ---- | ------------------------ | ---- | -------------------------------------------- | ---- | ------------------------------------ |
 | AD   | Andorra                  | AE   | The United Arab Emirates                     | AF   | Afghanistan                          |
 | AG   | Antigua & Barbuda        | AI   | Anguilla                                     | AL   | Albania                              |

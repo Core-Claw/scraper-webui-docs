@@ -20,7 +20,7 @@ Welcome to the CoreClaw Developer Guide. This section is for developers who want
 		<h3>Web Unlocker</h3>
 		<p>Bypass anti-scraping measures automatically</p>
 	</a>
-	<a href="/developer-guide/script/" class="hero-card">
+	<a href="/developer-guide/worker/" class="hero-card">
 		<div class="hero-card-icon">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216 40H40a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16M92.8 145.6a8 8 0 1 1-9.6 12.8l-32-24a8 8 0 0 1 0-12.8l32-24a8 8 0 1 1 9.6 12.8L69.33 128Zm60-48l-32 80a8 8 0 0 1-14.86-5.94l32-80a8 8 0 0 1 14.86 5.94m42.86 36.8l-32 24a8 8 0 1 1-9.6-12.8L182.67 128L153.6 106.4a8 8 0 1 1 9.6-12.8l32 24a8 8 0 0 1 0 12.8"/></svg>
 		</div>
@@ -60,7 +60,7 @@ Welcome to the CoreClaw Developer Guide. This section is for developers who want
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="/api/base/" class="quick-link">
+	<a href="/api/basic/base/" class="quick-link">
 		<div class="quick-link-content">
 			<span class="quick-link-title">API Basics</span>
 			<span class="quick-link-desc">Learn how to use the CoreClaw API</span>

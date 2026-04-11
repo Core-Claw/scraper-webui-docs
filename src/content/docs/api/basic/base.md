@@ -1,48 +1,47 @@
 ---
 title: Overview
-description: API
+description: Base URL, headers, and global status codes for the CoreClaw API.
 sidebar:
     order: 1
 ---
 
-## 接口 URL
+## API Base URL
 
 ```
 https://openapi.coreclaw.com
 ```
 
-**Header参数**
+**Header Parameters**
 
-Object object
+| Parameter Name | Example Value       | Type   | Required | Description |
+| -------------- | ------------------- | ------ | -------- | ----------- |
+| api-key        | <YOUR_API_KEY>      | string | Yes      | -           |
+| content-type   | application/json    | string | Yes      | -           |
 
-| 参数名       | 示例值           | 参数类型 | 是否必填 | 参数描述 |
-| ------------ | ---------------- | -------- | -------- | -------- |
-| api-key      | <YOUR_API_KEY>   | string   | 是       | -        |
-| content-type | application/json | string   | 是       | -        |
+## Global Status Codes
 
-## 全局状态码
+Each API request may return a success code or an error code. You can use these codes to debug requests and identify issues.
 
-企业应用每次调用接口时，可能获得正确或错误的返回码，企业可以根据返回码信息调试接口，排查错误。
+The global response codes are as follows:
 
-全局返回码说明如下：
+| CODE  | Description                 |
+| ----- | --------------------------- |
+| 0     | Success                     |
+| 5000  | Internal server error       |
+| 4000  | Invalid request parameters  |
+| 4010  | Unauthorized access         |
+| 4040  | Resource not found          |
+| 4290  | Rate limit exceeded         |
+| 10001 | User does not exist         |
+| 10002 | User is disabled            |
+| 20001 | Invalid API key             |
+| 20002 | API key expired             |
+| 30001 | Insufficient balance        |
+| 30002 | Insufficient traffic quota  |
+| 50001 | Worker does not exist       |
+| 50002 | Worker execution failed     |
+| 50003 | Worker version unavailable  |
+| 60001 | Task does not exist         |
+| 70001 | Run record does not exist   |
+| 70002 | Run abort failed            |
 
-| CODE  | 说明           |
-| ----- | -------------- |
-| 0     | 成功           |
-| 5000  | 内部服务器错误 |
-| 4000  | 无效的请求参数 |
-| 4010  | 未授权访问     |
-| 4040  | 资源不存在     |
-| 4290  | 请求频率限制   |
-| 10001 | 用户不存在     |
-| 10002 | 用户已禁用     |
-| 20001 | 无效的API密钥  |
-| 20002 | API密钥已过期  |
-| 30001 | 余额不足       |
-| 30002 | 流量不足       |
-| 50001 | 脚本不存在     |
-| 50002 | 脚本运行失败   |
-| 50003 | 脚本版本不可用 |
-| 60001 | 任务不存在     |
-| 70001 | 运行记录不存在 |
-| 70002 | 终止运行失败   |

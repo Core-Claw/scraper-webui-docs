@@ -31,13 +31,13 @@ try:
     Auth = os.environ.get("PROXY_AUTH")
     CoreSDK.Log.info(f"Current browser authentication info: {Auth}")
 except Exception as e:
-    #Detect other unknown anomalies
+    # Detect other unknown anomalies
     CoreSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
     Auth = None
-return
+    return
 
 # CDP endpoint of the fingerprint browser
-browser_url = f 'ws://{Auth}@chrome-ws-inner.coreclaw.com'
+browser_url = f'ws://{Auth}@chrome-ws-inner.coreclaw.com'
 rest_item = {
     "url": url,
     "html": "",
@@ -47,14 +47,14 @@ rest_item = {
 async with async_playwright() as playwright:
     CoreSDK.Log.info(f"Requested URL: {url}")
 
-try:
-    browser = await playwright.chromium.connect_over_cdp(browser_url)
-except Exception as e:
-    CoreSDK.Log.info(f"[Error] Failed to connect fingerprint browser: {e}")
-    rest_item['resp_status'] = "403"
-    await asyncio.sleep(5)
-    await browser.close()
-return
+    try:
+        browser = await playwright.chromium.connect_over_cdp(browser_url)
+    except Exception as e:
+        CoreSDK.Log.info(f"[Error] Failed to connect fingerprint browser: {e}")
+        rest_item['resp_status'] = "403"
+        await asyncio.sleep(5)
+        await browser.close()
+        return
 ```
 
 ---

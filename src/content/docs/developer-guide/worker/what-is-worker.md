@@ -43,10 +43,11 @@ This is the core of the script. Based on the provided URLs, it automatically nav
 Once data collection is complete, the script converts unstructured information into standardized formats and stores it in the system.
 It also automatically generates well-structured table headers for easy data analysis and export.
 
-## ⭐ Code example
+## ⭐ Code Example
 
-| 类型    | 地址                                         |
-| ------- | -------------------------------------------- |
-| Python  | https://github.com/Core-Claw/PythonScirptDemo |
-| Go      | https://github.com/Core-Claw/GoScirptDemo     |
-| Node.js | https://github.com/Core-Claw/NodeScirptDemo   |
+| Language | Repository |
+| -------- | ---------- |
+| Python   | https://github.com/Core-Claw/PythonScirptDemo |
+| Go       | https://github.com/Core-Claw/GoScirptDemo |
+| Node.js  | https://github.com/Core-Claw/NodeScirptDemo |
+

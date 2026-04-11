@@ -121,5 +121,5 @@ CoreClaw 采用基于使用量的定价模型：
 ## 下一步
 
 - [用户指南](/zh-cn/user-guide/) - 学习如何使用这些概念
-- [API 文档](/zh-cn/api/base/) - 集成到您的应用程序
+- [API 文档](/zh-cn/api/basic/base/) - 集成到您的应用程序
 - [开发者指南](/zh-cn/developer-guide/worker/what-is-worker/) - 构建自己的爬虫

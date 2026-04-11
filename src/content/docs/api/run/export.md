@@ -1,17 +1,17 @@
 ---
 title: Export Run Result
-description: Export the result of a Worker task
+description: Export the results of a Worker run.
 sidebar:
     order: 10
 ---
 
-**请求方式：** `POST`
+**Method:** `POST`
 
-**请求地址：** `/api/v1/run/result/export`
+**Endpoint:** `/api/v1/run/result/export`
 
-使用 **Content-Type: application/json** 发送请求体。
+Send the request body with **Content-Type: application/json**.
 
-## 请求示例
+## Request Example
 
 ```json
 {
@@ -21,15 +21,15 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Parameters
 
-| 参数        | 示例值                     | 参数类型 | 是否必填 | 参数描述                 |
-| ----------- | -------------------------- | -------- | -------- | ------------------------ |
-| run_slug    | 01KK0DP5AK0WMS83RH9H16SS95 | String   | 是       | 运行唯一标识             |
-| filter_keys | -                          | Array    | 是       | 要导出的字段             |
-| format      | csv                        | String   | 是       | 要导出的格式 `csv或json` |
+| Parameter   | Example                    | Type   | Required | Description                   |
+| ----------- | -------------------------- | ------ | -------- | ----------------------------- |
+| run_slug    | 01KK0DP5AK0WMS83RH9H16SS95 | String | Yes      | Unique run identifier         |
+| filter_keys | -                          | Array  | Yes      | Fields to export              |
+| format      | csv                        | String | Yes      | Export format: `csv` or `json` |
 
-## 响应示例
+## Response Example
 
 ```json
 {
@@ -41,8 +41,8 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Response Fields
 
-| 参数         | 示例值 | 参数描述           |
-| ------------ | ------ | ------------------ |
-| download_url | -      | 导出结果的下载链接 |
+| Parameter    | Example | Description                  |
+| ------------ | ------- | ---------------------------- |
+| download_url | -       | Download URL for the export  |

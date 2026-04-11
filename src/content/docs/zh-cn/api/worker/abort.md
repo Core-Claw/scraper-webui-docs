@@ -39,6 +39,6 @@ sidebar:
 
 | 参数    | 示例值  | 类型    | 描述                                    |
 | ------- | ------- | ------- | --------------------------------------- |
-| code    | 0       | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
+| code    | 0       | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
 | message | success | String  | -                                       |
 | data    | null    | Null    | -                                       |

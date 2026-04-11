@@ -1,17 +1,17 @@
 ---
 title: Start Worker
-description: Start a Worker task
+description: Start a Worker run.
 sidebar:
     order: 4
 ---
 
-**请求方式：** `POST`
+**Method:** `POST`
 
-**请求地址：** `/api/v1/scraper/run`
+**Endpoint:** `/api/v1/scraper/run`
 
-使用 **Content-Type: application/json** 发送请求体。
+Send the request body with **Content-Type: application/json**.
 
-## 请求示例
+## Request Example
 
 ```json
 {
@@ -43,31 +43,31 @@ sidebar:
 }
 ```
 
-### 参数说明
+### Parameters
 
-| 参数         | 必须 | 说明                         |
-| ------------ | ---- | ---------------------------- |
-| scraper_slug | 是   | Worker 唯一标识符            |
-| version      | 是   | Worker 版本                  |
-| input        | 是   | 输入参数                     |
-| callback_url | 是   | 回调 URL(接收运行结果的地址) |
+| Parameter    | Required | Description                          |
+| ------------ | -------- | ------------------------------------ |
+| scraper_slug | Yes      | Unique Worker identifier             |
+| version      | Yes      | Worker version                       |
+| input        | Yes      | Input parameters                     |
+| callback_url | Yes      | Callback URL for receiving run results |
 
-#### system 系统参数说明
+#### `system` Parameters
 
-| 参数                       | 示例值 | 类型   | 必填 | 描述                                                            |
-| -------------------------- | ------ | ------ | ---- | --------------------------------------------------------------- |
-| proxy_region               | CH     | string | 是   | 执行节点 [查看帮助](/zh-cn/api/proxy/)                          |
-| cpus                       | 0.125  | number | 是   | 容器 CPU 核心数 [查看帮助](/zh-cn/api/device-configuration/)    |
-| memory                     | 512    | number | 是   | 容器内存大小（MB） [查看帮助](/zh-cn/api/device-configuration/) |
-| execute_limit_time_seconds | 1800   | number | 是   | 容器执行超时（秒）                                              |
-| max_total_charge           | 0      | number | 是   | 最大消耗费用（$）                                               |
-| max_total_traffic          | 0      | number | 是   | 最大消耗流量（MB）                                              |
+| Parameter                    | Example | Type   | Required | Description                                             |
+| --------------------------- | ------- | ------ | -------- | ------------------------------------------------------- |
+| proxy_region                | CH      | string | Yes      | Execution node. [See help](/api/basic/proxy/)                |
+| cpus                        | 0.125   | number | Yes      | Container CPU cores. [See help](/api/basic/device-configuration/) |
+| memory                      | 512     | number | Yes      | Container memory size in MB. [See help](/api/basic/device-configuration/) |
+| execute_limit_time_seconds  | 1800    | number | Yes      | Container execution timeout in seconds                  |
+| max_total_charge            | 0       | number | Yes      | Maximum charge in USD                                   |
+| max_total_traffic           | 0       | number | Yes      | Maximum traffic in MB                                   |
 
-#### custom 参数说明
+#### `custom` Parameters
 
-根据 Worker 脚本的参数说明，填写具体参数。
+Fill in these values according to the parameter definition of the Worker you are running.
 
-## 响应示例
+## Response Example
 
 ```json
 {
@@ -79,11 +79,11 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Response Fields
 
-| 参数        | 示例值                     | 类型    | 描述                                    |
-| ----------- | -------------------------- | ------- | --------------------------------------- |
-| code        | 0                          | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
-| message     | success                    | String  | -                                       |
-| data        | -                          | Object  |                                         |
-| └─ run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行的唯一标识                          |
+| Parameter | Example                      | Type    | Description              |
+| --------- | ---------------------------- | ------- | ------------------------ |
+| code      | 0                            | Integer | Global status code       |
+| message   | success                      | String  | Response message         |
+| data      | -                            | Object  | Response payload         |
+| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ   | String  | Unique run identifier    |

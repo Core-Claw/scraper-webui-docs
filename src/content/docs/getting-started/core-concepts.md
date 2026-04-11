@@ -121,5 +121,5 @@ See [Pricing Rules](/user-guide/worker-pricing-rules/) for detailed pricing and 
 ## Next Steps
 
 - [User Guide](/user-guide/) - Learn how to use these concepts
-- [API Documentation](/api/base/) - Integrate with your applications
-- [Developer Guide](/developer-guide/script/what-is-worker/) - Build your own Workers
+- [API Documentation](/api/basic/base/) - Integrate with your applications
+- [Developer Guide](/developer-guide/worker/what-is-worker/) - Build your own Workers

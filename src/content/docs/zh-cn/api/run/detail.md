@@ -53,7 +53,7 @@ sidebar:
 
 | 参数            | 示例值                     | 类型    | 描述                                                                          |
 | --------------- | -------------------------- | ------- | ----------------------------------------------------------------------------- |
-| code            | 0                          | Integer | [查看帮助](/zh-cn/api/base/#全局状态码)                                       |
+| code            | 0                          | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码)                                       |
 | message         | success                    | String  | -                                                                             |
 | data            | -                          | Object  | -                                                                             |
 | └─ status       | 3                          | Integer | 运行状态<br>1: 准备中<br>2: 执行中<br>3: 执行成功<br>4: 执行失败<br>5: 已终止 |
@@ -84,6 +84,6 @@ sidebar:
 
 | 参数    | 示例值                     | 类型    | 描述                                    |
 | ------- | -------------------------- | ------- | --------------------------------------- |
-| code    | 4000                       | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
+| code    | 4000                       | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
 | message | Invalid request parameters | String  | 错误描述                                |
 | data    | null                       | Null    | -                                       |
