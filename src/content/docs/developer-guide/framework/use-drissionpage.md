@@ -33,7 +33,11 @@ except Exception as e:
     Auth = None
     return
 
-browser_url = f"ws://chrome-ws-inner.coreclaw.com/ws?apiKey={Auth}"
+# WebSocket endpoint of the fingerprint browser (read from environment variable for flexible deployment)
+chrome_ws = os.environ.get("ChromeWs") or "chrome-ws-inner.coreclaw.com"
+CoreSDK.Log.info(f"Chrome WebSocket endpoint: {chrome_ws}")
+
+browser_url = f"ws://{chrome_ws}/ws?apiKey={Auth}"
 rest_item = {"url": url, "html": "", "resp_status": "200"}
 
 CoreSDK.Log.info("Connecting to fingerprint browser...")
@@ -109,7 +113,11 @@ async def run():
         CoreSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
         return
 
-    browser_url = f"ws://chrome-ws-inner.coreclaw.com/ws?apiKey={Auth}"
+    # WebSocket endpoint of the fingerprint browser (read from environment variable for flexible deployment)
+    chrome_ws = os.environ.get("ChromeWs") or "chrome-ws-inner.coreclaw.com"
+    CoreSDK.Log.info(f"Chrome WebSocket endpoint: {chrome_ws}")
+
+    browser_url = f"ws://{chrome_ws}/ws?apiKey={Auth}"
     rest_item = {"url": url, "html": "", "resp_status": "200"}
 
     CoreSDK.Log.info("Connecting to fingerprint browser...")

@@ -39,7 +39,11 @@ try {
     auth = null
 }
 
-let browser_url = `ws://${auth}@chrome-ws-inner.coreclaw.com`
+// 指纹浏览器地址（从环境变量读取，支持灵活部署）
+const chromeWs = process.env.ChromeWs || 'chrome-ws-inner.coreclaw.com'
+await coresdk.log.info(`Chrome WebSocket 地址: ${chromeWs}`)
+
+let browser_url = `ws://${auth}@${chromeWs}`
 await coresdk.log.info(`指纹浏览器地址: ${browser_url}`)
 ```
 
@@ -114,7 +118,11 @@ async function run() {
             auth = null
         }
 
-        let browser_url = `ws://${auth}@chrome-ws-inner.coreclaw.com`
+        // 指纹浏览器地址（从环境变量读取，支持灵活部署）
+        const chromeWs = process.env.ChromeWs || 'chrome-ws-inner.coreclaw.com'
+        await coresdk.log.info(`Chrome WebSocket 地址: ${chromeWs}`)
+
+        let browser_url = `ws://${auth}@${chromeWs}`
         await coresdk.log.info(`指纹浏览器地址: ${browser_url}`)
 
         // 4. 业务逻辑处理

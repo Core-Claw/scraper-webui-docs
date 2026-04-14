@@ -36,8 +36,11 @@ except Exception as e:
     Auth = None
     return
 
-# CDP endpoint of the fingerprint browser
-browser_url = f'ws://{Auth}@chrome-ws-inner.coreclaw.com'
+# CDP endpoint of the fingerprint browser (read from environment variable for flexible deployment)
+chrome_ws = os.environ.get("ChromeWs") or "chrome-ws-inner.coreclaw.com"
+CoreSDK.Log.info(f"Chrome WebSocket endpoint: {chrome_ws}")
+
+browser_url = f'ws://{Auth}@{chrome_ws}'
 rest_item = {
     "url": url,
     "html": "",
@@ -127,8 +130,11 @@ async def run():
         Auth = None
         return
 
-    # CDP endpoint of the fingerprint browser
-    browser_url = f'ws://{Auth}@chrome-ws-inner.coreclaw.com'
+    # CDP endpoint of the fingerprint browser (read from environment variable for flexible deployment)
+    chrome_ws = os.environ.get("ChromeWs") or "chrome-ws-inner.coreclaw.com"
+    CoreSDK.Log.info(f"Chrome WebSocket endpoint: {chrome_ws}")
+
+    browser_url = f'ws://{Auth}@{chrome_ws}'
     rest_item = {"url": url, "html": "", "resp_status": "200"}
 
     async with async_playwright() as playwright:
@@ -156,6 +162,45 @@ async def run():
 
 if __name__ == "__main__":
     asyncio.run(run())
+```
+
+---
+
+##### 4️⃣ Connecting to Firefox Fingerprint Browser
+
+Playwright supports connecting to Firefox browsers via CDP:
+
+```python
+try:
+    Auth = os.environ.get("PROXY_AUTH")
+    CoreSDK.Log.info(f"Current browser authentication info: {Auth}")
+except Exception as e:
+    CoreSDK.Log.error(f"Failed to obtain browser authentication info: {e}")
+    Auth = None
+    return
+
+# Firefox CDP endpoint (read from environment variable for flexible deployment)
+firefox_ws = os.environ.get("FirefoxWs") or "firefox-ws-inner.coreclaw.com"
+CoreSDK.Log.info(f"Firefox WebSocket endpoint: {firefox_ws}")
+
+browser_url = f'ws://{Auth}@{firefox_ws}'
+rest_item = {
+    "url": url,
+    "html": "",
+    "resp_status": "200"
+}
+
+async with async_playwright() as playwright:
+    CoreSDK.Log.info(f"Requested URL: {url}")
+
+    try:
+        browser = await playwright.firefox.connect_over_cdp(browser_url)
+    except Exception as e:
+        CoreSDK.Log.info(f"[Error] Failed to connect Firefox fingerprint browser: {e}")
+        rest_item['resp_status'] = "403"
+        await asyncio.sleep(5)
+        await browser.close()
+        return
 ```
 
 ---

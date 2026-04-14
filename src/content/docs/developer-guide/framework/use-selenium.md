@@ -41,7 +41,11 @@ except Exception as e:
     Auth = None
     return
 
-browser_url = f'http://{Auth}@chrome-http-inner.coreclaw.com'  # WebDriver endpoint of the fingerprint browser
+# WebDriver endpoint of the fingerprint browser (read from environment variable for flexible deployment)
+chrome_http = os.environ.get("ChromeHttp") or "chrome-http-inner.coreclaw.com"
+CoreSDK.Log.info(f"Chrome HTTP endpoint: {chrome_http}")
+
+browser_url = f'http://{Auth}@{chrome_http}'
 rest_item = {"url": url, "html": "", "resp_status": "200"}
 
 # Configure Chrome options
@@ -86,6 +90,49 @@ CoreSDK.Result.push_data(rest_item)
 
 ---
 
+##### 3️⃣ Connecting to Firefox Fingerprint Browser
+
+Selenium supports connecting to Firefox browsers via Remote WebDriver:
+
+```python
+try:
+    Auth = os.environ.get("PROXY_AUTH")
+    CoreSDK.Log.info(f"Current browser auth info: {Auth}")
+except Exception as e:
+    CoreSDK.Log.error(f"Failed to get browser auth info: {e}")
+    Auth = None
+    return
+
+# Firefox WebDriver endpoint (read from environment variable for flexible deployment)
+firefox_http = os.environ.get("FirefoxHttp") or "firefox-http-inner.coreclaw.com"
+CoreSDK.Log.info(f"Firefox HTTP endpoint: {firefox_http}")
+
+browser_url = f'http://{Auth}@{firefox_http}'
+rest_item = {"url": url, "html": "", "resp_status": "200"}
+
+# Configure Firefox options
+firefox_options = webdriver.FirefoxOptions()
+
+# Common options
+firefox_options.add_argument('--no-sandbox')
+firefox_options.add_argument('--disable-dev-shm-usage')
+firefox_options.add_argument('--width=1920')
+firefox_options.add_argument('--height=1080')
+
+CoreSDK.Log.info(f"Requested URL: {url}")
+try:
+    driver = webdriver.Remote(
+        command_executor=browser_url,
+        options=firefox_options
+    )
+except Exception as e:
+    CoreSDK.Log.info(f"[Error] Failed to connect to Firefox fingerprint browser: {e}")
+    rest_item['resp_status'] = "403"
+    return
+```
+
+---
+
 ## 3. Complete Platform Script Entry Example (Recommended)
 
 ```python
@@ -116,7 +163,11 @@ async def run():
     Auth = os.environ.get("PROXY_AUTH")
     CoreSDK.Log.info(f"Current browser auth info: {Auth}")
 
-    browser_url = f'http://{Auth}@chrome-http-inner.coreclaw.com'
+    # WebDriver endpoint of the fingerprint browser (read from environment variable for flexible deployment)
+    chrome_http = os.environ.get("ChromeHttp") or "chrome-http-inner.coreclaw.com"
+    CoreSDK.Log.info(f"Chrome HTTP endpoint: {chrome_http}")
+
+    browser_url = f'http://{Auth}@{chrome_http}'
     rest_item = {"url": url, "html": "", "resp_status": "200"}
 
     chrome_options = webdriver.ChromeOptions()

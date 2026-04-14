@@ -34,9 +34,13 @@ except Exception as e:
     Auth = None
     return
 
-browser_url = f"ws://chrome-ws-inner.coreclaw.com/ws?apiKey={Auth}"
+# 指纹浏览器的 WebSocket 连接地址（从环境变量读取，支持灵活部署）
+chrome_ws = os.environ.get("ChromeWs") or "chrome-ws-inner.coreclaw.com"
+CoreSDK.Log.info(f"Chrome WebSocket 地址: {chrome_ws}")
+
+browser_url = f"ws://{chrome_ws}/ws?apiKey={Auth}"
 rest_item = {"url": url, "html": "", "resp_status": "200"}
-CoreSDK.Log.info(f"开始连接指纹浏览器")
+CoreSDK.Log.info("开始连接指纹浏览器")
 # 初始化浏览器实例
 co = ChromiumOptions()
 co.set_address(browser_url)
@@ -120,9 +124,13 @@ async def run():
         Auth = None
         return
 
-    browser_url = f"ws://chrome-ws-inner.coreclaw.com/ws?apiKey={Auth}"
+    # 指纹浏览器的 WebSocket 连接地址（从环境变量读取，支持灵活部署）
+    chrome_ws = os.environ.get("ChromeWs") or "chrome-ws-inner.coreclaw.com"
+    CoreSDK.Log.info(f"Chrome WebSocket 地址: {chrome_ws}")
+
+    browser_url = f"ws://{chrome_ws}/ws?apiKey={Auth}"
     rest_item = {"url": url, "html": "", "resp_status": "200"}
-    CoreSDK.Log.info(f"开始连接指纹浏览器")
+    CoreSDK.Log.info("开始连接指纹浏览器")
     # 初始化浏览器实例
     co = ChromiumOptions()
     co.set_address(browser_url)

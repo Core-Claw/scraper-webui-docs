@@ -39,7 +39,11 @@ try {
     auth = null
 }
 
-let browser_url = `ws://${auth}@chrome-ws-inner.coreclaw.com`
+// Fingerprint browser endpoint (read from environment variable for flexible deployment)
+const chromeWs = process.env.ChromeWs || 'chrome-ws-inner.coreclaw.com'
+await coresdk.log.info(`Chrome WebSocket endpoint: ${chromeWs}`)
+
+let browser_url = `ws://${auth}@${chromeWs}`
 await coresdk.log.info(`Fingerprint browser endpoint: ${browser_url}`)
 ```
 
@@ -108,7 +112,11 @@ async function run() {
             auth = null
         }
 
-        let browser_url = `ws://${auth}@chrome-ws-inner.coreclaw.com`
+        // Fingerprint browser endpoint (read from environment variable for flexible deployment)
+        const chromeWs = process.env.ChromeWs || 'chrome-ws-inner.coreclaw.com'
+        await coresdk.log.info(`Chrome WebSocket endpoint: ${chromeWs}`)
+
+        let browser_url = `ws://${auth}@${chromeWs}`
         await coresdk.log.info(`Fingerprint browser endpoint: ${browser_url}`)
 
         // 4. Business logic

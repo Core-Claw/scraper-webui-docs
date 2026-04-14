@@ -38,8 +38,11 @@ except Exception as e:
     CoreSDK.Log.error(f"Failed to get browser auth info: {e}")
     Auth = None
 
-# Remote fingerprint browser WebSocket address
-browser_url = f'ws://{Auth}@chrome-ws-inner.coreclaw.com'
+# Remote fingerprint browser WebSocket address (read from environment variable for flexible deployment)
+chrome_ws = os.environ.get("ChromeWs") or "chrome-ws-inner.coreclaw.com"
+CoreSDK.Log.info(f"Chrome WebSocket endpoint: {chrome_ws}")
+
+browser_url = f'ws://{Auth}@{chrome_ws}'
 
 CoreSDK.Log.info(f"Using remote browser address: {browser_url}")
 
@@ -71,11 +74,14 @@ ctx := context.Background()
 auth := os.Getenv("PROXY_AUTH")
 coresdk.Log.Info(fmt.Sprintf("Current browser auth info: %s", auth))
 
-// Build remote browser WS address
-browserURL := "ws://chrome-ws-inner.coreclaw.com"
-if auth != "" {
-    browserURL = fmt.Sprintf("ws://%s@chrome-ws-inner.coreclaw.com", auth)
+// Build remote browser WS address (read from environment variable for flexible deployment)
+chromeWs := os.Getenv("ChromeWs")
+if chromeWs == "" {
+    chromeWs = "chrome-ws-inner.coreclaw.com"
 }
+coresdk.Log.Info(ctx, "Chrome WebSocket endpoint: %s", chromeWs)
+
+browserURL := fmt.Sprintf("ws://%s@%s", auth, chromeWs)
 coresdk.Log.Info(ctx, "Using remote browser address: %s", browserURL)
 
 // Start Playwright
@@ -130,11 +136,11 @@ const { chromium } = require('playwright')
     const Auth = process.env.PROXY_AUTH
     console.log('Current browser auth info:', Auth)
 
-    // Build remote browser WS address
-    const browserUrl = Auth
-        ? `ws://${Auth}@chrome-ws-inner.coreclaw.com`
-        : `ws://chrome-ws-inner.coreclaw.com`
+    // Build remote browser WS address (read from environment variable for flexible deployment)
+    const chromeWs = process.env.ChromeWs || 'chrome-ws-inner.coreclaw.com'
+    console.log('Chrome WebSocket endpoint:', chromeWs)
 
+    const browserUrl = `ws://${Auth}@${chromeWs}`
     console.log('Using remote browser address:', browserUrl)
 
     // Connect to remote fingerprint browser

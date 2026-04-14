@@ -36,8 +36,11 @@ except Exception as e:
     CoreSDK.Log.error(f"当前获取浏览器认证信息失败: {e}")
     Auth = None
 
-# 代理浏览器 WebSocket 地址
-browser_url = f'ws://{Auth}@chrome-ws-inner.coreclaw.com'
+# 代理浏览器 WebSocket 地址（从环境变量读取，支持灵活部署）
+chrome_ws = os.environ.get("ChromeWs") or "chrome-ws-inner.coreclaw.com"
+CoreSDK.Log.info(f"Chrome WebSocket 地址: {chrome_ws}")
+
+browser_url = f'ws://{Auth}@{chrome_ws}'
 
 CoreSDK.Log.info(f"使用代理浏览器地址: {browser_url}")
 
@@ -69,11 +72,14 @@ ctx := context.Background()
 auth := os.Getenv("PROXY_AUTH")
 coresdk.Log.Info(fmt.Sprintf("当前获取的浏览器认证信息: %s", auth))
 
-// 拼接代理浏览器 WS 地址
-browserURL := "ws://chrome-ws-inner.coreclaw.com"
-if auth != "" {
-	browserURL = fmt.Sprintf("ws://%s@chrome-ws-inner.coreclaw.com", auth)
+// 拼接代理浏览器 WS 地址（从环境变量读取，支持灵活部署）
+chromeWs := os.Getenv("ChromeWs")
+if chromeWs == "" {
+    chromeWs = "chrome-ws-inner.coreclaw.com"
 }
+coresdk.Log.Info(ctx, "Chrome WebSocket 地址: %s", chromeWs)
+
+browserURL := fmt.Sprintf("ws://%s@%s", auth, chromeWs)
 coresdk.Log.Info(ctx, "使用代理浏览器地址: %s", browserURL)
 
 // 启动 Playwright
@@ -128,11 +134,11 @@ const { chromium } = require('playwright')
     const Auth = process.env.PROXY_AUTH
     console.log('当前获取的浏览器认证信息:', Auth)
 
-    // 拼接代理浏览器 WS
-    const browserUrl = Auth
-        ? `ws://${Auth}@chrome-ws-inner.coreclaw.com`
-        : `ws://chrome-ws-inner.coreclaw.com`
+    // 拼接代理浏览器 WS（从环境变量读取，支持灵活部署）
+    const chromeWs = process.env.ChromeWs || 'chrome-ws-inner.coreclaw.com'
+    console.log('Chrome WebSocket 地址:', chromeWs)
 
+    const browserUrl = `ws://${Auth}@${chromeWs}`
     console.log('使用代理浏览器地址:', browserUrl)
 
     // 连接代理浏览器

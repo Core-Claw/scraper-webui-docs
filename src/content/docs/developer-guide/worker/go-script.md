@@ -1,0 +1,421 @@
+---
+title: Go Script
+description: Learn how to write Go scripts for CoreClaw Workers
+---
+
+# Go Script Demo
+
+## GitHub Repository
+
+[https://github.com/core-claw/GoScirptDemo](https://github.com/core-claw/GoScirptDemo)
+
+---
+
+## Required Files (Located in the Project Root Directory)
+
+```
+├── main.go
+├── main
+├── input_schema.json
+├── README.md
+├── go.mod
+├── go.sum
+└── GoSdk
+      ├── sdk.go
+      ├── sdk_pd.go
+      └── sdk_grpc_pd.go
+```
+
+| File Name           | Description                                                           |
+| ------------------- | --------------------------------------------------------------------- |
+| `main.go`           | Script source code                                                    |
+| `main`              | Script entry executable (execution entry point), must be named `main` |
+| `input_schema.json` | UI input form configuration                                           |
+| `README.md`         | Project documentation                                                 |
+| `sdk.go`            | Core SDK functionality (located in `GoSdk` directory)                 |
+| `sdk_pd.go`         | Data processing enhancement module (located in `GoSdk` directory)     |
+| `sdk_grpc_pd.go`    | Network communication module (located in `GoSdk` directory)           |
+
+---
+
+## Go Scripts Must Be Built into an Executable Before Uploading
+
+```bash
+set CGO_ENABLED=0
+set GOOS=linux
+set GOARCH=amd64
+go build -o main ./main.go
+```
+
+It is recommended to compress the executable using **UPX** after building to significantly reduce file size.
+
+---
+
+# Core SDK Files
+
+## File Overview
+
+The following three SDK files are required and must be placed in the **root directory** of the script:
+
+| File Name        | Main Function                      |
+| ---------------- | ---------------------------------- |
+| `sdk.go`         | Core SDK functionality             |
+| `sdk_pd.go`      | Data processing enhancement module |
+| `sdk_grpc_pd.go` | Network communication module       |
+
+These files together form the script's **toolbox**, providing all essential capabilities required for crawler execution and communication with the platform backend.
+
+---
+
+## Core Feature Usage Guide
+
+### 1. Environment Parameters – Retrieve Script Input Configuration
+
+When the script starts, configuration parameters (such as target website URLs or search keywords) can be passed in externally.
+
+Use the following method to retrieve them:
+
+```go
+// Retrieve all input parameters as a JSON string
+ctx := context.Background()
+inputJSON, _ := coresdk.Parameter.GetInputJSONString(ctx)
+
+// Example return value:
+// {"website": "example.com", "keyword": "technology news"}
+```
+
+**Use case**: 
+You can reuse the same script to crawl different websites or datasets simply by changing input parameters, without modifying the code.
+
+---
+
+### 2. Runtime Logs – Record Script Execution Process
+
+During execution, logs of different levels can be recorded and displayed in the platform console for monitoring and debugging:
+
+```go
+ctx := context.Background()
+
+// Debug information (most detailed, for troubleshooting)
+coresdk.Log.Debug(ctx, "Connecting to target website...")
+
+// Informational logs (normal workflow)
+coresdk.Log.Info(ctx, "Successfully retrieved 10 news items")
+
+// Warning logs (non-critical issues)
+coresdk.Log.Warn(ctx, "Network latency is high, performance may be affected")
+
+// Error logs (execution failures)
+coresdk.Log.Error(ctx, "Failed to access target website, please check network connection")
+```
+
+**Log Levels**:
+
+- **debug**: Detailed debugging information (recommended during development)
+- **info**: Normal execution flow
+- **warn**: Warnings that do not stop execution
+- **error**: Critical errors that require attention
+
+---
+
+### 3. Result Submission – Sending Data Back to the Platform
+
+After data collection, results must be returned to the platform in two steps.
+
+---
+
+### Step 1: Define Table Headers (Required)
+
+Before pushing data, define the table structure (similar to defining column headers in Excel):
+
+```go
+headers := []*coresdk.TableHeaderItem{
+    {
+        Label:  "Title",
+        Key:    "title",
+        Format: "text",
+    },
+    {
+        Label:  "Content",
+        Key:    "content",
+        Format: "text",
+    },
+}
+
+ctx := context.Background()
+res, err := coresdk.Result.SetTableHeader(ctx, headers)
+```
+
+**Field Description**:
+
+- **Label**: Column name displayed to users
+- **Key**: Unique identifier used in code
+- **Format**: Data type, supported values:
+  - `"text"` – string
+  - `"integer"` – integer
+  - `"boolean"` – true/false
+  - `"array"` – list
+  - `"object"` – dictionary/object
+
+---
+
+### Step 2: Push Data Row by Row
+
+After defining headers, push the collected data one record at a time:
+
+```go
+type result struct {
+    Title   string `json:"title"`
+    Content string `json:"content"`
+}
+
+resultData := []result{
+    {Title: "Sample Title 1", Content: "Sample Content 1"},
+    {Title: "Sample Title 2", Content: "Sample Content 2"},
+}
+
+ctx := context.Background()
+
+for _, datum := range resultData {
+    jsonBytes, _ := json.Marshal(datum)
+
+    res, err := coresdk.Result.PushData(ctx, string(jsonBytes))
+    if err != nil {
+        coresdk.Log.Error(ctx, fmt.Sprintf("Failed to push data: %v", err))
+        return
+    }
+    fmt.Printf("PushData Response: %+v\n", res)
+}
+```
+
+**Important Notes**:
+
+1. The order of setting headers and pushing data does not matter
+2. Keys in pushed data must exactly match the keys defined in headers
+3. Data must be pushed **one record at a time**
+4. Logging after each push is recommended for traceability
+
+---
+
+### Common Issues & Notes
+
+1. **File placement**: Ensure all SDK files are located in the script directory
+2. **Imports**: Use `SDK` or `CoreSDK` directly to access SDK functionality
+3. **Key consistency**: Data keys must exactly match table header keys
+4. **Error handling**: Always check return values, especially when pushing data
+
+---
+
+# Script Entry File (main.go)
+
+## Complete Code Example
+
+```go
+package main
+
+import (
+	"context"
+	"crypto/tls"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+	coresdk "test/GoSdk"
+	"time"
+)
+
+func run() {
+	ctx := context.Background()
+
+	time.Sleep(2 * time.Second)
+	coresdk.Log.Info(ctx, "golang gRPC SDK client started......")
+
+	// 1. Get input parameters
+	inputJSON, err := coresdk.Parameter.GetInputJSONString(ctx)
+	if err != nil {
+		coresdk.Log.Error(ctx, fmt.Sprintf("Failed to get input parameters: %v", err))
+		return
+	}
+	coresdk.Log.Debug(ctx, fmt.Sprintf("Input parameters: %s", inputJSON))
+
+	// 2. Get proxy configuration (read from environment variable for flexible deployment)
+	proxyDomain := os.Getenv("PROXY_DOMAIN")
+	if proxyDomain == "" {
+		proxyDomain = "proxy-inner.coreclaw.com:6000"
+	}
+	coresdk.Log.Info(ctx, fmt.Sprintf("Proxy domain: %s", proxyDomain))
+
+	var proxyAuth string
+	proxyAuth = os.Getenv("PROXY_AUTH")
+	coresdk.Log.Info(ctx, fmt.Sprintf("Proxy authentication: %s", proxyAuth))
+
+	// 3. Build proxy URL
+	var proxyURL string
+	if proxyAuth != "" {
+		proxyURL = fmt.Sprintf("socks5://%s@%s", proxyAuth, proxyDomain)
+	}
+	coresdk.Log.Info(ctx, fmt.Sprintf("Proxy URL: %s", proxyURL))
+
+	// 4. Business logic processing (example)
+	coresdk.Log.Info(ctx, "Starting business logic processing")
+
+	// Create custom HTTP client with proxy support
+	httpClient := &http.Client{
+		Timeout: time.Second * 30,
+	}
+
+	// If proxy is configured, set proxy transport
+	if proxyURL != "" {
+		proxyParsed, err := url.Parse(proxyURL)
+		if err != nil {
+			coresdk.Log.Error(ctx, fmt.Sprintf("Failed to parse proxy URL: %v", err))
+			return
+		}
+
+		httpClient.Transport = &http.Transport{
+			Proxy: http.ProxyURL(proxyParsed),
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		}
+
+		coresdk.Log.Info(ctx, "Proxy client configured")
+	}
+
+	// Send request to ipinfo.io
+	targetURL := "https://ipinfo.io/ip"
+	req, err := http.NewRequestWithContext(ctx, "GET", targetURL, nil)
+	if err != nil {
+		coresdk.Log.Error(ctx, fmt.Sprintf("Failed to create request: %v", err))
+		return
+	}
+
+	coresdk.Log.Info(ctx, fmt.Sprintf("Requesting: %s", targetURL))
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		coresdk.Log.Error(ctx, fmt.Sprintf("Request failed: %v", err))
+		return
+	}
+	defer resp.Body.Close()
+
+	coresdk.Log.Info(ctx, fmt.Sprintf("Response status code: %d", resp.StatusCode))
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		coresdk.Log.Error(ctx, fmt.Sprintf("Failed to read response: %v", err))
+		return
+	}
+
+	ip := strings.TrimSpace(string(body))
+	coresdk.Log.Info(ctx, fmt.Sprintf("Current IP address: %s", ip))
+	coresdk.Log.Info(ctx, "Business logic processing completed")
+
+	// 5. Push result data
+	type result struct {
+		Title   string `json:"title"`
+		Content string `json:"content"`
+	}
+
+	resultData := []result{
+		{Title: "Sample Title 1", Content: "Sample Content 1"},
+		{Title: "Sample Title 2", Content: "Sample Content 2"},
+	}
+
+	for _, datum := range resultData {
+		jsonBytes, _ := json.Marshal(datum)
+
+		res, err := coresdk.Result.PushData(ctx, string(jsonBytes))
+		if err != nil {
+			coresdk.Log.Error(ctx, fmt.Sprintf("Failed to push data: %v", err))
+			return
+		}
+		fmt.Printf("PushData Response: %+v\n", res)
+	}
+
+	// 6. Set table header
+	headers := []*coresdk.TableHeaderItem{
+		{
+			Label:  "Title",
+			Key:    "title",
+			Format: "text",
+		},
+		{
+			Label:  "Content",
+			Key:    "content",
+			Format: "text",
+		},
+	}
+
+	res, err := coresdk.Result.SetTableHeader(ctx, headers)
+	if err != nil {
+		coresdk.Log.Error(ctx, fmt.Sprintf("Failed to set table header: %v", err))
+		return
+	}
+	fmt.Printf("SetTableHeader Response: %+v\n", res)
+
+	coresdk.Log.Info(ctx, "Script execution completed")
+}
+
+func main() {
+	run()
+}
+```
+
+---
+
+# Automated Data Collection Script: Workflow & Principles
+
+## 1. Script Overview
+
+This script is an automation script that works like a **digital employee**. It automatically opens target web pages (such as social media sites), extracts required information, and organizes the data into structured tables.
+
+---
+
+## 2. How Does It Work?
+
+The entire process can be simplified into four main stages:
+
+---
+
+### Step 1: Receive Instructions (Input Parameters)
+
+Before execution, you provide instructions such as:
+
+- Target page URL
+- Number of records to collect
+
+---
+
+### Step 2: Stealth Preparation (Proxy Network Configuration)
+
+To reliably access overseas or restricted websites, the script automatically configures a secure proxy channel.
+
+**Proxy Environment Variables:**
+
+| Environment Variable | Description | Example Value |
+| :------------------- | :---------- | :------------ |
+| `PROXY_DOMAIN` | Proxy server address | `proxy-inner.coreclaw.com:6000` |
+| `PROXY_AUTH` | Proxy authentication info | `user:password` |
+
+---
+
+### Step 3: Automated Execution (Business Logic Processing)
+
+This is the core stage where the script:
+
+- Visits target pages
+- Extracts titles, content, images, and other required data
+
+---
+
+### Step 4: Result Reporting (Data Push & Table Generation)
+
+After collection:
+
+- Raw data is converted into standardized formats
+- Results are saved to the system
+- Table headers (e.g., "URL", "Content") are automatically generated

@@ -42,7 +42,11 @@ except Exception as e:
     Auth = None
     return
 
-browser_url = f'http://{Auth}@chrome-http-inner.coreclaw.com' #指纹浏览器的webdriver连接地址
+# 指纹浏览器的 WebDriver 连接地址（从环境变量读取，支持灵活部署）
+chrome_http = os.environ.get("ChromeHttp") or "chrome-http-inner.coreclaw.com"
+CoreSDK.Log.info(f"Chrome HTTP 地址: {chrome_http}")
+
+browser_url = f'http://{Auth}@{chrome_http}'
 rest_item = {"url": url, "html": "", "resp_status": "200"}
 
 # 设置 Chrome 选项
@@ -85,6 +89,50 @@ CoreSDK.Result.push_data(rest_item)
 
 ---
 
+##### 3️⃣ 连接 Firefox 指纹浏览器
+
+Selenium 支持通过 Remote WebDriver 连接 Firefox 浏览器：
+
+```python
+try:
+    Auth = os.environ.get("PROXY_AUTH")
+    CoreSDK.Log.info(f"当前获取的浏览器认证信息: {Auth}")
+except Exception as e:
+    # 捕获其他未知异常
+    CoreSDK.Log.error(f"当前获取浏览器认证信息失败: {e}")
+    Auth = None
+    return
+
+# Firefox WebDriver 连接地址（从环境变量读取，支持灵活部署）
+firefox_http = os.environ.get("FirefoxHttp") or "firefox-http-inner.coreclaw.com"
+CoreSDK.Log.info(f"Firefox HTTP 地址: {firefox_http}")
+
+browser_url = f'http://{Auth}@{firefox_http}'
+rest_item = {"url": url, "html": "", "resp_status": "200"}
+
+# 设置 Firefox 选项
+firefox_options = webdriver.FirefoxOptions()
+
+# 添加一些常用选项
+firefox_options.add_argument('--no-sandbox')
+firefox_options.add_argument('--disable-dev-shm-usage')
+firefox_options.add_argument('--width=1920')
+firefox_options.add_argument('--height=1080')
+
+CoreSDK.Log.info(f"请求的url：{url}")
+try:
+    driver = webdriver.Remote(
+        command_executor=browser_url,
+        options=firefox_options
+    )
+except Exception as e:
+    CoreSDK.Log.info(f"[错误] Firefox 指纹浏览器连接失败: {e}")
+    rest_item['resp_status'] = "403"
+    return
+```
+
+---
+
 ## 三、完整平台脚本入口示例（推荐直接使用）
 
 ```python
@@ -115,8 +163,12 @@ asyncdefrun():
     Auth = os.environ.get("PROXY_AUTH")
     CoreSDK.Log.info(f"当前获取的浏览器认证信息: {Auth}")
 
-    browser_url =f'http://{Auth}@chrome-http-inner.coreclaw.com'
-    rest_item = {"url": url,"html":"","resp_status":"200"}
+    # 指纹浏览器的 WebDriver 连接地址（从环境变量读取，支持灵活部署）
+    chrome_http = os.environ.get("ChromeHttp") or "chrome-http-inner.coreclaw.com"
+    CoreSDK.Log.info(f"Chrome HTTP 地址: {chrome_http}")
+
+    browser_url = f'http://{Auth}@{chrome_http}'
+    rest_item = {"url": url, "html": "", "resp_status": "200"}
 
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
