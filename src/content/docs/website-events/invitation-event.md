@@ -44,7 +44,7 @@ This is a limited-time event. CoreClaw reserves the right to modify terms or ter
 
 ### Privacy Protection
 
-The Platform safeguards user information with security policies, technologies, and procedures. All recipients of user data are required to protect confidentiality. For details, see the CoreClaw Privacy Policy.
+The Platform safeguards user information with security policies, technologies, and procedures. All recipients of user data are required to protect confidentiality. For details, see the [CoreClaw Privacy Policy](/platform-policies/privacy-policy/).
 
 ### Single User Definition
 

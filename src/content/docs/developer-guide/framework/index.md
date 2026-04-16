@@ -1,6 +1,8 @@
 ---
 title: Data Collection Framework
 description: Learn about the data collection frameworks supported by CoreClaw, including Selenium, Playwright, Puppeteer, and DrissionPage.
+sidebar:
+  order: 0
 ---
 
 # Data Collection Framework

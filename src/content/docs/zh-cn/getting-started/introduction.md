@@ -1,6 +1,8 @@
 ---
 title: 简介
 description: 了解 CoreClaw 的功能和特性
+sidebar:
+  order: 0
 ---
 
 ## 什么是 CoreClaw？

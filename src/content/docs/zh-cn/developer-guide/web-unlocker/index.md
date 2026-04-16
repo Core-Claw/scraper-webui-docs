@@ -1,48 +1,66 @@
 ---
 title: 网页解锁器
 description: 使用 CoreClaw 的网页解锁器绕过反爬虫措施，访问被屏蔽的内容。
+sidebar:
+  order: 0
 ---
 
-# 网页解锁器
+import { LinkCard } from '@astrojs/starlight/components'
 
-CoreClaw 的网页解锁器帮助您绕过反爬虫措施，访问原本被屏蔽的内容。
+**化繁为简，让数据获取回归采集逻辑本身。**
 
-## 功能特性
+我们的平台专注于解决数据爬取中最复杂、最容易失败的部分。
 
-- **指纹浏览器** - 轮换浏览器指纹以避免被检测
-- **代理网络** - 通过全球代理网络访问内容
-- **验证码绕过** - 自动处理 CAPTCHA 和验证挑战
-- **SOCKS5 网络代理** - 配置自定义代理设置
+您无需自行搭建指纹浏览器、网页解锁器或代理网络，这些能力**已内置于平台并可免费使用**。
+
+您只需编写采集逻辑，其余工作全部交给我们。
+
+## 为什么要使用指纹浏览器与网页解锁器？
+
+现代网站的反爬体系，早已不再依赖简单的 IP 封禁，而是通过：
+
+- 浏览器指纹识别
+- 行为轨迹分析
+- 动态渲染与验证挑战
+
+单纯的请求或自动化脚本，很难长期稳定运行。
+
+平台内置的**指纹浏览器与网页解锁器**，为脚本提供一个被网站视为"真实用户"的执行环境，大幅提升采集成功率。
+
+## 平台内置能力（免费提供）
+
+### 指纹浏览器
+
+- 稳定浏览器指纹
+- 完整执行 JavaScript
+- 支持动态加载页面
+
+### 网页解锁器
+
+- 高质量动态住宅代理
+- 真人行为模拟
+- 自动应对主流反爬策略
+
+### 验证码与滑块支持
+
+- Cloudflare Turnstile
+- Google reCAPTCHA v2/v3
+- DataDome 高级滑块
+- TikTok、Temu 等平台专项验证
+
+:::note
+以上能力均无需额外配置，默认集成，免费使用。
+:::
 
 ## 主题
 
-<div class="quick-links">
-	<a href="./overview/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">概述</span>
-			<span class="quick-link-desc">网页解锁器介绍</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="./fingerprint-browser/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">指纹浏览器</span>
-			<span class="quick-link-desc">轮换浏览器指纹</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="./socks5-network-proxy/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">SOCKS5 代理</span>
-			<span class="quick-link-desc">配置网络代理设置</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="./bypass-verification-code/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">绕过验证码</span>
-			<span class="quick-link-desc">自动处理验证码</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-</div>
+<LinkCard
+    title="指纹浏览器配置"
+    description="为应对目标网站的浏览器指纹识别与自动化检测机制，平台在脚本运行时会自动提供并托管一个隔离的浏览器指纹环境"
+    href="/zh-cn/developer-guide/web-unlocker/fingerprint-browser/"
+/>
+<LinkCard
+    title="验证码绕过服务"
+    description="平台集成了验证码自动绕过能力，并通过自定义 CDP 命令对外开放，开发者只需在爬虫代码中调用指定命令，即可自动完成验证码处理。"
+    href="/zh-cn/developer-guide/web-unlocker/bypass-verification-code/"
+/>

@@ -1,6 +1,8 @@
 ---
 title: What is a Worker?
 description: Learn what a Worker is and how it works in CoreClaw
+sidebar:
+    order: 0
 ---
 
 import Icon from '@/components/Icon.astro'

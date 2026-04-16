@@ -1,48 +1,66 @@
 ---
 title: Web Unlocker
 description: Bypass anti-scraping measures and access blocked content with CoreClaw's Web Unlocker.
+sidebar:
+  order: 0
 ---
 
-# Web Unlocker
+import { LinkCard } from '@astrojs/starlight/components'
 
-CoreClaw's Web Unlocker helps you bypass anti-scraping measures and access content that would otherwise be blocked.
+**Simplify Complexity. Focus on What Matters: Data Extraction Logic.**
 
-## Features
+Our platform is built to handle the hardest and most failure-prone parts of web data collection.
 
-- **Fingerprint Browser** - Rotate browser fingerprints to avoid detection
-- **Proxy Network** - Access content through a global proxy network
-- **Verification Code Bypass** - Automatically handle CAPTCHAs and verification challenges
-- **SOCKS5 Network Proxy** - Configure custom proxy settings
+You **don't need to build or maintain fingerprint browsers, web unlockers, or proxy networks** — all of these capabilities are **built in and free to use**.
+
+You focus on writing the extraction logic. We take care of everything else.
+
+## Why Fingerprint Browsers and Web Unlockers Matter?
+
+Modern anti-bot systems no longer rely on simple IP blocking. Instead, they analyze:
+
+- Browser fingerprint consistency
+- User behavior and interaction patterns
+- Dynamic rendering and verification challenges
+
+Traditional HTTP requests or basic automation scripts struggle to run reliably at scale.
+
+Our **built-in fingerprint browser and web unlocker** provide an execution environment that websites recognize as a **real human user**, dramatically improving stability and success rates.
+
+## Built-in Platform Capabilities (Free to Use)
+
+### Fingerprint Browser
+
+- Stable and consistent browser fingerprints
+- Full JavaScript execution
+- Support for dynamically rendered pages
+
+### Web Unlocker
+
+- High-quality dynamic residential proxies
+- Human-like behavior simulation
+- Automatic handling of mainstream anti-bot systems
+
+### Captcha & Slider Verification Support
+
+- Cloudflare Turnstile
+- Google reCAPTCHA v2/v3
+- DataDome advanced slider challenges
+- Platform-specific protections such as TikTok and Temu
+
+:::note
+All features above are **enabled by default**, require **no additional configuration**, and are **free to use**.
+:::
 
 ## Topics
 
-<div class="quick-links">
-	<a href="./overview/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">Overview</span>
-			<span class="quick-link-desc">Introduction to Web Unlocker</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="./fingerprint-browser/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">Fingerprint Browser</span>
-			<span class="quick-link-desc">Rotate browser fingerprints</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="./socks5-network-proxy/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">SOCKS5 Proxy</span>
-			<span class="quick-link-desc">Configure network proxy settings</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="./bypass-verification-code/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">Bypass Verification</span>
-			<span class="quick-link-desc">Handle CAPTCHAs automatically</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-</div>
+<LinkCard
+    title="Fingerprint Browser"
+    description="To counter the target website's browser fingerprinting and automated detection mechanisms, the platform automatically provides and hosts an isolated browser fingerprinting environment during script execution."
+    href="/developer-guide/web-unlocker/fingerprint-browser/"
+/>
+<LinkCard
+    title="Bypass Verification Code"
+    description="The platform integrates automatic CAPTCHA bypass capabilities and exposes them to external users through custom CDP commands. Developers only need to call the specified command in the crawler code to automatically complete the CAPTCHA processing."
+    href="/developer-guide/web-unlocker/bypass-verification-code/"
+/>

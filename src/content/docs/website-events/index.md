@@ -1,6 +1,8 @@
 ---
 title: Website Events
 description: Explore ongoing events and activities on CoreClaw platform.
+sidebar:
+  order: 0
 ---
 
 # Website Events

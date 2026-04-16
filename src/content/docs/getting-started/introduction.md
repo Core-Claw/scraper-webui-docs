@@ -1,6 +1,8 @@
 ---
 title: Introduction
 description: Learn about CoreClaw features and capabilities
+sidebar:
+  order: 0
 ---
 
 ## What is CoreClaw?
