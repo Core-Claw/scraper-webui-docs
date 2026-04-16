@@ -172,12 +172,12 @@ export default defineConfig({
                     ],
                 },
                 {
-                    label: 'Partnership & Promotion',
+                    label: 'Website Events',
                     collapsed: true,
                     translations: {
-                        'zh-CN': '推广合作',
+                        'zh-CN': '网站活动',
                     },
-                    autogenerate: { directory: 'partnership-promotion' },
+                    autogenerate: { directory: 'website-events' },
                 },
                 {
                     label: 'Platform Policies',
