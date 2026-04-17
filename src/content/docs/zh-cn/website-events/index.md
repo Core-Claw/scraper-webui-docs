@@ -1,5 +1,5 @@
 ---
-title: 网站活动
+title: 概述
 description: 了解 CoreClaw 平台正在进行的活动和奖励机会。
 sidebar:
   order: 0

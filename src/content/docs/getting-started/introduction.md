@@ -2,7 +2,7 @@
 title: Introduction
 description: Learn about CoreClaw features and capabilities
 sidebar:
-  order: 0
+  order: 1
 ---
 
 ## What is CoreClaw?

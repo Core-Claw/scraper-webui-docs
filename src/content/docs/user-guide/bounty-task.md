@@ -3,6 +3,7 @@ title: Bounty Task
 description: Learn how to post and fulfill bounty tasks on the CoreClaw platform.
 sidebar:
     order: 8
+draft: true
 ---
 
 ### What is a Bounty Task?

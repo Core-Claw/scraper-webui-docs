@@ -1,5 +1,5 @@
 ---
-title: Worker Scripts
+title: Overview
 description: Learn how to create and manage custom Worker scripts in CoreClaw.
 sidebar:
   order: 0

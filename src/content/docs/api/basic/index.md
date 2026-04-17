@@ -1,9 +1,9 @@
 ---
-title: Basic Information
+title: Overview
 description: Essential API information including authentication, base URL, and request formatting.
+sidebar:
+    order: 0
 ---
-
-# Basic Information
 
 This section covers the fundamental information you need to start using the CoreClaw API.
 

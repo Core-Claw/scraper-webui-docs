@@ -1,8 +1,8 @@
 ---
-title: 简介
+title: 平台简介
 description: 了解 CoreClaw 的功能和特性
 sidebar:
-  order: 0
+  order: 1
 ---
 
 ## 什么是 CoreClaw？

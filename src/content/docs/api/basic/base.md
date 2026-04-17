@@ -1,6 +1,6 @@
 ---
-title: Overview
-description: Base URL, headers, and global status codes for the CoreClaw API.
+title: Base URL & Authentication
+description: API base URL, request headers, and global status codes.
 sidebar:
     order: 1
 ---

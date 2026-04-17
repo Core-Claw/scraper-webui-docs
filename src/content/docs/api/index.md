@@ -1,6 +1,8 @@
 ---
-title: API Reference
+title: Overview
 description: Complete API documentation for CoreClaw
+sidebar:
+  order: 0
 ---
 
 Welcome to the CoreClaw API documentation. Our RESTful API allows you to integrate web scraping capabilities into your applications.

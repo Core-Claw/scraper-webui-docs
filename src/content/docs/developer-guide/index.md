@@ -1,6 +1,8 @@
 ---
-title: Developer Guide
+title: Overview
 description: Build custom Workers and integrate with CoreClaw API
+sidebar:
+  order: 0
 ---
 
 Welcome to the CoreClaw Developer Guide. This section is for developers who want to build custom Workers and integrate with our platform programmatically.

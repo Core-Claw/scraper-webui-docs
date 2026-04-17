@@ -1,6 +1,8 @@
 ---
-title: 开发者指南
+title: 概述
 description: 构建自定义爬虫并集成 CoreClaw API
+sidebar:
+  order: 0
 ---
 
 欢迎来到 CoreClaw 开发者指南。本章节面向希望构建自定义爬虫并通过编程方式集成我们平台的开发者。

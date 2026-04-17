@@ -30,10 +30,6 @@ While it is difficult to precisely predict resource consumption before a run, yo
 
 ![](@/assets/docs/img_25.jpg)
 
-### Traffic Usage Records
-
-![](@/assets/docs/img_24.jpg)
-
 :::note[Best Practices]
 
 - We recommend starting with small-scale test runs (for example, scraping only a limited number of pages).

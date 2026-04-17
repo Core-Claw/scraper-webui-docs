@@ -1,5 +1,5 @@
 ---
-title: Platform Policies
+title: Overview
 description: Important policies and terms governing the use of CoreClaw services.
 sidebar:
   order: 0

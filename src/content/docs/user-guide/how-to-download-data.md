@@ -11,7 +11,7 @@ sidebar:
 
 - Log in to your account
 - Go to 「Runs」
-- Click on the corresponding Worker title or Run ID
+- Click on the Run ID
 
 ##### Step 2: View Execution Results
 
@@ -30,7 +30,6 @@ The system typically supports two structured data formats:
 
 - 📊 XLSX (Excel file)
 - 📦 JSON (recommended for developers)
-- 🗂 API Access (for system integration)
 
 Click the format button and select your desired option.
 

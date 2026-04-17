@@ -245,13 +245,13 @@ template: splash
 			<a href="/zh-cn/changelog/" class="updates-panel-link">查看完整日志 →</a>
 		</div>
 		<div class="updates-list">
-			<a href="/zh-cn/partnership-promotion/data-bounty-earnings/" class="updates-item">
-				<span class="updates-dot" style="--dot-color: #10b981"></span>
+			<a href="/zh-cn/website-events/invitation-event/" class="updates-item">
+				<span class="updates-dot" style="--dot-color: #8b5cf6"></span>
 				<div class="updates-item-content">
-					<div class="updates-item-title">上线数据悬赏计划</div>
-					<div class="updates-item-desc">发布数据需求，开发者认领完成即可获得悬赏奖励</div>
+					<div class="updates-item-title">上线邀请计划</div>
+					<div class="updates-item-desc">邀请好友注册参与新邀请活动并获得奖励</div>
 				</div>
-				<span class="updates-item-date">2026-02-02</span>
+				<span class="updates-item-date">2025-04-16</span>
 			</a>
 			<a href="/zh-cn/developer-guide/worker/worker-directory/" class="updates-item">
 				<span class="updates-dot" style="--dot-color: #3b82f6"></span>

@@ -233,13 +233,13 @@ template: splash
 			<a href="/changelog/" class="updates-panel-link">Full changelog →</a>
 		</div>
 		<div class="updates-list">
-			<a href="/partnership-promotion/data-bounty-earnings/" class="updates-item">
-				<span class="updates-dot" style="--dot-color: #10b981"></span>
+			<a href="/website-events/invitation-event/" class="updates-item">
+				<span class="updates-dot" style="--dot-color: #8b5cf6"></span>
 				<div class="updates-item-content">
-					<div class="updates-item-title">Data Bounty Program Launched</div>
-					<div class="updates-item-desc">Post data requirements, developers claim and earn bounty rewards</div>
+					<div class="updates-item-title">Invitation Program Launched</div>
+					<div class="updates-item-desc">Invite friends to register and earn rewards through the new invitation campaign</div>
 				</div>
-				<span class="updates-item-date">2026-02-02</span>
+				<span class="updates-item-date">2025-04-16</span>
 			</a>
 			<a href="/developer-guide/worker/worker-directory/" class="updates-item">
 				<span class="updates-dot" style="--dot-color: #3b82f6"></span>

@@ -1,6 +1,8 @@
 ---
 title: Core Concepts
 description: Understand the fundamental concepts of CoreClaw
+sidebar:
+  order: 3
 ---
 
 Understanding these core concepts will help you make the most of CoreClaw.

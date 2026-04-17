@@ -1,5 +1,5 @@
 ---
-title: 爬虫脚本
+title: 概述
 description: 学习如何在 CoreClaw 中创建和管理自定义爬虫脚本。
 sidebar:
   order: 0

@@ -1,6 +1,8 @@
 ---
 title: 核心概念
 description: 理解 CoreClaw 的基本概念
+sidebar:
+  order: 3
 ---
 
 理解这些核心概念将帮助您充分利用 CoreClaw。

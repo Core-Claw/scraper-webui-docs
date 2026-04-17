@@ -1,6 +1,6 @@
 ---
-title: 概述
-description: API
+title: 基础 URL 与认证
+description: API 接口地址、请求头和全局状态码。
 sidebar:
     order: 1
 ---

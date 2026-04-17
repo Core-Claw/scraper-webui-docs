@@ -8,7 +8,6 @@ sidebar:
 **Note**: The table below lists all available execution node codes and their corresponding country or region names.
 
 | Code | Country / Region Name | Code | Country / Region Name | Code | Country / Region Name |
-
 | ---- | ------------------------ | ---- | -------------------------------------------- | ---- | ------------------------------------ |
 | AD   | Andorra                  | AE   | The United Arab Emirates                     | AF   | Afghanistan                          |
 | AG   | Antigua & Barbuda        | AI   | Anguilla                                     | AL   | Albania                              |
