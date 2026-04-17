@@ -1,17 +1,19 @@
 # CoreClaw Documentation
 
-CoreClaw 官方文档仓库，使用 [Astro](https://astro.build/) + [Starlight](https://starlight.astro.build/) 构建，提供英文与简体中文两套文档内容。
+CoreClaw documentation repository built with [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/), providing both English and Simplified Chinese documentation.
 
-本仓库承载了 CoreClaw 文档站点的内容、导航配置、首页引导、组件定制与样式主题，适用于本地开发、内容维护、版本发布与静态构建部署。
+This repository contains the documentation content, sidebar configuration, landing pages, custom UI components, and theme styling for the CoreClaw docs site. It is used for local development, content maintenance, version updates, and static site deployment.
 
-## 项目概览
+For the Chinese version of this repository guide, see [`README.zh-CN.md`](./README.zh-CN.md).
 
-- 文档框架：Astro + Starlight
-- UI 扩展：自定义 Header、Banner、目录组件、移动端页脚等
-- 多语言：
-  - English（默认）
-  - 简体中文（`/zh-cn/`）
-- 内容类型：
+## Overview
+
+- Documentation framework: Astro + Starlight
+- UI customization: custom header, banner, table of contents, mobile footer, and related components
+- Languages:
+  - English (default)
+  - Simplified Chinese (`/zh-cn/`)
+- Main content areas:
   - Getting Started
   - User Guide
   - Developer Guide
@@ -21,30 +23,30 @@ CoreClaw 官方文档仓库，使用 [Astro](https://astro.build/) + [Starlight]
   - FAQ
   - Changelog
 
-## 技术栈
+## Tech Stack
 
 - [Astro](https://astro.build/)
 - [Starlight](https://starlight.astro.build/)
-- [React](https://react.dev/)（用于部分扩展能力）
+- [React](https://react.dev/) for selected extension points
 - `starlight-image-zoom`
 - `sharp`
 
-## 仓库结构
+## Repository Structure
 
 ```text
 .
-├── public/                         # 静态资源（直接原样输出）
+├── public/                         # Static files copied as-is
 ├── src/
-│   ├── assets/                     # 构建期资源（图片、logo 等）
+│   ├── assets/                     # Build-time assets (images, logos, etc.)
 │   │   ├── docs/
 │   │   └── logo.png
-│   ├── components/                 # Starlight 自定义组件
+│   ├── components/                 # Custom Starlight components
 │   │   ├── Banner.astro
 │   │   ├── Header.astro
 │   │   ├── MobileMenuFooter.astro
 │   │   └── TableOfContents.astro
 │   ├── content/
-│   │   └── docs/                   # 文档内容根目录
+│   │   └── docs/                   # Documentation content root
 │   │       ├── about-coreclaw/
 │   │       ├── api/
 │   │       ├── developer-guide/
@@ -54,47 +56,50 @@ CoreClaw 官方文档仓库，使用 [Astro](https://astro.build/) + [Starlight]
 │   │       ├── user-guide/
 │   │       ├── website-events/
 │   │       ├── changelog.mdx
-│   │       ├── index.md            # 英文首页
-│   │       └── zh-cn/              # 简体中文文档
+│   │       ├── index.md            # English landing page
+│   │       └── zh-cn/              # Simplified Chinese docs
 │   └── styles/
-│       └── common.css              # 全局样式
-├── astro.config.mjs                # Astro / Starlight 主配置
-├── package.json                    # 脚本与依赖
+│       └── common.css              # Global styles
+├── astro.config.mjs                # Astro / Starlight configuration
+├── package.json                    # Scripts and dependencies
 ├── package-lock.json
 ├── tsconfig.json
-└── README.md
+├── README.md                       # English repository guide
+└── README.zh-CN.md                 # Chinese repository guide
 ```
 
-## 内容组织约定
+## Content Organization Rules
 
-### 1. 文档目录
+### 1. Documentation Directories
 
-英文文档位于：
+English documentation lives in:
 
 - `src/content/docs/`
 
-中文文档位于：
+Chinese documentation lives in:
 
 - `src/content/docs/zh-cn/`
 
-通常要求中英文目录结构保持对应，便于维护和导航一致性。
+In most cases, the English and Chinese directory structures should stay aligned to keep navigation and maintenance consistent.
 
-### 2. index 文件职责
+### 2. Responsibility of `index` Files
 
-每个文档分组通常使用 `index.md` / `index.mdx` 作为该目录概述页：
+Each documentation group commonly uses `index.md` or `index.mdx` as the overview page for that directory.
 
-- 英文标题统一为 `Overview`
-- 中文标题统一为 `概述`
-- 若要求目录中首项展示，需设置：
+Recommended conventions:
+
+- English overview title: `Overview`
+- Chinese overview title: `概述`
+- If the overview page must appear first in the sidebar, set:
 
 ```yaml
 sidebar:
   order: 0
 ```
 
-### 3. Frontmatter 约定
+### 3. Frontmatter Conventions
 
-常见 frontmatter 字段：
+Typical frontmatter fields:
 
 ```yaml
 ---
@@ -105,102 +110,102 @@ sidebar:
 ---
 ```
 
-说明：
+Field notes:
 
-- `title`：页面标题，也是默认侧边栏显示名
-- `description`：页面描述，用于 SEO 与页面摘要
-- `sidebar.order`：控制同级文档排序
-- `.mdx` 页面可额外引入组件、图片资源和交互内容
+- `title`: page title and default sidebar label
+- `description`: page summary used for SEO and page metadata
+- `sidebar.order`: ordering among sibling pages
+- `.mdx` pages may import components, images, and interactive content
 
-## 多语言配置
+## Internationalization Configuration
 
-多语言配置位于 `astro.config.mjs` 中：
+Multilingual settings are defined in `astro.config.mjs`.
 
-- 默认语言：`root`（English）
-- 中文语言：`zh-cn`
-- 默认访问路径：`/`
-- 中文访问路径：`/zh-cn/`
+- Default locale: `root` (English)
+- Chinese locale: `zh-cn`
+- Default path: `/`
+- Chinese path: `/zh-cn/`
 
-当前配置还包含：
+The current configuration also includes:
 
-- 自定义 sidebar
-- 自定义 Header / Banner / TOC 等组件
-- 自定义 CSS
-- 站点地址 `site`
+- custom sidebar definitions
+- custom Header / Banner / TOC components
+- custom CSS
+- explicit `site` configuration
 
-## 侧边栏说明
+## Sidebar Strategy
 
-侧边栏主要由 `astro.config.mjs` 中的 `sidebar` 配置控制。
+Sidebar behavior is primarily controlled by the `sidebar` configuration in `astro.config.mjs`.
 
-本仓库中同时存在两种方式：
+This repository uses two patterns:
 
 1. `autogenerate`
-   - 适合结构清晰、按目录自动生成的栏目
-2. `items`
-   - 适合需要显式控制顺序、标题、概述页与子项名称的栏目
+   - Best for clean directory-driven sections
+2. explicit `items`
+   - Best when you need strict control over order, labels, overview pages, and nested entries
 
-如果某个目录的“概述”显示异常，通常优先检查：
+If an overview page is displayed incorrectly in the sidebar, check these first:
 
-- 该目录 `index.*` 的 `title`
+- the `title` in that directory’s `index.*`
 - `sidebar.order`
-- `astro.config.mjs` 是否使用了显式 `items`
+- whether `astro.config.mjs` uses explicit `items` for that section
 
-## 本地开发
+## Local Development
 
-### 环境要求
+### Requirements
 
 - Node.js 18+
 - npm 9+
 
-### 安装依赖
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 启动开发服务器
+### Start Development Server
 
 ```bash
 npm run dev
 ```
 
-默认地址：
+Default local URL:
 
 - <http://localhost:4321>
 
-### 生产构建
+### Production Build
 
 ```bash
 npm run build
 ```
 
-构建输出目录：
+Build output directory:
 
 - `dist/`
 
-### 本地预览构建结果
+### Preview Build Output
 
 ```bash
 npm run preview
 ```
 
-## 常用维护流程
+## Common Maintenance Workflows
 
-### 新增文档页面
+### Add a New Documentation Page
 
-1. 在对应语言目录下新增 `.md` 或 `.mdx` 文件
-2. 补充 frontmatter
-3. 根据需要设置 `sidebar.order`
-4. 如果是分组概述页，使用 `index.md` / `index.mdx`
-5. 本地运行 `npm run dev` 检查渲染与侧边栏顺序
+1. Create a new `.md` or `.mdx` file in the correct language directory
+2. Add frontmatter
+3. Set `sidebar.order` if ordering matters
+4. Use `index.md` / `index.mdx` if it is the overview page of a section
+5. Run `npm run dev` and verify rendering and sidebar order
 
-### 新增图片资源
+### Add Image Assets
 
-如果图片要在 `.mdx` 中安全使用，推荐放到：
+If an image needs to be used safely in `.mdx`, place it under:
 
 - `src/assets/docs/`
 
-然后通过导入方式使用：
+Then import it explicitly:
 
 ```mdx
 import demoImage from '@/assets/docs/example.png'
@@ -208,84 +213,84 @@ import demoImage from '@/assets/docs/example.png'
 <img src={demoImage.src} alt="example" />
 ```
 
-不要直接在 Markdown 图片语法里使用别名路径：
+Do not rely on alias paths directly inside Markdown image syntax such as:
 
 ```md
 ![](@/assets/docs/example.png)
 ```
 
-这类写法容易在内容渲染阶段报错。
+That pattern can cause content rendering errors.
 
-### 调整导航结构
+### Adjust Navigation Structure
 
-优先修改：
+Prefer updating:
 
 - `astro.config.mjs`
 
-适用场景：
+Typical use cases:
 
-- 显式指定“概述”显示名
-- 调整某栏目在侧边栏的层级
-- 将自动生成改为手工控制 `items`
-- 处理多语言标题不一致问题
+- explicitly defining the displayed label of an overview page
+- changing sidebar hierarchy for a section
+- replacing fully automatic generation with explicit `items`
+- resolving multilingual title mismatches
 
-## 质量检查建议
+## Recommended Quality Checks
 
-每次修改内容后，建议至少执行：
+After content updates, at minimum run:
 
 ```bash
 npm run build
 ```
 
-重点检查：
+Key things to verify:
 
-- 是否有内容渲染错误
-- 是否有缺失图片/资源引用
-- 侧边栏顺序是否符合预期
-- 中英文页面是否对应一致
+- no content rendering errors
+- no missing asset or image references
+- correct sidebar order
+- English and Chinese pages stay aligned where required
 
-## 已知注意事项
+## Known Notes
 
-- `src/content/docs/` 下的内容页和 `astro.config.mjs` 的 sidebar 配置需要保持一致，否则可能出现：
-  - 左侧目录名称不符合预期
-  - 页面存在但目录不显示
-  - 概述页未排到首项
-- `.mdx` 中引用图片时，应使用 `import` 而不是 Markdown 别名路径
-- 构建日志中如果出现不影响输出的外层提示，可先以最终构建成功为准，再判断是否值得追踪
+- Content under `src/content/docs/` must remain consistent with sidebar rules in `astro.config.mjs`, otherwise you may see:
+  - unexpected sidebar labels
+  - pages that exist but do not show up in navigation
+  - overview pages not appearing first
+- In `.mdx`, images should be imported explicitly instead of referenced through Markdown alias paths
+- If build logs contain non-blocking wrapper-level warnings, treat successful build output as the primary source of truth
 
-## 脚本命令
+## Scripts
 
-| 命令 | 说明 |
+| Command | Description |
 | --- | --- |
-| `npm install` | 安装依赖 |
-| `npm run dev` | 启动本地开发服务器 |
-| `npm run build` | 构建静态站点 |
-| `npm run preview` | 预览构建结果 |
+| `npm install` | Install dependencies |
+| `npm run dev` | Start the local development server |
+| `npm run build` | Build the static site |
+| `npm run preview` | Preview the built output |
 
-## 发布与推送
+## Release and Push Workflow
 
-常规发布流程建议：
+Recommended workflow:
 
-1. 本地修改内容
-2. 运行 `npm run build`
-3. 检查页面与导航
-4. 提交代码
-5. 推送到 GitHub 仓库
+1. Update content locally
+2. Run `npm run build`
+3. Verify pages and navigation
+4. Commit changes
+5. Push to GitHub
 
-远端仓库：
+Remote repository:
 
 - `https://github.com/Core-Claw/scraper-webui-docs`
 
-## 维护建议
+## Maintenance Recommendations
 
-- 保持中英文目录结构同步
-- 概述页标题统一：
-  - English：`Overview`
-  - 中文：`概述`
-- 对导航敏感目录，优先用显式 `items` 而不是完全依赖自动生成
-- 变更首页、changelog、活动页时，同步检查中英文是否一致
+- Keep English and Chinese directory structures aligned
+- Standardize overview page titles:
+  - English: `Overview`
+  - Chinese: `概述`
+- For navigation-sensitive sections, prefer explicit `items` instead of relying entirely on auto-generation
+- When changing the homepage, changelog, or event pages, verify both language versions together
 
-## 参考链接
+## References
 
 - [Astro Documentation](https://docs.astro.build/)
 - [Starlight Documentation](https://starlight.astro.build/)
