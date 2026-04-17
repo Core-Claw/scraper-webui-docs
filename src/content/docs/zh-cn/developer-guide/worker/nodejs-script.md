@@ -1,6 +1,8 @@
 ---
 title: Node.js 脚本
 description: 学习如何编写 Node.js 脚本
+sidebar:
+    order: 5
 ---
 
 # Node.js 脚本示例
@@ -200,8 +202,8 @@ async function run() {
         const inputJson = await coresdk.parameter.getInputJSONObject()
         await coresdk.log.debug(`输入参数: ${JSON.stringify(inputJson)}`)
 
-        // 2. 获取代理配置（从环境变量读取，支持灵活部署）
-        const proxyDomain = process.env.PROXY_DOMAIN || 'proxy-inner.coreclaw.com:6000'
+        // 2. 获取代理配置（仅从环境变量读取）
+        const proxyDomain = process.env.PROXY_DOMAIN
         await coresdk.log.info(`代理域名: ${proxyDomain}`)
 
         let proxyAuth = null

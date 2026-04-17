@@ -1,6 +1,8 @@
 ---
 title: Go Script
 description: Learn how to write Go scripts for CoreClaw Workers
+sidebar:
+    order: 4
 ---
 
 # Go Script Demo
@@ -241,11 +243,8 @@ func run() {
 	}
 	coresdk.Log.Debug(ctx, fmt.Sprintf("Input parameters: %s", inputJSON))
 
-	// 2. Get proxy configuration (read from environment variable for flexible deployment)
+	// 2. Get proxy configuration (retrieve from environment variables)
 	proxyDomain := os.Getenv("PROXY_DOMAIN")
-	if proxyDomain == "" {
-		proxyDomain = "proxy-inner.coreclaw.com:6000"
-	}
 	coresdk.Log.Info(ctx, fmt.Sprintf("Proxy domain: %s", proxyDomain))
 
 	var proxyAuth string
@@ -396,10 +395,10 @@ To reliably access overseas or restricted websites, the script automatically con
 
 **Proxy Environment Variables:**
 
-| Environment Variable | Description | Example Value |
-| :------------------- | :---------- | :------------ |
-| `PROXY_DOMAIN` | Proxy server address | `proxy-inner.coreclaw.com:6000` |
-| `PROXY_AUTH` | Proxy authentication info | `user:password` |
+| Environment Variable | Description |
+| :------------------- | :---------- |
+| `PROXY_DOMAIN` | Proxy server address (injected by the runtime environment) |
+| `PROXY_AUTH` | Proxy authentication info |
 
 ---
 

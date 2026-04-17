@@ -1,6 +1,8 @@
 ---
 title: Go 脚本
 description: 学习如何编写 Go 脚本
+sidebar:
+    order: 4
 ---
 
 # Go 脚本示例
@@ -243,9 +245,6 @@ func run() {
 
 	// 2. 获取代理配置（从环境变量读取，支持灵活部署）
 	proxyDomain := os.Getenv("PROXY_DOMAIN")
-	if proxyDomain == "" {
-		proxyDomain = "proxy-inner.coreclaw.com:6000"
-	}
 	coresdk.Log.Info(ctx, fmt.Sprintf("代理域名: %s", proxyDomain))
 
 	var proxyAuth string
@@ -396,10 +395,10 @@ func main() {
 
 **代理环境变量：**
 
-| 环境变量 | 说明 | 示例值 |
-| :------- | :--- | :----- |
-| `PROXY_DOMAIN` | 代理服务器地址 | `proxy-inner.coreclaw.com:6000` |
-| `PROXY_AUTH` | 代理认证信息 | `user:password` |
+| 环境变量 | 说明 |
+| :------- | :--- |
+| `PROXY_DOMAIN` | 代理服务器地址（由运行环境注入） |
+| `PROXY_AUTH` | 代理认证信息 |
 
 ---
 

@@ -2,7 +2,7 @@
 title: 数据保存
 description: 了解抓取任务完成后数据的保存和管理方式。
 sidebar:
-    order: 5
+    order: 7
 ---
 
 ### 数据保存方式

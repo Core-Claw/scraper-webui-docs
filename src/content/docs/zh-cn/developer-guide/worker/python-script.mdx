@@ -1,6 +1,8 @@
 ---
 title: Python 脚本
 description: 学习如何编写 Python 脚本
+sidebar:
+    order: 3
 ---
 
 # Python 脚本示例
@@ -248,8 +250,8 @@ async def run():
         input_json_dict = CoreSDK.Parameter.get_input_json_dict()
         CoreSDK.Log.debug(f"输入参数: {input_json_dict}")
 
-        # 2. 代理配置（从环境变量读取，支持灵活部署）
-        proxy_domain = os.environ.get("PROXY_DOMAIN") or "proxy-inner.coreclaw.com:6000"
+        # 2. 代理配置（仅从环境变量读取）
+        proxy_domain = os.environ.get("PROXY_DOMAIN")
         CoreSDK.Log.info(f"代理域名: {proxy_domain}")
 
         try:

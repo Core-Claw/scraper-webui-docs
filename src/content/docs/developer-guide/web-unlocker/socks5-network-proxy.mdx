@@ -14,7 +14,7 @@ Simply read the proxy credentials injected by the platform and configure them co
 ### Proxy Configuration
 
 - **Protocol**: `SOCKS5`
-- **Endpoint**: `proxy-inner.coreclaw.com:6000`
+- **Endpoint**: read from the `PROXY_DOMAIN` environment variable at runtime
 - **Authentication**:
     - **Environment Variable**: `PROXY_AUTH`
     - **Format**: `username:password`
@@ -26,8 +26,8 @@ Simply read the proxy credentials injected by the platform and configure them co
 import os
 import requests
 
-# 1. Proxy service address
-proxyDomain = "proxy-inner.coreclaw.com:6000"
+# 1. Get proxy service address from the runtime environment
+proxyDomain = os.environ.get("PROXY_DOMAIN")
 
 # 2. Get proxy credentials (automatically injected by the platform)
 try:
@@ -75,8 +75,8 @@ import (
 func main() {
     ctx := context.Background()
 
-    // 1. Proxy service address
-    proxyDomain := "proxy-inner.coreclaw.com:6000"
+    // 1. Get proxy service address from the runtime environment
+    proxyDomain := os.Getenv("PROXY_DOMAIN")
 
     // 2. Get proxy credentials
     proxyAuth := os.Getenv("PROXY_AUTH")
@@ -137,8 +137,8 @@ const axios = require('axios')
 const { SocksProxyAgent } = require('socks-proxy-agent')
 
 async function main() {
-    // 1. Proxy service address
-    const proxyDomain = 'proxy-inner.coreclaw.com:6000'
+    // 1. Get proxy service address from the runtime environment
+    const proxyDomain = process.env.PROXY_DOMAIN
 
     // 2. Get proxy credentials (automatically injected by the platform)
     const proxyAuth = process.env.PROXY_AUTH

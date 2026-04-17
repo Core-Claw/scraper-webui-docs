@@ -1,6 +1,8 @@
 ---
 title: Python Script
 description: Learn how to write Python scripts for CoreClaw Workers
+sidebar:
+    order: 3
 ---
 
 # Python Script Demo
@@ -248,8 +250,8 @@ async def run():
         input_json_dict = CoreSDK.Parameter.get_input_json_dict()
         CoreSDK.Log.debug(f"Input parameters: {input_json_dict}")
 
-        # 2. Proxy configuration (read from environment variable for flexible deployment)
-        proxy_domain = os.environ.get("PROXY_DOMAIN") or "proxy-inner.coreclaw.com:6000"
+        # 2. Proxy configuration (retrieve from environment variables)
+        proxy_domain = os.environ.get("PROXY_DOMAIN")
         CoreSDK.Log.info(f"Proxy domain: {proxy_domain}")
 
         try:

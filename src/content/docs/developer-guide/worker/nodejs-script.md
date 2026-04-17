@@ -1,6 +1,8 @@
 ---
 title: Node.js Script
 description: Learn how to write Node.js scripts for CoreClaw Workers
+sidebar:
+    order: 5
 ---
 
 # Node.js Script Demo
@@ -200,8 +202,8 @@ async function run() {
         const inputJson = await coresdk.parameter.getInputJSONObject()
         await coresdk.log.debug(`Input parameters: ${JSON.stringify(inputJson)}`)
 
-        // 2. Get proxy configuration (read from environment variable for flexible deployment)
-        const proxyDomain = process.env.PROXY_DOMAIN || 'proxy-inner.coreclaw.com:6000'
+        // 2. Get proxy configuration (retrieve from environment variables)
+        const proxyDomain = process.env.PROXY_DOMAIN
         await coresdk.log.info(`Proxy domain: ${proxyDomain}`)
 
         let proxyAuth = null
