@@ -11,7 +11,7 @@ sidebar:
 
 - Log in to your account
 - Go to 「Runs」
-- Click on the corresponding Template title or Run ID
+- Click on the corresponding Worker title or Run ID
 
 ##### Step 2: View Execution Results
 
@@ -44,7 +44,7 @@ API is a custom service; please contact platform customer support for details
 
 **Steps:**
 
-- Go to the Template details page
+- Go to the Worker details page
 - Locate the API Endpoint
 - Use Token for authentication
 - Fetch result data via GET request
