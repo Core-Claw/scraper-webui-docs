@@ -26,7 +26,7 @@ export default defineConfig({
             },
             defaultLocale: 'root',
             locales,
-            lastUpdated: true,
+            lastUpdated: false,
             social: [
                 {
                     icon: 'github',
