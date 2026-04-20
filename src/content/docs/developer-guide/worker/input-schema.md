@@ -156,6 +156,8 @@ You can choose different `editor` types based on your needs to improve the user 
 
 ### 4. Dropdown (`select`)
 
+> Set `multiple: true` attribute for select to enable multiple mode.
+
 ```json
 {
     "title": "🌍 Language",
