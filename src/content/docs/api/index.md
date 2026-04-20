@@ -1,6 +1,8 @@
 ---
-title: API Reference
+title: Overview
 description: Complete API documentation for CoreClaw
+sidebar:
+  order: 0
 ---
 
 Welcome to the CoreClaw API documentation. Our RESTful API allows you to integrate web scraping capabilities into your applications.
@@ -43,7 +45,7 @@ All API requests require authentication using your API key. You can find your AP
 ## Quick Links
 
 <div class="quick-links">
-	<a href="/api/base/" class="quick-link">
+	<a href="/api/basic/" class="quick-link">
 		<div class="quick-link-content">
 			<span class="quick-link-title">API Base URL</span>
 			<span class="quick-link-desc">Base URL and authentication details</span>
@@ -57,14 +59,14 @@ All API requests require authentication using your API key. You can find your AP
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="/api/proxy/" class="quick-link">
+	<a href="/api/basic/proxy/" class="quick-link">
 		<div class="quick-link-content">
 			<span class="quick-link-title">Proxy Configuration</span>
 			<span class="quick-link-desc">Configure proxies for your Workers</span>
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="/api/device-configuration/" class="quick-link">
+	<a href="/api/basic/device-configuration/" class="quick-link">
 		<div class="quick-link-content">
 			<span class="quick-link-title">Device Configuration</span>
 			<span class="quick-link-desc">Configure device settings for Workers</span>

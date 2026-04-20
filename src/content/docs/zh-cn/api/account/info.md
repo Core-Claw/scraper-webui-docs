@@ -43,7 +43,7 @@ sidebar:
 
 | 参数                     | 示例值       | 参数类型 | 参数描述                                |
 | ------------------------ | ------------ | -------- | --------------------------------------- |
-| code                     | 0            | Integer  | [查看帮助](/zh-cn/api/base/#全局状态码) |
+| code                     | 0            | Integer  | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
 | message                  | success      | String   | 错误描述                                |
 | data                     | -            | Object   | -                                       |
 | └─ balance               | 10122.5547   | String   | 账户余额($)                             |

@@ -1,6 +1,6 @@
 ---
 title: Bypass verification code
-description: 验证码绕过
+description: Automatically bypass CAPTCHA and verification challenges
 ---
 
 ## CAPTCHA Bypass Service (Fingerprint Browser-Based)

@@ -40,7 +40,7 @@ Find answers to common questions about CoreClaw. Can't find what you're looking 
 
 ---
 
-## Payment & Billing
+<h2 id="payment-billing">Payment & Billing</h2>
 
 <div class="faq-list">
 	<div class="faq-item">
@@ -79,7 +79,7 @@ Find answers to common questions about CoreClaw. Can't find what you're looking 
 
 ---
 
-## Account & Access
+<h2 id="account-access">Account & Access</h2>
 
 <div class="faq-list">
 	<div class="faq-item">
@@ -110,7 +110,7 @@ Find answers to common questions about CoreClaw. Can't find what you're looking 
 
 ---
 
-## Technical Issues
+<h2 id="technical">Technical Issues</h2>
 
 <div class="faq-list">
 	<div class="faq-item">
@@ -149,7 +149,7 @@ Find answers to common questions about CoreClaw. Can't find what you're looking 
 
 ---
 
-## Getting Started
+<h2 id="getting-started">Getting Started</h2>
 
 <div class="faq-list">
 	<div class="faq-item">

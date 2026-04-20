@@ -11,7 +11,7 @@ sidebar:
 
 - 登录您的账户
 - 进入「Runs」
-- 点击对应的 Template 标题或者 Run ID
+- 点击对应的Run ID
 
 ##### 第二步：查看运行结果
 
@@ -30,7 +30,6 @@ sidebar:
 
 - 📊 XLSX（Excel 文件）
 - 📦 JSON（适合开发者使用）
-- 🗂 API 访问（用于系统对接）
 
 点击格式按钮，选择所需格式即可。
 
@@ -42,7 +41,7 @@ sidebar:
 
 API属于定制服务，详情可以咨询平台客服
 
-- 进入 Template 详情页
+- 进入 Worker 详情页
 - 找到 API Endpoint
 - 使用 Token 进行授权访问
 - 通过 GET 请求拉取结果数据

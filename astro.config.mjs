@@ -17,6 +17,7 @@ const locales = {
 }
 
 export default defineConfig({
+    site: 'https://docs.coreclaw.com',
     integrations: [
         starlight({
             plugins: [starlightImageZoom()],
@@ -26,7 +27,7 @@ export default defineConfig({
             },
             defaultLocale: 'root',
             locales,
-            lastUpdated: true,
+            lastUpdated: false,
             social: [
                 {
                     icon: 'github',
@@ -77,13 +78,47 @@ export default defineConfig({
                     },
                     items: [
                         {
+                            label: 'Overview',
+                            slug: 'developer-guide',
+                            translations: {
+                                'zh-CN': '概述',
+                            },
+                        },
+                        {
                             label: 'Web Unlocker',
                             translations: {
                                 'zh-CN': '网页解锁器',
                             },
-                            autogenerate: {
-                                directory: 'developer-guide/web-unlocker',
-                            },
+                            items: [
+                                {
+                                    label: 'Overview',
+                                    slug: 'developer-guide/web-unlocker',
+                                    translations: {
+                                        'zh-CN': '概述',
+                                    },
+                                },
+                                {
+                                    label: 'Fingerprint Browser',
+                                    slug: 'developer-guide/web-unlocker/fingerprint-browser',
+                                    translations: {
+                                        'zh-CN': '指纹浏览器配置',
+                                    },
+                                },
+                                {
+                                    label: 'Bypass Verification Code',
+                                    slug: 'developer-guide/web-unlocker/bypass-verification-code',
+                                    translations: {
+                                        'zh-CN': '验证码绕过服务',
+                                    },
+                                },
+                                {
+                                    label: 'HTTP/Socks5 Network Proxy',
+                                    slug: 'developer-guide/web-unlocker/socks5-network-proxy',
+                                    translations: {
+                                        'zh-CN': 'HTTP/Socks5 网络代理',
+                                    },
+                                },
+                            ],
                         },
                         {
                             label: 'Worker',
@@ -113,14 +148,48 @@ export default defineConfig({
                     collapsed: true,
                     items: [
                         {
+                            label: 'Overview',
+                            slug: 'api',
+                            translations: {
+                                'zh-CN': '概述',
+                            },
+                        },
+                        {
                             label: 'Basic Information',
                             collapsed: true,
                             translations: {
                                 'zh-CN': '基础信息',
                             },
-                            autogenerate: {
-                                directory: 'api/basic',
-                            },
+                            items: [
+                                {
+                                    label: 'Overview',
+                                    slug: 'api/basic',
+                                    translations: {
+                                        'zh-CN': '概述',
+                                    },
+                                },
+                                {
+                                    label: 'Base URL & Authentication',
+                                    slug: 'api/basic/base',
+                                    translations: {
+                                        'zh-CN': '基础 URL 与认证',
+                                    },
+                                },
+                                {
+                                    label: 'Device Configuration',
+                                    slug: 'api/basic/device-configuration',
+                                    translations: {
+                                        'zh-CN': '设备配置',
+                                    },
+                                },
+                                {
+                                    label: 'Proxy Nodes',
+                                    slug: 'api/basic/proxy',
+                                    translations: {
+                                        'zh-CN': '代理节点',
+                                    },
+                                },
+                            ],
                         },
                         {
                             label: 'Worker',
@@ -128,9 +197,22 @@ export default defineConfig({
                             translations: {
                                 'zh-CN': 'Worker',
                             },
-                            autogenerate: {
-                                directory: 'api/worker',
-                            },
+                            items: [
+                                {
+                                    label: 'Start Worker',
+                                    slug: 'api/worker/run',
+                                    translations: {
+                                        'zh-CN': '运行爬虫',
+                                    },
+                                },
+                                {
+                                    label: 'Abort Worker',
+                                    slug: 'api/worker/abort',
+                                    translations: {
+                                        'zh-CN': '中止爬虫',
+                                    },
+                                },
+                            ],
                         },
                         {
                             label: 'Runs',
@@ -138,9 +220,50 @@ export default defineConfig({
                             translations: {
                                 'zh-CN': 'Runs',
                             },
-                            autogenerate: {
-                                directory: 'api/run',
-                            },
+                            items: [
+                                {
+                                    label: 'Run History',
+                                    slug: 'api/run/history',
+                                    translations: {
+                                        'zh-CN': '运行历史',
+                                    },
+                                },
+                                {
+                                    label: 'Run Detail',
+                                    slug: 'api/run/detail',
+                                    translations: {
+                                        'zh-CN': '运行详情',
+                                    },
+                                },
+                                {
+                                    label: 'Run Result',
+                                    slug: 'api/run/result',
+                                    translations: {
+                                        'zh-CN': '运行结果',
+                                    },
+                                },
+                                {
+                                    label: 'Run Log',
+                                    slug: 'api/run/log',
+                                    translations: {
+                                        'zh-CN': '运行日志',
+                                    },
+                                },
+                                {
+                                    label: 'Export Run Result',
+                                    slug: 'api/run/export',
+                                    translations: {
+                                        'zh-CN': '导出运行结果',
+                                    },
+                                },
+                                {
+                                    label: 'Re-run',
+                                    slug: 'api/run/rerun',
+                                    translations: {
+                                        'zh-CN': '重新运行',
+                                    },
+                                },
+                            ],
                         },
                         {
                             label: 'Tasks',
@@ -148,9 +271,15 @@ export default defineConfig({
                             translations: {
                                 'zh-CN': 'Tasks',
                             },
-                            autogenerate: {
-                                directory: 'api/task',
-                            },
+                            items: [
+                                {
+                                    label: 'Start Task',
+                                    slug: 'api/task/run',
+                                    translations: {
+                                        'zh-CN': '运行任务',
+                                    },
+                                },
+                            ],
                         },
                         {
                             label: 'Account Information',
@@ -165,12 +294,12 @@ export default defineConfig({
                     ],
                 },
                 {
-                    label: 'Partnership & Promotion',
+                    label: 'Website Events',
                     collapsed: true,
                     translations: {
-                        'zh-CN': '推广合作',
+                        'zh-CN': '网站活动',
                     },
-                    autogenerate: { directory: 'partnership-promotion' },
+                    autogenerate: { directory: 'website-events' },
                 },
                 {
                     label: 'Platform Policies',
@@ -184,20 +313,19 @@ export default defineConfig({
                 },
                 {
                     label: 'FAQ',
-                    slug: 'faq',
+                    collapsed: true,
                     translations: {
                         'zh-CN': '常见问题',
                     },
-                },
-                {
-                    label: 'Payment FAQ',
-                    collapsed: true,
-                    translations: {
-                        'zh-CN': '支付问题',
-                    },
-                    autogenerate: {
-                        directory: 'faq/payment-problem',
-                    },
+                    items: [
+                        {
+                            label: 'Overview',
+                            slug: 'faq',
+                            translations: {
+                                'zh-CN': '概述',
+                            },
+                        },
+                    ],
                 },
                 {
                     label: 'Changelog',

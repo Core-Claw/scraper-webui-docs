@@ -2,7 +2,7 @@
 title: 什么是 Worker？
 description: Worker 是一种基于无服务器架构的云端程序，旨在处理从简单任务（如网页表单填充）到高复杂度操作（如全站大规模抓取、复杂数据集去重）的全方位工作。
 sidebar:
-    order: 1
+    order: 0
 ---
 
 ## Worker 自动化数据采集工具：操作指南与原理

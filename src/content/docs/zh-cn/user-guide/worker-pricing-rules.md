@@ -1,13 +1,13 @@
 ---
-title: 脚本计价规则
-description: 您只需为 Template 运行时实际消耗的平台资源付费，无额外隐形费用。
+title: Worker 计价规则
+description: 您只需为 Worker 运行时实际消耗的平台资源付费，无额外隐形费用。
 sidebar:
     order: 3
 ---
 
 ### 定价模式：按用量付费 (Pay per usage)
 
-您只需为 Template 运行时**实际消耗**的平台资源付费，无额外隐形费用。
+您只需为 Worker 运行时**实际消耗**的平台资源付费，无额外隐形费用。
 
 ### 计费范围
 
@@ -16,7 +16,7 @@ sidebar:
 - 运行设备数量、时长
 - 消耗流量
 
-根据您选择的内存配置，动态计算单价。最终将按照脚本实际运行时长、数据大小计算消耗费用和流量。
+根据您选择的内存配置，动态计算单价。最终将按照 Worker 实际运行时长、数据大小计算消耗费用和流量。
 
 ![](@/assets/docs/img_4.jpg)
 
@@ -28,14 +28,10 @@ sidebar:
 
 ![](@/assets/docs/img_5.jpg)
 
-### 流量消耗记录
-
-![](@/assets/docs/img_6.jpg)
-
 :::note[最佳实践]
 我们建议您进行小规模测试（例如仅抓取少量页面）。通过试运行，您可以直观地评估资源消耗情况，从而推算出大规模运行的预算。
-:::
+::::
 
-:::tip[反馈与支持]
-如在使用 Template 过程中遇到任何问题，欢迎随时发送邮件至：[support@coreclaw.com](mailto:support@coreclaw.com)
-:::
+::::tip[反馈与支持]
+如在使用 Worker 过程中遇到任何问题，欢迎随时发送邮件至：[support@coreclaw.com](mailto:support@coreclaw.com)
+::::

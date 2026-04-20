@@ -5,13 +5,13 @@ sidebar:
     order: 10
 ---
 
-**请求方式：** `POST`
+**Request Method:** `POST`
 
-**请求地址：** `/api/v1/account/info`
+**Request URL:** `/api/v1/account/info`
 
-使用 **Content-Type: application/json** 发送请求体。
+Send the request body with **Content-Type: application/json**.
 
-## header 头请求示例
+## Header Request Example
 
 ```json
 {
@@ -19,13 +19,13 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Parameter Description
 
-| 参数    | 示例值 | 参数类型 | 是否必填 | 参数描述 |
-| ------- | ------ | -------- | -------- | -------- |
-| api-key | -      | String   | 是       | API密钥  |
+| Parameter | Example Value | Type   | Required | Description |
+| --------- | ------------- | ------ | -------- | ----------- |
+| api-key   | -             | String | Yes      | API key     |
 
-## 响应示例
+## Response Example
 
 ```json
 {
@@ -39,13 +39,13 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### Parameter Description
 
-| 参数                     | 示例值       | 参数类型 | 参数描述                                |
-| ------------------------ | ------------ | -------- | --------------------------------------- |
-| code                     | 0            | Integer  | [查看帮助](/zh-cn/api/base/#全局状态码) |
-| message                  | success      | String   | 错误描述                                |
-| data                     | -            | Object   | -                                       |
-| └─ balance               | 10122.5547   | String   | 账户余额($)                             |
-| └─ traffic               | 178194757135 | Integer  | 消耗流量(字节)                          |
-| └─ traffic_expiration_at | 1775267018   | Integer  | 流量过期时间(时间戳 秒)                 |
+| Parameter                | Example Value | Type    | Description                                  |
+| ------------------------ | ------------- | ------- | -------------------------------------------- |
+| code                     | 0             | Integer | [View help](/api/basic/base/#global-status-codes) |
+| message                  | success       | String  | Error description                            |
+| data                     | -             | Object  | -                                            |
+| └─ balance               | 10122.5547    | String  | Account balance ($)                          |
+| └─ traffic               | 178194757135  | Integer | Consumed traffic (bytes)                     |
+| └─ traffic_expiration_at | 1775267018    | Integer | Traffic expiration time (timestamp, seconds) |

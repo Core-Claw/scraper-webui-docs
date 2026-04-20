@@ -43,7 +43,7 @@ sidebar:
 
 | 参数        | 示例值                     | 类型    | 描述                                    |
 | ----------- | -------------------------- | ------- | --------------------------------------- |
-| code        | 0                          | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
+| code        | 0                          | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
 | message     | success                    | String  | -                                       |
 | data        | -                          | Object  | -                                       |
 | └─ run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行的唯一标识                          |
@@ -62,6 +62,6 @@ sidebar:
 
 | 参数名  | 示例值                    | 类型    | 描述                                    |
 | ------- | ------------------------- | ------- | --------------------------------------- |
-| code    | 70001                     | Integer | [查看帮助](/zh-cn/api/base/#全局状态码) |
+| code    | 70001                     | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
 | message | Run record does not exist | String  | 错误描述                                |
 | data    | null                      | Null    | -                                       |

@@ -76,7 +76,7 @@ After successful login, users enter the main system console, where they can view
 
 ##### 4.1 Enter Task Management
 
-In the left menu, click **[Template]** → Select the script you want to run (**Template**).
+In the left menu, click **[Worker]** → Select the script you want to run (**Worker**).
 
 ![](@/assets/docs/img_13.jpg)
 
@@ -194,11 +194,6 @@ The system will generate the export file and automatically download it upon comp
     <p>- Record the complete **error code and prompt message**.</p>
     <p>- First try **refreshing the page or logging in again**.</p>
     <p>- If the error persists, provide the error message to **technical support or the administrator** for quick problem resolution.</p>
-</details>
-
-<details>
-    <summary>What to do if the task keeps running?</summary>
-    <p>You can check the task logs or contact the administrator.</p>
 </details>
 
 <details>

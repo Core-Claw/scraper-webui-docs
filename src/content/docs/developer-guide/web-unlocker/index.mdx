@@ -1,0 +1,66 @@
+---
+title: Overview
+description: Bypass anti-scraping measures and access blocked content with CoreClaw's Web Unlocker.
+sidebar:
+  order: 0
+---
+
+import { LinkCard } from '@astrojs/starlight/components'
+
+**Simplify Complexity. Focus on What Matters: Data Extraction Logic.**
+
+Our platform is built to handle the hardest and most failure-prone parts of web data collection.
+
+You **don't need to build or maintain fingerprint browsers, web unlockers, or proxy networks** — all of these capabilities are **built in and free to use**.
+
+You focus on writing the extraction logic. We take care of everything else.
+
+## Why Fingerprint Browsers and Web Unlockers Matter?
+
+Modern anti-bot systems no longer rely on simple IP blocking. Instead, they analyze:
+
+- Browser fingerprint consistency
+- User behavior and interaction patterns
+- Dynamic rendering and verification challenges
+
+Traditional HTTP requests or basic automation scripts struggle to run reliably at scale.
+
+Our **built-in fingerprint browser and web unlocker** provide an execution environment that websites recognize as a **real human user**, dramatically improving stability and success rates.
+
+## Built-in Platform Capabilities (Free to Use)
+
+### Fingerprint Browser
+
+- Stable and consistent browser fingerprints
+- Full JavaScript execution
+- Support for dynamically rendered pages
+
+### Web Unlocker
+
+- High-quality dynamic residential proxies
+- Human-like behavior simulation
+- Automatic handling of mainstream anti-bot systems
+
+### Captcha & Slider Verification Support
+
+- Cloudflare Turnstile
+- Google reCAPTCHA v2/v3
+- DataDome advanced slider challenges
+- Platform-specific protections such as TikTok and Temu
+
+:::note
+All features above are **enabled by default**, require **no additional configuration**, and are **free to use**.
+:::
+
+## Topics
+
+<LinkCard
+    title="Fingerprint Browser"
+    description="To counter the target website's browser fingerprinting and automated detection mechanisms, the platform automatically provides and hosts an isolated browser fingerprinting environment during script execution."
+    href="/developer-guide/web-unlocker/fingerprint-browser/"
+/>
+<LinkCard
+    title="Bypass Verification Code"
+    description="The platform integrates automatic CAPTCHA bypass capabilities and exposes them to external users through custom CDP commands. Developers only need to call the specified command in the crawler code to automatically complete the CAPTCHA processing."
+    href="/developer-guide/web-unlocker/bypass-verification-code/"
+/>

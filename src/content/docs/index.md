@@ -1,16 +1,15 @@
 ---
-title: ''
+title: 'Documentation'
 description: CoreClaw is dedicated to providing efficient, stable, and scalable data acquisition solutions for users with diverse backgrounds and technical capabilities.
 template: splash
 ---
 
-<!--
 <div class="breadcrumb-home">
 	<a href="https://coreclaw.com" class="breadcrumb-home-link">Home</a>
 	<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
 	<span class="breadcrumb-home-current">Documentation Center</span>
 </div>
--->
+
 <div class="hero-section">
 	<h1 class="hero-title">CoreClaw <span class="hero-title-accent">Documentation</span></h1>
 	<p class="hero-subtitle">Whether you're getting started or building advanced solutions, our documentation provides complete guidance.</p>
@@ -31,11 +30,13 @@ template: splash
 		display: flex;
 		align-items: center;
 		gap: 6px;
-		font-size: 12px;
+		font-size: 16px;
 		color: #94a3b8;
 		width: 100%;
-		margin: 0;
-		padding: 14px 24px 0;
+		max-width: var(--sl-content-width);
+		margin: 0 auto;
+		padding: 12px 24px 0;
+		box-sizing: border-box;
 	}
 	.breadcrumb-home-link {
 		color: #94a3b8;
@@ -54,11 +55,11 @@ template: splash
 		margin-bottom: 0;
 	}
 	.hero-title {
-		font-size: 40px;
-		font-weight: 800;
+		font-size: 36px;
+		font-weight: 700;
 		margin: 0 0 16px;
 		color: #0f172a;
-		line-height: 1.2;
+		line-height: 1.1;
 	}
 	.hero-title-accent {
 		background: linear-gradient(135deg, #0f4c81, #1aa6a3);
@@ -232,13 +233,13 @@ template: splash
 			<a href="/changelog/" class="updates-panel-link">Full changelog →</a>
 		</div>
 		<div class="updates-list">
-			<a href="/partnership-promotion/data-bounty-earnings/" class="updates-item">
-				<span class="updates-dot" style="--dot-color: #10b981"></span>
+			<a href="/website-events/invitation-event/" class="updates-item">
+				<span class="updates-dot" style="--dot-color: #8b5cf6"></span>
 				<div class="updates-item-content">
-					<div class="updates-item-title">Data Bounty Program Launched</div>
-					<div class="updates-item-desc">Post data requirements, developers claim and earn bounty rewards</div>
+					<div class="updates-item-title">Invitation Program Launched</div>
+					<div class="updates-item-desc">Invite friends to register and earn rewards through the new invitation campaign</div>
 				</div>
-				<span class="updates-item-date">2026-02-02</span>
+				<span class="updates-item-date">2025-04-16</span>
 			</a>
 			<a href="/developer-guide/worker/worker-directory/" class="updates-item">
 				<span class="updates-dot" style="--dot-color: #3b82f6"></span>
@@ -277,11 +278,16 @@ template: splash
 		<div class="help-card-title">GitHub</div>
 		<div class="help-card-desc">Submit issues or contribute to open source</div>
 	</a>
-	<div class="help-card help-card-no-link">
+	<a href="mailto:support@coreclaw.com" class="help-card">
 		<div class="help-card-icon" style="--help-bg: #dbeafe">
 			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>
 		</div>
 		<div class="help-card-title">Contact Us</div>
 		<div class="help-card-desc">Email: support@coreclaw.com</div>
-	</div>
+	</a>
+</div>
+
+<div class="company-footer">
+	<div class="company-name">Apex DataWorks Limited</div>
+	<div class="company-address">UNIT 9, 1/F, THE CLOUD, 111 TUNG CHAU STREET, TAI KOK TSUI, KOWLOON, HONG KONG</div>
 </div>

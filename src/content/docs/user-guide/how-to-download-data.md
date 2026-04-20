@@ -11,7 +11,7 @@ sidebar:
 
 - Log in to your account
 - Go to 「Runs」
-- Click on the corresponding Template title or Run ID
+- Click on the Run ID
 
 ##### Step 2: View Execution Results
 
@@ -30,7 +30,6 @@ The system typically supports two structured data formats:
 
 - 📊 XLSX (Excel file)
 - 📦 JSON (recommended for developers)
-- 🗂 API Access (for system integration)
 
 Click the format button and select your desired option.
 
@@ -44,7 +43,7 @@ API is a custom service; please contact platform customer support for details
 
 **Steps:**
 
-- Go to the Template details page
+- Go to the Worker details page
 - Locate the API Endpoint
 - Use Token for authentication
 - Fetch result data via GET request
@@ -58,7 +57,7 @@ API is a custom service; please contact platform customer support for details
 
 ---
 
-## III、常见问题
+## III. Frequently Asked Questions
 
 ##### ❓ Why is the download button disabled?
 
