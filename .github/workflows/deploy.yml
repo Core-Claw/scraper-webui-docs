@@ -30,7 +30,5 @@ jobs:
       
       - name: Deploy to web server
         run: |
-          # 将构建产物复制到 Web 服务器目录
-          sudo cp -r ./dist/* /var/www/docs/
-          # 或者使用 rsync 进行增量同步
+          sudo rsync -av --delete ./dist/ /var/www/docs/
 
