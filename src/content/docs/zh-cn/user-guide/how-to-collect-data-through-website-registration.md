@@ -29,7 +29,7 @@ sidebar:
 
 用户访问官网，点击右上角【转到控制台】按钮，进入注册页面。
 
-![](@/assets/docs/img_10.jpg)
+![进入控制台按钮](@/assets/docs/img_10.jpg)
 
 ---
 
@@ -62,7 +62,7 @@ sidebar:
 
 平台也支持Google、Github免注册登录
 
-![](@/assets/docs/img_11.jpg)
+![用户登录页面](@/assets/docs/img_11.jpg)
 
 ---
 
@@ -70,7 +70,7 @@ sidebar:
 
 登录成功后，用户进入系统主控制台，可查看任务概览、使用说明等信息。
 
-![](@/assets/docs/img_12.jpg)
+![系统主控制台](@/assets/docs/img_12.jpg)
 
 ## 四、创建采集任务
 
@@ -78,7 +78,7 @@ sidebar:
 
 在左侧菜单中，点击【**Worker**】 → 选择要运行的脚本（**Worker**）。
 
-![](@/assets/docs/img_13.jpg)
+![Worker 任务管理菜单](@/assets/docs/img_13.jpg)
 
 ---
 
@@ -88,7 +88,7 @@ sidebar:
 
 - 任务名称（用于区分不同任务）
 
-![](@/assets/docs/img_14.jpg)
+![任务名称配置](@/assets/docs/img_14.jpg)
 
 ## 五、配置采集参数
 
@@ -103,7 +103,7 @@ sidebar:
 
 请根据实际采集脚本的要求进行设置。
 
-![](@/assets/docs/img_15.jpg)
+![采集参数配置](@/assets/docs/img_15.jpg)
 
 ---
 
@@ -117,7 +117,7 @@ sidebar:
 
 普通用户可保持默认配置。
 
-![](@/assets/docs/img_16.jpg)
+![高级配置选项](@/assets/docs/img_16.jpg)
 
 ---
 
@@ -139,7 +139,7 @@ sidebar:
 - 失败
 - 已取消
 
-![](@/assets/docs/img_17.jpg)
+![任务状态列表](@/assets/docs/img_17.jpg)
 
 ---
 
@@ -157,7 +157,7 @@ sidebar:
 - 输入参数详情
 - 运行时间、费用等信息
 
-![](@/assets/docs/img_18.jpg)
+![采集结果页面](@/assets/docs/img_18.jpg)
 
 ---
 
@@ -172,7 +172,7 @@ sidebar:
 - CSV
 - JSON
 
-![](@/assets/docs/img_19.jpg)
+![导出数据按钮](@/assets/docs/img_19.jpg)
 
 ##### 8.2 执行导出
 

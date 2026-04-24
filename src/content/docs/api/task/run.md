@@ -2,7 +2,7 @@
 title: Start Task
 description: Start a Task.
 sidebar:
-    order: 9
+    order: 1
 ---
 
 **Method:** `POST`

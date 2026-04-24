@@ -2,7 +2,7 @@
 title: 获取日志
 description: 获取运行日志
 sidebar:
-    order: 11
+    order: 4
 ---
 
 **请求方式：** `POST`

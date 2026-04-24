@@ -1,6 +1,8 @@
 ---
 title: Bypass verification code
 description: Automatically bypass CAPTCHA and verification challenges
+sidebar:
+    order: 1
 ---
 
 ## CAPTCHA Bypass Service (Fingerprint Browser-Based)

@@ -2,7 +2,7 @@
 title: Bounty Task
 description: Learn how to post and fulfill bounty tasks on the CoreClaw platform.
 sidebar:
-    order: 8
+    order: 7
 draft: true
 ---
 

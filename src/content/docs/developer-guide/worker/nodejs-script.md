@@ -2,10 +2,10 @@
 title: Node.js Script
 description: Learn how to write Node.js scripts for CoreClaw Workers
 sidebar:
-    order: 5
+    order: 6
 ---
 
-# Node.js Script Demo
+## Node.js Script Demo
 
 ## GitHub Repository
 
@@ -37,7 +37,7 @@ sidebar:
 
 ---
 
-# Core SDK Files
+## Core SDK Files
 
 ## File Overview
 
@@ -186,7 +186,7 @@ With these features, your script can seamlessly integrate with the platform back
 
 ---
 
-# Script Entry File (`main.js`)
+## Script Entry File (`main.js`)
 
 ## Example Code
 
@@ -280,7 +280,7 @@ run()
 
 ---
 
-# Automated Data Collection Script: Workflow & Principles
+## Automated Data Collection Script: Workflow & Principles
 
 ## 1. Script Overview
 

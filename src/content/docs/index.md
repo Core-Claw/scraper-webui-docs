@@ -197,7 +197,7 @@ template: splash
 			<a href="/developer-guide/web-unlocker/" class="updates-panel-link">View all →</a>
 		</div>
 		<div class="updates-list">
-			<a href="/developer-guide/web-unlocker/overview/" class="updates-item">
+			<a href="/developer-guide/web-unlocker/" class="updates-item">
 				<span class="updates-dot" style="--dot-color: #6366f1"></span>
 				<div class="updates-item-content">
 					<div class="updates-item-title">Web Unlocker</div>

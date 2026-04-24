@@ -1,5 +1,6 @@
 ---
 title: Worker 目录结构
+description: 了解 Worker 项目的标准目录结构和必需文件，包括配置文件、脚本文件和依赖管理。
 sidebar:
     order: 2
 ---

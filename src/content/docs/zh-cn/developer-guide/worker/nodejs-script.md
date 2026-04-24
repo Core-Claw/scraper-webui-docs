@@ -2,10 +2,10 @@
 title: Node.js 脚本
 description: 学习如何编写 Node.js 脚本
 sidebar:
-    order: 5
+    order: 6
 ---
 
-# Node.js 脚本示例
+## Node.js 脚本示例
 
 ## GitHub 仓库
 
@@ -37,7 +37,7 @@ sidebar:
 
 ---
 
-# 核心 SDK 文件
+## 核心 SDK 文件
 
 ## 文件概览
 
@@ -186,7 +186,7 @@ for (let index = 0; index < dataObject.length; index++) {
 
 ---
 
-# 脚本入口文件（`main.js`）
+## 脚本入口文件（`main.js`）
 
 ## 示例代码
 
@@ -280,7 +280,7 @@ run()
 
 ---
 
-# 自动化数据采集脚本：工作流与原理
+## 自动化数据采集脚本：工作流与原理
 
 ## 1. 脚本概览
 

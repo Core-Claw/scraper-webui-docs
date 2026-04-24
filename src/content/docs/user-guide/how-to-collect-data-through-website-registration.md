@@ -29,7 +29,7 @@ The complete user operation path is as follows:
 
 Visit the official website and click the **[Go to Console]** button in the top right corner to enter the registration page.
 
-![](@/assets/docs/img_10.jpg)
+![Go to Console button](@/assets/docs/img_10.jpg)
 
 ---
 
@@ -62,7 +62,7 @@ Click the **[Login]** button to enter the system.
 
 The platform also supports Google and Github login without registration.
 
-![](@/assets/docs/img_11.jpg)
+![User login page](@/assets/docs/img_11.jpg)
 
 ---
 
@@ -70,7 +70,7 @@ The platform also supports Google and Github login without registration.
 
 After successful login, users enter the main system console, where they can view task overviews, usage instructions, and other information.
 
-![](@/assets/docs/img_12.jpg)
+![Main system console](@/assets/docs/img_12.jpg)
 
 ## 4. Create Scraping Task
 
@@ -78,7 +78,7 @@ After successful login, users enter the main system console, where they can view
 
 In the left menu, click **[Worker]** → Select the script you want to run (**Worker**).
 
-![](@/assets/docs/img_13.jpg)
+![Worker task management menu](@/assets/docs/img_13.jpg)
 
 ---
 
@@ -88,7 +88,7 @@ When creating a new task, users need to fill in the following:
 
 - Task Name (used to distinguish different tasks)
 
-![](@/assets/docs/img_14.jpg)
+![Task name configuration](@/assets/docs/img_14.jpg)
 
 ## 5. Configure Scraping Parameters
 
@@ -103,7 +103,7 @@ On the scraping parameter configuration page, users can configure:
 
 Please configure these options according to the requirements of the selected data collection script.
 
-![](@/assets/docs/img_15.jpg)
+![Scraping parameter configuration](@/assets/docs/img_15.jpg)
 
 ---
 
@@ -117,7 +117,7 @@ Advanced users can configure as needed:
 
 Regular users can keep the default configuration.
 
-![](@/assets/docs/img_16.jpg)
+![Advanced configuration options](@/assets/docs/img_16.jpg)
 
 ---
 
@@ -139,7 +139,7 @@ Users can view task status in the **[Run]** list:
 - Failed
 - Canceled
 
-![](@/assets/docs/img_17.jpg)
+![Task status list](@/assets/docs/img_17.jpg)
 
 ---
 
@@ -157,7 +157,7 @@ On the results page, users can:
 - View input parameter details
 - View run time, costs, and other information
 
-![](@/assets/docs/img_18.jpg)
+![Scraping results page](@/assets/docs/img_18.jpg)
 
 ---
 
@@ -172,7 +172,7 @@ The system supports the following export formats (depending on permissions):
 - CSV
 - JSON
 
-![](@/assets/docs/img_19.jpg)
+![Export data button](@/assets/docs/img_19.jpg)
 
 ##### 8.2 Execute Export
 

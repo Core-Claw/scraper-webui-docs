@@ -1,11 +1,13 @@
 ---
 title: Frequently Asked Questions
 description: Find answers to common questions about CoreClaw, including payment, account, and technical issues.
+sidebar:
+    order: 0
 ---
 
-# Frequently Asked Questions
+## Frequently Asked Questions
 
-Find answers to common questions about CoreClaw. Can't find what you're looking for? [Contact our support team](https://coreclaw.com/contact).
+Find answers to common questions about CoreClaw. Can't find what you're looking for? [Contact our support team](mailto:support@coreclaw.com).
 
 <div class="faq-categories">
 	<a href="#payment-billing" class="faq-category">

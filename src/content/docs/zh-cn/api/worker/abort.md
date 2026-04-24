@@ -2,7 +2,7 @@
 title: 终止 Worker
 description: 终止正在运行的 Worker 任务
 sidebar:
-    order: 5
+    order: 2
 ---
 
 **请求方式：** `POST`

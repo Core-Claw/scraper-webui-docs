@@ -2,7 +2,7 @@
 title: Data Saving
 description: Learn how data is saved and managed after a scraping task completes.
 sidebar:
-    order: 7
+    order: 8
 ---
 
 ### Data Saving Methods

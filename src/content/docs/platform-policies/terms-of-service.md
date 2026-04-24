@@ -1,5 +1,8 @@
 ---
 title: Terms of Service
+description: Legal terms and conditions governing the use of CoreClaw services, including website, APIs, and cloud execution environment.
+sidebar:
+    order: 2
 lastUpdated: 2025-09-01
 ---
 
@@ -32,7 +35,7 @@ These Terms of Service (“Terms”) constitute a legally binding agreement betw
 
 ## 1. Definitions
 
-1. **“Platform”** means the website operated by CoreClaw ([www.coreclaw.com](http://www.coreclaw.com/) or its subdomains), client applications, and related cloud-based technical services.
+1. **"Platform"** means the website operated by CoreClaw ([www.coreclaw.com](https://www.coreclaw.com/) or its subdomains), client applications, and related cloud-based technical services.
 2. **“User”** means any individual or entity that registers, accesses, or uses the Platform, including:
     - **“Developer”**: a User who uploads, publishes, sells, or licenses scraping scripts on the Platform;
     - **“Consumer”**: a User who purchases, rents, or runs scripts provided by Developers to obtain data.

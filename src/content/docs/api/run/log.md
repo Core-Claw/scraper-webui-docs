@@ -2,7 +2,7 @@
 title: Run Log
 description: Get the logs of a Worker run.
 sidebar:
-    order: 11
+    order: 4
 ---
 
 **Method:** `POST`

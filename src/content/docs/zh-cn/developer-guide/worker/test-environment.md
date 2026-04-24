@@ -2,7 +2,7 @@
 title: 测试环境
 description: 了解如何在正式运行前使用测试环境验证抓取逻辑。
 sidebar:
-    order: 6
+    order: 7
 ---
 
 ### 什么是测试环境？

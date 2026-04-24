@@ -1,5 +1,8 @@
 ---
 title: Privacy Policy
+description: How CoreClaw collects, uses, and protects your personal data when using the Platform and related services.
+sidebar:
+    order: 1
 lastUpdated: 2025-09-01
 ---
 

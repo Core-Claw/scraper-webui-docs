@@ -1,6 +1,8 @@
 ---
 title: Puppeteer
-description: Why Puppeteer is selected as the page scraping framework in modern Web data collection scenarios within the Node.js ecosystem, and the platform’s officially recommended usage patterns.
+description: Why Puppeteer is selected as the page scraping framework in modern Web data collection scenarios within the Node.js ecosystem, and the platform's officially recommended usage patterns.
+sidebar:
+    order: 4
 ---
 
 > Why Puppeteer is selected as the page scraping framework in modern Web data collection scenarios within the Node.js ecosystem, and the platform’s officially recommended usage patterns.

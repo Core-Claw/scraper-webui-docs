@@ -1,5 +1,5 @@
 ---
-title: 概述
+title: API 概述
 description: CoreClaw 完整 API 文档
 sidebar:
   order: 0
@@ -9,7 +9,7 @@ sidebar:
 
 ## 快速开始
 
-所有 API 请求都需要使用您的 API 密钥进行身份验证。您可以在[账户设置](/zh-cn/api/account/)中找到您的 API 密钥。
+所有 API 请求都需要使用您的 API 密钥进行身份验证。您可以在[账户设置](/zh-cn/api/account/info/)中找到您的 API 密钥。
 
 <div class="hero-cards">
 	<a href="/zh-cn/api/basic/base/" class="hero-card">

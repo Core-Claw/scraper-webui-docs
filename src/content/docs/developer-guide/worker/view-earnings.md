@@ -2,7 +2,7 @@
 title: View Earnings
 description: Learn how to view and manage your earnings as a Script developer.
 sidebar:
-    order: 10
+    order: 12
 ---
 
 ### How to View Earnings

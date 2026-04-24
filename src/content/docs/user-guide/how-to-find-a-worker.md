@@ -1,6 +1,8 @@
 ---
 title: How to Find a Worker
 description: The platform provides two entry points for discovering Workers based on different usage scenarios.
+sidebar:
+    order: 4
 ---
 
 ## 1. Worker Discovery Entry Points
@@ -20,7 +22,7 @@ Both entry points display the same Worker information and support browsing and s
 
 Users visit the official platform website and navigate to the **Worker Store** page via the navigation bar or related entry points.
 
-![](@/assets/docs/img_26.jpg)
+![Worker Store page](@/assets/docs/img_26.jpg)
 
 ##### 2.2 Browse Worker Categories
 
@@ -34,7 +36,7 @@ On the **Worker Store** page, Workers are typically organized by functionality o
 
 Users can quickly browse Workers of a specific type by selecting a category.
 
-![](@/assets/docs/img_27.jpg)
+![Worker categories](@/assets/docs/img_27.jpg)
 
 ##### 2.3 Worker Search
 
@@ -53,7 +55,7 @@ After entering keywords, the system automatically matches and displays relevant 
 
 After logging in to the console, click **Worker** in the left-side menu to enter the Worker management page.
 
-![](@/assets/docs/img_28.jpg)
+![Console Worker management page](@/assets/docs/img_28.jpg)
 
 ##### 3.2 View the Worker List
 
@@ -73,7 +75,7 @@ The Worker page also supports search functionality, including:
 
 Search results are updated in real time, helping users quickly locate the desired Worker.
 
-![](@/assets/docs/img_29.jpg)
+![Worker search functionality](@/assets/docs/img_29.jpg)
 
 ---
 

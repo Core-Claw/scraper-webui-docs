@@ -2,7 +2,7 @@
 title: Abort Worker
 description: Abort a running Worker task.
 sidebar:
-    order: 5
+    order: 2
 ---
 
 **Method:** `POST`

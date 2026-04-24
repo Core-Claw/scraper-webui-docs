@@ -2,7 +2,7 @@
 title: Export Run Result
 description: Export the results of a Worker run.
 sidebar:
-    order: 10
+    order: 5
 ---
 
 **Method:** `POST`

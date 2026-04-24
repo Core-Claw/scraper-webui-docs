@@ -1,9 +1,11 @@
 ---
 title: Invitation Event
 description: Invite friends to CoreClaw and earn $3 balance reward for each successful referral.
+sidebar:
+    order: 1
 ---
 
-# CoreClaw Invitation Program Terms & Conditions
+## CoreClaw Invitation Program Terms & Conditions
 
 Welcome to the event hosted by CoreClaw ("Platform"). To protect your rights, please read these rules carefully before participation. By joining the event, you acknowledge that you have read, understood, and agreed to all terms and conditions.
 

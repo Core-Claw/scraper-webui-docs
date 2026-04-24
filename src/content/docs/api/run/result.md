@@ -2,7 +2,7 @@
 title: Run Result
 description: Get the results of a Worker run.
 sidebar:
-    order: 9
+    order: 3
 ---
 
 **Method:** `POST`

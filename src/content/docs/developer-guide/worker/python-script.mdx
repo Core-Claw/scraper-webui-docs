@@ -2,10 +2,10 @@
 title: Python Script
 description: Learn how to write Python scripts for CoreClaw Workers
 sidebar:
-    order: 3
+    order: 4
 ---
 
-# Python Script Demo
+## Python Script Demo
 
 ## GitHub Repository
 
@@ -70,7 +70,7 @@ Use the following method to retrieve them:
 
 ```python
 # Retrieve all input parameters as a dictionary
-parameters = SDK.Parameter.get_input_json_dict()
+parameters = CoreSDK.Parameter.get_input_json_dict()
 
 # Example return value:
 # {"website": "example.com", "keyword": "tech news"}
@@ -89,16 +89,16 @@ During execution, you can log messages at different levels. These logs will be d
 
 ```python
 # Debug-level logs (most detailed)
-SDK.Log.debug("Connecting to target website...")
+CoreSDK.Log.debug("Connecting to target website...")
 
 # Informational logs (normal execution flow)
-SDK.Log.info("Successfully collected 10 news articles")
+CoreSDK.Log.info("Successfully collected 10 news articles")
 
 # Warning logs (non-fatal issues)
-SDK.Log.warn("Network latency detected, collection speed may be affected")
+CoreSDK.Log.warn("Network latency detected, collection speed may be affected")
 
 # Error logs (execution failures)
-SDK.Log.error("Failed to access target website, please check network connection")
+CoreSDK.Log.error("Failed to access target website, please check network connection")
 ```
 
 #### Log Level Explanation
@@ -192,9 +192,9 @@ for i, news in enumerate(news_data):
 from sdk import CoreSDK
 
 # 1. Get input parameters
-config = SDK.Parameter.get_input_json_dict()
+config = CoreSDK.Parameter.get_input_json_dict()
 website = config.get("website", "default website")
-SDK.Log.info(f"Starting collection for website: {website}")
+CoreSDK.Log.info(f"Starting collection for website: {website}")
 
 # 2. Set table headers
 headers = [
@@ -206,14 +206,14 @@ headers = [
 CoreSDK.Result.set_table_header(headers)
 
 # 3. Simulate data collection
-SDK.Log.info("Collecting data...")
+CoreSDK.Log.info("Collecting data...")
 collected_data = [
     {"title": "Sample News 1", "publish_time": "2023-10-01 10:00", "category": "Tech", "view_count": 1000},
     {"title": "Sample News 2", "publish_time": "2023-10-01 11:00", "category": "Finance", "view_count": 500},
 ]
 
 # 4. Push data
-SDK.Log.info(f"Collected {len(collected_data)} records, pushing data...")
+CoreSDK.Log.info(f"Collected {len(collected_data)} records, pushing data...")
 for data in collected_data:
     obj = {
         "title": data.get("title"),
@@ -224,7 +224,7 @@ for data in collected_data:
     CoreSDK.Result.push_data(obj)
 
 # 5. Done
-SDK.Log.info("Data collection task completed!")
+CoreSDK.Log.info("Data collection task completed!")
 ```
 
 ---

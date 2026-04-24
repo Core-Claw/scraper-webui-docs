@@ -1,11 +1,13 @@
 ---
 title: 常见问题
 description: 查找关于 CoreClaw 的常见问题解答，包括支付、账户和技术问题。
+sidebar:
+    order: 0
 ---
 
-# 常见问题
+## 常见问题
 
-查找关于 CoreClaw 的常见问题解答。找不到您需要的答案？[联系我们的支持团队](https://coreclaw.com/contact)。
+查找关于 CoreClaw 的常见问题解答。找不到您需要的答案？[联系我们的支持团队](mailto:support@coreclaw.com)。
 
 <div class="faq-categories">
 	<a href="#payment-billing" class="faq-category">

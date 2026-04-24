@@ -2,7 +2,7 @@
 title: Run Detail
 description: Get the details of a Worker run.
 sidebar:
-    order: 8
+    order: 2
 ---
 
 **Method:** `POST`

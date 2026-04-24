@@ -1,11 +1,11 @@
 ---
-title: 概述
+title: 数据采集框架
 description: 了解 CoreClaw 支持的数据采集框架，包括 Selenium、Playwright、Puppeteer 和 DrissionPage。
 sidebar:
   order: 0
 ---
 
-# 数据采集框架
+## 数据采集框架
 
 CoreClaw 支持多种数据采集框架，以满足不同的爬取需求。每个框架都有其独特的优势，适用于特定的使用场景。
 

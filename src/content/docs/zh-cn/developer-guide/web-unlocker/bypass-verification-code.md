@@ -1,6 +1,8 @@
 ---
 title: 验证码绕过服务
 description: 验证码绕过
+sidebar:
+    order: 1
 ---
 
 ## 🚀 验证码绕过服务（依赖指纹浏览器）
@@ -117,13 +119,13 @@ else:
 
 | 验证码类型           | solverType          | 示例                          |
 | -------------------- | ------------------- | ----------------------------- |
-| Cloudflare Turnstile | cloudflare          | ![](@/assets/docs/code_1.jpg) |
-| Google reCAPTCHA v2  | google-v2           | ![](@/assets/docs/code_2.jpg) |
-| Google reCAPTCHA v3  | google-v3           | ![](@/assets/docs/code_3.jpg) |
-| DataDome 滑块验证码  | datadome            | ![](@/assets/docs/code_4.jpg) |
-| OOCL Rotate Slide    | oocl_slide          | ![](@/assets/docs/code_5.jpg) |
-| Temu 全系列验证码    | temu_auto           | ![](@/assets/docs/code_6.jpg) |
-| TikTok 滑块验证码    | tiktok_slide_simple | ![](@/assets/docs/code_7.jpg) |
+| Cloudflare Turnstile | cloudflare          | ![Cloudflare Turnstile](@/assets/docs/code_1.jpg) |
+| Google reCAPTCHA v2  | google-v2           | ![Google reCAPTCHA v2](@/assets/docs/code_2.jpg) |
+| Google reCAPTCHA v3  | google-v3           | ![Google reCAPTCHA v3](@/assets/docs/code_3.jpg) |
+| DataDome 滑块验证码  | datadome            | ![DataDome 滑块验证码](@/assets/docs/code_4.jpg) |
+| OOCL Rotate Slide    | oocl_slide          | ![OOCL Rotate Slide](@/assets/docs/code_5.jpg) |
+| Temu 全系列验证码    | temu_auto           | ![Temu 全系列验证码](@/assets/docs/code_6.jpg) |
+| TikTok 滑块验证码    | tiktok_slide_simple | ![TikTok 滑块验证码](@/assets/docs/code_7.jpg) |
 
 :::note[使用说明]
 当 `status = true` 时，表示验证码已成功处理，可直接继续执行登录、数据抓取、表单提交等后续业务逻辑；

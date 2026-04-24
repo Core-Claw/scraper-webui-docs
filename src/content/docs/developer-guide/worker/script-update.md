@@ -2,7 +2,7 @@
 title: Script Update
 description: Learn how to update an existing Script on the CoreClaw platform.
 sidebar:
-    order: 9
+    order: 11
 ---
 
 ### Overview

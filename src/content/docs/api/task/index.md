@@ -1,9 +1,11 @@
 ---
 title: Tasks API
 description: API endpoints for managing scheduled scraping tasks.
+sidebar:
+    order: 0
 ---
 
-# Tasks API
+## Tasks API
 
 Create and manage scheduled scraping tasks for automated data collection.
 

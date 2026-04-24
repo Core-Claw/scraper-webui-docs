@@ -1,11 +1,11 @@
 ---
-title: Overview
+title: Platform Policies
 description: Important policies and terms governing the use of CoreClaw services.
 sidebar:
   order: 0
 ---
 
-# Platform Policies
+## Platform Policies
 
 Please review our policies carefully before using CoreClaw services.
 

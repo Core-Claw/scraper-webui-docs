@@ -1,9 +1,11 @@
 ---
 title: Payment FAQ
 description: Frequently asked questions about payments, traffic, and billing.
+sidebar:
+    order: 0
 ---
 
-# Payment FAQ
+## Payment FAQ
 
 Common questions about payments, traffic usage, and billing.
 

@@ -2,7 +2,7 @@
 title: 历史记录
 description: 获取任务的运行记录
 sidebar:
-    order: 7
+    order: 1
 ---
 
 **请求方式：** `POST`

@@ -2,7 +2,7 @@
 title: Run History
 description: Get the history of Worker runs.
 sidebar:
-    order: 7
+    order: 1
 ---
 
 **Method:** `POST`

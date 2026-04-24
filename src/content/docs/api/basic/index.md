@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: API Basics Overview
 description: Essential API information including authentication, base URL, and request formatting.
 sidebar:
     order: 0

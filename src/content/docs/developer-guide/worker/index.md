@@ -1,11 +1,11 @@
 ---
-title: Overview
+title: Worker Development
 description: Learn how to create and manage custom Worker scripts in CoreClaw.
 sidebar:
   order: 0
 ---
 
-# Worker Scripts
+## Worker Scripts
 
 CoreClaw allows you to write custom Worker scripts to extract data from any website. This section covers everything you need to know about creating and managing your Worker scripts.
 

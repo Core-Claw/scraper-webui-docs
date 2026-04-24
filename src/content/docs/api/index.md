@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: API Overview
 description: Complete API documentation for CoreClaw
 sidebar:
   order: 0
@@ -9,7 +9,7 @@ Welcome to the CoreClaw API documentation. Our RESTful API allows you to integra
 
 ## Getting Started
 
-All API requests require authentication using your API key. You can find your API key in your [account settings](/api/account/).
+All API requests require authentication using your API key. You can find your API key in your [account settings](/api/account/info/).
 
 <div class="hero-cards">
 	<a href="/api/basic/" class="hero-card">
@@ -52,7 +52,7 @@ All API requests require authentication using your API key. You can find your AP
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="/api/account/" class="quick-link">
+	<a href="/api/account/info/" class="quick-link">
 		<div class="quick-link-content">
 			<span class="quick-link-title">Account API</span>
 			<span class="quick-link-desc">Manage your account and API keys</span>

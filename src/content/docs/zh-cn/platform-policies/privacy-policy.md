@@ -1,6 +1,9 @@
 ---
 title: 隐私政策
+description: CoreClaw 如何收集、使用和保护您在使用平台及相关服务时的个人数据。
 lastUpdated: 2025-09-01
+sidebar:
+    order: 1
 ---
 
 欢迎使用 CoreClaw（以下简称“我们”、“平台”或“我们的服务”）。我们致力于构建一个连接开发者与数据需求方的生态系统：

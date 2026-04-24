@@ -2,7 +2,7 @@
 title: Start Worker
 description: Start a Worker run.
 sidebar:
-    order: 4
+    order: 1
 ---
 
 **Method:** `POST`

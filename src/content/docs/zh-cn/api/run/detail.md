@@ -2,7 +2,7 @@
 title: 获取详情
 description: 获取运行详情
 sidebar:
-    order: 8
+    order: 2
 ---
 
 **请求方式：** `POST`

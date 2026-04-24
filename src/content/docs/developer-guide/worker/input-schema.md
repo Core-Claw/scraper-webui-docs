@@ -1,13 +1,15 @@
 ---
 title: Worker Input Configuration (Input Schema)
 description: A manual for Worker input configuration (Input Schema)
+sidebar:
+    order: 3
 ---
 
 This document explains how developers should configure the **input_schema.json** file. This file determines the **input form layout** presented to users in the web interface of an automation Worker.
 
 ---
 
-# 🛠️ Input Schema User Guide
+## 🛠️ Input Schema User Guide
 
 `input_schema.json` is the "face" of your script. By editing this file, you can control which parameters users must fill in before launching the script, such as URLs, keywords, dates, and more, as well as how those fields are displayed, such as dropdowns, checkboxes, and text inputs.
 
@@ -48,7 +50,7 @@ A standard configuration file consists of the following three parts:
 
 ### Output Example: Input
 
-![](@/assets/docs/img_34.jpg)
+![Input Schema output example](@/assets/docs/img_34.jpg)
 
 ## 2. Key Root Fields
 
@@ -125,7 +127,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_35.jpg)
+![Input field example](@/assets/docs/img_35.jpg)
 
 ### 2. Multi-line Textarea (`textarea`)
 
@@ -138,7 +140,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_36.jpg)
+![Textarea example](@/assets/docs/img_36.jpg)
 
 ### 3. Number Input (`number`)
 
@@ -152,7 +154,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_37.jpg)
+![Number input example](@/assets/docs/img_37.jpg)
 
 ### 4. Dropdown (`select`)
 
@@ -182,7 +184,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_38.jpg)
+![Dropdown select example](@/assets/docs/img_38.jpg)
 
 ### 5. Radio Group (`radio`)
 
@@ -206,7 +208,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_39.jpg)
+![Radio group example](@/assets/docs/img_39.jpg)
 
 ### 6. Checkbox Group (`checkbox`)
 
@@ -234,7 +236,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_40.jpg)
+![Checkbox group example](@/assets/docs/img_40.jpg)
 
 ### 7. Date Picker (`datepicker`)
 
@@ -249,7 +251,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_41.jpg)
+![Date picker example](@/assets/docs/img_41.jpg)
 
 ```json
 // editor:"datepicker"
@@ -263,9 +265,9 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_42.jpg)
+![Date picker absolute or relative](@/assets/docs/img_42.jpg)
 
-![](@/assets/docs/img_43.jpg)
+![Date picker relative date options](@/assets/docs/img_43.jpg)
 
 ### 8. Toggle Switch (`switch`)
 
@@ -278,7 +280,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_44.jpg)
+![Toggle switch example](@/assets/docs/img_44.jpg)
 
 ### 9. URL List (`requestList`)
 
@@ -301,7 +303,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_45.jpg)
+![URL list example](@/assets/docs/img_45.jpg)
 
 ### 10. URL Request Source (`requestListSource`)
 
@@ -359,7 +361,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_46.jpg)
+![URL request source example](@/assets/docs/img_46.jpg)
 
 ### 11. String List (`stringList`)
 
@@ -380,7 +382,7 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-![](@/assets/docs/img_47.jpg)
+![String list example](@/assets/docs/img_47.jpg)
 
 ---
 
@@ -461,7 +463,7 @@ Developers can logically group multiple configuration items by using specific fi
 }
 ```
 
-![](@/assets/docs/img_48.jpg)
+![Grouped configuration example](@/assets/docs/img_48.jpg)
 
 ## 💡 Configuration Tips
 

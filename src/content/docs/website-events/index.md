@@ -1,11 +1,11 @@
 ---
-title: Overview
+title: Website Events
 description: Explore ongoing events and activities on CoreClaw platform.
 sidebar:
   order: 0
 ---
 
-# Website Events
+## Website Events
 
 Welcome to CoreClaw's events page! Here you'll find all the latest activities and opportunities to earn rewards on our platform.
 

@@ -1,9 +1,11 @@
 ---
 title: Worker API
 description: API endpoints for managing and running Workers.
+sidebar:
+    order: 0
 ---
 
-# Worker API
+## Worker API
 
 Manage your Workers through the API. Create, configure, and execute scraping tasks.
 

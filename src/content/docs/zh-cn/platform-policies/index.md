@@ -1,11 +1,11 @@
 ---
-title: 概述
+title: 平台政策
 description: 管理 CoreClaw 服务使用的重要政策和条款。
 sidebar:
   order: 0
 ---
 
-# 平台政策
+## 平台政策
 
 在使用 CoreClaw 服务之前，请仔细阅读我们的政策。
 

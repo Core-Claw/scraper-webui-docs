@@ -1,6 +1,8 @@
 ---
 title: Puppeteer
 description: 在现代 Web 数据采集场景及 Node.js 生态下，为什么选择 Puppeteer 作为页面采集框架，以及平台官方推荐的使用方式。
+sidebar:
+    order: 4
 ---
 
 > 在现代 Web 数据采集场景及 Node.js 生态下，为什么选择 Puppeteer 作为页面采集框架，以及平台官方推荐的使用方式。

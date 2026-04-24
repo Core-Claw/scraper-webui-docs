@@ -2,7 +2,7 @@
 title: 发布悬赏任务
 description: 了解如何在 CoreClaw 平台上发布和承接悬赏任务。
 sidebar:
-    order: 8
+    order: 7
 draft: true
 ---
 

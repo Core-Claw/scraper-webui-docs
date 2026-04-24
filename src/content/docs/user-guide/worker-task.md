@@ -1,6 +1,8 @@
 ---
 title: Worker Task
 description: Tasks let you create and save multiple preset configurations for the same Worker for easy reuse.
+sidebar:
+    order: 6
 ---
 
 Worker tasks allow you to create and save **multiple preset configurations** for the same Worker, making it easy to reuse and run them on demand.
@@ -15,7 +17,7 @@ You can manage and run these task configurations directly in the **CoreClaw Cons
 
 Choose the Worker you want to use for the task.
 
-![](@/assets/docs/img_31.jpg)
+![Worker selection page](@/assets/docs/img_31.jpg)
 
 ---
 
@@ -23,7 +25,7 @@ Choose the Worker you want to use for the task.
 
 Configure the input parameters and settings required by the selected Worker.
 
-![](@/assets/docs/img_32.jpg)
+![Worker configuration page](@/assets/docs/img_32.jpg)
 
 ---
 
@@ -31,7 +33,7 @@ Configure the input parameters and settings required by the selected Worker.
 
 To make tasks easier to identify, you can click the task title on the details page to add a **name**, **title**, and **description**.
 
-![](@/assets/docs/img_17.jpg)
+![Task naming interface](@/assets/docs/img_17.jpg)
 
 ---
 
@@ -39,5 +41,5 @@ To make tasks easier to identify, you can click the task title on the details pa
 
 Start the task to create a Worker Run and begin execution.
 
-![](@/assets/docs/img_4.jpg)
+![Worker run execution](@/assets/docs/img_4.jpg)
 

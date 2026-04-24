@@ -2,7 +2,7 @@
 title: 发布Script
 description: 了解如何在 CoreClaw 平台上发布私有或公开脚本。
 sidebar:
-    order: 7
+    order: 9
 ---
 
 ### 提交与使用

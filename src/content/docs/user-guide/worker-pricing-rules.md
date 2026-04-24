@@ -20,7 +20,7 @@ Charges cover various aspects of platform resource usage, including:
 Pricing is dynamically calculated based on the **selected memory configuration**.
 The final cost is determined by the **actual execution time of the script** and the **amount of data processed**, including traffic usage.
 
-![](@/assets/docs/img_4.jpg)
+![Worker pricing configuration](@/assets/docs/img_4.jpg)
 
 ### How to Estimate Costs?
 
@@ -28,7 +28,7 @@ While it is difficult to precisely predict resource consumption before a run, yo
 
 ### Cost Usage Records
 
-![](@/assets/docs/img_25.jpg)
+![Cost usage records](@/assets/docs/img_25.jpg)
 
 :::note[Best Practices]
 

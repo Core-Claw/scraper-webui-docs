@@ -1,9 +1,11 @@
 ---
 title: Runs API
 description: API endpoints for managing scraping run results and history.
+sidebar:
+    order: 0
 ---
 
-# Runs API
+## Runs API
 
 Access and manage your scraping run results, logs, and exports.
 

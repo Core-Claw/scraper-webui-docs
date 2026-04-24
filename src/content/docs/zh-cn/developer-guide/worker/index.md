@@ -1,11 +1,11 @@
 ---
-title: 概述
+title: Worker 开发
 description: 学习如何在 CoreClaw 中创建和管理自定义爬虫脚本。
 sidebar:
   order: 0
 ---
 
-# 爬虫脚本
+## 爬虫脚本
 
 CoreClaw 允许您编写自定义爬虫脚本来从任何网站提取数据。本节涵盖创建和管理爬虫脚本所需的一切知识。
 

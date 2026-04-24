@@ -1,11 +1,11 @@
 ---
-title: 概述
+title: 网站活动
 description: 了解 CoreClaw 平台正在进行的活动和奖励机会。
 sidebar:
   order: 0
 ---
 
-# 网站活动
+## 网站活动
 
 欢迎来到 CoreClaw 活动页面！这里汇集了平台最新的活动和奖励机会，让您在使用平台的同时获得更多收益。
 

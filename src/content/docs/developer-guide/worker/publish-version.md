@@ -2,7 +2,7 @@
 title: Publish Version
 description: Learn how versioning works when publishing Script updates.
 sidebar:
-    order: 8
+    order: 10
 ---
 
 ### What is a Published Version?

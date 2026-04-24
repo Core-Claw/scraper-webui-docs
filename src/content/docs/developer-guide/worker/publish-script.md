@@ -2,7 +2,7 @@
 title: Publish Script
 description: Learn how to publish your Script as private or public on the CoreClaw platform.
 sidebar:
-    order: 7
+    order: 9
 ---
 
 ### Submission & Usage

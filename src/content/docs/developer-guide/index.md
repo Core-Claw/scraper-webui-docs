@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: Developer Guide
 description: Build custom Workers and integrate with CoreClaw API
 sidebar:
   order: 0

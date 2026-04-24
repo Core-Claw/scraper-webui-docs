@@ -209,7 +209,7 @@ template: splash
 			<a href="/zh-cn/developer-guide/web-unlocker/" class="updates-panel-link">查看全部 →</a>
 		</div>
 		<div class="updates-list">
-			<a href="/zh-cn/developer-guide/web-unlocker/overview/" class="updates-item">
+			<a href="/zh-cn/developer-guide/web-unlocker/" class="updates-item">
 				<span class="updates-dot" style="--dot-color: #6366f1"></span>
 				<div class="updates-item-content">
 					<div class="updates-item-title">网页解锁器</div>

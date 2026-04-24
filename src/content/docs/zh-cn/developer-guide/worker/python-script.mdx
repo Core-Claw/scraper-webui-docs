@@ -2,10 +2,10 @@
 title: Python 脚本
 description: 学习如何编写 Python 脚本
 sidebar:
-    order: 3
+    order: 4
 ---
 
-# Python 脚本示例
+## Python 脚本示例
 
 ## GitHub 仓库
 
@@ -70,7 +70,7 @@ Python 脚本示例仓库：
 
 ```python
 # 获取所有输入参数为字典
-parameters = SDK.Parameter.get_input_json_dict()
+parameters = CoreSDK.Parameter.get_input_json_dict()
 
 # 示例返回值：
 # {"website": "example.com", "keyword": "科技新闻"}
@@ -89,16 +89,16 @@ parameters = SDK.Parameter.get_input_json_dict()
 
 ```python
 # 调试级别日志（最详细）
-SDK.Log.debug("正在连接目标网站...")
+CoreSDK.Log.debug("正在连接目标网站...")
 
 # 信息日志（正常执行流程）
-SDK.Log.info("成功采集 10 条新闻")
+CoreSDK.Log.info("成功采集 10 条新闻")
 
 # 警告日志（非致命问题）
-SDK.Log.warn("检测到网络延迟，采集速度可能受影响")
+CoreSDK.Log.warn("检测到网络延迟，采集速度可能受影响")
 
 # 错误日志（执行失败）
-SDK.Log.error("无法访问目标网站，请检查网络连接")
+CoreSDK.Log.error("无法访问目标网站，请检查网络连接")
 ```
 
 #### 日志级别说明
@@ -174,7 +174,7 @@ for i, news in enumerate(news_data):
     }
 
     res = CoreSDK.Result.push_data(obj)
-    SDK.Log.info(f"已推送第 {i + 1} 条记录: {news.get('title')}")
+    CoreSDK.Log.info(f"已推送第 {i + 1} 条记录: {news.get('title')}")
 ```
 
 ##### 注意事项
@@ -192,9 +192,9 @@ for i, news in enumerate(news_data):
 from sdk import CoreSDK
 
 # 1. 获取输入参数
-config = SDK.Parameter.get_input_json_dict()
+config = CoreSDK.Parameter.get_input_json_dict()
 website = config.get("website", "默认网站")
-SDK.Log.info(f"开始采集网站: {website}")
+CoreSDK.Log.info(f"开始采集网站: {website}")
 
 # 2. 设置表头
 headers = [
@@ -206,14 +206,14 @@ headers = [
 CoreSDK.Result.set_table_header(headers)
 
 # 3. 模拟数据采集
-SDK.Log.info("正在采集数据...")
+CoreSDK.Log.info("正在采集数据...")
 collected_data = [
     {"title": "示例新闻 1", "publish_time": "2023-10-01 10:00", "category": "科技", "view_count": 1000},
     {"title": "示例新闻 2", "publish_time": "2023-10-01 11:00", "category": "财经", "view_count": 500},
 ]
 
 # 4. 推送数据
-SDK.Log.info(f"已采集 {len(collected_data)} 条记录，正在推送数据...")
+CoreSDK.Log.info(f"已采集 {len(collected_data)} 条记录，正在推送数据...")
 for data in collected_data:
     obj = {
         "title": data.get("title"),
@@ -224,7 +224,7 @@ for data in collected_data:
     CoreSDK.Result.push_data(obj)
 
 # 5. 完成
-SDK.Log.info("数据采集任务完成！")
+CoreSDK.Log.info("数据采集任务完成！")
 ```
 
 ---
