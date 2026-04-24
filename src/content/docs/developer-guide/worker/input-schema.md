@@ -2,12 +2,10 @@
 title: Worker Input Configuration (Input Schema)
 description: A manual for Worker input configuration (Input Schema)
 sidebar:
-    order: 3
+  order: 3
 ---
 
-This document explains how developers should configure the **input\_schema.json** file. This file determines the **input form layout** presented to users in the web interface of an automation Worker.
-
-***
+This document explains how developers should configure the **input_schema.json** file. This file determines the **input form layout** presented to users in the web interface of an automation Worker.
 
 ## 🛠️ Input Schema User Guide
 
@@ -470,4 +468,3 @@ Developers can logically group multiple configuration items by using specific fi
 1. **Write clear descriptions**: Make sure `description` is clear and accurate. This helps your script get discovered by more target users.
 2. **Set sensible defaults**: A reasonable `default` value lets users run the script immediately and greatly lowers the barrier to entry.
 3. **Validate required fields**: For parameters without which the script cannot run, such as login cookies or the main URL, be sure to set `"required": true`.
-
