@@ -5,7 +5,7 @@ sidebar:
     order: 10
 ---
 
-### What is a Published Version?
+## What is a Published Version?
 
 On the CoreClaw platform, each Script can generate a new published version after updates or modifications. Published versions are used to:
 
@@ -15,7 +15,7 @@ On the CoreClaw platform, each Script can generate a new published version after
 
 Each official release generates an independent version number.
 
-### How to Publish a New Version
+## How to Publish a New Version
 
 1. Log in to the Console
 2. Navigate to the Script management page
@@ -25,7 +25,7 @@ Each official release generates an independent version number.
 
 After publishing, new tasks will use the latest version by default (unless a specific version is specified).
 
-### Version Management
+## Version Management
 
 The platform typically supports the following operations:
 
@@ -38,7 +38,7 @@ The platform typically supports the following operations:
 Keep a stable version before making major changes so you can quickly roll back if needed.
 :::
 
-### Important Notes
+## Important Notes
 
 - Modifying script content does not automatically affect running tasks
 - Only reviewed and published versions can be used for production execution

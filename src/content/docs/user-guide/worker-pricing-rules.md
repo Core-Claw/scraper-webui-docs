@@ -5,12 +5,12 @@ sidebar:
     order: 3
 ---
 
-### Pricing Model: Pay Per Usage
+## Pricing Model: Pay Per Usage
 
 You only pay for the **actual platform resources consumed** during Worker runs.
 There are no hidden or additional fees.
 
-### Billing Scope
+## Billing Scope
 
 Charges cover various aspects of platform resource usage, including:
 
@@ -22,7 +22,7 @@ The final cost is determined by the **actual execution time of the script** and 
 
 ![Worker pricing configuration](@/assets/docs/img_4.jpg)
 
-### How to Estimate Costs?
+## How to Estimate Costs?
 
 While it is difficult to precisely predict resource consumption before a run, you can always review a **detailed billing breakdown** after each execution.
 

@@ -5,11 +5,11 @@ sidebar:
     order: 11
 ---
 
-### Overview
+## Overview
 
 After logging into the Console, navigate to the **Script** module to view and manage your list of created scripts.
 
-### Update Steps
+## Update Steps
 
 1. **Enter Script Details**: Click on any script name.
 2. **Select Settings & Publish**: In the script details page, find and click the **Settings & Publish** tab.

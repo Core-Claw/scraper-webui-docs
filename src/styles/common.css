@@ -1559,6 +1559,10 @@ main:has(.hero-section) .sl-markdown-content > :first-child {
     margin-top: 0;
 }
 
+main:has(.hero-section) .sl-markdown-content:has(.home-hide-auto-h1) h1#_top {
+    display: none;
+}
+
 main:has(.hero-section) .sl-markdown-content > h1:first-child,
 main:has(.hero-section) .sl-markdown-content h1:not(.hero-title),
 main:has(.hero-section)

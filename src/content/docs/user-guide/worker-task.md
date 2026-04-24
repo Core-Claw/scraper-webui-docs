@@ -13,7 +13,7 @@ You can manage and run these task configurations directly in the **CoreClaw Cons
 
 ---
 
-### Select a Worker
+## Select a Worker
 
 Choose the Worker you want to use for the task.
 
@@ -21,7 +21,7 @@ Choose the Worker you want to use for the task.
 
 ---
 
-### Configuration
+## Configuration
 
 Configure the input parameters and settings required by the selected Worker.
 
@@ -29,7 +29,7 @@ Configure the input parameters and settings required by the selected Worker.
 
 ---
 
-### Naming
+## Naming
 
 To make tasks easier to identify, you can click the task title on the details page to add a **name**, **title**, and **description**.
 
@@ -37,9 +37,8 @@ To make tasks easier to identify, you can click the task title on the details pa
 
 ---
 
-### Run
+## Run
 
 Start the task to create a Worker Run and begin execution.
 
 ![Worker run execution](@/assets/docs/img_4.jpg)
-

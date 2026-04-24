@@ -10,6 +10,8 @@ template: splash
 	<span class="breadcrumb-home-current">文档中心</span>
 </div>
 
+<span class="home-hide-auto-h1"></span>
+
 <div class="hero-section">
 	<h1 class="hero-title">CoreClaw <span class="hero-title-accent">文档中心</span></h1>
 	<p class="hero-subtitle">无论你是初次使用还是深度开发，文档中心为你提供完整指引。</p>

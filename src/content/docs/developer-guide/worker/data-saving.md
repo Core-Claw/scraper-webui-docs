@@ -5,7 +5,7 @@ sidebar:
     order: 8
 ---
 
-### Data Saving Methods
+## Data Saving Methods
 
 After a scraping task is executed on the CoreClaw platform, the system automatically saves the data results based on task settings. The platform supports exporting scraped data in the following common formats:
 
@@ -14,11 +14,11 @@ After a scraping task is executed on the CoreClaw platform, the system automatic
 
 Users can download data or retrieve it via API according to their needs.
 
-### Data Retention Period
+## Data Retention Period
 
 The platform retains scraped data for a certain period by default. The specific retention policy may vary depending on the account type or service plan. It is recommended that users download and back up required data promptly after processing to avoid data loss due to the end of the retention period.
 
-### Data Management Permissions
+## Data Management Permissions
 
 Users have management permissions for the data generated under their accounts, including:
 
@@ -28,11 +28,11 @@ Users have management permissions for the data generated under their accounts, i
 
 The platform will not use user data without authorization.
 
-### Data Security & Protection
+## Data Security & Protection
 
 CoreClaw takes data security seriously and implements technical measures to ensure the security of data storage and transmission. The platform processes data in accordance with relevant security standards, but users are still responsible for managing and backing up sensitive data.
 
-### Important Notes
+## Important Notes
 
 - It is recommended to regularly download important data for local backup
 - Data retention policies may be adjusted due to service version or feature updates

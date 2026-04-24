@@ -5,7 +5,7 @@ sidebar:
     order: 9
 ---
 
-### Submission & Usage
+## Submission & Usage
 
 Script types:
 
@@ -14,11 +14,11 @@ Script types:
 
 **File format requirement**: Script execution files must be in ZIP compressed format and comply with platform specifications.
 
-### Publishing a Private Script
+## Publishing a Private Script
 
 After creation, it can be run in the test environment without review, but it is limited to testing purposes and is not publicly visible.
 
-### Publishing to the Store
+## Publishing to the Store
 
 If your script passes review and is listed on the [CoreClaw Store](https://coreclaw.com/store), you can earn revenue (see the CoreClaw Script Revenue Rules for details).
 

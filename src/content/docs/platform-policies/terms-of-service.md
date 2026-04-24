@@ -10,23 +10,23 @@ Welcome to CoreClaw (“the Platform”, “we”, “us”, or “our”).
 
 These Terms of Service (“Terms”) constitute a legally binding agreement between you (“User” or “you”) and CoreClaw regarding your access to and use of the Platform and related services, including but not limited to the website, APIs, cloud execution environment, and other associated services.
 
-### Acceptance of the Terms
+## Acceptance of the Terms
 
 - Before registering for or using the Services, please carefully read and fully understand these Terms;
 - Pay special attention to clauses related to limitation of liability, risk allocation, and intellectual property;
 - If you do not agree to any part of these Terms, you must immediately stop registering for or using the Services.
 
-### User Conduct
+## User Conduct
 
 - You agree to comply with all applicable laws and regulations and shall not upload or execute any illegal, infringing, or non-compliant content or scripts;
 - You are responsible for safeguarding your account credentials and preventing unauthorized access or use.
 
-### Service Availability and Limitations
+## Service Availability and Limitations
 
 - The Services are provided on an “as-is” and “as-available” basis and may be subject to unforeseen interruptions or failures;
 - To the maximum extent permitted by law, the Platform shall not be liable for losses caused by service interruptions, network issues, or third-party factors.
 
-### Modification of the Terms
+## Modification of the Terms
 
 - We reserve the right to modify these Terms when necessary and will notify users via announcements, email, or platform messages;
 - Updated Terms become effective upon publication or notice. Continued use of the Services constitutes acceptance of the revised Terms.

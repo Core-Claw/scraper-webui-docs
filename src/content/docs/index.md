@@ -10,6 +10,8 @@ template: splash
 	<span class="breadcrumb-home-current">Documentation Center</span>
 </div>
 
+<span class="home-hide-auto-h1"></span>
+
 <div class="hero-section">
 	<h1 class="hero-title">CoreClaw <span class="hero-title-accent">Documentation</span></h1>
 	<p class="hero-subtitle">Whether you're getting started or building advanced solutions, our documentation provides complete guidance.</p>

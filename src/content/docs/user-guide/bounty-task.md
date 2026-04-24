@@ -6,7 +6,7 @@ sidebar:
 draft: true
 ---
 
-### What is a Bounty Task?
+## What is a Bounty Task?
 
 The Developer Bounty Program is a pay-on-demand development task mechanism:
 
@@ -14,13 +14,13 @@ The Developer Bounty Program is a pay-on-demand development task mechanism:
 - Developers accept and complete the development
 - The platform handles review and settlement throughout the process
 
-### Who is it for?
+## Who is it for?
 
-#### For Requesters
+### For Requesters
 
 - Those who need fast, clearly defined development deliverables
 
-#### For Developers
+### For Developers
 
 - Those who want to earn stable income through real tasks
 
