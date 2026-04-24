@@ -5,8 +5,6 @@ sidebar:
     order: 0
 ---
 
-## 常见问题
-
 查找关于 CoreClaw 的常见问题解答。找不到您需要的答案？[联系我们的支持团队](mailto:support@coreclaw.com)。
 
 <div class="faq-categories">

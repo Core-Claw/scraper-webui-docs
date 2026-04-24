@@ -1,10 +1,9 @@
-***
-
+---
 title: Worker Input Configuration (Input Schema)
 description: A manual for Worker input configuration (Input Schema)
 sidebar:
-order: 3
---------
+    order: 3
+---
 
 This document explains how developers should configure the **input\_schema.json** file. This file determines the **input form layout** presented to users in the web interface of an automation Worker.
 
