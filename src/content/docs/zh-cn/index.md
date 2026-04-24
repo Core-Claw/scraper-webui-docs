@@ -4,8 +4,6 @@ description: CoreClaw 致力于为不同背景和技术能力的用户提供高�
 template: splash
 ---
 
-<span class="hide-starlight-title"></span>
-
 <div class="breadcrumb-home">
 	<a href="https://coreclaw.com" class="breadcrumb-home-link">首页</a>
 	<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
