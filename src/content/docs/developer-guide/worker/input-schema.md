@@ -1,13 +1,14 @@
----
+***
+
 title: Worker Input Configuration (Input Schema)
 description: A manual for Worker input configuration (Input Schema)
 sidebar:
-    order: 3
----
+order: 3
+--------
 
-This document explains how developers should configure the **input_schema.json** file. This file determines the **input form layout** presented to users in the web interface of an automation Worker.
+This document explains how developers should configure the **input\_schema.json** file. This file determines the **input form layout** presented to users in the web interface of an automation Worker.
 
----
+***
 
 ## 🛠️ Input Schema User Guide
 
@@ -60,7 +61,7 @@ A standard configuration file consists of the following three parts:
 | **b**           | **Yes**  | **Task splitting key**. This must match the `name` of one element inside `properties`. The script uses this field for concurrent processing, for example, splitting tasks by the number of URLs. |
 | **properties**  | **Yes**  | **Parameter configuration array**. This contains all input items, and each element represents one input field or selector on the page.                                                           |
 
----
+***
 
 ## 3. Property Details Inside `properties`
 
@@ -69,17 +70,17 @@ Each input item can contain the following settings:
 - **title**: The label displayed on the page, for example, "Search Keywords".
 - **name**: The internal ID used by the program. It **must be unique** and cannot contain Chinese characters.
 - **type**:
-    - `string`: text
-    - `integer`: number
-    - `boolean`: switch (`true` / `false`)
-    - `array`: list / multi-select
-    - `object`: object
+  - `string`: text
+  - `integer`: number
+  - `boolean`: switch (`true` / `false`)
+  - `array`: list / multi-select
+  - `object`: object
 - **editor**: Determines which form control is used to render the input item in the web interface. See the table below.
 - **description**: Helper text shown below the input field to guide the user.
 - **default**: The initial displayed value or option.
 - **required**: If set to `true`, the script cannot be started unless the user fills in this field.
 
----
+***
 
 ## 4. Editor Type Guide
 
@@ -111,7 +112,7 @@ You can choose different `editor` types based on your needs to improve the user 
 | **requestListSource** | URL request source | Allows additional custom parameters                                   |
 | **stringList**        | String list        | Batch input for multiple keywords                                     |
 
----
+***
 
 ## 5. Common Component Examples
 
@@ -193,7 +194,7 @@ You can choose different `editor` types based on your needs to improve the user 
     "title": "🏢 Category",
     "name": "radio",
     "type": "integer",
-    "editor": "radioGroup",
+    "editor": "radio",
     "options": [
         {
             "label": "hotel",
@@ -217,7 +218,7 @@ You can choose different `editor` types based on your needs to improve the user 
     "title": "Data Sections to Scrape",
     "name": "data_sections",
     "type": "array",
-    "editor": "checkboxGroup",
+    "editor": "checkbox",
     "options": [
         {
             "label": "Reviews",
@@ -276,7 +277,7 @@ You can choose different `editor` types based on your needs to improve the user 
     "title": "⏩ Skip closed places",
     "name": "skipClosed",
     "type": "boolean",
-    "editor": "checkbox"
+    "editor": "switch"
 }
 ```
 
@@ -384,7 +385,7 @@ You can choose different `editor` types based on your needs to improve the user 
 
 ![String list example](@/assets/docs/img_47.jpg)
 
----
+***
 
 ## 📚 Grouped Configuration
 
@@ -470,3 +471,4 @@ Developers can logically group multiple configuration items by using specific fi
 1. **Write clear descriptions**: Make sure `description` is clear and accurate. This helps your script get discovered by more target users.
 2. **Set sensible defaults**: A reasonable `default` value lets users run the script immediately and greatly lowers the barrier to entry.
 3. **Validate required fields**: For parameters without which the script cannot run, such as login cookies or the main URL, be sure to set `"required": true`.
+
