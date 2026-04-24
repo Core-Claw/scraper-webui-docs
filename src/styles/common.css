@@ -1726,6 +1726,9 @@ summary:focus-visible {
    Hide Starlight auto title on splash pages
    ======================================== */
 
+.sl-markdown-content:has(.hide-starlight-title) > h1#_top:first-child {
+    display: none;
+}
 .company-footer {
     text-align: center;
     padding: 48px 24px 32px;

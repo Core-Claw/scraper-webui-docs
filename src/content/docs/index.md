@@ -4,6 +4,8 @@ description: CoreClaw is dedicated to providing efficient, stable, and scalable 
 template: splash
 ---
 
+<span class="hide-starlight-title"></span>
+
 <div class="breadcrumb-home">
 	<a href="https://coreclaw.com" class="breadcrumb-home-link">Home</a>
 	<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
