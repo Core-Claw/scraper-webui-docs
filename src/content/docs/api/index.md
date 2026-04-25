@@ -19,7 +19,7 @@ All API requests require authentication using your API key. You can find your AP
 		<h3>API Basics</h3>
 		<p>Authentication, endpoints, and rate limits</p>
 	</a>
-	<a href="/api/worker/" class="hero-card">
+	<a href="/api/worker/run/" class="hero-card">
 		<div class="hero-card-icon">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208 32H48a16 16 0 0 0-16 16v160a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16M48 48h160v160H48Zm112 96a8 8 0 0 1 0 16H96a8 8 0 0 1 0-16Zm0-32a8 8 0 0 1 0 16H96a8 8 0 0 1 0-16Zm0-32a8 8 0 0 1 0 16H96a8 8 0 0 1 0-16Z"/></svg>
 		</div>
@@ -33,7 +33,7 @@ All API requests require authentication using your API key. You can find your AP
 		<h3>Runs API</h3>
 		<p>Monitor and manage Worker runs</p>
 	</a>
-	<a href="/api/task/" class="hero-card">
+	<a href="/api/task/run/" class="hero-card">
 		<div class="hero-card-icon">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88m48-88a12 12 0 0 1-12 12h-28v28a12 12 0 0 1-24 0v-28H84a12 12 0 0 1 0-24h28V88a12 12 0 0 1 24 0v28h28a12 12 0 0 1 12 12"/></svg>
 		</div>

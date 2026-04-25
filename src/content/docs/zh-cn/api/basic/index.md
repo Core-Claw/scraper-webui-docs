@@ -1,35 +1,33 @@
 ---
-title: Payment FAQ
-description: Frequently asked questions about payments, traffic, and billing.
+title: API 基础概述
+description: 核心 API 信息，包括认证、基础 URL 和请求格式。
 sidebar:
     order: 0
 ---
 
-## Payment FAQ
+本节介绍使用 CoreClaw API 所需的基础信息。
 
-Common questions about payments, traffic usage, and billing.
-
-## Topics
+## 主题
 
 <div class="quick-links">
-	<a href="./what-is-the-purchased-traffic-used-for/" class="quick-link">
+	<a href="./base/" class="quick-link">
 		<div class="quick-link-content">
-			<span class="quick-link-title">Traffic Usage</span>
-			<span class="quick-link-desc">What is purchased traffic used for?</span>
+			<span class="quick-link-title">基础 URL 与认证</span>
+			<span class="quick-link-desc">API 端点与认证方式</span>
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="./how-soon-is-traffic-credited-after-payment/" class="quick-link">
+	<a href="./device-configuration/" class="quick-link">
 		<div class="quick-link-content">
-			<span class="quick-link-title">Traffic Credit Time</span>
-			<span class="quick-link-desc">When is traffic credited after payment?</span>
+			<span class="quick-link-title">设备配置</span>
+			<span class="quick-link-desc">配置请求设备</span>
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>
-	<a href="./can-unused-traffic-be-extended-after-the-package-expires/" class="quick-link">
+	<a href="./proxy/" class="quick-link">
 		<div class="quick-link-content">
-			<span class="quick-link-title">Traffic Extension</span>
-			<span class="quick-link-desc">Can unused traffic be extended?</span>
+			<span class="quick-link-title">代理设置</span>
+			<span class="quick-link-desc">配置请求代理</span>
 		</div>
 		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 	</a>

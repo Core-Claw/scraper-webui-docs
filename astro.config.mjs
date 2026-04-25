@@ -24,6 +24,7 @@ export default defineConfig({
             title: 'CoreClaw',
             logo: {
                 src: './src/assets/logo.png',
+                alt: 'CoreClaw Logo',
             },
             defaultLocale: 'root',
             locales,
@@ -152,13 +153,6 @@ export default defineConfig({
                             slug: 'user-guide/worker-pricing-rules',
                             translations: {
                                 'zh-CN': '计价规则',
-                            },
-                        },
-                        {
-                            label: 'Download Data',
-                            slug: 'user-guide/how-to-download-data',
-                            translations: {
-                                'zh-CN': '如何下载数据',
                             },
                         },
                     ],
