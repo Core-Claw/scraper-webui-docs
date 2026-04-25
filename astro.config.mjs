@@ -18,6 +18,24 @@ const locales = {
 
 export default defineConfig({
     site: 'https://docs.coreclaw.com',
+    redirects: {
+        '/api/account': {
+            status: 301,
+            destination: '/api/account/info/',
+        },
+        '/zh-cn/api/account': {
+            status: 301,
+            destination: '/zh-cn/api/account/info/',
+        },
+        '/developer-guide/web-unlocker/overview': {
+            status: 301,
+            destination: '/developer-guide/web-unlocker/',
+        },
+        '/zh-cn/developer-guide/web-unlocker/overview': {
+            status: 301,
+            destination: '/zh-cn/developer-guide/web-unlocker/',
+        },
+    },
     integrations: [
         starlight({
             plugins: [starlightImageZoom()],
