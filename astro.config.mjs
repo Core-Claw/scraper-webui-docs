@@ -19,6 +19,30 @@ const locales = {
 export default defineConfig({
     site: 'https://docs.coreclaw.com',
     redirects: {
+        '/api/run': {
+            status: 301,
+            destination: '/api/run/history/',
+        },
+        '/zh-cn/api/run': {
+            status: 301,
+            destination: '/zh-cn/api/run/history/',
+        },
+        '/api/task': {
+            status: 301,
+            destination: '/api/task/run/',
+        },
+        '/zh-cn/api/task': {
+            status: 301,
+            destination: '/zh-cn/api/task/run/',
+        },
+        '/api/worker': {
+            status: 301,
+            destination: '/api/worker/run/',
+        },
+        '/zh-cn/api/worker': {
+            status: 301,
+            destination: '/zh-cn/api/worker/run/',
+        },
         '/api/account': {
             status: 301,
             destination: '/api/account/info/',
