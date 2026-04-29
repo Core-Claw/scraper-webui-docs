@@ -7,25 +7,15 @@ sidebar:
 
 **Method:** `POST`
 
-**Endpoint:** `/api/v1/task/run`
+**Endpoint:** `/api/v1/tasks/{task_slug}/run`
 
 Send the request body with **Content-Type: application/json**.
 
-## Request Example
+## Path Parameters
 
-```json
-{
-    "task_slug": "01KK0G4W9W4JYTWEA55KMG5QKP",
-    "callback_url": "https://your-domain.com/callback"
-}
-```
-
-#### Parameters
-
-| Parameter    | Example                            | Type   | Required | Description                              |
-| ------------ | ---------------------------------- | ------ | -------- | ---------------------------------------- |
-| task_slug    | 01KK0DS99CJG4ZEC11VDXZ8Y2Q          | String | Yes      | Unique task identifier                   |
-| callback_url | https://your-domain.com/callback   | String | Yes      | Callback URL for receiving Task results  |
+| Parameter  | Required | Description             |
+| ---------- | -------- | ----------------------- |
+| task_slug  | Yes      | Unique task identifier  |
 
 ## Response Example
 

@@ -5,29 +5,22 @@ sidebar:
     order: 3
 ---
 
-**Method:** `POST`
+**Method:** `GET`
 
-**Endpoint:** `/api/v1/run/result/list`
+**Endpoint:** `/api/v1/runs/{run_slug}/results`
 
-Send the request body with **Content-Type: application/json**.
+## Path Parameters
 
-## Request Example
+| Parameter | Required | Description           |
+| --------- | -------- | --------------------- |
+| run_slug  | Yes      | Unique run identifier |
 
-```json
-{
-    "page": 1,
-    "page_size": 20,
-    "run_slug": "01KKBBRYX3NTK8HRZ2C6HD0JNM"
-}
-```
+## Query Parameters
 
-#### Parameters
-
-| Parameter | Example                    | Type    | Required | Description           |
-| --------- | -------------------------- | ------- | -------- | --------------------- |
-| page      | 1                          | Integer | Yes      | Current page number   |
-| page_size | 20                         | Integer | Yes      | Items per page        |
-| run_slug  | 01KKBBRYX3NTK8HRZ2C6HD0JNM | String  | Yes      | Unique run identifier |
+| Parameter | Default | Type    | Required | Description           |
+| --------- | ------- | ------- | -------- | --------------------- |
+| page      | 1       | Integer | No       | Current page number   |
+| page_size | 20      | Integer | No       | Items per page        |
 
 ## Response Example
 
@@ -36,8 +29,8 @@ Send the request body with **Content-Type: application/json**.
     "code": 0,
     "message": "success",
     "data": {
-        "count": 4,
-        "headers": [
+        "total": 4,
+        "columns": [
             {
                 "label": "title",
                 "key": "title",
@@ -49,7 +42,7 @@ Send the request body with **Content-Type: application/json**.
                 "format": "text"
             }
         ],
-        "list": [
+        "records": [
             {
                 "title": "Example Article Title",
                 "publish_time": "2026-01-19"
@@ -66,11 +59,11 @@ Send the request body with **Content-Type: application/json**.
 | code      | 0       | Integer | Global status code     |
 | message   | success | String  | Response message       |
 | data      | -       | Object  | Response payload       |
-| count     | 4       | Integer | Total record count     |
-| headers   | -       | Array   | Result table headers   |
-| list      | -       | Array   | Result record list     |
+| total     | 4       | Integer | Total record count     |
+| columns   | -       | Array   | Result table columns   |
+| records   | -       | Array   | Result record list     |
 
-##### `headers` Fields
+##### `columns` Fields
 
 | Parameter | Example | Type   | Description      |
 | --------- | ------- | ------ | ---------------- |

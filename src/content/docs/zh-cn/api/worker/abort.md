@@ -1,29 +1,21 @@
 ---
-title: 终止 Worker
-description: 终止正在运行的 Worker 任务
+title: 中止爬虫
+description: 中止正在运行的 Worker 任务
 sidebar:
     order: 2
 ---
 
-**请求方式：** `POST`
+**方法：** `POST`
 
-**请求地址：** `/api/v1/scraper/abort`
+**端点：** `/api/v1/runs/{run_slug}/abort`
 
 使用 **Content-Type: application/json** 发送请求体。
 
-## 请求示例
+## 路径参数
 
-```json
-{
-    "run_slug": "01KJYA4S1QQ1PMDVVRP7XH72C51"
-}
-```
-
-#### 参数说明
-
-| 参数     | 必须 | 说明           |
-| -------- | ---- | -------------- |
-| run_slug | 是   | run 唯一标识符 |
+| 参数      | 必填 | 说明           |
+| --------- | ---- | -------------- |
+| run_slug  | 是   | 运行唯一标识符 |
 
 ## 响应示例
 
@@ -35,10 +27,10 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### 响应字段
 
-| 参数    | 示例值  | 类型    | 描述                                    |
-| ------- | ------- | ------- | --------------------------------------- |
-| code    | 0       | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
-| message | success | String  | -                                       |
-| data    | null    | Null    | -                                       |
+| 参数    | 示例    | 类型    | 说明         |
+| ------- | ------- | ------- | ------------ |
+| code    | 0       | Integer | 全局状态码   |
+| message | success | String  | 响应消息     |
+| data    | null    | Null    | 空数据       |

@@ -1,31 +1,21 @@
 ---
-title: 运行 Task
-description: 运行指定的 Task
+title: 运行任务
+description: 启动任务
 sidebar:
     order: 1
 ---
 
-**请求方式：** `POST`
+**方法：** `POST`
 
-**请求地址：** `/api/v1/task/run`
+**端点：** `/api/v1/tasks/{task_slug}/run`
 
 使用 **Content-Type: application/json** 发送请求体。
 
-## 请求示例
+## 路径参数
 
-```json
-{
-    "task_slug": "01KK0G4W9W4JYTWEA55KMG5QKP",
-    "callback_url": "https://your-domain.com/callback"
-}
-```
-
-#### 参数说明
-
-| 参数           | 示例值                             | 类型   | 必填 | 描述                         |
-| -------------- | ---------------------------------- | ------ | ---- | ---------------------------- |
-| `task_slug`    | `01KK0DS99CJG4ZEC11VDXZ8Y2Q`       | String | 是   | 任务唯一标识                 |
-| `callback_url` | `https://your-domain.com/callback` | String | 是   | 回调 URL(接收Task结果的地址) |
+| 参数       | 必填 | 说明           |
+| ---------- | ---- | -------------- |
+| task_slug  | 是   | 任务唯一标识符 |
 
 ## 响应示例
 
@@ -39,29 +29,29 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### 响应字段
 
-| 参数        | 示例值                     | 类型    | 描述                                    |
-| ----------- | -------------------------- | ------- | --------------------------------------- |
-| code        | 0                          | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
-| message     | success                    | String  | -                                       |
-| data        | -                          | Object  | -                                       |
-| └─ run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行的唯一标识                          |
+| 参数     | 示例                       | 类型    | 说明           |
+| -------- | -------------------------- | ------- | -------------- |
+| code     | 0                          | Integer | 全局状态码     |
+| message  | success                    | String  | 响应消息       |
+| data     | -                          | Object  | 响应数据       |
+| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行唯一标识符 |
 
 ## 错误响应
 
 ```json
 {
     "code": 70001,
-    "message": "Run record does not exist",
+    "message": "运行记录不存在",
     "data": null
 }
 ```
 
-#### 参数说明
+#### 错误字段
 
-| 参数名  | 示例值                    | 类型    | 描述                                    |
-| ------- | ------------------------- | ------- | --------------------------------------- |
-| code    | 70001                     | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
-| message | Run record does not exist | String  | 错误描述                                |
-| data    | null                      | Null    | -                                       |
+| 参数    | 示例             | 类型    | 说明       |
+| ------- | ---------------- | ------- | ---------- |
+| code    | 70001            | Integer | 错误码     |
+| message | 运行记录不存在   | String  | 错误描述   |
+| data    | null             | Null    | 空数据     |

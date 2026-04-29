@@ -1,29 +1,19 @@
 ---
-title: 获取日志
-description: 获取运行日志
+title: 运行日志
+description: 获取 Worker 运行日志
 sidebar:
     order: 4
 ---
 
-**请求方式：** `POST`
+**方法：** `GET`
 
-**请求地址：** `/api/v1/run/last/log`
+**端点：** `/api/v1/runs/{run_slug}/logs`
 
-使用 **Content-Type: application/json** 发送请求体。
+## 路径参数
 
-## 请求示例
-
-```json
-{
-    "run_slug": "01KKJYJ4HH0R9K7XD856MAE1WH"
-}
-```
-
-#### 参数说明
-
-| 参数     | 示例值                     | 参数类型 | 是否必填 | 参数描述     |
-| -------- | -------------------------- | -------- | -------- | ------------ |
-| run_slug | 01KKJYJ4HH0R9K7XD856MAE1WH | String   | 是       | 运行唯一标识 |
+| 参数      | 必填 | 说明           |
+| --------- | ---- | -------------- |
+| run_slug  | 是   | 运行唯一标识符 |
 
 ## 响应示例
 
@@ -32,54 +22,36 @@ sidebar:
     "code": 0,
     "message": "success",
     "data": {
-        "all_logs_url": "https://smpfile.coreclaw.com/log/all_log_7cb43d81-38d5-47b6-a313-4e1423d4c28a_1773383790454",
-        "list": [
+        "full_log_url": "https://smpfile.coreclaw.com/log/all_log_7cb43d81-38d5-47b6-a313-4e1423d4c28a_1773383790454",
+        "records": [
             {
                 "type": 2,
                 "group": "28596067108978688",
-                "content": "SYSTEM: Subtask-[28596067108978688] - Preparing the execution environment.",
+                "msg": "SYSTEM: 子任务-[28596067108978688] - 正在准备执行环境。",
                 "timestamp": 1773383784438
-            },
-            {
-                "type": 2,
-                "group": "28596067108978688",
-                "content": "SYSTEM: Subtask-[28596067108978688] - Running...",
-                "timestamp": 1773383784958
-            },
-            {
-                "type": 2,
-                "group": "28596067108978688",
-                "content": "SYSTEM: Subtask-[28596067108978688] - Execution completed.",
-                "timestamp": 1773383790211
-            },
-            {
-                "type": 2,
-                "group": "28596067108913152",
-                "content": "All subtasks have completed execution! Total 1 subtasks: 1 succeeded, 0 failed.",
-                "timestamp": 1773383790498
             }
         ],
-        "result_count": 4
+        "current_result_count": 4
     }
 }
 ```
 
-#### 参数说明
+#### 响应字段
 
-| 参数            | 示例值  | 类型    | 描述                                    |
-| --------------- | ------- | ------- | --------------------------------------- |
-| code            | 0       | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
-| message         | success | String  | -                                       |
-| data            | -       | Object  | -                                       |
-| └─ all_logs_url | -       | String  | 完整日志URL                             |
-| └─ list         | -       | Array   | 日志简要列表                            |
-| result_count    | 4       | Integer | 采集数据总条数                          |
+| 参数                 | 示例    | 类型    | 说明                             |
+| -------------------- | ------- | ------- | -------------------------------- |
+| code                 | 0       | Integer | 全局状态码                       |
+| message              | success | String  | 响应消息                         |
+| data                 | -       | Object  | 响应数据                         |
+| full_log_url         | -       | String  | 完整日志文件 URL                 |
+| records              | -       | Array   | 摘要日志条目                     |
+| current_result_count | 4       | Integer | 采集总行数                       |
 
-##### list 参数说明
+##### `records` 字段
 
-| 参数      | 示例值 | 类型    | 描述                                               |
-| --------- | ------ | ------- | -------------------------------------------------- |
-| type      | 1      | Integer | 日志类型<br>1.Debug<br>2.Info<br>3.Warn<br>4.Error |
-| group     | -      | String  | 日志分组标识                                       |
-| content   | -      | String  | 日志内容                                           |
-| timestamp | -      | Integer | 日志时间戳（毫秒）                                 |
+| 参数      | 示例 | 类型    | 说明                                     |
+| --------- | ---- | ------- | ---------------------------------------- |
+| type      | 1    | Integer | 日志级别：1 调试，2 信息，3 警告，4 错误  |
+| group     | -    | String  | 日志组标识符                             |
+| msg       | -    | String  | 日志内容                                 |
+| timestamp | -    | Integer | 日志时间戳（毫秒）                       |

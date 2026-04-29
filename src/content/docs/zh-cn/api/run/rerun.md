@@ -1,31 +1,21 @@
 ---
 title: 重新运行
-description: 重新运行Run。
+description: 重新运行 Worker 任务
 sidebar:
     order: 6
 ---
 
-**请求方式：** `POST`
+**方法：** `POST`
 
-**请求地址：** `/api/v1/rerun`
+**端点：** `/api/v1/runs/{run_slug}/rerun`
 
 使用 **Content-Type: application/json** 发送请求体。
 
-## 请求示例
+## 路径参数
 
-```json
-{
-    "run_slug": "01KJYCSVTDCM7078HNB4Z5RJE2",
-    "callback_url": "https://your-domain.com/callback"
-}
-```
-
-#### 参数说明
-
-| 参数         | 必须 | 说明           |
-| ------------ | ---- | -------------- |
-| run_slug     | 是   | run 唯一标识符 |
-| callback_url | 否   | 回调 URL       |
+| 参数      | 必填 | 说明           |
+| --------- | ---- | -------------- |
+| run_slug  | 是   | 运行唯一标识符 |
 
 ## 响应示例
 
@@ -33,14 +23,19 @@ sidebar:
 {
     "code": 0,
     "message": "success",
-    "data": null
+    "data": {
+        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
+        "status": 1
+    }
 }
 ```
 
-#### 参数说明
+#### 响应字段
 
-| 参数    | 示例值  | 类型    | 说明                                    |
-| ------- | ------- | ------- | --------------------------------------- |
-| code    | 0       | Integer | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
-| message | success | String  | -                                       |
-| data    | null    | Null    | -                                       |
+| 参数     | 示例                       | 类型    | 说明                                                     |
+| -------- | -------------------------- | ------- | -------------------------------------------------------- |
+| code     | 0                          | Integer | 全局状态码                                               |
+| message  | success                    | String  | 响应消息                                                 |
+| data     | -                          | Object  | 响应数据                                                 |
+| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 新运行的唯一标识符                                       |
+| status   | 1                          | Integer | 运行状态：1 就绪，2 运行中，3 成功，4 失败，5 终止中      |

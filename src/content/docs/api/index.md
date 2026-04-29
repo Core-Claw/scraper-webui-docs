@@ -1,76 +1,65 @@
 ---
-title: API Overview
-description: Complete API documentation for CoreClaw
+title: Base URL & Authentication
+description: API base URL, request headers, and global status codes
 sidebar:
   order: 0
 ---
 
-Welcome to the CoreClaw API documentation. Our RESTful API allows you to integrate web scraping capabilities into your applications.
+## API Base URL
 
-## Getting Started
+```
+https://openapi.coreclaw.com
+```
 
-All API requests require authentication using your API key. You can find your API key in your [account settings](/api/account/info/).
+## Header Parameters
 
-<div class="hero-cards">
-	<a href="/api/basic/" class="hero-card">
-		<div class="hero-card-icon">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88m48-88a12 12 0 0 1-12 12h-28v28a12 12 0 0 1-24 0v-28H84a12 12 0 0 1 0-24h28V88a12 12 0 0 1 24 0v28h28a12 12 0 0 1 12 12"/></svg>
-		</div>
-		<h3>API Basics</h3>
-		<p>Authentication, endpoints, and rate limits</p>
-	</a>
-	<a href="/api/worker/run/" class="hero-card">
-		<div class="hero-card-icon">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208 32H48a16 16 0 0 0-16 16v160a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16M48 48h160v160H48Zm112 96a8 8 0 0 1 0 16H96a8 8 0 0 1 0-16Zm0-32a8 8 0 0 1 0 16H96a8 8 0 0 1 0-16Zm0-32a8 8 0 0 1 0 16H96a8 8 0 0 1 0-16Z"/></svg>
-		</div>
-		<h3>Worker API</h3>
-		<p>Manage and run Workers</p>
-	</a>
-	<a href="/api/run/" class="hero-card">
-		<div class="hero-card-icon">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88m48-88a12 12 0 0 1-12 12h-28v28a12 12 0 0 1-24 0v-28H84a12 12 0 0 1 0-24h28V88a12 12 0 0 1 24 0v28h28a12 12 0 0 1 12 12"/></svg>
-		</div>
-		<h3>Runs API</h3>
-		<p>Monitor and manage Worker runs</p>
-	</a>
-	<a href="/api/task/run/" class="hero-card">
-		<div class="hero-card-icon">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88m48-88a12 12 0 0 1-12 12h-28v28a12 12 0 0 1-24 0v-28H84a12 12 0 0 1 0-24h28V88a12 12 0 0 1 24 0v28h28a12 12 0 0 1 12 12"/></svg>
-		</div>
-		<h3>Tasks API</h3>
-		<p>Schedule automated scraping tasks</p>
-	</a>
-</div>
+| Parameter Name | Example Value       | Type   | Required | Description |
+| -------------- | ------------------- | ------ | -------- | ----------- |
+| api-key        | <YOUR_API_KEY>      | string | Yes      | Your API key for authentication |
+| content-type   | application/json    | string | Yes      | Request content type |
 
-## Quick Links
+## Global Status Codes
 
-<div class="quick-links">
-	<a href="/api/basic/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">API Base URL</span>
-			<span class="quick-link-desc">Base URL and authentication details</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="/api/account/info/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">Account API</span>
-			<span class="quick-link-desc">Manage your account and API keys</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="/api/basic/proxy/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">Proxy Configuration</span>
-			<span class="quick-link-desc">Configure proxies for your Workers</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-	<a href="/api/basic/device-configuration/" class="quick-link">
-		<div class="quick-link-content">
-			<span class="quick-link-title">Device Configuration</span>
-			<span class="quick-link-desc">Configure device settings for Workers</span>
-		</div>
-		<svg class="quick-link-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-	</a>
-</div>
+Each API request may return a success code or an error code. You can use these codes to debug requests and identify issues.
+
+| CODE  | Description                 |
+| ----- | --------------------------- |
+| 0     | Success                     |
+| 5000  | Internal server error       |
+| 4000  | Invalid request parameters  |
+| 4010  | Unauthorized access         |
+| 4040  | Resource not found          |
+| 4290  | Rate limit exceeded         |
+| 10001 | User does not exist         |
+| 10002 | User is disabled            |
+| 20001 | Invalid API key             |
+| 20002 | API key expired             |
+| 30001 | Insufficient balance        |
+| 30002 | Insufficient traffic quota  |
+| 50001 | Worker does not exist       |
+| 50002 | Worker execution failed     |
+| 50003 | Worker version unavailable  |
+| 60001 | Task does not exist         |
+| 70001 | Run record does not exist   |
+| 70002 | Run abort failed            |
+
+## Authentication
+
+All API requests require authentication using your API key. You can find your API key in your account settings.
+
+### Getting Your API Key
+
+1. Log in to your CoreClaw account
+2. Navigate to Account Settings
+3. Find your API key in the API section
+4. Copy and use it in your requests
+
+### Using the API Key
+
+Include your API key in the header of every request:
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v1/account/info" \
+  -H "api-key: YOUR_API_KEY" \
+  -H "content-type: application/json"
+```

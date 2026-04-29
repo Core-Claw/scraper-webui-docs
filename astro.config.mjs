@@ -48,56 +48,13 @@ export default defineConfig({
             ],
             favicon: '/logo.png',
             sidebar: [
+
                 {
-                    label: 'About CoreClaw',
-                    slug: 'about-coreclaw',
+                    label: 'Home',
+                    slug: 'home',
                     translations: {
-                        'zh-CN': '关于 CoreClaw',
+                        'zh-CN': '首页',
                     },
-                },
-                {
-                    label: 'Getting Started',
-                    collapsed: false,
-                    translations: {
-                        'zh-CN': '快速开始',
-                    },
-                    items: [
-                        {
-                            label: 'Overview',
-                            slug: 'getting-started',
-                            translations: {
-                                'zh-CN': '概述',
-                            },
-                        },
-                        {
-                            label: 'Quick Start',
-                            slug: 'getting-started/quick-start',
-                            translations: {
-                                'zh-CN': '快速上手',
-                            },
-                        },
-                        {
-                            label: 'Introduction',
-                            slug: 'getting-started/introduction',
-                            translations: {
-                                'zh-CN': '介绍',
-                            },
-                        },
-                        {
-                            label: 'Core Concepts',
-                            slug: 'getting-started/core-concepts',
-                            translations: {
-                                'zh-CN': '核心概念',
-                            },
-                        },
-                        {
-                            label: 'FAQ',
-                            slug: 'getting-started/faq',
-                            translations: {
-                                'zh-CN': '常见问题',
-                            },
-                        },
-                    ],
                 },
                 {
                     label: 'User Guide',
@@ -107,53 +64,85 @@ export default defineConfig({
                     },
                     items: [
                         {
-                            label: 'Overview',
-                            slug: 'user-guide',
+                            label: 'Run Worker',
+                            collapsed: true,
                             translations: {
-                                'zh-CN': '概述',
+                                'zh-CN': '运行 Worker',
                             },
+                            items: [
+                                {
+                                    label: 'Quick Start',
+                                    slug: 'user-guide/run-worker/quick-start',
+                                    translations: {
+                                        'zh-CN': '快速上手',
+                                    },
+                                },
+                                {
+                                    label: 'Input and Output',
+                                    slug: 'user-guide/run-worker/input-output',
+                                    translations: {
+                                        'zh-CN': '输入与输出',
+                                    },
+                                },
+                                {
+                                    label: 'Builds and Runs',
+                                    slug: 'user-guide/run-worker/builds-and-runs',
+                                    translations: {
+                                        'zh-CN': '构建与运行',
+                                    },
+                                },
+                                {
+                                    label: 'Worker Tasks',
+                                    slug: 'user-guide/run-worker/worker-tasks',
+                                    translations: {
+                                        'zh-CN': 'Worker 任务',
+                                    },
+                                },
+                                {
+                                    label: 'API Calls',
+                                    slug: 'user-guide/run-worker/api-calls',
+                                    translations: {
+                                        'zh-CN': 'API 调用',
+                                    },
+                                },
+                                {
+                                    label: 'Pricing Rules',
+                                    slug: 'user-guide/run-worker/pricing-rules',
+                                    translations: {
+                                        'zh-CN': '计价规则',
+                                    },
+                                },
+                            ],
                         },
                         {
-                            label: 'Find a Worker',
-                            slug: 'user-guide/how-to-find-a-worker',
+                            label: 'User FAQ',
+                            collapsed: true,
                             translations: {
-                                'zh-CN': '如何查找 Worker',
+                                'zh-CN': '用户常见问题',
                             },
-                        },
-                        {
-                            label: 'Run Scraper',
-                            slug: 'user-guide/run-scraper',
-                            translations: {
-                                'zh-CN': '运行爬虫',
-                            },
-                        },
-                        {
-                            label: 'Download Data',
-                            slug: 'user-guide/how-to-download-data',
-                            translations: {
-                                'zh-CN': '如何下载数据',
-                            },
-                        },
-                        {
-                            label: 'Website Registration',
-                            slug: 'user-guide/how-to-collect-data-through-website-registration',
-                            translations: {
-                                'zh-CN': '网站注册采集',
-                            },
-                        },
-                        {
-                            label: 'Worker Tasks',
-                            slug: 'user-guide/worker-task',
-                            translations: {
-                                'zh-CN': 'Worker 任务',
-                            },
-                        },
-                        {
-                            label: 'Pricing Rules',
-                            slug: 'user-guide/worker-pricing-rules',
-                            translations: {
-                                'zh-CN': '计价规则',
-                            },
+                            items: [
+                                {
+                                    label: 'How to run a Worker?',
+                                    slug: 'user-guide/user-faq/how-to-run-worker',
+                                    translations: {
+                                        'zh-CN': '如何运行 Worker？',
+                                    },
+                                },
+                                {
+                                    label: 'Worker failed?',
+                                    slug: 'user-guide/user-faq/worker-failed',
+                                    translations: {
+                                        'zh-CN': 'Worker 运行失败？',
+                                    },
+                                },
+                                {
+                                    label: 'How to export data?',
+                                    slug: 'user-guide/user-faq/how-to-export-data',
+                                    translations: {
+                                        'zh-CN': '如何导出数据？',
+                                    },
+                                },
+                            ],
                         },
                     ],
                 },
@@ -165,193 +154,236 @@ export default defineConfig({
                     },
                     items: [
                         {
-                            label: 'Overview',
-                            slug: 'developer-guide',
+                            label: 'Develop Worker',
+                            collapsed: true,
                             translations: {
-                                'zh-CN': '概述',
-                            },
-                        },
-                        {
-                            label: 'Web Unlocker',
-                            translations: {
-                                'zh-CN': '网页解锁器',
+                                'zh-CN': '开发 Worker',
                             },
                             items: [
                                 {
-                                    label: 'Overview',
-                                    slug: 'developer-guide/web-unlocker',
+                                    label: 'Quick Start',
+                                    slug: 'developer-guide/develop-worker/quick-start',
                                     translations: {
-                                        'zh-CN': '概述',
-                                    },
-                                },
-                                {
-                                    label: 'Fingerprint Browser',
-                                    slug: 'developer-guide/web-unlocker/fingerprint-browser',
-                                    translations: {
-                                        'zh-CN': '指纹浏览器配置',
-                                    },
-                                },
-                                {
-                                    label: 'Bypass Verification Code',
-                                    slug: 'developer-guide/web-unlocker/bypass-verification-code',
-                                    translations: {
-                                        'zh-CN': '验证码绕过服务',
-                                    },
-                                },
-                                {
-                                    label: 'HTTP/Socks5 Network Proxy',
-                                    slug: 'developer-guide/web-unlocker/socks5-network-proxy',
-                                    translations: {
-                                        'zh-CN': 'HTTP/Socks5 网络代理',
+                                        'zh-CN': '快速上手',
                                     },
                                 },
                             ],
                         },
                         {
-                            label: 'Worker',
+                            label: 'Worker Definition',
+                            collapsed: true,
                             translations: {
-                                'zh-CN': 'Worker',
+                                'zh-CN': 'Worker 定义',
                             },
                             items: [
                                 {
-                                    label: 'Overview',
-                                    slug: 'developer-guide/worker',
+                                    label: 'Project Structure',
+                                    slug: 'developer-guide/worker-definition/project-structure',
+                                    badge: { text: 'Required', variant: 'danger' },
                                     translations: {
-                                        'zh-CN': '概述',
+                                        'zh-CN': '项目结构',
                                     },
                                 },
                                 {
-                                    label: 'What is a Worker?',
-                                    slug: 'developer-guide/worker/what-is-worker',
+                                    label: 'Platform Features',
+                                    collapsed: true,
                                     translations: {
-                                        'zh-CN': '什么是 Worker？',
+                                        'zh-CN': '平台功能',
                                     },
-                                },
-                                {
-                                    label: 'Worker Directory',
-                                    slug: 'developer-guide/worker/worker-directory',
-                                    translations: {
-                                        'zh-CN': 'Worker 目录结构',
-                                    },
-                                },
-                                {
-                                    label: 'Go Script',
-                                    slug: 'developer-guide/worker/go-script',
-                                    translations: {
-                                        'zh-CN': 'Go 脚本',
-                                    },
-                                },
-                                {
-                                    label: 'Python Script',
-                                    slug: 'developer-guide/worker/python-script',
-                                    translations: {
-                                        'zh-CN': 'Python 脚本',
-                                    },
-                                },
-                                {
-                                    label: 'Node.js Script',
-                                    slug: 'developer-guide/worker/nodejs-script',
-                                    translations: {
-                                        'zh-CN': 'Node.js 脚本',
-                                    },
+                                    items: [
+                                        {
+                                            label: 'Proxy Support',
+                                            slug: 'developer-guide/worker-definition/platform-features/proxy-support',
+                                            badge: { text: 'Required', variant: 'danger' },
+                                            translations: {
+                                                'zh-CN': '代理支持',
+                                            },
+                                        },
+                                        {
+                                            label: 'Browser Fingerprinting',
+                                            slug: 'developer-guide/worker-definition/platform-features/browser-fingerprinting',
+                                            translations: {
+                                                'zh-CN': '浏览器指纹',
+                                            },
+                                        },
+                                        {
+                                            label: 'CAPTCHA Handling',
+                                            slug: 'developer-guide/worker-definition/platform-features/captcha-handling',
+                                            translations: {
+                                                'zh-CN': '验证码处理',
+                                            },
+                                        },
+                                    ],
                                 },
                                 {
                                     label: 'Input Schema',
-                                    slug: 'developer-guide/worker/input-schema',
+                                    slug: 'developer-guide/worker-definition/input-schema',
+                                    badge: { text: 'Required', variant: 'danger' },
                                     translations: {
-                                        'zh-CN': '输入配置（Input Schema）',
+                                        'zh-CN': '输入配置',
                                     },
                                 },
                                 {
-                                    label: 'Test Environment',
-                                    slug: 'developer-guide/worker/test-environment',
+                                    label: 'Output Schema',
+                                    slug: 'developer-guide/worker-definition/output-schema',
                                     translations: {
-                                        'zh-CN': '测试环境',
+                                        'zh-CN': '输出配置',
                                     },
                                 },
                                 {
-                                    label: 'Publish Script',
-                                    slug: 'developer-guide/worker/publish-script',
+                                    label: 'SDK Modules',
+                                    slug: 'developer-guide/worker-definition/sdk-modules',
+                                    badge: { text: 'Required', variant: 'danger' },
                                     translations: {
-                                        'zh-CN': '发布脚本',
+                                        'zh-CN': 'SDK 模块',
                                     },
                                 },
                                 {
-                                    label: 'Publish Version',
-                                    slug: 'developer-guide/worker/publish-version',
+                                    label: 'Examples',
+                                    collapsed: true,
                                     translations: {
-                                        'zh-CN': '发布版本',
+                                        'zh-CN': '示例',
+                                    },
+                                    items: [
+                                        {
+                                            label: 'Python Example',
+                                            slug: 'developer-guide/worker-definition/examples/python-example',
+                                            translations: {
+                                                'zh-CN': 'Python 示例',
+                                            },
+                                        },
+                                        {
+                                            label: 'Node.js Example',
+                                            slug: 'developer-guide/worker-definition/examples/nodejs-example',
+                                            translations: {
+                                                'zh-CN': 'Node.js 示例',
+                                            },
+                                        },
+                                        {
+                                            label: 'Go Example',
+                                            slug: 'developer-guide/worker-definition/examples/go-example',
+                                            translations: {
+                                                'zh-CN': 'Go 示例',
+                                            },
+                                        },
+                                    ],
+                                },
+                                {
+                                    label: 'Browser Automation',
+                                    collapsed: true,
+                                    translations: {
+                                        'zh-CN': '浏览器自动化',
+                                    },
+                                    items: [
+                                        {
+                                            label: 'Overview',
+                                            slug: 'developer-guide/worker-definition/browser-automation/overview',
+                                            translations: {
+                                                'zh-CN': '概述',
+                                            },
+                                        },
+                                        {
+                                            label: 'Playwright',
+                                            slug: 'developer-guide/worker-definition/browser-automation/playwright',
+                                            translations: {
+                                                'zh-CN': 'Playwright',
+                                            },
+                                        },
+                                        {
+                                            label: 'Puppeteer',
+                                            slug: 'developer-guide/worker-definition/browser-automation/puppeteer',
+                                            translations: {
+                                                'zh-CN': 'Puppeteer',
+                                            },
+                                        },
+                                        {
+                                            label: 'Selenium',
+                                            slug: 'developer-guide/worker-definition/browser-automation/selenium',
+                                            translations: {
+                                                'zh-CN': 'Selenium',
+                                            },
+                                        },
+                                        {
+                                            label: 'DrissionPage',
+                                            slug: 'developer-guide/worker-definition/browser-automation/drissionpage',
+                                            translations: {
+                                                'zh-CN': 'DrissionPage',
+                                            },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            label: 'Deployment',
+                            slug: 'developer-guide/deployment',
+                            translations: {
+                                'zh-CN': '部署',
+                            },
+                        },
+                        {
+                            label: 'Builds & Runs',
+                            slug: 'developer-guide/builds-and-runs',
+                            translations: {
+                                'zh-CN': '构建与运行',
+                            },
+                        },
+                        {
+                            label: 'Test Your Worker',
+                            slug: 'developer-guide/test-your-worker',
+                            translations: {
+                                'zh-CN': '测试 Worker',
+                            },
+                        },
+                        {
+                            label: 'Publishing & Monetization',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': '发布与变现',
+                            },
+                            items: [
+                                {
+                                    label: 'Publish Your Worker',
+                                    slug: 'developer-guide/publishing-and-monetization/publish-your-worker',
+                                    translations: {
+                                        'zh-CN': '发布 Worker',
                                     },
                                 },
                                 {
-                                    label: 'Script Update',
-                                    slug: 'developer-guide/worker/script-update',
+                                    label: 'Monetize Your Worker',
+                                    slug: 'developer-guide/publishing-and-monetization/monetize-your-worker',
                                     translations: {
-                                        'zh-CN': '脚本更新',
-                                    },
-                                },
-                                {
-                                    label: 'Data Saving',
-                                    slug: 'developer-guide/worker/data-saving',
-                                    translations: {
-                                        'zh-CN': '数据保存',
-                                    },
-                                },
-                                {
-                                    label: 'View Earnings',
-                                    slug: 'developer-guide/worker/view-earnings',
-                                    translations: {
-                                        'zh-CN': '查看收益',
+                                        'zh-CN': 'Worker 变现',
                                     },
                                 },
                             ],
                         },
                         {
-                            label: 'Framework',
+                            label: 'Developer FAQ',
+                            collapsed: true,
                             translations: {
-                                'zh-CN': '数据采集框架',
+                                'zh-CN': '开发者常见问题',
                             },
                             items: [
                                 {
-                                    label: 'Overview',
-                                    slug: 'developer-guide/framework',
+                                    label: 'How to deploy?',
+                                    slug: 'developer-guide/developer-faq/how-to-deploy',
                                     translations: {
-                                        'zh-CN': '概述',
+                                        'zh-CN': '如何部署？',
                                     },
                                 },
                                 {
-                                    label: 'Why Use Framework?',
-                                    slug: 'developer-guide/framework/why-use-collection-framework',
+                                    label: 'Build failed?',
+                                    slug: 'developer-guide/developer-faq/build-failed',
                                     translations: {
-                                        'zh-CN': '为什么使用框架？',
+                                        'zh-CN': '构建失败？',
                                     },
                                 },
                                 {
-                                    label: 'Selenium',
-                                    slug: 'developer-guide/framework/use-selenium',
+                                    label: 'Test errors?',
+                                    slug: 'developer-guide/developer-faq/test-errors',
                                     translations: {
-                                        'zh-CN': 'Selenium',
-                                    },
-                                },
-                                {
-                                    label: 'Playwright',
-                                    slug: 'developer-guide/framework/use-playwright',
-                                    translations: {
-                                        'zh-CN': 'Playwright',
-                                    },
-                                },
-                                {
-                                    label: 'Puppeteer',
-                                    slug: 'developer-guide/framework/use-puppeteer',
-                                    translations: {
-                                        'zh-CN': 'Puppeteer',
-                                    },
-                                },
-                                {
-                                    label: 'DrissionPage',
-                                    slug: 'developer-guide/framework/use-drissionpage',
-                                    translations: {
-                                        'zh-CN': 'DrissionPage',
+                                        'zh-CN': '测试错误？',
                                     },
                                 },
                             ],
@@ -366,48 +398,11 @@ export default defineConfig({
                     collapsed: true,
                     items: [
                         {
-                            label: 'Overview',
+                            label: 'Base URL & Authentication',
                             slug: 'api',
                             translations: {
-                                'zh-CN': '概述',
+                                'zh-CN': '基础 URL 与认证',
                             },
-                        },
-                        {
-                            label: 'Basic Information',
-                            collapsed: true,
-                            translations: {
-                                'zh-CN': '基础信息',
-                            },
-                            items: [
-                                {
-                                    label: 'Overview',
-                                    slug: 'api/basic',
-                                    translations: {
-                                        'zh-CN': '概述',
-                                    },
-                                },
-                                {
-                                    label: 'Base URL & Authentication',
-                                    slug: 'api/basic/base',
-                                    translations: {
-                                        'zh-CN': '基础 URL 与认证',
-                                    },
-                                },
-                                {
-                                    label: 'Device Configuration',
-                                    slug: 'api/basic/device-configuration',
-                                    translations: {
-                                        'zh-CN': '设备配置',
-                                    },
-                                },
-                                {
-                                    label: 'Proxy Nodes',
-                                    slug: 'api/basic/proxy',
-                                    translations: {
-                                        'zh-CN': '代理节点',
-                                    },
-                                },
-                            ],
                         },
                         {
                             label: 'Worker',
@@ -500,82 +495,58 @@ export default defineConfig({
                             ],
                         },
                         {
-                            label: 'Account Information',
+                            label: 'Marketplace',
                             collapsed: true,
                             translations: {
-                                'zh-CN': '账户信息',
+                                'zh-CN': '市场',
                             },
-                            autogenerate: {
-                                directory: 'api/account',
+                            items: [
+                                {
+                                    label: 'Search Scrapers',
+                                    slug: 'api/marketplace/search',
+                                    translations: {
+                                        'zh-CN': '搜索爬虫',
+                                    },
+                                },
+                                {
+                                    label: 'Scraper Details',
+                                    slug: 'api/marketplace/details',
+                                    translations: {
+                                        'zh-CN': '爬虫详情',
+                                    },
+                                },
+                            ],
+                        },
+                        {
+                            label: 'Account',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': '账户',
                             },
+                            items: [
+                                {
+                                    label: 'Account Info',
+                                    slug: 'api/account/info',
+                                    translations: {
+                                        'zh-CN': '账户信息',
+                                    },
+                                },
+                            ],
                         },
                     ],
                 },
                 {
-                    label: 'Website Events',
+                    label: 'Events',
                     collapsed: true,
                     translations: {
-                        'zh-CN': '网站活动',
+                        'zh-CN': '活动',
                     },
                     items: [
-                        {
-                            label: 'Overview',
-                            slug: 'website-events',
-                            translations: {
-                                'zh-CN': '概述',
-                            },
-                        },
                         {
                             label: 'Invitation Program',
-                            slug: 'website-events/invitation-event',
+                            slug: 'events/invitation-program',
                             translations: {
                                 'zh-CN': '邀请计划',
-                            },
-                        },
-                    ],
-                },
-                {
-                    label: 'Platform Policies',
-                    collapsed: true,
-                    translations: {
-                        'zh-CN': '平台政策',
-                    },
-                    items: [
-                        {
-                            label: 'Overview',
-                            slug: 'platform-policies',
-                            translations: {
-                                'zh-CN': '概述',
-                            },
-                        },
-                        {
-                            label: 'Privacy Policy',
-                            slug: 'platform-policies/privacy-policy',
-                            translations: {
-                                'zh-CN': '隐私政策',
-                            },
-                        },
-                        {
-                            label: 'Terms of Service',
-                            slug: 'platform-policies/terms-of-service',
-                            translations: {
-                                'zh-CN': '服务条款',
-                            },
-                        },
-                    ],
-                },
-                {
-                    label: 'FAQ',
-                    collapsed: true,
-                    translations: {
-                        'zh-CN': '常见问题',
-                    },
-                    items: [
-                        {
-                            label: 'Overview',
-                            slug: 'faq',
-                            translations: {
-                                'zh-CN': '概述',
                             },
                         },
                     ],

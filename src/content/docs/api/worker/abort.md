@@ -7,19 +7,11 @@ sidebar:
 
 **Method:** `POST`
 
-**Endpoint:** `/api/v1/scraper/abort`
+**Endpoint:** `/api/v1/runs/{run_slug}/abort`
 
 Send the request body with **Content-Type: application/json**.
 
-## Request Example
-
-```json
-{
-    "run_slug": "01KJYA4S1QQ1PMDVVRP7XH72C51"
-}
-```
-
-#### Parameters
+## Path Parameters
 
 | Parameter | Required | Description           |
 | --------- | -------- | --------------------- |

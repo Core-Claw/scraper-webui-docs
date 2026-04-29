@@ -1,33 +1,26 @@
 ---
-title: 查询运行结果
-description: 查询指定运行的结果
+title: 运行结果
+description: 获取 Worker 运行结果
 sidebar:
     order: 3
 ---
 
-**请求方式：** `POST`
+**方法：** `GET`
 
-**请求地址：** `/api/v1/run/result/list`
+**端点：** `/api/v1/runs/{run_slug}/results`
 
-使用 **Content-Type: application/json** 发送请求体。
+## 路径参数
 
-## 请求示例
+| 参数      | 必填 | 说明           |
+| --------- | ---- | -------------- |
+| run_slug  | 是   | 运行唯一标识符 |
 
-```json
-{
-    "page": 1,
-    "page_size": 20,
-    "run_slug": "01KKBBRYX3NTK8HRZ2C6HD0JNM"
-}
-```
+## 查询参数
 
-#### 参数说明
-
-| 参数      | 示例值                     | 参数类型 | 是否必填 | 参数描述     |
-| --------- | -------------------------- | -------- | -------- | ------------ |
-| page      | 1                          | Integer  | 是       | 当前页码     |
-| page_size | 20                         | Integer  | 是       | 每页数量     |
-| run_slug  | 01KKBBRYX3NTK8HRZ2C6HD0JNM | String   | 是       | 运行唯一标识 |
+| 参数      | 默认值 | 类型    | 必填 | 说明       |
+| --------- | ------ | ------- | ---- | ---------- |
+| page      | 1      | Integer | 否   | 当前页码   |
+| page_size | 20     | Integer | 否   | 每页条数   |
 
 ## 响应示例
 
@@ -36,22 +29,22 @@ sidebar:
     "code": 0,
     "message": "success",
     "data": {
-        "count": 4,
-        "headers": [
+        "total": 4,
+        "columns": [
             {
-                "label": "标题v1",
+                "label": "title",
                 "key": "title",
                 "format": "text"
             },
             {
-                "label": "时间",
+                "label": "publish_time",
                 "key": "publish_time",
                 "format": "text"
             }
         ],
-        "list": [
+        "records": [
             {
-                "title": "太平洋彼岸传佳音，美国中国总商会授予圣奥重磅大奖",
+                "title": "示例文章标题",
                 "publish_time": "2026-01-19"
             }
         ]
@@ -59,21 +52,21 @@ sidebar:
 }
 ```
 
-#### 参数说明
+#### 响应字段
 
-| 参数       | 示例值  | 参数类型 | 参数描述                                |
-| ---------- | ------- | -------- | --------------------------------------- |
-| code       | 0       | Integer  | [查看帮助](/zh-cn/api/basic/base/#全局状态码) |
-| message    | success | String   | 错误描述                                |
-| data       | -       | Object   | -                                       |
-| └─ count   | 4       | Integer  | 记录总条数                              |
-| └─ headers | -       | Array    | 采集数据的表头                          |
-| └─ list    | -       | Array    | 采集数据的记录集                        |
+| 参数    | 示例    | 类型    | 说明           |
+| ------- | ------- | ------- | -------------- |
+| code    | 0       | Integer | 全局状态码     |
+| message | success | String  | 响应消息       |
+| data    | -       | Object  | 响应数据       |
+| total   | 4       | Integer | 总记录数       |
+| columns | -       | Array   | 结果表列定义   |
+| records | -       | Array   | 结果记录列表   |
 
-##### headers 参数说明
+##### `columns` 字段
 
-| 参数   | 示例值 | 参数类型 | 参数描述 |
-| ------ | ------ | -------- | -------- |
-| label  | -      | String   | 别名     |
-| key    | -      | String   | 键名     |
-| format | -      | String   | 类型     |
+| 参数   | 示例 | 类型   | 说明     |
+| ------ | ---- | ------ | -------- |
+| label  | -    | String | 显示标签 |
+| key    | -    | String | 字段键   |
+| format | -    | String | 字段格式 |
