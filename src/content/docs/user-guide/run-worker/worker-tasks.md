@@ -11,18 +11,20 @@ You can manage and run these task configurations directly in the CoreClaw Consol
 
 ## Select a Worker
 
-![Worker selection page](@/assets/docs/img_31.jpg)
+![Worker selection page](@/assets/docs/65.png)
 
 ## Configuration
 
-![Worker configuration page](@/assets/docs/img_32.jpg)
+![Worker configuration page](@/assets/docs/66.png)
 
 ## Naming
 
 To make tasks easier to identify, you can click the task title on the details page to add a name, title, and description.
 
-![Task naming interface](@/assets/docs/img_17.jpg)
+![Task naming interface](@/assets/docs/67.png)
 
-## Run
+## Task Templates
 
-![Worker run execution](@/assets/docs/img_4.jpg)
+You can view saved tasks in the Task Templates section of the Console, making it easy to perform repetitive task work.
+
+![Task templates](@/assets/docs/68.png)

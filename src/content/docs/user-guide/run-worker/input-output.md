@@ -7,49 +7,37 @@ sidebar:
 
 Learn how to configure Worker inputs and understand the output data structure.
 
-## Input Parameters
+## Input
 
-Each Worker accepts specific input parameters that control its behavior. These parameters are defined in the Worker's **Input Schema**.
+Each Worker accepts input that tells it what to do. You can run a Worker from the CoreClaw Console UI and configure the input using the auto-generated form:
 
-### Common Input Types
+![Input configuration UI](@/assets/docs/61.png)
 
-| Type        | Description                    | Example               |
-| ----------- | ------------------------------ | --------------------- |
-| **string**  | Text input                     | URL, search query     |
-| **number**  | Numeric input                  | Page limit, timeout   |
-| **boolean** | True/false toggle              | Include images        |
-| **array**   | List of values                 | Multiple URLs         |
-| **object**  | Nested configuration           | Proxy settings        |
+Configuring input via the UI is equivalent to passing input parameters as JSON. You can click **Batch Edit** to conveniently enter a large number of parameters at once.
 
-### Configuring Inputs
+When running a Worker via API, you pass the same input as a JSON object. For the example shown in the screenshot above, the corresponding JSON input would be:
 
-When running a Worker, you'll see a form based on its Input Schema:
+```json
+[
+    {
+        "lang": "en-US",
+        "keyword": "711",
+        "max_results": 20,
+        "base_location": "New York",
+        "max_reviews_per_place": 5
+    }
+]
+```
 
-1. **Required fields** must be filled before running
-2. **Optional fields** have default values
-3. **Help text** explains each parameter's purpose
+## Options — Build, Timeout, and Memory
+
+As part of the input, you can also specify run options for your Worker, such as the script version, proxy node, timeout, and memory allocation.
+
+![Run Options](@/assets/docs/63.png)
 
 ## Output Data
 
-Worker output is structured data in JSON format. The structure depends on the Worker's purpose.
-
-### Output Structure
-
-```json
-{
-  "data": [
-    {
-      "title": "Product Name",
-      "price": 99.99,
-      "url": "https://example.com/product"
-    }
-  ],
-  "metadata": {
-    "total": 100,
-    "scrapedAt": "2024-01-15T10:30:00Z"
-  }
-}
-```
+Worker output is structured data stored via `push_data`. The structure depends on the Worker's purpose and is defined by the `output_schema.json` file.
 
 ### Export Formats
 
@@ -60,7 +48,7 @@ You can export output data in the following formats:
 | **JSON** | Developers, API integration       |
 | **CSV**  | Spreadsheets, data analysis       |
 
-## Data Size Limits
+### Data Size Limits
 
 - Large datasets are paginated
 - Use API for streaming large results

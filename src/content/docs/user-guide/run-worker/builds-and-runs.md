@@ -1,60 +1,54 @@
 ---
 title: Builds and Runs
-description: Learn about Worker builds and run management
+description: Understand how Workers run on the CoreClaw platform
 sidebar:
   order: 3
 ---
 
-Understand how Workers are built and executed on the CoreClaw platform.
+Understand how Workers run on the CoreClaw platform.
 
-## Worker Builds
+## No Build Required — Lightweight Script Mode
 
-Before a Worker can run, it must be built on the platform. The build process packages your Worker code and dependencies into a runnable unit.
-
-### Build Process
-
-1. **Code Upload** - Worker code is uploaded as a ZIP archive
-2. **Dependency Install** - Required packages are installed on the platform
-3. **Environment Setup** - The script runtime environment is prepared
-4. **Ready State** - Worker is ready to run
-
-### Build States
-
-| State         | Description                    |
-| ------------- | ------------------------------ |
-| **PENDING**   | Build is queued                |
-| **BUILDING**  | Build is in progress           |
-| **SUCCESS**   | Build completed successfully   |
-| **FAILED**    | Build encountered an error     |
-
-### Build Logs
-
-View build logs to debug build failures:
-
-- Dependency errors
-- Syntax errors
-- Configuration issues
-
-## Worker Runs
-
-A Run is a single execution of a built Worker. Each run executes in a lightweight, process-isolated script runtime environment.
-
-### Run Lifecycle
+CoreClaw's execution flow is:
 
 ```
-READY → RUNNING → SUCCEEDED/FAILED/ABORTING
+User Code → Script Runtime → Remote Fingerprint Browser Pool (CDP) → Target Website
 ```
 
-### Run Management
+CoreClaw uses **lightweight process isolation**, not container isolation:
 
-- **Monitor** - Watch run progress in real-time
+- **Runtime is pre-provisioned**: Python/Node runtimes and base dependencies are already installed in the shared environment.
+- **Browser is remotely hosted**: No need to build a browser environment locally. Instead, connect to the remote fingerprint browser pool via CDP.
+- **Dependency installation is automatic**: The platform automatically installs dependencies based on `requirements.txt` / `package.json` — no manual image building required.
+
+So all you need to do is: **Upload your script (or find one in the Store) → Click Run**. The platform handles dependency installation and execution automatically.
+
+**In short**: CoreClaw has no Build step because it provides **platform-level hosting** for both the runtime and the browser. Users don't need to worry about environment setup — this is CoreClaw's advantage: **upload and run**.
+
+## Run Lifecycle
+
+```
+READY → RUNNING → SUCCEEDED / FAILED / ABORTING
+```
+
+| Status | Description |
+| ------ | ----------- |
+| **READY** | Run is queued and waiting to start |
+| **RUNNING** | Script is currently executing |
+| **SUCCEEDED** | Run completed successfully |
+| **FAILED** | Run encountered an error |
+| **ABORTING** | Run is being stopped |
+
+## Run Management
+
+- **Monitor** - View real-time run progress
 - **Abort** - Stop a running Worker
-- **Rerun** - Execute the same Worker with same parameters
+- **Rerun** - Execute again with the same parameters
 - **View Logs** - Debug execution issues
 
 ## Run History
 
-CoreClaw retains all of your Worker run records. Each run is saved with:
+CoreClaw retains all your Worker run records. Each run saves:
 
 - Unique Run ID
 - Timestamp
@@ -63,3 +57,5 @@ CoreClaw retains all of your Worker run records. Each run is saved with:
 - Input parameters
 - Output data
 - Logs
+
+You can view run records in the Console.
