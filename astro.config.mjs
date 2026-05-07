@@ -18,6 +18,14 @@ const locales = {
 
 export default defineConfig({
     site: 'https://docs.coreclaw.com',
+    redirects: {
+        '/user-guide': '/user-guide/run-worker/quick-start',
+        '/developer-guide': '/developer-guide/develop-worker/quick-start',
+        '/faq': '/user-guide/user-faq/how-to-run-worker',
+        '/zh-cn/user-guide': '/zh-cn/user-guide/run-worker/quick-start',
+        '/zh-cn/developer-guide': '/zh-cn/developer-guide/develop-worker/quick-start',
+        '/zh-cn/faq': '/zh-cn/user-guide/user-faq/how-to-run-worker',
+    },
     integrations: [
         starlight({
             plugins: [starlightImageZoom()],
