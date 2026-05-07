@@ -1,11 +1,11 @@
 ---
-title: 'Documentation'
+title: 'Home'
 description: CoreClaw is dedicated to providing efficient, stable, and scalable data acquisition solutions for users with diverse backgrounds and technical capabilities.
 template: splash
 ---
 
 <div class="breadcrumb-home">
-	<a href="https://coreclaw.com" class="breadcrumb-home-link">Home</a>
+	<a href="https://coreclaw.com" class="breadcrumb-home-link">Website Home</a>
 	<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
 	<span class="breadcrumb-home-current">Documentation Center</span>
 </div>
@@ -16,7 +16,7 @@ template: splash
 	<div class="hero-title">CoreClaw <span class="hero-title-accent">Documentation</span></div>
 	<p class="hero-subtitle">Whether you're getting started or building advanced solutions, our documentation provides complete guidance.</p>
 	<div class="hero-actions">
-		<a href="/home/" class="hero-btn hero-btn-primary">
+		<a href="/home" class="hero-btn hero-btn-primary">
 			<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
 			Browse Docs
 		</a>
@@ -182,7 +182,7 @@ template: splash
 		<h3 class="nav-card-title">Browser Automation <span class="nav-card-arrow">→</span></h3>
 		<p class="nav-card-desc">Playwright, Puppeteer, Selenium, DrissionPage integration guides</p>
 	</a>
-	<a href="/events/invitation-program/" class="nav-card">
+	<a href="/website-events/invitation-event/" class="nav-card">
 		<div class="nav-card-header">
 			<div class="nav-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></div>
 			<span class="nav-card-tag" style="--tag-color: #ef4444">Events</span>
@@ -235,7 +235,7 @@ template: splash
 			<a href="/changelog/" class="updates-panel-link">Full changelog →</a>
 		</div>
 		<div class="updates-list">
-			<a href="/events/invitation-program/" class="updates-item">
+			<a href="/website-events/invitation-event/" class="updates-item">
 				<span class="updates-dot" style="--dot-color: #8b5cf6"></span>
 				<div class="updates-item-content">
 					<div class="updates-item-title">Invitation Program Launched</div>

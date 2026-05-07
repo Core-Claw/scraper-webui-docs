@@ -12,7 +12,7 @@ sidebar:
 运行 Worker 前，请确保您有：
 
 - CoreClaw 账户（[免费注册](https://console.coreclaw.com/sign-up)）
-- 足够的账户余额（查看您的控制台）
+- 足够的账户余额（查看您的[控制台](https://console.coreclaw.com/wallet)）
 - 准备好目标网站 URL 或参数
 
 ## 分步指南
@@ -48,7 +48,7 @@ sidebar:
 
 ### 4. 启动运行
 
-点击 **"运行 Worker"** 开始执行：
+点击 **"开始运行"** 开始执行：
 
 1. 系统创建新的运行
 2. 分配资源

@@ -64,8 +64,8 @@ git clone https://github.com/Core-Claw/GoScirptDemo.git
 └── sdk_pb2_grpc.py   # 网络通信模块
 ```
 
-- **input_schema.json** — 定义用户运行 Worker 时看到的输入表单。详见 [输入配置](/developer-guide/worker-definition/input-schema/)。
-- **output_schema.json** — 定义 Worker 结果的输出表格结构。详见 [输出配置](/developer-guide/worker-definition/output-schema/)。
+- **input_schema.json** — 定义用户运行 Worker 时看到的输入表单。详见 [输入配置](/zh-cn/developer-guide/worker-definition/input-schema/)。
+- **output_schema.json** — 定义 Worker 结果的输出表格结构。详见 [输出配置](/zh-cn/developer-guide/worker-definition/output-schema/).
 - **sdk.py / sdk_pb2.py / sdk_pb2_grpc.py** — CoreClaw SDK 模块，用于与平台运行时通信。
 
 ### 3. 编写脚本
@@ -75,8 +75,8 @@ git clone https://github.com/Core-Claw/GoScirptDemo.git
 :::important
 CoreClaw 运行环境是**隔离的网络沙箱**，脚本无法直接访问外网，必须通过平台内置代理出去：
 
-- **HTTP 请求类脚本** — 代理配置是**必须的**。通过 `PROXY_AUTH` 环境变量读取代理地址，将 HTTP 客户端配置为使用 SOCKS5 代理。详见 [代理支持](/developer-guide/worker-definition/platform-features/proxy-support/)。
-- **浏览器自动化脚本** — 通过 `ChromeWs` 环境变量（WebSocket 地址）连接远程浏览器，代理由浏览器自动处理，无需手动配置代理。详见 [浏览器指纹](/developer-guide/worker-definition/platform-features/browser-fingerprinting/)。
+- **HTTP 请求类脚本** — 代理配置是**必须的**。通过 `PROXY_AUTH` 环境变量读取代理地址，将 HTTP 客户端配置为使用 SOCKS5 代理。详见 [代理支持](/zh-cn/developer-guide/worker-definition/platform-features/proxy-support/)。
+- **浏览器自动化脚本** — 通过 `ChromeWs` 环境变量（WebSocket 地址）连接远程浏览器，代理由浏览器自动处理，无需手动配置代理。详见 [浏览器指纹](/zh-cn/developer-guide/worker-definition/platform-features/browser-fingerprinting/)。
 :::
 
 ```python

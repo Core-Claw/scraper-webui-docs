@@ -21,7 +21,7 @@ sidebar:
 
 ![官网首页入口](@/assets/docs/55.png)
 
-- 从 CoreClaw 控制台，点击侧边栏中的 **Store**。
+- 从 [CoreClaw 控制台](https://console.coreclaw.com/)，点击侧边栏中的 **Store**。
 
 ![控制台入口](@/assets/docs/57.png)
 

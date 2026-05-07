@@ -19,7 +19,7 @@ const lang = getLanguageFromURL(Astro.url.pathname)
 const pageTitle = entry?.data?.title || ''
 
 // Labels based on language
-const homeLabel = lang === 'zh-cn' ? '首页' : 'Home'
+const homeLabel = lang === 'zh-cn' ? '主页' : 'Index'
 const homeHref = lang === 'zh-cn' ? '/zh-cn/' : '/'
 
 // Define category info - all categories now have index pages
@@ -36,52 +36,27 @@ const categoryConfig: Record<
 	'home': {
 		label: 'Home',
 		labelZh: '首页',
-		hasIndex: true,
+		hasIndex: false,
 	},
 	'user-guide': {
 		label: 'User Guide',
 		labelZh: '用户指南',
-		hasIndex: true,
+		hasIndex: false,
 	},
 	'developer-guide': {
 		label: 'Developer Guide',
 		labelZh: '开发者指南',
-		hasIndex: true,
-		subCategories: {
-			'web-unlocker': { label: 'Web Unlocker', labelZh: '网页解锁器', hasIndex: true },
-			worker: { label: 'Worker', labelZh: 'Worker', hasIndex: true },
-			framework: { label: 'Framework', labelZh: '数据采集框架', hasIndex: true },
-		},
+		hasIndex: false,
 	},
 	api: {
 		label: 'API',
 		labelZh: 'API',
 		hasIndex: true,
-		subCategories: {
-			basic: { label: 'Basic Information', labelZh: '基础信息', hasIndex: true },
-			worker: { label: 'Worker', labelZh: 'Worker', hasIndex: true },
-			run: { label: 'Runs', labelZh: 'Runs', hasIndex: true },
-			task: { label: 'Tasks', labelZh: 'Tasks', hasIndex: true },
-			account: { label: 'Account Information', labelZh: '账户信息', hasIndex: true },
-		},
 	},
-	faq: {
-		label: 'FAQ',
-		labelZh: '常见问题',
-		hasIndex: true,
-		subCategories: {
-			'payment-problem': { label: 'Payment FAQ', labelZh: '支付问题', hasIndex: true },
-		},
-	},
-	'partnership-promotion': {
-		label: 'Partnership & Promotion',
-		labelZh: '推广合作',
-		hasIndex: true,
-	},
-	'platform-policies': {
-		label: 'Platform Policies',
-		labelZh: '平台政策',
-		hasIndex: true,
+	'website-events': {
+		label: 'Events',
+		labelZh: '活动',
+		hasIndex: false,
 	},
 }
 
@@ -111,7 +86,10 @@ const isCategoryIndex = entryId.endsWith('/index') || entryId.endsWith('/index.m
 const shouldShowBreadcrumb = !isHomePage && !isSplashPage
 
 // Build breadcrumbs based on path structure
-if (pathParts.length > 0 && !isCategoryIndex) {
+// Special case: 'home' is a top-level page, not a category
+const isHomeDocPage = pathParts.length === 1 && pathParts[0] === 'home'
+
+if (pathParts.length > 0 && !isCategoryIndex && !isHomeDocPage) {
 	const categorySlug = pathParts[0]
 	const category = categoryConfig[categorySlug]
 

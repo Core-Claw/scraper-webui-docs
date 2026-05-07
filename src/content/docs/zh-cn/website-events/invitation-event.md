@@ -1,5 +1,5 @@
 ---
-title: 邀请计划
+title: 邀请活动
 description: CoreClaw 邀请活动条款与规则
 sidebar:
   order: 1

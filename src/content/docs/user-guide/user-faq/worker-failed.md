@@ -115,5 +115,5 @@ If issues persist:
 ## Related Topics
 
 - [Builds and Runs](/user-guide/run-worker/builds-and-runs/) - Understand run lifecycle
-- [Platform Features](/developer-guide/worker-definition/platform-features/) - Bypass anti-scraping
+- [Platform Features](/developer-guide/worker-definition/platform-features/proxy-support/) - Bypass anti-scraping
 - [API Reference](/api/) - Error codes explained

@@ -17,11 +17,11 @@ Get your first Worker running in just 5 minutes!
 
 After signing in, you can access the Worker Store from two entry points:
 
-- From the [CoreClaw homepage](https://coreclaw.com), click **Store** in the navigation bar.
+- From the [CoreClaw Official Website](https://coreclaw.com), click **Store** in the navigation bar.
 
-![Homepage Store entry](@/assets/docs/49.png)
+![Official Website Store entry](@/assets/docs/49.png)
 
-- From the CoreClaw Console, click **Store** in the sidebar.
+- From the [CoreClaw Console](https://console.coreclaw.com/), click **Store** in the sidebar.
 
 ![Console Store entry](@/assets/docs/54.png)
 

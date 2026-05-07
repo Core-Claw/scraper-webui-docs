@@ -9,7 +9,7 @@ sidebar:
 
 ## 输入
 
-每个 Worker 接受输入，输入告诉它该做什么。您可以用 CoreClaw 控制台的 UI 运行一个 Worker，然后用自动生成的 UI 配置输入：
+每个 Worker 需要**输入参数**来指定运行方式。输入参数是一个 JSON 对象，您可以通过 CoreClaw 控制台的自动生成的 UI 表单来配置，也可以直接通过 API 传递 JSON 数据：
 
 ![输入配置界面](@/assets/docs/62.png)
 

@@ -25,6 +25,8 @@ export default defineConfig({
         '/zh-cn/user-guide': '/zh-cn/user-guide/run-worker/quick-start',
         '/zh-cn/developer-guide': '/zh-cn/developer-guide/develop-worker/quick-start',
         '/zh-cn/faq': '/zh-cn/user-guide/user-faq/how-to-run-worker',
+        '/events/invitation-program': '/website-events/invitation-event',
+        '/zh-cn/events/invitation-program': '/zh-cn/website-events/invitation-event',
     },
     integrations: [
         starlight({
@@ -551,10 +553,10 @@ export default defineConfig({
                     },
                     items: [
                         {
-                            label: 'Invitation Program',
-                            slug: 'events/invitation-program',
+                            label: 'Invitation Event',
+                            slug: 'website-events/invitation-event',
                             translations: {
-                                'zh-CN': '邀请计划',
+                                'zh-CN': '邀请活动',
                             },
                         },
                     ],

@@ -108,6 +108,6 @@ You can list all runs via `GET /api/v1/runs` and view detailed records in the Co
 
 ### For Production
 
-- Use Tasks for repeated runs — see [Worker Tasks](/developer-guide/develop-worker/worker-tasks/)
+- Use Tasks for repeated runs — see [Worker Tasks](/user-guide/run-worker/worker-tasks/)
 - Set appropriate timeout values for long-running scripts
 - Handle errors gracefully with try/except and meaningful error messages

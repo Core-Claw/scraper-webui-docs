@@ -12,7 +12,7 @@ Learn how to run a Worker on CoreClaw in a few simple steps.
 Before running a Worker, make sure you have:
 
 - A CoreClaw account ([Sign up free](https://console.coreclaw.com/sign-up))
-- Sufficient account balance (check your dashboard)
+- Sufficient account balance (check your [console](https://console.coreclaw.com/wallet))
 - The target website URL or parameters ready
 
 ## Step-by-Step Guide
@@ -48,7 +48,7 @@ Fill in the required input parameters:
 
 ### 4. Start the Run
 
-Click **"Run Worker"** to start execution:
+Click **"Start"** to start execution:
 
 1. The system creates a new Run
 2. Resources are allocated

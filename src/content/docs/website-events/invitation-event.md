@@ -1,5 +1,5 @@
 ---
-title: Invitation Program
+title: Invitation Event
 description: CoreClaw Invitation Program Terms & Conditions
 sidebar:
   order: 1
