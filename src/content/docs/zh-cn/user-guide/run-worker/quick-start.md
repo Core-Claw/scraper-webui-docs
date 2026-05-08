@@ -17,23 +17,23 @@ sidebar:
 
 注册登录后，您可以通过以下两个入口进入脚本商店：
 
-- 从 [CoreClaw 官网首页](https://coreclaw.com)，点击导航栏中的 **Store**。
+- 从 [CoreClaw 官网首页](https://coreclaw.com)，点击导航栏中的 **商店**。
 
 ![官网首页入口](@/assets/docs/55.png)
 
-- 从 [CoreClaw 控制台](https://console.coreclaw.com/)，点击侧边栏中的 **Store**。
+- 从 [CoreClaw 控制台](https://console.coreclaw.com/)，点击侧边栏中的 **CoreClaw 商店**。
 
 ![控制台入口](@/assets/docs/57.png)
 
 ### 2. 查找脚本
 
-在脚本商店中，您可以按分类浏览或使用搜索栏查找所需脚本。点击脚本卡片查看详情。
+在Worker商店中，您可以按分类浏览或使用搜索栏查找所需Worker。点击卡片查看详情。
 
-![脚本商店](@/assets/docs/56.png)
+![Worker商店](@/assets/docs/56.png)
 
-在脚本详情页，您可以查看描述、输入参数、示例输出和定价信息。点击**运行**进入配置页面。
+在Worker详情页，您可以查看描述、输入参数、示例输出和定价信息。点击**运行**进入配置页面。
 
-![脚本详情页](@/assets/docs/58.png)
+![Worker详情页](@/assets/docs/58.png)
 
 ### 3. 配置并运行
 
