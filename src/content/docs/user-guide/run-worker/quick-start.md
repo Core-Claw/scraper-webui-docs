@@ -31,7 +31,7 @@ In the Worker Store, you can browse by category or use the search bar to find th
 
 ![Worker Store](@/assets/docs/50.png)
 
-On the Worker detail page, you can review the description, input parameters, sample output, and pricing. Click **Use** to proceed.
+On the Worker detail page, you can review the description, input parameters, sample output, and pricing. Click **Run** to proceed.
 
 ![Worker detail page](@/assets/docs/51.png)
 

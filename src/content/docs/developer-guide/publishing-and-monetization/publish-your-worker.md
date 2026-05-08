@@ -23,7 +23,6 @@ After the script is created, it can be executed **immediately without review**, 
 - Can be run immediately
 - **Only visible to you**
 
-![Private script](@/assets/docs/img_45.jpg)
 
 Private scripts are ideal for:
 
