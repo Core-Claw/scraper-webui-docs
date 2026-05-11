@@ -505,29 +505,6 @@ export default defineConfig({
                             ],
                         },
                         {
-                            label: 'Marketplace',
-                            collapsed: true,
-                            translations: {
-                                'zh-CN': '市场',
-                            },
-                            items: [
-                                {
-                                    label: 'Search Scrapers',
-                                    slug: 'api/marketplace/search',
-                                    translations: {
-                                        'zh-CN': '搜索爬虫',
-                                    },
-                                },
-                                {
-                                    label: 'Scraper Details',
-                                    slug: 'api/marketplace/details',
-                                    translations: {
-                                        'zh-CN': '爬虫详情',
-                                    },
-                                },
-                            ],
-                        },
-                        {
                             label: 'Account',
                             collapsed: true,
                             translations: {

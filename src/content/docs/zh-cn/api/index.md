@@ -45,21 +45,13 @@ https://openapi.coreclaw.com
 
 ## 身份验证
 
-所有 API 请求都需要使用您的 API 密钥进行身份验证。您可以在账户设置中找到您的 API 密钥。
-
-### 获取 API 密钥
-
-1. 登录您的 CoreClaw 账户
-2. 进入账户设置
-3. 在 API 部分找到您的 API 密钥
-4. 复制并在请求中使用
+所有 API 请求都需要在请求头中携带 API 密钥。
 
 ### 使用 API 密钥
 
-在每个请求的头部包含您的 API 密钥：
-
 ```bash
-curl -X GET "https://openapi.coreclaw.com/api/v1/account/info" \
+curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json"
+  -H "content-type: application/json" \
+  --data "{}"
 ```

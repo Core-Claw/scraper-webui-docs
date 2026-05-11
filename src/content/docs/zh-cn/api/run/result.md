@@ -5,22 +5,29 @@ sidebar:
     order: 3
 ---
 
-**方法：** `GET`
+**方法：** `POST`
 
-**端点：** `/api/v1/runs/{run_slug}/results`
+**端点：** `/api/v1/run/result/list`
 
-## 路径参数
+使用 **Content-Type: application/json** 发送请求体。
 
-| 参数      | 必填 | 说明           |
-| --------- | ---- | -------------- |
-| run_slug  | 是   | 运行唯一标识符 |
+## 请求示例
 
-## 查询参数
+```json
+{
+    "page": 1,
+    "page_size": 20,
+    "run_slug": "YOUR_RUN_SLUG"
+}
+```
 
-| 参数      | 默认值 | 类型    | 必填 | 说明       |
-| --------- | ------ | ------- | ---- | ---------- |
-| page      | 1      | Integer | 否   | 当前页码   |
-| page_size | 20     | Integer | 否   | 每页条数   |
+#### 参数说明
+
+| 参数      | 示例值        | 类型    | 必填 | 说明           |
+| --------- | ------------- | ------- | ---- | -------------- |
+| page      | 1             | Integer | 是   | 当前页码       |
+| page_size | 20            | Integer | 是   | 每页条数       |
+| run_slug  | YOUR_RUN_SLUG | String  | 是   | 运行唯一标识符 |
 
 ## 响应示例
 
@@ -29,8 +36,8 @@ sidebar:
     "code": 0,
     "message": "success",
     "data": {
-        "total": 4,
-        "columns": [
+        "count": 4,
+        "headers": [
             {
                 "label": "title",
                 "key": "title",
@@ -42,7 +49,7 @@ sidebar:
                 "format": "text"
             }
         ],
-        "records": [
+        "list": [
             {
                 "title": "示例文章标题",
                 "publish_time": "2026-01-19"
@@ -54,19 +61,19 @@ sidebar:
 
 #### 响应字段
 
-| 参数    | 示例    | 类型    | 说明           |
-| ------- | ------- | ------- | -------------- |
-| code    | 0       | Integer | 全局状态码     |
-| message | success | String  | 响应消息       |
-| data    | -       | Object  | 响应数据       |
-| total   | 4       | Integer | 总记录数       |
-| columns | -       | Array   | 结果表列定义   |
-| records | -       | Array   | 结果记录列表   |
+| 参数    | 示例    | 类型    | 说明 |
+| ------- | ------- | ------- | ---- |
+| code    | 0       | Integer | 全局状态码 |
+| message | success | String  | 响应消息 |
+| data    | -       | Object  | 响应数据 |
+| count   | 4       | Integer | 总记录数 |
+| headers | -       | Array   | 结果表头 |
+| list    | -       | Array   | 结果记录列表 |
 
-##### `columns` 字段
+##### `headers` 字段
 
-| 参数   | 示例 | 类型   | 说明     |
-| ------ | ---- | ------ | -------- |
+| 参数   | 示例 | 类型   | 说明 |
+| ------ | ---- | ------ | ---- |
 | label  | -    | String | 显示标签 |
-| key    | -    | String | 字段键   |
+| key    | -    | String | 字段键 |
 | format | -    | String | 字段格式 |

@@ -7,15 +7,23 @@ sidebar:
 
 **方法：** `POST`
 
-**端点：** `/api/v1/runs/{run_slug}/abort`
+**端点：** `/api/v1/scraper/abort`
 
 使用 **Content-Type: application/json** 发送请求体。
 
-## 路径参数
+## 请求示例
 
-| 参数      | 必填 | 说明           |
-| --------- | ---- | -------------- |
-| run_slug  | 是   | 运行唯一标识符 |
+```json
+{
+    "run_slug": "YOUR_RUN_SLUG"
+}
+```
+
+#### 参数说明
+
+| 参数     | 必填 | 说明           |
+| -------- | ---- | -------------- |
+| run_slug | 是   | 运行唯一标识符 |
 
 ## 响应示例
 
@@ -29,8 +37,8 @@ sidebar:
 
 #### 响应字段
 
-| 参数    | 示例    | 类型    | 说明         |
-| ------- | ------- | ------- | ------------ |
-| code    | 0       | Integer | 全局状态码   |
-| message | success | String  | 响应消息     |
-| data    | null    | Null    | 空数据       |
+| 参数    | 示例    | 类型    | 说明       |
+| ------- | ------- | ------- | ---------- |
+| code    | 0       | Integer | 全局状态码 |
+| message | success | String  | 响应消息   |
+| data    | null    | Null    | 空数据     |

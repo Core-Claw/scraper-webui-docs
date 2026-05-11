@@ -7,15 +7,27 @@ sidebar:
 
 **Method:** `POST`
 
-**Endpoint:** `/api/v1/runs/{run_slug}/rerun`
+**Endpoint:** `/api/v1/rerun`
 
 Send the request body with **Content-Type: application/json**.
 
-## Path Parameters
+## Request Example
 
-| Parameter | Required | Description           |
-| --------- | -------- | --------------------- |
-| run_slug  | Yes      | Unique run identifier |
+```json
+{
+    "run_slug": "YOUR_RUN_SLUG",
+    "callback_url": "https://your-callback.example.com/webhook"
+}
+```
+
+#### Parameters
+
+| Parameter    | Required | Description           |
+| ------------ | -------- | --------------------- |
+| run_slug     | Yes      | Unique run identifier |
+| callback_url | No       | Optional callback URL |
+
+Example callback URL: `https://your-callback.example.com/webhook`
 
 ## Response Example
 
@@ -23,19 +35,14 @@ Send the request body with **Content-Type: application/json**.
 {
     "code": 0,
     "message": "success",
-    "data": {
-        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
-        "status": 1
-    }
+    "data": null
 }
 ```
 
 #### Response Fields
 
-| Parameter | Example                    | Type    | Description                                                          |
-| --------- | -------------------------- | ------- | -------------------------------------------------------------------- |
-| code      | 0                          | Integer | Global status code                                                   |
-| message   | success                    | String  | Response message                                                     |
-| data      | -                          | Object  | Response payload                                                     |
-| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | Unique run identifier of the new run                                 |
-| status    | 1                          | Integer | Run status: 1 Ready, 2 Running, 3 Succeeded, 4 Failed, 5 Aborting   |
+| Parameter | Example | Type    | Description        |
+| --------- | ------- | ------- | ------------------ |
+| code      | 0       | Integer | Global status code |
+| message   | success | String  | Response message   |
+| data      | null    | Null    | Empty payload      |

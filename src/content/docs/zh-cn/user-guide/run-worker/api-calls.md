@@ -1,116 +1,123 @@
 ---
 title: API 调用
-description: 通过 API 编程运行 Worker
+description: 通过 CoreClaw API 编程运行 Worker 与 Task 模板
 sidebar:
   order: 5
 ---
 
-了解如何使用 CoreClaw API 编程运行 Worker 和管理任务。
+了解如何使用 CoreClaw API 以编程方式启动 Worker、运行 Task 模板，以及查询运行记录。
 
 ## 快速开始
 
 ### 身份验证
 
-所有 API 请求需要在请求头中使用 API 密钥进行身份验证：
+所有 API 请求都必须在请求头中携带 API Key：
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/runs" \
+curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json"
+  -H "content-type: application/json" \
+  --data "{}"
 ```
 
-从[账户设置](/zh-cn/api/account/info/)获取您的 API 密钥。
+从[账户信息](/zh-cn/api/account/info/)获取您的 API Key。
 
-完整 API 文档请参考[基础 URL 与身份验证](/zh-cn/api/)。
+完整端点说明请参考[基础地址与身份验证](/zh-cn/api/)。
 
-## 运行 Worker
+## 三种 Slug 的区别
 
-### 启动 Worker 运行
+| Slug | 标识对象 | 获取方式 | 典型用途 |
+| ---- | -------- | -------- | -------- |
+| `scraper_slug` | 某个 Worker | 每个 Worker 都有自己的 `scraper_slug`。可以从 Worker 页面获取，或从[运行详情](/zh-cn/api/run/detail/)和[运行历史](/zh-cn/api/run/history/)返回的 `scraper_slug` 获取。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
+| `task_slug` | 已保存的 Task 模板 | 用户创建并保存 Task 模板时生成。 | `/api/v1/task/run` |
+| `run_slug` | 某一次具体运行记录 | 启动 Worker 或 Task 后返回，也会出现在运行相关接口里。 | `/api/v1/run/detail`、`/api/v1/run/last/log`、`/api/v1/run/result/list`、`/api/v1/run/result/export`、`/api/v1/rerun`、`/api/v1/scraper/abort` |
+
+不要混用这些标识符。把 `run_slug` 传到 `task_slug` 或 `scraper_slug` 字段中，会直接触发请求参数校验错误。
+
+## 启动 Worker 运行
 
 ```bash
-POST /api/v1/runs
+POST /api/v1/scraper/run
 ```
 
 **请求体：**
+
 ```json
 {
-  "scraper_slug": "01KGYERXPXTABWXMGQKFCE43M2",
-  "version": "v1.0.1",
-  "system_params": "{\"proxy_region\":\"US\"}",
-  "custom_params": "{\"startURLs\":[{\"url\":\"https://example.com\"}]}"
+  "scraper_slug": "YOUR_SCRAPER_SLUG",
+  "version": "v1.1.0",
+  "input": {
+    "parameters": {
+      "system": {
+        "proxy_region": "CH",
+        "cpus": 0.125,
+        "memory": 512,
+        "execute_limit_time_seconds": 1800,
+        "max_total_charge": 0,
+        "max_total_traffic": 0
+      },
+      "custom": {
+        "startURLs": [
+          {
+            "url": "https://example.com"
+          }
+        ]
+      }
+    }
+  },
+  "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-**响应：**
+### 如何构造 `input.parameters.custom`
+
+`custom` 不是随意拼接的字符串，也不是旧版的 `custom_params` JSON 字符串字段。它的结构必须与该 Worker 的 `input_schema.json` 一致。
+
+- 使用该 Worker `input_schema.json` 中每个 `properties[].name` 作为 `custom` 的字段名
+- 严格遵守 schema 声明的 `type`、嵌套结构与数组形状
+- 对于 schema 中 `required: true` 的字段，必须显式提供
+- 如果 `custom` 为空，或结构与 Worker schema 不匹配，接口会返回 `400 Bad Request`
+
+详情请参考[运行爬虫](/zh-cn/api/worker/run/)和[Worker 输入配置](/zh-cn/developer-guide/worker-definition/input-schema/)。
+
+### 如何获取 `version`
+
+可以从以下位置获得：
+
+- Worker 页面显示的版本号
+- [运行详情](/zh-cn/api/run/detail/)返回中的 `version`
+- [运行历史](/zh-cn/api/run/history/)返回中的 `version`
+
+## 运行已保存的 Task 模板
+
+```bash
+POST /api/v1/task/run
+```
+
+**请求体：**
+
 ```json
 {
-  "code": 0,
-  "message": "success",
-  "data": {
-    "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
-  }
+  "task_slug": "YOUR_TASK_SLUG",
+  "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-### 检查运行状态
+`callback_url` 为必填项。缺失时，请求会返回 `400 Bad Request`。
 
-```bash
-GET /api/v1/runs/{run_slug}/status
-```
+## 查询一次运行
 
-**响应：**
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": {
-    "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
-    "status": 3,
-    "result_count": 500,
-    "duration_seconds": 120
-  }
-}
-```
+拿到返回的 `run_slug` 后，可以继续调用以下接口：
 
-### 获取运行结果
+- [运行详情](/zh-cn/api/run/detail/)：查看状态、`scraper_slug` 与 `version`
+- [运行日志](/zh-cn/api/run/log/)：查看执行日志
+- [运行结果列表](/zh-cn/api/run/result/)：分页查看结果
+- [导出运行结果](/zh-cn/api/run/export/)：导出文件
 
-```bash
-GET /api/v1/runs/{run_slug}/results
-```
+## 常见错误
 
-### 中止运行
-
-```bash
-POST /api/v1/runs/{run_slug}/abort
-```
-
-## 管理任务
-
-### 运行任务
-
-```bash
-POST /api/v1/tasks/{task_slug}/run
-```
-
-**响应：**
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": {
-    "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
-  }
-}
-```
-
-## 错误处理
-
-| CODE | 描述 |
-| ---- | ---- |
-| 0 | 成功 |
-| 4000 | 无效请求参数 |
-| 4010 | 未授权访问 |
-| 4040 | 资源不存在 |
-| 5000 | 服务器内部错误 |
-
-完整状态码列表请参考[全局状态码](/zh-cn/api/#global-status-codes)。
+- 继续使用旧路径 `/api/v1/runs` 或 `/api/v1/tasks/{task_slug}/run`
+- 把 `system_params`、`custom_params` 当成字符串化 JSON 发送
+- 在需要 `scraper_slug` 或 `task_slug` 的地方误传 `run_slug`
+- 调用 `/api/v1/task/run` 时漏掉 `callback_url`
+- 调用 `/api/v1/scraper/run` 时漏掉该 Worker 所需的 `custom` 字段

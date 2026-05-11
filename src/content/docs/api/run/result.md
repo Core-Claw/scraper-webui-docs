@@ -5,22 +5,29 @@ sidebar:
     order: 3
 ---
 
-**Method:** `GET`
+**Method:** `POST`
 
-**Endpoint:** `/api/v1/runs/{run_slug}/results`
+**Endpoint:** `/api/v1/run/result/list`
 
-## Path Parameters
+Send the request body with **Content-Type: application/json**.
 
-| Parameter | Required | Description           |
-| --------- | -------- | --------------------- |
-| run_slug  | Yes      | Unique run identifier |
+## Request Example
 
-## Query Parameters
+```json
+{
+    "page": 1,
+    "page_size": 20,
+    "run_slug": "YOUR_RUN_SLUG"
+}
+```
 
-| Parameter | Default | Type    | Required | Description           |
-| --------- | ------- | ------- | -------- | --------------------- |
-| page      | 1       | Integer | No       | Current page number   |
-| page_size | 20      | Integer | No       | Items per page        |
+#### Parameters
+
+| Parameter | Example       | Type    | Required | Description           |
+| --------- | ------------- | ------- | -------- | --------------------- |
+| page      | 1             | Integer | Yes      | Current page number   |
+| page_size | 20            | Integer | Yes      | Items per page        |
+| run_slug  | YOUR_RUN_SLUG | String  | Yes      | Unique run identifier |
 
 ## Response Example
 
@@ -29,8 +36,8 @@ sidebar:
     "code": 0,
     "message": "success",
     "data": {
-        "total": 4,
-        "columns": [
+        "count": 4,
+        "headers": [
             {
                 "label": "title",
                 "key": "title",
@@ -42,7 +49,7 @@ sidebar:
                 "format": "text"
             }
         ],
-        "records": [
+        "list": [
             {
                 "title": "Example Article Title",
                 "publish_time": "2026-01-19"
@@ -54,19 +61,19 @@ sidebar:
 
 #### Response Fields
 
-| Parameter | Example | Type    | Description            |
-| --------- | ------- | ------- | ---------------------- |
-| code      | 0       | Integer | Global status code     |
-| message   | success | String  | Response message       |
-| data      | -       | Object  | Response payload       |
-| total     | 4       | Integer | Total record count     |
-| columns   | -       | Array   | Result table columns   |
-| records   | -       | Array   | Result record list     |
+| Parameter | Example | Type    | Description          |
+| --------- | ------- | ------- | -------------------- |
+| code      | 0       | Integer | Global status code   |
+| message   | success | String  | Response message     |
+| data      | -       | Object  | Response payload     |
+| count     | 4       | Integer | Total record count   |
+| headers   | -       | Array   | Result table headers |
+| list      | -       | Array   | Result record list   |
 
-##### `columns` Fields
+##### `headers` Fields
 
-| Parameter | Example | Type   | Description      |
-| --------- | ------- | ------ | ---------------- |
-| label     | -       | String | Display label    |
-| key       | -       | String | Field key        |
-| format    | -       | String | Field format     |
+| Parameter | Example | Type   | Description   |
+| --------- | ------- | ------ | ------------- |
+| label     | -       | String | Display label |
+| key       | -       | String | Field key     |
+| format    | -       | String | Field format  |

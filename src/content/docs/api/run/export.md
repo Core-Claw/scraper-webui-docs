@@ -7,53 +7,42 @@ sidebar:
 
 **Method:** `POST`
 
-**Endpoint:** `/api/v1/runs/{run_slug}/export`
+**Endpoint:** `/api/v1/run/result/export`
 
 Send the request body with **Content-Type: application/json**.
-
-## Path Parameters
-
-| Parameter | Required | Description           |
-| --------- | -------- | --------------------- |
-| run_slug  | Yes      | Unique run identifier |
-
-## Request Body
-
-| Parameter   | Default | Type   | Required | Description                   |
-| ----------- | ------- | ------ | -------- | ----------------------------- |
-| filter_keys | -       | string | No       | Comma-separated fields to export |
-| format      | csv     | String | No       | Export format: `csv` or `json` |
 
 ## Request Example
 
 ```json
 {
-    "filter_keys": "",
+    "run_slug": "YOUR_RUN_SLUG",
+    "filter_keys": [],
     "format": "csv"
 }
 ```
+
+#### Parameters
+
+| Parameter   | Example        | Type   | Required | Description                  |
+| ----------- | -------------- | ------ | -------- | ---------------------------- |
+| run_slug    | YOUR_RUN_SLUG  | String | Yes      | Unique run identifier        |
+| filter_keys | -              | Array  | Yes      | Fields to export             |
+| format      | csv            | String | Yes      | Export format: `csv` or `json` |
 
 ## Response Example
 
 ```json
 {
     "code": 0,
-    "message": "success",
     "data": {
-        "download_url": "https://smpfile.coreclaw.com/export/...",
-        "format": "csv",
-        "record_count": 4
-    }
+        "download_url": ""
+    },
+    "msg": "Success"
 }
 ```
 
 #### Response Fields
 
-| Parameter    | Example | Type    | Description                  |
-| ------------ | ------- | ------- | ---------------------------- |
-| code         | 0       | Integer | Global status code           |
-| message      | success | String  | Response message             |
-| data         | -       | Object  | Response payload             |
-| download_url | -       | String  | Download URL for the export  |
-| format       | csv     | String  | Export format                |
-| record_count | 4       | Integer | Number of exported records   |
+| Parameter    | Example | Description                 |
+| ------------ | ------- | --------------------------- |
+| download_url | -       | Download URL for the export |

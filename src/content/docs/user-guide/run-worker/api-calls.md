@@ -1,116 +1,123 @@
 ---
 title: API Calls
-description: Run Workers programmatically via API
+description: Run Workers and Task templates programmatically via the CoreClaw API
 sidebar:
   order: 5
 ---
 
-Learn how to run Workers and manage tasks programmatically using the CoreClaw API.
+Learn how to launch Workers, run Task templates, and inspect runs programmatically using the CoreClaw API.
 
 ## Getting Started
 
 ### Authentication
 
-All API requests require authentication using your API key in the request header:
+All API requests must include your API key in the request headers:
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/runs" \
+curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json"
+  -H "content-type: application/json" \
+  --data "{}"
 ```
 
-Get your API key from [Account Settings](/api/account/info/).
+Get your API key from [Account Info](/api/account/info/).
 
-For full API documentation, see [Base URL & Authentication](/api/).
+For the full endpoint reference, see [Base URL & Authentication](/api/).
 
-## Running a Worker
+## Slug Types
 
-### Start Worker Run
+| Slug | What it identifies | How to get it | Used by |
+| ---- | ------------------ | ------------- | ------- |
+| `scraper_slug` | A Worker | Each Worker has its own `scraper_slug`. You can get it from the Worker page, or from `scraper_slug` returned by [Run Detail](/api/run/detail/) or [Run History](/api/run/history/). | `/api/v1/scraper/run`, `/api/v1/run/list` |
+| `task_slug` | A saved Task template | Generated when a user creates and saves a Task template. | `/api/v1/task/run` |
+| `run_slug` | A specific run record | Returned after starting a Worker or a Task, and exposed by run APIs. | `/api/v1/run/detail`, `/api/v1/run/last/log`, `/api/v1/run/result/list`, `/api/v1/run/result/export`, `/api/v1/rerun`, `/api/v1/scraper/abort` |
+
+Do not mix these identifiers. Passing a `run_slug` to a `task_slug` or `scraper_slug` field results in request validation errors.
+
+## Start a Worker run
 
 ```bash
-POST /api/v1/runs
+POST /api/v1/scraper/run
 ```
 
-**Request Body:**
+**Request body:**
+
 ```json
 {
-  "scraper_slug": "01KGYERXPXTABWXMGQKFCE43M2",
-  "version": "v1.0.1",
-  "system_params": "{\"proxy_region\":\"US\"}",
-  "custom_params": "{\"startURLs\":[{\"url\":\"https://example.com\"}]}"
+  "scraper_slug": "YOUR_SCRAPER_SLUG",
+  "version": "v1.1.0",
+  "input": {
+    "parameters": {
+      "system": {
+        "proxy_region": "CH",
+        "cpus": 0.125,
+        "memory": 512,
+        "execute_limit_time_seconds": 1800,
+        "max_total_charge": 0,
+        "max_total_traffic": 0
+      },
+      "custom": {
+        "startURLs": [
+          {
+            "url": "https://example.com"
+          }
+        ]
+      }
+    }
+  },
+  "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-**Response:**
+### How to build `input.parameters.custom`
+
+`custom` is not a free-form string and not the old `custom_params` JSON string field. Its structure must match the Worker's `input_schema.json`.
+
+- Use each `properties[].name` value from the Worker's `input_schema.json` as a key in `custom`
+- Follow the declared `type`, nested structure, and array shape
+- Provide every field whose schema sets `required: true`
+- If `custom` is empty or does not match the Worker's schema, the API returns `400 Bad Request`
+
+See [Start Worker](/api/worker/run/) and [Worker Input Configuration](/developer-guide/worker-definition/input-schema/) for details.
+
+### How to get `version`
+
+Use one of the following sources:
+
+- the Worker version shown on the Worker page
+- the `version` field returned by [Run Detail](/api/run/detail/)
+- the `version` field returned by [Run History](/api/run/history/)
+
+## Run a saved Task template
+
+```bash
+POST /api/v1/task/run
+```
+
+**Request body:**
+
 ```json
 {
-  "code": 0,
-  "message": "success",
-  "data": {
-    "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
-  }
+  "task_slug": "YOUR_TASK_SLUG",
+  "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-### Check Run Status
+`callback_url` is required. A request without it returns `400 Bad Request`.
 
-```bash
-GET /api/v1/runs/{run_slug}/status
-```
+## Inspect a run
 
-**Response:**
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": {
-    "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
-    "status": 3,
-    "result_count": 500,
-    "duration_seconds": 120
-  }
-}
-```
+Use the returned `run_slug` with the run APIs:
 
-### Get Run Results
+- [Run Detail](/api/run/detail/) for status, `scraper_slug`, and `version`
+- [Run Log](/api/run/log/) for execution logs
+- [Run Result List](/api/run/result/) for paginated results
+- [Export Run Result](/api/run/export/) for file export
 
-```bash
-GET /api/v1/runs/{run_slug}/results
-```
+## Common mistakes
 
-### Abort a Run
-
-```bash
-POST /api/v1/runs/{run_slug}/abort
-```
-
-## Managing Tasks
-
-### Run a Task
-
-```bash
-POST /api/v1/tasks/{task_slug}/run
-```
-
-**Response:**
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": {
-    "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
-  }
-}
-```
-
-## Error Handling
-
-| CODE  | Description                 |
-| ----- | --------------------------- |
-| 0     | Success                     |
-| 4000  | Invalid request parameters  |
-| 4010  | Unauthorized access         |
-| 4040  | Resource not found          |
-| 5000  | Internal server error       |
-
-See [Global Status Codes](/api/#global-status-codes) for the complete list.
+- Using the old `/api/v1/runs` or `/api/v1/tasks/{task_slug}/run` paths
+- Sending `system_params` or `custom_params` as stringified JSON
+- Passing a `run_slug` where a `scraper_slug` or `task_slug` is required
+- Omitting `callback_url` from `/api/v1/task/run`
+- Omitting required Worker-specific `custom` fields from `/api/v1/scraper/run`

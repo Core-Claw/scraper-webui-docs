@@ -7,15 +7,25 @@ sidebar:
 
 **方法：** `POST`
 
-**端点：** `/api/v1/runs/{run_slug}/rerun`
+**端点：** `/api/v1/rerun`
 
 使用 **Content-Type: application/json** 发送请求体。
 
-## 路径参数
+## 请求示例
 
-| 参数      | 必填 | 说明           |
-| --------- | ---- | -------------- |
-| run_slug  | 是   | 运行唯一标识符 |
+```json
+{
+    "run_slug": "YOUR_RUN_SLUG",
+    "callback_url": "https://your-callback.example.com/webhook"
+}
+```
+
+#### 参数说明
+
+| 参数         | 必填 | 说明 |
+| ------------ | ---- | ---- |
+| run_slug     | 是   | 运行唯一标识符 |
+| callback_url | 否   | 可选回调地址 |
 
 ## 响应示例
 
@@ -23,19 +33,14 @@ sidebar:
 {
     "code": 0,
     "message": "success",
-    "data": {
-        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
-        "status": 1
-    }
+    "data": null
 }
 ```
 
 #### 响应字段
 
-| 参数     | 示例                       | 类型    | 说明                                                     |
-| -------- | -------------------------- | ------- | -------------------------------------------------------- |
-| code     | 0                          | Integer | 全局状态码                                               |
-| message  | success                    | String  | 响应消息                                                 |
-| data     | -                          | Object  | 响应数据                                                 |
-| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 新运行的唯一标识符                                       |
-| status   | 1                          | Integer | 运行状态：1 就绪，2 运行中，3 成功，4 失败，5 终止中      |
+| 参数    | 示例    | 类型    | 说明 |
+| ------- | ------- | ------- | ---- |
+| code    | 0       | Integer | 全局状态码 |
+| message | success | String  | 响应消息 |
+| data    | null    | Null    | 空数据 |
