@@ -255,6 +255,8 @@ npm run build
   - 概述页未排到首项
 - `.mdx` 中引用图片时，应使用 `import` 而不是 Markdown 别名路径
 - 构建日志中如果出现不影响输出的外层提示，可先以最终构建成功为准，再判断是否值得追踪
+- `openapi.swagger.json` 仅供本地 API 参考，不纳入版本控制（见 `.gitignore`）
+- API 文档使用 `Worker` 术语；API 字段和路径使用 `scraper`（如 `scraper_slug`、`/api/v1/scraper/run`）
 
 ## 脚本命令
 

@@ -84,7 +84,7 @@ Each item in `list[]` contains the fields defined by the Worker's output schema,
 
 | Parameter        | Example | Type   | Description            |
 | ---------------- | ------- | ------ | ---------------------- |
-| __cafe_data_id__ | -       | String | Internal data identifier |
+| __coreclaw_data_id__ | -       | String | Internal data identifier |
 | title            | -       | String | Item title             |
 | publish_time     | -       | String | Publish time           |
 | category         | -       | String | Item category          |

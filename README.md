@@ -257,6 +257,8 @@ Key things to verify:
   - overview pages not appearing first
 - In `.mdx`, images should be imported explicitly instead of referenced through Markdown alias paths
 - If build logs contain non-blocking wrapper-level warnings, treat successful build output as the primary source of truth
+- `openapi.swagger.json` is for local API reference only and is excluded from version control (see `.gitignore`)
+- API documentation uses `Worker` terminology; API fields and paths use `scraper` (e.g. `scraper_slug`, `/api/v1/scraper/run`)
 
 ## Scripts
 

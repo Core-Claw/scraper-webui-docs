@@ -20,4 +20,7 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
+# swagger reference (local use only, do not commit)
+openapi.swagger.json
+
 .vscode/

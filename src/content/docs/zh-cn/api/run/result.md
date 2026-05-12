@@ -84,7 +84,7 @@ sidebar:
 
 | 参数             | 示例 | 类型   | 说明         |
 | ---------------- | ---- | ------ | ------------ |
-| __cafe_data_id__ | -    | String | 内部数据标识 |
+| __coreclaw_data_id__ | -    | String | 内部数据标识 |
 | title            | -    | String | 条目标题     |
 | publish_time     | -    | String | 发布时间     |
 | category         | -    | String | 条目分类     |
