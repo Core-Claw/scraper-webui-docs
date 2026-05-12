@@ -69,10 +69,10 @@ sidebar:
 | -------------------------- | ----- | ------ | ---- | ---- |
 | proxy_region               | CH    | string | 是   | 执行节点（ISO 3166-1 alpha-2 国家代码）。常用：`US`、`CN`、`HK`、`JP`、`SG`、`DE`、`GB`、`FR`。完整支持列表请参考 Swagger 定义。 |
 | cpus                       | 0.125 | number | 是   | 容器 CPU 核心数 |
-| memory                     | 512   | number | 是   | 容器内存大小（MB）。支持的值：`512`、`1024`、`2048`、`4096`、`8192`、`16384` |
-| execute_limit_time_seconds | 1800  | number | 是   | 容器执行超时（秒） |
-| max_total_charge           | 0     | number | 是   | 最大费用（美元） |
-| max_total_traffic          | 0     | number | 是   | 最大流量（MB） |
+| memory                     | 512   | integer | 是   | 容器内存大小（MB）。支持的值：`512`、`1024`、`2048`、`4096`、`8192`、`16384` |
+| execute_limit_time_seconds | 1800  | integer | 是   | 容器执行超时（秒） |
+| max_total_charge           | 0     | integer | 是   | 最大费用（美元） |
+| max_total_traffic          | 0     | integer | 是   | 最大流量（MB） |
 
 #### `custom` 参数
 

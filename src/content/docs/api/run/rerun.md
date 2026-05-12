@@ -22,10 +22,10 @@ Send the request body with **Content-Type: application/json**.
 
 #### Parameters
 
-| Parameter    | Required | Description           |
-| ------------ | -------- | --------------------- |
-| run_slug     | Yes      | Unique run identifier |
-| callback_url | Yes      | Callback URL |
+| Parameter    | Type   | Required | Description           |
+| ------------ | ------ | -------- | --------------------- |
+| run_slug     | String | Yes      | Unique run identifier |
+| callback_url | String | Yes      | Callback URL |
 
 Example callback URL: `https://your-callback.example.com/webhook`
 

@@ -21,9 +21,9 @@ Send the request body with **Content-Type: application/json**.
 
 #### Parameters
 
-| Parameter | Required | Description           |
-| --------- | -------- | --------------------- |
-| run_slug  | Yes      | Unique run identifier |
+| Parameter | Type   | Required | Description           |
+| --------- | ------ | -------- | --------------------- |
+| run_slug  | String | Yes      | Unique run identifier |
 
 ## Response Example
 

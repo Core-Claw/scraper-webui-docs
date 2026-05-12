@@ -26,7 +26,7 @@ sidebar:
 | 参数        | 示例值        | 类型   | 必填 | 说明 |
 | ----------- | ------------- | ------ | ---- | ---- |
 | run_slug    | YOUR_RUN_SLUG | String | 是   | 运行唯一标识符 |
-| filter_keys | -             | Array  | 是   | 要导出的字段 |
+| filter_keys | -             | String[]  | 是   | 要导出的字段 |
 | format      | csv           | String | 是   | 导出格式：`csv` 或 `json` |
 
 ## 响应示例

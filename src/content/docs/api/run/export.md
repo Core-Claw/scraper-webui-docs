@@ -26,7 +26,7 @@ Send the request body with **Content-Type: application/json**.
 | Parameter   | Example        | Type   | Required | Description                  |
 | ----------- | -------------- | ------ | -------- | ---------------------------- |
 | run_slug    | YOUR_RUN_SLUG  | String | Yes      | Unique run identifier        |
-| filter_keys | -              | Array  | Yes      | Fields to export             |
+| filter_keys | -              | String[]  | Yes      | Fields to export             |
 | format      | csv            | String | Yes      | Export format: `csv` or `json` |
 
 ## Response Example

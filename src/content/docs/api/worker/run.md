@@ -69,10 +69,10 @@ Every Worker has its own `scraper_slug`. You can get it from the Worker page, or
 | --------------------------- | ------- | ------ | -------- | ----------- |
 | proxy_region                | CH    | string | Yes      | Execution node (ISO 3166-1 alpha-2 country code). Common: `US`, `CN`, `HK`, `JP`, `SG`, `DE`, `GB`, `FR`. See Swagger definition for the full list of supported codes. |
 | cpus                        | 0.125 | number | Yes      | Container CPU cores |
-| memory                      | 512   | number | Yes      | Container memory size in MB. Supported values: `512`, `1024`, `2048`, `4096`, `8192`, `16384` |
-| execute_limit_time_seconds  | 1800    | number | Yes      | Container execution timeout in seconds |
-| max_total_charge            | 0       | number | Yes      | Maximum charge in USD |
-| max_total_traffic           | 0       | number | Yes      | Maximum traffic in MB |
+| memory                      | 512   | integer | Yes      | Container memory size in MB. Supported values: `512`, `1024`, `2048`, `4096`, `8192`, `16384` |
+| execute_limit_time_seconds  | 1800    | integer | Yes      | Container execution timeout in seconds |
+| max_total_charge            | 0       | integer | Yes      | Maximum charge in USD |
+| max_total_traffic           | 0       | integer | Yes      | Maximum traffic in MB |
 
 #### `custom` Parameters
 

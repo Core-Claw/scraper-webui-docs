@@ -45,6 +45,23 @@ https://openapi.coreclaw.com
 | 70001 | 运行记录不存在 |
 | 70002 | 运行中止失败 |
 
+## 端点速查
+
+| # | 方法 | 端点 | 说明 |
+|---|------|------|------|
+| 1 | `POST` | `/api/v1/scraper/run` | [启动 Worker](/zh-cn/api/worker/run/) |
+| 2 | `POST` | `/api/v1/scraper/abort` | [中止 Worker](/zh-cn/api/worker/abort/) |
+| 3 | `GET` | `/api/scraper` | [Worker 详情](/zh-cn/api/worker/detail/) |
+| 4 | `GET` | `/api/store` | [搜索 Worker](/zh-cn/api/worker/search/) |
+| 5 | `POST` | `/api/v1/run/list` | [运行历史](/zh-cn/api/run/history/) |
+| 6 | `POST` | `/api/v1/run/detail` | [运行详情](/zh-cn/api/run/detail/) |
+| 7 | `POST` | `/api/v1/run/result/list` | [运行结果](/zh-cn/api/run/result/) |
+| 8 | `POST` | `/api/v1/run/last/log` | [运行日志](/zh-cn/api/run/log/) |
+| 9 | `POST` | `/api/v1/run/result/export` | [导出运行结果](/zh-cn/api/run/export/) |
+| 10 | `POST` | `/api/v1/rerun` | [重新运行](/zh-cn/api/run/rerun/) |
+| 11 | `POST` | `/api/v1/task/run` | [运行任务](/zh-cn/api/task/run/) |
+| 12 | `POST` | `/api/v1/account/info` | [账户信息](/zh-cn/api/account/info/) |
+
 ## 身份验证
 
 所有 API 请求都需要在请求头中携带 API 密钥。

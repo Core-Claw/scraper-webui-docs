@@ -513,7 +513,7 @@ export default defineConfig({
                                     label: 'Start Task',
                                     slug: 'api/task/run',
                                     translations: {
-                                        'zh-CN': '运行任务',
+                                        'zh-CN': '运行任务（模板）',
                                     },
                                 },
                             ],

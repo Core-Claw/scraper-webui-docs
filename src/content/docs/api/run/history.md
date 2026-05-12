@@ -75,6 +75,7 @@ Send the request body with **Content-Type: application/json**.
 | count         | 106                        | Integer | Total record count |
 | list          | -                          | Array   | Run record list |
 | status        | 3                          | Integer | Run status: 1 Ready, 2 Running, 3 Succeeded, 4 Failed, 5 Aborted |
+| err_msg       | -                          | String  | Error message |
 | slug          | 01KKGKQ89XN5HYD7JYKCC9C32H | String  | Unique run record identifier |
 | scraper_title | News Collection 20260305   | String  | Worker title |
 | scraper_slug  | 01KJXYJ7KCHXM0PDZHQD5293XE | String  | Unique Worker identifier |

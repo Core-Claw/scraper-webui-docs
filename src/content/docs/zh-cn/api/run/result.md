@@ -77,3 +77,14 @@ sidebar:
 | label  | -    | String | 显示标签 |
 | key    | -    | String | 字段键 |
 | format | -    | String | 字段格式 |
+
+##### `list[]` 字段
+
+`list[]` 中的每条记录包含 Worker 输出 schema 定义的字段，与 `headers` 中的 `key` 对应。
+
+| 参数             | 示例 | 类型   | 说明         |
+| ---------------- | ---- | ------ | ------------ |
+| __cafe_data_id__ | -    | String | 内部数据标识 |
+| title            | -    | String | 条目标题     |
+| publish_time     | -    | String | 发布时间     |
+| category         | -    | String | 条目分类     |

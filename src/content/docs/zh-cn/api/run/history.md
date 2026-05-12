@@ -75,6 +75,7 @@ sidebar:
 | count         | 106                        | Integer | 总记录数 |
 | list          | -                          | Array   | 运行记录列表 |
 | status        | 3                          | Integer | 运行状态：1 就绪，2 运行中，3 成功，4 失败，5 已终止 |
+| err_msg       | -                          | String  | 错误消息 |
 | slug          | 01KKGKQ89XN5HYD7JYKCC9C32H | String  | 运行记录唯一标识符 |
 | scraper_title | 新闻采集 20260305          | String  | Worker 标题 |
 | scraper_slug  | 01KJXYJ7KCHXM0PDZHQD5293XE | String  | Worker 唯一标识符 |

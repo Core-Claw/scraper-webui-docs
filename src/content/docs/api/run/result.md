@@ -77,3 +77,14 @@ Send the request body with **Content-Type: application/json**.
 | label     | -       | String | Display label |
 | key       | -       | String | Field key     |
 | format    | -       | String | Field format  |
+
+##### `list[]` Fields
+
+Each item in `list[]` contains the fields defined by the Worker's output schema, matching the `key` values in `headers`.
+
+| Parameter        | Example | Type   | Description            |
+| ---------------- | ------- | ------ | ---------------------- |
+| __cafe_data_id__ | -       | String | Internal data identifier |
+| title            | -       | String | Item title             |
+| publish_time     | -       | String | Publish time           |
+| category         | -       | String | Item category          |
