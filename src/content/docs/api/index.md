@@ -20,6 +20,8 @@ https://openapi.coreclaw.com
 | api-key        | <YOUR_API_KEY>   | string | Yes      | Your API key for authentication |
 | content-type   | application/json | string | Yes      | Request content type |
 
+> **Note:** `/api/scraper` and `/api/store` are public endpoints that do not require an API key.
+
 ## Global Status Codes
 
 Each API request may return a success code or an error code. You can use these codes to debug requests and identify issues.
@@ -64,7 +66,7 @@ Each API request may return a success code or an error code. You can use these c
 
 ## Authentication
 
-All API requests require authentication using your API key. Include it in the request header of every API call.
+Most API requests require authentication using your API key. The public endpoints `/api/scraper` and `/api/store` do not require authentication. Include the key in the request header of every authenticated call.
 
 ### Using the API Key
 
@@ -74,3 +76,13 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "content-type: application/json" \
   --data "{}"
 ```
+
+## Slug Types
+
+| Slug | What it identifies | How to get it | Used by |
+| ---- | ------------------ | ------------- | ------- |
+| `scraper_slug` | A Worker | Each Worker has its own `scraper_slug`. You can get it from the Worker page, or from `scraper_slug` returned by [Run Detail](/api/run/detail/) or [Run History](/api/run/history/). | `/api/v1/scraper/run`, `/api/v1/run/list` |
+| `task_slug` | A saved Task template | Generated when a user creates and saves a Task template. | `/api/v1/task/run` |
+| `run_slug` | A specific run record | Returned after starting a Worker or a Task, and exposed by run APIs. | `/api/v1/run/detail`, `/api/v1/run/last/log`, `/api/v1/run/result/list`, `/api/v1/run/result/export`, `/api/v1/rerun`, `/api/v1/scraper/abort` |
+
+Do not mix these identifiers. Passing a `run_slug` to a `task_slug` or `scraper_slug` field results in request validation errors.

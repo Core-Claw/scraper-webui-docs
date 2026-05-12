@@ -65,11 +65,12 @@ POST /api/v1/scraper/run
       }
     }
   },
+  "is_async": true,
   "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-### How to build `input.parameters.custom`
+`is_async` controls whether the run executes asynchronously. When `is_async=true` (default), `callback_url` is **required**. When `is_async=false` (sync mode), `callback_url` is optional.
 
 `custom` is not a free-form string and not the old `custom_params` JSON string field. Its structure must match the Worker's `input_schema.json`.
 
@@ -78,7 +79,9 @@ POST /api/v1/scraper/run
 - Provide every field whose schema sets `required: true`
 - If `custom` is empty or does not match the Worker's schema, the API returns `400 Bad Request`
 
-See [Start Worker](/api/worker/run/) and [Worker Input Configuration](/developer-guide/worker-definition/input-schema/) for details.
+To find the exact `custom` fields for a specific Worker, open the Worker in the [CoreClaw Console](https://console.coreclaw.com), go to the **Input** tab, click the **API** button in the top-right corner, and select **API clients** to view ready-to-use code snippets.
+
+![API clients button in Worker Input tab](@/assets/docs/74.png)
 
 ### How to get `version`
 

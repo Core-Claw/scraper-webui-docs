@@ -65,11 +65,12 @@ POST /api/v1/scraper/run
       }
     }
   },
+  "is_async": true,
   "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-### 如何构造 `input.parameters.custom`
+`is_async` 控制是否异步执行。`is_async=true`（默认）时，`callback_url` **必填**。`is_async=false`（同步模式）时，`callback_url` 可选。
 
 `custom` 不是随意拼接的字符串，也不是旧版的 `custom_params` JSON 字符串字段。它的结构必须与该 Worker 的 `input_schema.json` 一致。
 
@@ -78,7 +79,9 @@ POST /api/v1/scraper/run
 - 对于 schema 中 `required: true` 的字段，必须显式提供
 - 如果 `custom` 为空，或结构与 Worker schema 不匹配，接口会返回 `400 Bad Request`
 
-详情请参考[运行爬虫](/zh-cn/api/worker/run/)和[Worker 输入配置](/zh-cn/developer-guide/worker-definition/input-schema/)。
+要查看具体 Worker 的 `custom` 字段，请在 [CoreClaw Console](https://console.coreclaw.com) 中打开该 Worker，进入 **Input** 选项卡，点击右上角的 **API** 按钮，选择 **API clients** 即可查看可直接使用的代码片段。
+
+![Worker Input 选项卡中的 API clients 按钮](@/assets/docs/74.png)
 
 ### 如何获取 `version`
 

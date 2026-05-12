@@ -20,6 +20,8 @@ https://openapi.coreclaw.com
 | api-key | <YOUR_API_KEY> | string | 是 | 您的 API 密钥，用于身份验证 |
 | content-type | application/json | string | 是 | 请求内容类型 |
 
+> **说明：** `/api/scraper` 和 `/api/store` 为公开端点，无需 API 密钥即可访问。
+
 ## 全局状态码
 
 每个 API 请求可能返回成功码或错误码。您可以使用这些代码调试请求并识别问题。
@@ -64,7 +66,7 @@ https://openapi.coreclaw.com
 
 ## 身份验证
 
-所有 API 请求都需要在请求头中携带 API 密钥。
+大部分 API 请求需要认证。公开端点 `/api/scraper` 和 `/api/store` 无需 API 密钥。
 
 ### 使用 API 密钥
 
@@ -74,3 +76,13 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "content-type: application/json" \
   --data "{}"
 ```
+
+## 三种 Slug 的区别
+
+| Slug | 标识对象 | 获取方式 | 典型用途 |
+| ---- | -------- | -------- | -------- |
+| `scraper_slug` | 某个 Worker | 每个 Worker 都有自己的 `scraper_slug`。可以从 Worker 页面获取，或从[运行详情](/zh-cn/api/run/detail/)和[运行历史](/zh-cn/api/run/history/)返回的 `scraper_slug` 获取。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
+| `task_slug` | 已保存的 Task 模板 | 用户创建并保存 Task 模板时生成。 | `/api/v1/task/run` |
+| `run_slug` | 某一次具体运行记录 | 启动 Worker 或 Task 后返回，也会出现在运行相关接口里。 | `/api/v1/run/detail`、`/api/v1/run/last/log`、`/api/v1/run/result/list`、`/api/v1/run/result/export`、`/api/v1/rerun`、`/api/v1/scraper/abort` |
+
+不要混用这些标识符。把 `run_slug` 传到 `task_slug` 或 `scraper_slug` 字段中，会直接触发请求参数校验错误。

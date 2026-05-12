@@ -61,7 +61,7 @@ sidebar:
 | is_async     | 是   | boolean | `true`：异步执行（默认），`false`：同步执行（等待完成） |
 | page_index   | 是   | number  | 结果页码，默认 `1` |
 | page_size    | 是   | number  | 每页条数，默认 `10`，最大 `1000` |
-| callback_url | 否   | string  | 用于接收运行结果的回调地址 |
+| callback_url | 条件 | string  | 用于接收运行结果的回调地址。`is_async=true` 时**必填**，`is_async=false` 时可选。 |
 
 #### `system` 参数
 
@@ -83,7 +83,9 @@ sidebar:
 - 对于 schema 中 `required: true` 的字段，必须显式提供
 - 如果 `custom` 为空，或结构与 Worker schema 不匹配，接口会返回 `400 Bad Request`
 
-schema 格式请参考[Worker 输入配置](/zh-cn/developer-guide/worker-definition/input-schema/)。
+要查看具体 Worker 的 `custom` 字段，请在 [CoreClaw Console](https://console.coreclaw.com) 中打开该 Worker，进入 **Input** 选项卡，点击右上角的 **API** 按钮，选择 **API clients** 即可查看可直接使用的代码片段。
+
+![Worker Input 选项卡中的 API clients 按钮](@/assets/docs/74.png)
 
 ### 如何获取 `version`
 
@@ -95,7 +97,7 @@ schema 格式请参考[Worker 输入配置](/zh-cn/developer-guide/worker-defini
 
 ## 校验行为
 
-- 当您需要异步接收结果时，应提供 `callback_url`。
+- **`callback_url` 与 `is_async`**：当 `is_async=true`（默认）时，`callback_url` **必填**。当 `is_async=false`（同步模式）时，`callback_url` 可选。
 - 如果把 `run_slug` 或 `task_slug` 误传到 `scraper_slug` 字段，请求会在参数校验阶段失败。
 - 如果只提供通用 `system` 参数，但缺少该 Worker schema 要求的 `custom` 字段，请求仍会失败。
 
