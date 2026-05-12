@@ -20,7 +20,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   --data "{}"
 ```
 
-从[账户信息](/zh-cn/api/account/info/)获取您的 API Key。
+从 [CoreClaw Console](https://console.coreclaw.com/settings/integrations) 获取您的 API Key。
 
 完整端点说明请参考[基础地址与身份验证](/zh-cn/api/)。
 

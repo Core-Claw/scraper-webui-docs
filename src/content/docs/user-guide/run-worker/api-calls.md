@@ -20,7 +20,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   --data "{}"
 ```
 
-Get your API key from [Account Info](/api/account/info/).
+Get your API key from the [CoreClaw Console](https://console.coreclaw.com/settings/integrations).
 
 For the full endpoint reference, see [Base URL & Authentication](/api/).
 
