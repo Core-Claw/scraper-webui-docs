@@ -35,8 +35,8 @@ Send the request body with **Content-Type: application/json**.
         "status": 2,
         "err_msg": "",
         "slug": "01KKJYJ4HH0R9K7XD856MAE1WH",
-        "actors_title": "News Collection 20260305",
-        "actors_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+        "scraper_title": "News Collection 20260305",
+        "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
         "results": 4,
         "usage": "0.0217",
         "started_at": 1773383784,
@@ -59,8 +59,8 @@ Send the request body with **Content-Type: application/json**.
 | status       | 3                          | Integer | Run status: 1 Ready, 2 Running, 3 Succeeded, 4 Failed, 5 Aborted |
 | err_msg      | -                          | String  | Error message                                                     |
 | slug         | 01KKJYJ4HH0R9K7XD856MAE1WH | String  | Unique run identifier                                             |
-| actors_title | News Collection 20260305   | String  | Worker title                                                      |
-| actors_slug  | 01KJXYJ7KCHXM0PDZHQD5293XE | String  | Unique Worker identifier                                          |
+| scraper_title | News Collection 20260305   | String  | Worker title                                                      |
+| scraper_slug  | 01KJXYJ7KCHXM0PDZHQD5293XE | String  | Unique Worker identifier                                          |
 | results      | 4                          | Integer | Number of collected results                                       |
 | usage        | 0.0217                     | String  | Device usage cost in USD                                          |
 | started_at   | 1773383784                 | Integer | Start timestamp                                                   |

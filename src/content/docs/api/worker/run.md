@@ -44,26 +44,32 @@ Every Worker has its own `scraper_slug`. You can get it from the Worker page, or
             }
         }
     },
-    "callback_url": "https://your-callback.example.com/webhook"
+    "callback_url": "https://your-callback.example.com/webhook",
+    "is_async": true,
+    "page_index": 1,
+    "page_size": 10
 }
 ```
 
 ### Parameters
 
-| Parameter    | Required | Type   | Description |
-| ------------ | -------- | ------ | ----------- |
-| scraper_slug | Yes      | string | Unique Worker identifier |
-| version      | Yes      | string | Worker version |
-| input        | Yes      | object | Input parameters |
-| callback_url | Yes      | string | Callback URL for receiving run results |
+| Parameter    | Required | Type    | Description |
+| ------------ | -------- | ------- | ----------- |
+| scraper_slug | Yes      | string  | Unique Worker identifier |
+| version      | Yes      | string  | Worker version |
+| input        | Yes      | object  | Input parameters |
+| is_async     | Yes      | boolean | `true`: async execution (default), `false`: sync execution (waits for completion) |
+| page_index   | Yes      | number  | Result page number, default `1` |
+| page_size    | Yes      | number  | Results per page, default `10`, max `1000` |
+| callback_url | No       | string  | Callback URL for receiving run results |
 
 #### `system` Parameters
 
 | Parameter                   | Example | Type   | Required | Description |
 | --------------------------- | ------- | ------ | -------- | ----------- |
-| proxy_region                | CH      | string | Yes      | Execution node |
-| cpus                        | 0.125   | number | Yes      | Container CPU cores |
-| memory                      | 512     | number | Yes      | Container memory size in MB |
+| proxy_region                | CH    | string | Yes      | Execution node (ISO 3166-1 alpha-2 country code). Common: `US`, `CN`, `HK`, `JP`, `SG`, `DE`, `GB`, `FR`. See Swagger definition for the full list of supported codes. |
+| cpus                        | 0.125 | number | Yes      | Container CPU cores |
+| memory                      | 512   | number | Yes      | Container memory size in MB. Supported values: `512`, `1024`, `2048`, `4096`, `8192`, `16384` |
 | execute_limit_time_seconds  | 1800    | number | Yes      | Container execution timeout in seconds |
 | max_total_charge            | 0       | number | Yes      | Maximum charge in USD |
 | max_total_traffic           | 0       | number | Yes      | Maximum traffic in MB |

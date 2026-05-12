@@ -15,7 +15,7 @@ sidebar:
 
 ```json
 {
-    "page": 1,
+    "page_index": 1,
     "page_size": 20,
     "status": 0,
     "scraper_slug": "YOUR_SCRAPER_SLUG"
@@ -26,8 +26,8 @@ sidebar:
 
 | 参数         | 默认值 | 类型    | 必填 | 说明 |
 | ------------ | ------ | ------- | ---- | ---- |
-| page         | 1      | Integer | 是   | 当前页码 |
-| page_size    | 20     | Integer | 是   | 每页条数。可选值：`10`、`20`、`50` |
+| page_index   | 1      | Integer | 是   | 当前页码 |
+| page_size    | 20     | Integer | 是   | 每页条数 |
 | status       | 0      | Integer | 是   | 运行状态：0 全部，1 就绪，2 运行中，3 成功，4 失败，5 已终止 |
 | scraper_slug | -      | String  | 是   | Worker 唯一标识符 |
 

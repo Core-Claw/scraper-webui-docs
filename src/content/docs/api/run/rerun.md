@@ -25,7 +25,7 @@ Send the request body with **Content-Type: application/json**.
 | Parameter    | Required | Description           |
 | ------------ | -------- | --------------------- |
 | run_slug     | Yes      | Unique run identifier |
-| callback_url | No       | Optional callback URL |
+| callback_url | Yes      | Callback URL |
 
 Example callback URL: `https://your-callback.example.com/webhook`
 
@@ -35,14 +35,17 @@ Example callback URL: `https://your-callback.example.com/webhook`
 {
     "code": 0,
     "message": "success",
-    "data": null
+    "data": {
+        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+    }
 }
 ```
 
 #### Response Fields
 
-| Parameter | Example | Type    | Description        |
-| --------- | ------- | ------- | ------------------ |
-| code      | 0       | Integer | Global status code |
-| message   | success | String  | Response message   |
-| data      | null    | Null    | Empty payload      |
+| Parameter | Example                    | Type    | Description           |
+| --------- | -------------------------- | ------- | --------------------- |
+| code      | 0                          | Integer | Global status code    |
+| message   | success                    | String  | Response message      |
+| data      | -                          | Object  | Response payload      |
+| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | Unique run identifier |

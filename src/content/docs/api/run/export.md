@@ -34,15 +34,18 @@ Send the request body with **Content-Type: application/json**.
 ```json
 {
     "code": 0,
+    "message": "success",
     "data": {
-        "download_url": ""
-    },
-    "msg": "Success"
+        "download_url": "https://..."
+    }
 }
 ```
 
 #### Response Fields
 
-| Parameter    | Example | Description                 |
-| ------------ | ------- | --------------------------- |
-| download_url | -       | Download URL for the export |
+| Parameter    | Example | Type   | Description                 |
+| ------------ | ------- | ------ | --------------------------- |
+| code         | 0       | Integer | Global status code |
+| message      | success  | String  | Response message |
+| data         | -       | Object  | Response payload |
+| download_url | -       | String  | Download URL for the export |

@@ -35,8 +35,8 @@ sidebar:
         "status": 2,
         "err_msg": "",
         "slug": "01KKJYJ4HH0R9K7XD856MAE1WH",
-        "actors_title": "新闻采集 20260305",
-        "actors_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+        "scraper_title": "新闻采集 20260305",
+        "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
         "results": 4,
         "usage": "0.0217",
         "started_at": 1773383784,
@@ -59,8 +59,8 @@ sidebar:
 | status       | 3                          | Integer | 运行状态：1 就绪，2 运行中，3 成功，4 失败，5 已终止 |
 | err_msg      | -                          | String  | 错误消息 |
 | slug         | 01KKJYJ4HH0R9K7XD856MAE1WH | String  | 运行唯一标识符 |
-| actors_title | 新闻采集 20260305          | String  | Worker 标题 |
-| actors_slug  | 01KJXYJ7KCHXM0PDZHQD5293XE | String  | Worker 唯一标识符 |
+| scraper_title | 新闻采集 20260305          | String  | Worker 标题 |
+| scraper_slug  | 01KJXYJ7KCHXM0PDZHQD5293XE | String  | Worker 唯一标识符 |
 | results      | 4                          | Integer | 采集结果数量 |
 | usage        | 0.0217                     | String  | 设备使用费用（美元） |
 | started_at   | 1773383784                 | Integer | 开始时间戳 |

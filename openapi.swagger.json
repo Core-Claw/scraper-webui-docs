@@ -1,0 +1,2672 @@
+{
+  "info": {
+    "title": "默认模块",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/api/v1/run/result/list": {
+      "post": {
+        "summary": "查询采集数据",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page_index": {
+                  "type": "integer",
+                  "description": "页码"
+                },
+                "page_size": {
+                  "type": "integer",
+                  "description": "每页数量"
+                },
+                "run_slug": {
+                  "type": "string",
+                  "description": "运行唯一识别码"
+                }
+              },
+              "required": [
+                "page_index",
+                "page_size",
+                "run_slug"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "description": "采集数据总条数"
+                    },
+                    "headers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string"
+                          },
+                          "key": {
+                            "type": "string"
+                          },
+                          "format": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "key",
+                          "format"
+                        ]
+                      },
+                      "description": "采集数据表头"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "__cafe_data_id__": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "publish_time": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "__cafe_data_id__",
+                          "title",
+                          "publish_time",
+                          "category"
+                        ]
+                      },
+                      "description": "采集数据类别 这个列表的key 是标题headers 里key的值"
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "headers",
+                    "list"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/run/detail": {
+      "post": {
+        "summary": "运行详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_slug": {
+                  "type": "string",
+                  "description": "运行唯一标识"
+                }
+              },
+              "required": [
+                "run_slug"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": {
+                  "status": 2,
+                  "err_msg": "",
+                  "slug": "01KKJYJ4HH0R9K7XD856MAE1WH",
+                  "scraper_title": "新闻采集20260305",
+                  "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                  "results": 4,
+                  "usage": "0.0217",
+                  "started_at": 1773383784,
+                  "finished_at": 0,
+                  "duration": 0,
+                  "origin": "api",
+                  "traffic": 0,
+                  "version": "v1.0.1"
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "description": "脚本运行状态\n 1:ready 2:running 3:succeeded 4:failed 5:aborting"
+                    },
+                    "err_msg": {
+                      "type": "string",
+                      "description": "运行错误信息"
+                    },
+                    "slug": {
+                      "type": "string",
+                      "description": "运行唯一标识"
+                    },
+                    "scraper_title": {
+                      "type": "string",
+                      "description": "脚本标题"
+                    },
+                    "scraper_slug": {
+                      "type": "string",
+                      "description": "脚步唯一标识"
+                    },
+                    "results": {
+                      "type": "integer",
+                      "description": "采集数据条数"
+                    },
+                    "usage": {
+                      "type": "string",
+                      "description": "设备费用"
+                    },
+                    "started_at": {
+                      "type": "integer",
+                      "description": "执行开始时间"
+                    },
+                    "finished_at": {
+                      "type": "integer",
+                      "description": "执行结束时间"
+                    },
+                    "duration": {
+                      "type": "integer",
+                      "description": "运行时长"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "description": "来源 api web"
+                    },
+                    "traffic": {
+                      "type": "integer",
+                      "description": "流量 单位字节"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "版本"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "err_msg",
+                    "slug",
+                    "scraper_title",
+                    "scraper_slug",
+                    "results",
+                    "usage",
+                    "started_at",
+                    "finished_at",
+                    "duration",
+                    "origin",
+                    "traffic",
+                    "version"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/scraper/run": {
+      "post": {
+        "summary": "运行脚本接口",
+        "deprecated": false,
+        "description": "request.body.input.parameters.system.proxy_region传参是国家简码支持的参数，不传递则默认使用US：AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GT GU GW GY HK HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW  \nrequest.body.input.parameters.system.memory是设备内存 单位是：M 支持参数:512,1024,2048,4096,8192,16384",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "scraper_slug": {
+                  "type": "string",
+                  "description": "脚本唯一识别码"
+                },
+                "version": {
+                  "type": "string",
+                  "description": "版本"
+                },
+                "input": {
+                  "type": "object",
+                  "properties": {
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "system": {
+                          "type": "object",
+                          "properties": {
+                            "cpus": {
+                              "type": "number",
+                              "description": "设备CPU核心数"
+                            },
+                            "memory": {
+                              "type": "integer",
+                              "description": "设备内存大小"
+                            },
+                            "execute_limit_time_seconds": {
+                              "type": "integer",
+                              "description": "脚本执行超时时间 单位秒"
+                            },
+                            "max_total_charge": {
+                              "type": "integer",
+                              "description": "最大消耗金额 单位美元"
+                            },
+                            "max_total_traffic": {
+                              "type": "integer",
+                              "description": "最大消耗流量 MB"
+                            },
+                            "proxy_region": {
+                              "type": "string",
+                              "description": "执行节点（代理）"
+                            }
+                          },
+                          "required": [
+                            "cpus",
+                            "memory",
+                            "execute_limit_time_seconds",
+                            "max_total_charge",
+                            "max_total_traffic",
+                            "proxy_region"
+                          ],
+                          "description": "系统参数"
+                        },
+                        "custom": {
+                          "type": "object",
+                          "properties": {
+                            "startURLs": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "url": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "url"
+                                ],
+                                "description": "参数集合：key是定义的入参，value则是爬取参数的具体值"
+                              },
+                              "description": "这个参数是不固定的,具体的key名要从脚本详情信息中的Input详情中获取"
+                            }
+                          },
+                          "required": [
+                            "startURLs"
+                          ],
+                          "description": "脚本参数（每个脚本的参数基本都不一致）"
+                        }
+                      },
+                      "required": [
+                        "system",
+                        "custom"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "parameters"
+                  ],
+                  "description": "运行参数"
+                },
+                "callback_url": {
+                  "type": "string",
+                  "description": "通知回调地址"
+                },
+                "is_async": {
+                  "type": "boolean",
+                  "description": "ture :异步执行 false 同步获取结果 默认异步"
+                },
+                "page_index": {
+                  "type": "number",
+                  "description": "获取结果页码  默认 1"
+                },
+                "page_size": {
+                  "type": "number",
+                  "description": "获取结果每页条数 默认10 最大 1000"
+                }
+              },
+              "required": [
+                "scraper_slug",
+                "version",
+                "input",
+                "is_async",
+                "page_index",
+                "page_size"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": {
+                  "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "run_slug": {
+                      "type": "string",
+                      "description": "运行唯一标识"
+                    }
+                  },
+                  "required": [
+                    "run_slug"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/rerun": {
+      "post": {
+        "summary": "重新运行",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_slug": {
+                  "type": "string",
+                  "description": "运行唯一标识"
+                },
+                "callback_url": {
+                  "type": "string",
+                  "description": "通知地址"
+                }
+              },
+              "required": [
+                "run_slug",
+                "callback_url"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": {
+                  "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "run_slug": {
+                      "type": "string",
+                      "description": "运行唯一识别"
+                    }
+                  },
+                  "required": [
+                    "run_slug"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "404": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 70001,
+                "message": "Run record does not exist",
+                "data": null
+              }
+            },
+            "schema": {}
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/run/result/export": {
+      "post": {
+        "summary": "导出采集数据",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_slug": {
+                  "type": "string",
+                  "description": "运行唯一识别"
+                },
+                "filter_keys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "指定导出的字段key"
+                },
+                "format": {
+                  "type": "string",
+                  "description": "导出格式 csv json"
+                }
+              },
+              "required": [
+                "run_slug",
+                "filter_keys",
+                "format"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": {
+                  "download_url": "https://worker.coreclaw.com/export/exported_result_<UUID>.csv?q-sign-algorithm=sha1&q-ak=<Q_AK>&q-sign-time=<TIMESTAMP>&q-key-time=<TIMESTAMP>&q-header-list=host&q-url-param-list=&q-signature=<SIGNATURE>"
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "download_url": {
+                      "type": "string",
+                      "description": "文件下载地址"
+                    }
+                  },
+                  "required": [
+                    "download_url"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/task/run": {
+      "post": {
+        "summary": "运行任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "task_slug": {
+                  "type": "string",
+                  "description": "任务唯一标识"
+                },
+                "callback_url": {
+                  "type": "string",
+                  "description": "通知地址"
+                }
+              },
+              "required": [
+                "task_slug",
+                "callback_url"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": {
+                  "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "run_slug": {
+                      "type": "string",
+                      "description": "运行唯一标识"
+                    }
+                  },
+                  "required": [
+                    "run_slug"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/run/list": {
+      "post": {
+        "summary": "运行记录列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page_index": {
+                  "type": "integer",
+                  "description": "页码"
+                },
+                "page_size": {
+                  "type": "integer",
+                  "description": "每页数量"
+                },
+                "status": {
+                  "type": "integer",
+                  "description": "状态 0: 查询所有  1:准备中  2:执行中 3:执行成功 4:失败 5:中止"
+                },
+                "scraper_slug": {
+                  "type": "string",
+                  "description": "脚本唯一标识"
+                }
+              },
+              "required": [
+                "page_index",
+                "page_size",
+                "status",
+                "scraper_slug"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": {
+                  "count": 107,
+                  "list": [
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKJYJ4HH0R9K7XD856MAE1WH",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.0542",
+                      "started_at": 1773383784,
+                      "finished_at": 1773383790,
+                      "duration": 6,
+                      "origin": "api",
+                      "traffic": 23109,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGKQ89XN5HYD7JYKCC9C32H",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.065",
+                      "started_at": 1773305309,
+                      "finished_at": 1773305316,
+                      "duration": 7,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGHRQ1ZXSHDHA6NQA9J26GZ",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.1192",
+                      "started_at": 1773303259,
+                      "finished_at": 1773303270,
+                      "duration": 11,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGHFS5XYGFY9J8WWG10KXZM",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.0542",
+                      "started_at": 1773302967,
+                      "finished_at": 1773302973,
+                      "duration": 6,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGH9VYJ6YRDZBJKPEX2JPXC",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 0,
+                      "usage": "0.2925",
+                      "started_at": 1773302773,
+                      "finished_at": 1773302800,
+                      "duration": 27,
+                      "origin": "api",
+                      "traffic": 16413,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGH5KG78M5WNYHJEE8KD6K0",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.0542",
+                      "started_at": 1773302633,
+                      "finished_at": 1773302639,
+                      "duration": 6,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGGZMH9K8TM9SV1P371835B",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.0542",
+                      "started_at": 1773302438,
+                      "finished_at": 1773302444,
+                      "duration": 6,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGGPEN985FWANJKSJAAB5HF",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.065",
+                      "started_at": 1773302136,
+                      "finished_at": 1773302142,
+                      "duration": 6,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGGCCJN20PWK6CZ3DG6W69H",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.065",
+                      "started_at": 1773301807,
+                      "finished_at": 1773301814,
+                      "duration": 7,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGEMS91ZSE9YBVMZCPR56YB",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.065",
+                      "started_at": 1773299985,
+                      "finished_at": 1773299992,
+                      "duration": 7,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGEJQB80RA0GHPZGQPJ724X",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.1192",
+                      "started_at": 1773299917,
+                      "finished_at": 1773299929,
+                      "duration": 12,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGEGRBBJNDZ882ERQHBDFG0",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.0542",
+                      "started_at": 1773299853,
+                      "finished_at": 1773299859,
+                      "duration": 6,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGEDG0B2D395BRDSJDEX6J1",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.0542",
+                      "started_at": 1773299746,
+                      "finished_at": 1773299752,
+                      "duration": 6,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGDZJ8M12V88W97R54RZMB4",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.065",
+                      "started_at": 1773299290,
+                      "finished_at": 1773299296,
+                      "duration": 6,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGDWH76D97NNYEK5GGHDVGB",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.065",
+                      "started_at": 1773299190,
+                      "finished_at": 1773299197,
+                      "duration": 7,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGDHW36ZKYT646XE2EF8Q7T",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.1842",
+                      "started_at": 1773298841,
+                      "finished_at": 1773298859,
+                      "duration": 18,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKGDE21WZCFN99BVYQ6WNACV",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.0975",
+                      "started_at": 1773298716,
+                      "finished_at": 1773298725,
+                      "duration": 9,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKG9Q2F4GY39NQST6CYZVC4H",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.065",
+                      "started_at": 1773294817,
+                      "finished_at": 1773294824,
+                      "duration": 7,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKG9F5W75HKP2QZ1F76GMERZ",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 4,
+                      "usage": "0.0758",
+                      "started_at": 1773294558,
+                      "finished_at": 1773294566,
+                      "duration": 8,
+                      "origin": "api",
+                      "traffic": 23108,
+                      "version": "v1.0.1"
+                    },
+                    {
+                      "status": 3,
+                      "err_msg": "",
+                      "slug": "01KKG92CFKK4G1ZMJSQ431H9RJ",
+                      "scraper_title": "新闻采集20260305",
+                      "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                      "results": 0,
+                      "usage": "0.195",
+                      "started_at": 1773294139,
+                      "finished_at": 1773294158,
+                      "duration": 19,
+                      "origin": "api",
+                      "traffic": 517,
+                      "version": "v1.0.1"
+                    }
+                  ]
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "description": "运行记录调试"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "integer",
+                            "description": "1:ready 2:running 3:succeeded 4:failed 5:aborting"
+                          },
+                          "err_msg": {
+                            "type": "string",
+                            "description": "错误信息"
+                          },
+                          "slug": {
+                            "type": "string",
+                            "description": "唯一标识"
+                          },
+                          "scraper_title": {
+                            "type": "string",
+                            "description": "脚本标题"
+                          },
+                          "scraper_slug": {
+                            "type": "string",
+                            "description": "脚步唯一标识"
+                          },
+                          "results": {
+                            "type": "integer",
+                            "description": "采集数据条数"
+                          },
+                          "usage": {
+                            "type": "string",
+                            "description": "设备费用"
+                          },
+                          "started_at": {
+                            "type": "integer",
+                            "description": "运行开始时间"
+                          },
+                          "finished_at": {
+                            "type": "integer",
+                            "description": "运行结束时间"
+                          },
+                          "duration": {
+                            "type": "integer",
+                            "description": "运行时长"
+                          },
+                          "origin": {
+                            "type": "string",
+                            "description": "来源 api web"
+                          },
+                          "traffic": {
+                            "type": "integer",
+                            "description": "流量 单位字节"
+                          },
+                          "version": {
+                            "type": "string",
+                            "description": "版本"
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "err_msg",
+                          "slug",
+                          "scraper_title",
+                          "scraper_slug",
+                          "results",
+                          "usage",
+                          "started_at",
+                          "finished_at",
+                          "duration",
+                          "origin",
+                          "traffic",
+                          "version"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "list"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "404": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 4000,
+                "message": "Invalid request parameters",
+                "data": null
+              }
+            },
+            "schema": {}
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/run/last/log": {
+      "post": {
+        "summary": "运行日志",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_slug": {
+                  "type": "string",
+                  "description": "运行唯一标识"
+                }
+              },
+              "required": [
+                "run_slug"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": {
+                  "all_logs_url": "https://smpfile.cafescraper.com/log/all_log_7cb43d81-38d5-47b6-a313-4e1423d4c28a_1773383790454",
+                  "list": [
+                    {
+                      "type": 2,
+                      "group": "28596067108978688",
+                      "content": "SYSTEM: Subtask-[28596067108978688] - Preparing the execution environment.",
+                      "timestamp": 1773383784438
+                    },
+                    {
+                      "type": 2,
+                      "group": "28596067108978688",
+                      "content": "SYSTEM: Subtask-[28596067108978688] - Running...",
+                      "timestamp": 1773383784958
+                    },
+                    {
+                      "type": 2,
+                      "group": "28596067108978688",
+                      "content": "SYSTEM: Subtask-[28596067108978688] - Execution completed.",
+                      "timestamp": 1773383790211
+                    },
+                    {
+                      "type": 2,
+                      "group": "28596067108913152",
+                      "content": "All subtasks have completed execution! Total 1 subtasks: 1 succeeded, 0 failed.",
+                      "timestamp": 1773383790498
+                    }
+                  ],
+                  "result_count": 4
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "all_logs_url": {
+                      "type": "string",
+                      "description": "日志下载地址"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "integer",
+                            "description": "日志类型（1.Debug 2.Info 3.Warn 4.Error）"
+                          },
+                          "group": {
+                            "type": "string",
+                            "description": "日志分组标识"
+                          },
+                          "content": {
+                            "type": "string",
+                            "description": "日志内容"
+                          },
+                          "timestamp": {
+                            "type": "integer",
+                            "description": "时间"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "group",
+                          "content",
+                          "timestamp"
+                        ]
+                      },
+                      "description": "日志列表"
+                    },
+                    "result_count": {
+                      "type": "integer",
+                      "description": "才数据总条数"
+                    }
+                  },
+                  "required": [
+                    "all_logs_url",
+                    "list",
+                    "result_count"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/scraper/abort": {
+      "post": {
+        "summary": "终止执行",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "run_slug": {
+                  "type": "string",
+                  "description": "运行唯一标识"
+                }
+              },
+              "required": [
+                "run_slug"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": null
+              }
+            },
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/v1/account/info": {
+      "post": {
+        "summary": "查询账户信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "success",
+                "data": {
+                  "balance": "10122.5547",
+                  "traffic": 178194757135,
+                  "traffic_expiration_at": 1775267018
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "balance": {
+                      "type": "string",
+                      "description": "账户余额"
+                    },
+                    "traffic": {
+                      "type": "integer",
+                      "description": "账号流量"
+                    },
+                    "traffic_expiration_at": {
+                      "type": "integer",
+                      "description": "流量过期时间 时间戳"
+                    }
+                  },
+                  "required": [
+                    "balance",
+                    "traffic",
+                    "traffic_expiration_at"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "429": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/scraper": {
+      "get": {
+        "summary": "获取脚本详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "query",
+            "description": "脚本唯一识别码",
+            "required": true,
+            "type": "string",
+            "x-example": "01KJXYJ7KCHXM0PDZHQD5293XE"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "system": {
+                          "type": "object",
+                          "properties": {
+                            "cpus": {
+                              "type": "number",
+                              "description": "设备cpu核心数据"
+                            },
+                            "memory_bytes": {
+                              "type": "integer",
+                              "description": "设备内存"
+                            },
+                            "max_total_charge": {
+                              "type": "integer",
+                              "description": "最大执行费用消耗"
+                            },
+                            "max_total_traffic": {
+                              "type": "integer",
+                              "description": "最大执行消耗流量 单位MB"
+                            },
+                            "execute_limit_time_seconds": {
+                              "type": "integer",
+                              "description": "超时时间 单位秒"
+                            }
+                          },
+                          "required": [
+                            "cpus",
+                            "memory_bytes",
+                            "max_total_charge",
+                            "max_total_traffic",
+                            "execute_limit_time_seconds"
+                          ],
+                          "description": "系统参数"
+                        },
+                        "custom": {
+                          "type": "object",
+                          "properties": {
+                            "b": {
+                              "type": "string"
+                            },
+                            "properties": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "type": "string"
+                                  },
+                                  "editor": {
+                                    "type": "string"
+                                  },
+                                  "default": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "url": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "required": [
+                                        "url"
+                                      ]
+                                    }
+                                  },
+                                  "required": {
+                                    "type": "boolean"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "type",
+                                  "title",
+                                  "editor",
+                                  "default",
+                                  "description"
+                                ]
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "b",
+                            "properties",
+                            "description"
+                          ],
+                          "description": "脚步参数"
+                        }
+                      },
+                      "required": [
+                        "system",
+                        "custom"
+                      ],
+                      "description": "脚本参数"
+                    },
+                    "readme": {
+                      "type": "string",
+                      "description": "说明"
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "最新版本号"
+                    }
+                  },
+                  "required": [
+                    "parameters",
+                    "readme",
+                    "version"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/api/store": {
+      "get": {
+        "summary": "查询脚本接口",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "搜索词",
+            "required": true,
+            "type": "string",
+            "x-example": ""
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "返回条数限制",
+            "required": true,
+            "type": "integer",
+            "x-example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "状态码"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "错误信息"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "scraper": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": {
+                            "type": "string",
+                            "description": "脚本唯一识别码"
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "脚本标题"
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "脚本描述"
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "title",
+                          "description"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "scraper"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "data"
+              ]
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    }
+  },
+  "security": [],
+  "swagger": "2.0",
+  "definitions": {
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "业务状态码",
+          "x-nullable": true
+        },
+        "message": {
+          "type": "string",
+          "description": "错误描述"
+        },
+        "data": {
+          "description": "接口返回数据",
+          "x-nullable": true
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "api-key": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "api-key"
+    }
+  },
+  "x-components": {
+    "responses": {
+      "内部服务器错误": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "内部服务器错误": {
+                "summary": "内部服务器错误",
+                "value": {
+                  "code": 5000,
+                  "message": "Network error, try again",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "无效的请求参数": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 4010,
+                  "message": "Task does not belong to you",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "未授权访问": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 4010,
+                  "message": "Task does not belong to you",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "资源不存在": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 4040,
+                  "message": "Run record does not exist",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "请求频率限制": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例 1": {
+                "summary": "示例 1",
+                "value": {
+                  "code": 4290,
+                  "message": "Too many requests, please try again later",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "用户不存在": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 10001,
+                  "message": "User unavailable",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "用户已禁用": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 10002,
+                  "message": "User unavailable",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "无效的API密钥": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 20001,
+                  "message": "Invalid API key",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "API密钥已过期": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 20002,
+                  "message": "API key has expired",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "余额不足": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 30001,
+                  "message": "Balance is not enough",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "流量不足": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 30002,
+                  "message": "Account traffic is insufficient. Please purchase a traffic package to enable normal operation.",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "脚本不存在": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 50001,
+                  "message": "Script does not exist",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "脚本运行失败": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 50002,
+                  "message": "Script does not exist",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "脚本版本不可用": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 50003,
+                  "message": "The script version is not available",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "任务不存在": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 60001,
+                  "message": "Task does not exist",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "运行记录不存在": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 70001,
+                  "message": "Run record does not exist",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "终止运行失败": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {},
+              "required": []
+            },
+            "examples": {
+              "示例": {
+                "summary": "示例",
+                "value": {
+                  "code": 70002,
+                  "message": "Run record does not exist",
+                  "data": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "同步返回成功": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "title": "",
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "type": "string",
+                  "description": "失败的时候返回 失败原因"
+                },
+                "execution_end_timestamp": {
+                  "type": "integer",
+                  "description": "运行结束时间"
+                },
+                "execution_start_timestamp": {
+                  "type": "integer",
+                  "description": "运行开始时间"
+                },
+                "results": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number",
+                      "description": "采集结果数量"
+                    },
+                    "headers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "description": "标题"
+                          },
+                          "key": {
+                            "type": "string",
+                            "description": "字段"
+                          }
+                        },
+                        "required": [
+                          "label",
+                          "key"
+                        ]
+                      },
+                      "description": "采集结果表头"
+                    },
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "对应上面的key": {
+                            "type": "string"
+                          }
+                        },
+                        "description": "数据结果集",
+                        "required": [
+                          "对应上面的key"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "返回的记过",
+                  "required": [
+                    "count",
+                    "headers",
+                    "list"
+                  ]
+                },
+                "run_slug": {
+                  "type": "string",
+                  "description": "运行唯一标识"
+                },
+                "run_status": {
+                  "type": "string",
+                  "description": "执行状态  running 运行中 completed 已运行结束"
+                },
+                "running_duration": {
+                  "type": "integer",
+                  "description": "运行时长"
+                }
+              },
+              "required": [
+                "error_message",
+                "execution_end_timestamp",
+                "execution_start_timestamp",
+                "results",
+                "run_slug",
+                "run_status",
+                "running_duration"
+              ]
+            },
+            "examples": {
+              "示例 1": {
+                "summary": "示例 1",
+                "value": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "error_message": "",
+                    "execution_end_timestamp": 1776943348200,
+                    "execution_start_timestamp": 1776943336380,
+                    "result_message": "",
+                    "results": {
+                      "count": 8,
+                      "headers": [
+                        {
+                          "label": "标题v4_1",
+                          "key": "title",
+                          "format": "text"
+                        },
+                        {
+                          "label": "时间",
+                          "key": "publish_time",
+                          "format": "text"
+                        },
+                        {
+                          "label": "分类",
+                          "key": "category",
+                          "format": "text"
+                        }
+                      ],
+                      "list": [
+                        {
+                          "__coreclaw_data_id__": "99b666a20877412bbe083703de0afce27b5ad72f3b43cf4e71fc73099ffd231d",
+                          "title": "太平洋彼岸传佳音，美国中国总商会授予圣奥重磅大奖",
+                          "publish_time": "2026-01-19",
+                          "category": "品牌荣耀"
+                        },
+                        {
+                          "__coreclaw_data_id__": "4cbee8989d4793ff9f3809f6190313e852658ef4e09c7579875783e8931393bb",
+                          "title": "中国家具行业企业信用等级评价公布，圣奥荣获AAA信用等级",
+                          "publish_time": "2026-01-06",
+                          "category": "品牌荣耀"
+                        },
+                        {
+                          "__coreclaw_data_id__": "1f3947e61961c8b4f2ccca63932e8ad1200c720965c846cf1daeee577d29b837",
+                          "title": "双奖加冕！圣奥两款”拳头”产品闪耀2025红棉奖，以设计赋能办公生活",
+                          "publish_time": "2025-12-29",
+                          "category": "品牌荣耀"
+                        },
+                        {
+                          "__coreclaw_data_id__": "2bc0eeea9683e3aa14a2ff73ced000ecbdf5289a88248952f3c12a491ede5f19",
+                          "title": "圣奥办公家具荣登2025浙江省制造业民企与发明专利双百强榜单",
+                          "publish_time": "2025-12-17",
+                          "category": "新闻中心"
+                        },
+                        {
+                          "__coreclaw_data_id__": "c50b47978f95ff49c04bc58526cecfd1e37c808857f9d197ed6b42cb79f64fbf",
+                          "title": "2025圣奥海外经销商培训在杭州成功举办",
+                          "publish_time": "2025-10-20",
+                          "category": "新闻中心"
+                        },
+                        {
+                          "__coreclaw_data_id__": "8cdaf0b9a79f3c3fe7403b8260f261190538b73471af326cc5f3c33594ce8dbd",
+                          "title": "圣奥主导的中小学生午休课桌椅国标获央视专题报道，公司解决方案赢得学生好评",
+                          "publish_time": "2025-09-30",
+                          "category": "新闻中心"
+                        },
+                        {
+                          "__coreclaw_data_id__": "54b8ef5b3eb812cd8476d47d01b1db52bd4b37dda18e801c54157891f9759037",
+                          "title": "同一个订单，同一个梦想 | 圣奥2025全球合作伙伴大会成功举办",
+                          "publish_time": "2025-09-27",
+                          "category": "新闻中心"
+                        },
+                        {
+                          "__coreclaw_data_id__": "92d92c92c721798a2374667bbd864adda200fec393ccb6b524ce2d09a2048848",
+                          "title": "央视专题报道适老化家居，圣奥发展成果引关注",
+                          "publish_time": "2025-09-18",
+                          "category": "新闻中心"
+                        }
+                      ],
+                      "page_index": 1,
+                      "page_size": 10
+                    },
+                    "run_slug": "01KPX1704QS817ZSPG53B61MJM",
+                    "run_status": "completed",
+                    "running_duration": 21
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -44,26 +44,32 @@ sidebar:
             }
         }
     },
-    "callback_url": "https://your-callback.example.com/webhook"
+    "callback_url": "https://your-callback.example.com/webhook",
+    "is_async": true,
+    "page_index": 1,
+    "page_size": 10
 }
 ```
 
 ### 参数
 
-| 参数         | 必填 | 类型   | 说明 |
-| ------------ | ---- | ------ | ---- |
-| scraper_slug | 是   | string | Worker 唯一标识符 |
-| version      | 是   | string | Worker 版本 |
-| input        | 是   | object | 输入参数 |
-| callback_url | 是   | string | 用于接收运行结果的回调地址 |
+| 参数         | 必填 | 类型    | 说明 |
+| ------------ | ---- | ------- | ---- |
+| scraper_slug | 是   | string  | Worker 唯一标识符 |
+| version      | 是   | string  | Worker 版本 |
+| input        | 是   | object  | 输入参数 |
+| is_async     | 是   | boolean | `true`：异步执行（默认），`false`：同步执行（等待完成） |
+| page_index   | 是   | number  | 结果页码，默认 `1` |
+| page_size    | 是   | number  | 每页条数，默认 `10`，最大 `1000` |
+| callback_url | 否   | string  | 用于接收运行结果的回调地址 |
 
 #### `system` 参数
 
 | 参数                       | 示例  | 类型   | 必填 | 说明 |
 | -------------------------- | ----- | ------ | ---- | ---- |
-| proxy_region               | CH    | string | 是   | 执行节点 |
+| proxy_region               | CH    | string | 是   | 执行节点（ISO 3166-1 alpha-2 国家代码）。常用：`US`、`CN`、`HK`、`JP`、`SG`、`DE`、`GB`、`FR`。完整支持列表请参考 Swagger 定义。 |
 | cpus                       | 0.125 | number | 是   | 容器 CPU 核心数 |
-| memory                     | 512   | number | 是   | 容器内存大小（MB） |
+| memory                     | 512   | number | 是   | 容器内存大小（MB）。支持的值：`512`、`1024`、`2048`、`4096`、`8192`、`16384` |
 | execute_limit_time_seconds | 1800  | number | 是   | 容器执行超时（秒） |
 | max_total_charge           | 0     | number | 是   | 最大费用（美元） |
 | max_total_traffic          | 0     | number | 是   | 最大流量（MB） |

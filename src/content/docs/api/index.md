@@ -11,6 +11,8 @@ sidebar:
 https://openapi.coreclaw.com
 ```
 
+> **Terminology note:** In CoreClaw's API, `Worker` and `Scraper` refer to the same concept — a data extraction script. The API paths and field names use `scraper` (e.g. `scraper_slug`, `/api/v1/scraper/run`), while documentation may refer to them as Workers.
+
 ## Header Parameters
 
 | Parameter Name | Example Value    | Type   | Required | Description |

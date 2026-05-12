@@ -34,15 +34,18 @@ sidebar:
 ```json
 {
     "code": 0,
+    "message": "success",
     "data": {
-        "download_url": ""
-    },
-    "msg": "Success"
+        "download_url": "https://..."
+    }
 }
 ```
 
 #### 响应字段
 
-| 参数         | 示例 | 说明 |
-| ------------ | ---- | ---- |
-| download_url | -    | 导出文件下载 URL |
+| 参数         | 示例    | 类型    | 说明 |
+| ------------ | ------- | ------- | ---- |
+| code         | 0       | Integer | 全局状态码 |
+| message      | success | String  | 响应消息 |
+| data         | -       | Object  | 响应数据 |
+| download_url | -       | String  | 导出文件下载 URL |

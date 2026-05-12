@@ -11,6 +11,8 @@ sidebar:
 https://openapi.coreclaw.com
 ```
 
+> **术语说明：** CoreClaw API 中，`Worker` 和 `Scraper` 指向同一个概念 —— 数据采集脚本。API 路径和字段名使用 `scraper`（如 `scraper_slug`、`/api/v1/scraper/run`），文档中可能称为 Worker。
+
 ## 请求头参数
 
 | 参数名 | 示例值 | 类型 | 必填 | 说明 |

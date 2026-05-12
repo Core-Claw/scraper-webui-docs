@@ -15,7 +15,7 @@ sidebar:
 
 ```json
 {
-    "page": 1,
+    "page_index": 1,
     "page_size": 20,
     "run_slug": "YOUR_RUN_SLUG"
 }
@@ -23,11 +23,11 @@ sidebar:
 
 #### 参数说明
 
-| 参数      | 示例值        | 类型    | 必填 | 说明           |
-| --------- | ------------- | ------- | ---- | -------------- |
-| page      | 1             | Integer | 是   | 当前页码       |
-| page_size | 20            | Integer | 是   | 每页条数       |
-| run_slug  | YOUR_RUN_SLUG | String  | 是   | 运行唯一标识符 |
+| 参数       | 示例值        | 类型    | 必填 | 说明           |
+| ---------- | ------------- | ------- | ---- | -------------- |
+| page_index | 1             | Integer | 是   | 当前页码       |
+| page_size  | 20            | Integer | 是   | 每页条数       |
+| run_slug   | YOUR_RUN_SLUG | String  | 是   | 运行唯一标识符 |
 
 ## 响应示例
 

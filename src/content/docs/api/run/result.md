@@ -15,7 +15,7 @@ Send the request body with **Content-Type: application/json**.
 
 ```json
 {
-    "page": 1,
+    "page_index": 1,
     "page_size": 20,
     "run_slug": "YOUR_RUN_SLUG"
 }
@@ -23,11 +23,11 @@ Send the request body with **Content-Type: application/json**.
 
 #### Parameters
 
-| Parameter | Example       | Type    | Required | Description           |
-| --------- | ------------- | ------- | -------- | --------------------- |
-| page      | 1             | Integer | Yes      | Current page number   |
-| page_size | 20            | Integer | Yes      | Items per page        |
-| run_slug  | YOUR_RUN_SLUG | String  | Yes      | Unique run identifier |
+| Parameter  | Example       | Type    | Required | Description           |
+| ---------- | ------------- | ------- | -------- | --------------------- |
+| page_index | 1             | Integer | Yes      | Current page number   |
+| page_size  | 20            | Integer | Yes      | Items per page        |
+| run_slug   | YOUR_RUN_SLUG | String  | Yes      | Unique run identifier |
 
 ## Response Example
 

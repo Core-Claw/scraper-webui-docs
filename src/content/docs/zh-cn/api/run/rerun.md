@@ -25,7 +25,7 @@ sidebar:
 | 参数         | 必填 | 说明 |
 | ------------ | ---- | ---- |
 | run_slug     | 是   | 运行唯一标识符 |
-| callback_url | 否   | 可选回调地址 |
+| callback_url | 是   | 回调地址 |
 
 ## 响应示例
 
@@ -33,14 +33,17 @@ sidebar:
 {
     "code": 0,
     "message": "success",
-    "data": null
+    "data": {
+        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+    }
 }
 ```
 
 #### 响应字段
 
-| 参数    | 示例    | 类型    | 说明 |
-| ------- | ------- | ------- | ---- |
-| code    | 0       | Integer | 全局状态码 |
-| message | success | String  | 响应消息 |
-| data    | null    | Null    | 空数据 |
+| 参数     | 示例                       | 类型    | 说明 |
+| -------- | -------------------------- | ------- | ---- |
+| code     | 0                          | Integer | 全局状态码 |
+| message  | success                    | String  | 响应消息 |
+| data     | -                          | Object  | 响应数据 |
+| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行唯一标识符 |

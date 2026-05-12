@@ -435,6 +435,20 @@ export default defineConfig({
                                         'zh-CN': '中止爬虫',
                                     },
                                 },
+                                {
+                                    label: 'Worker Detail',
+                                    slug: 'api/worker/detail',
+                                    translations: {
+                                        'zh-CN': 'Worker 详情',
+                                    },
+                                },
+                                {
+                                    label: 'Search Workers',
+                                    slug: 'api/worker/search',
+                                    translations: {
+                                        'zh-CN': '搜索 Worker',
+                                    },
+                                },
                             ],
                         },
                         {
