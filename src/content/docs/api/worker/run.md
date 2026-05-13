@@ -45,9 +45,7 @@ Every Worker has its own `scraper_slug`. You can get it from the Worker page, or
         }
     },
     "callback_url": "https://your-callback.example.com/webhook",
-    "is_async": true,
-    "page_index": 1,
-    "page_size": 10
+    "is_async": true
 }
 ```
 
@@ -59,9 +57,7 @@ Every Worker has its own `scraper_slug`. You can get it from the Worker page, or
 | version      | Yes      | string  | Worker version |
 | input        | Yes      | object  | Input parameters |
 | is_async     | Yes      | boolean | `true`: async execution (default), `false`: sync execution (waits for completion) |
-| page_index   | Yes      | number  | Result page number, default `1` |
-| page_size    | Yes      | number  | Results per page, default `10`, max `1000` |
-| callback_url | Conditional | string  | Callback URL for receiving run results. **Required** when `is_async=true`, optional when `is_async=false`. |
+| callback_url | No       | string  | Callback URL for receiving run results |
 
 #### `system` Parameters
 
@@ -76,16 +72,18 @@ Every Worker has its own `scraper_slug`. You can get it from the Worker page, or
 
 #### `custom` Parameters
 
-Build `input.parameters.custom` from the Worker's `input_schema.json`.
+`input.parameters.custom` is not a fixed schema — it varies per Worker. Use one of these approaches to find the exact fields:
 
-- Use each `properties[].name` as the key in `custom`
-- Match the declared `type`, nested structure, and array shape
-- Provide all fields whose schema sets `required: true`
-- An empty or schema-mismatched `custom` object returns `400 Bad Request`
-
-To find the exact `custom` fields for a specific Worker, open the Worker in the [CoreClaw Console](https://console.coreclaw.com), go to the **Input** tab, click the **API** button in the top-right corner, and select **API clients** to view ready-to-use code snippets.
+- **API**: Call `GET /api/scraper?slug=<scraper_slug>` and read `data.parameters.custom` from the response. Each entry in `properties[]` maps to a field in `input.parameters.custom`.
+- **Console**: Open the Worker in the [CoreClaw Console](https://console.coreclaw.com), go to the **Input** tab, click the **API** button in the top-right corner, and select **API clients** to view ready-to-use code snippets.
 
 ![API clients button in Worker Input tab](@/assets/docs/74.png)
+
+When building `custom`:
+- Use each `properties[].name` as the key
+- Match the declared `type`, nested structure, and array shape
+- Provide all fields where `required: true`
+- An empty or schema-mismatched `custom` object returns `400 Bad Request`
 
 ### How to get `version`
 
@@ -97,9 +95,9 @@ You can get the Worker version from:
 
 ## Validation behavior
 
-- **`callback_url` and `is_async`**: When `is_async=true` (default), `callback_url` is **required**. When `is_async=false` (sync mode), `callback_url` is optional.
+- `callback_url` is optional for this endpoint. It is **required** for [`/api/v1/task/run`](/api/task/run/) and [`/api/v1/rerun`](/api/run/rerun/).
 - Passing a `run_slug` or `task_slug` to `scraper_slug` causes request validation failure.
-- Providing only generic `system` parameters is not enough if the Worker requires `custom` fields defined by its schema.
+- Providing only generic `system` parameters is not enough if the Worker requires `custom` fields defined by its descriptor.
 
 ## Response Example
 

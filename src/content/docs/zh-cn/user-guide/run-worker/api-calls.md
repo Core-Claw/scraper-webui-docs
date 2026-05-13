@@ -70,18 +70,22 @@ POST /api/v1/scraper/run
 }
 ```
 
-`is_async` 控制是否异步执行。`is_async=true`（默认）时，`callback_url` **必填**。`is_async=false`（同步模式）时，`callback_url` 可选。
+`is_async` 控制是否异步执行：`true`（默认）为异步，`false` 为同步等待结果。如需 Webhook 推送结果，请提供 `callback_url`。
 
-`custom` 不是随意拼接的字符串，也不是旧版的 `custom_params` JSON 字符串字段。它的结构必须与该 Worker 的 `input_schema.json` 一致。
+`custom` 不是随意拼接的字符串，也不是旧版的 `custom_params` JSON 字符串字段。其结构因 Worker 而异，并非固定静态 schema。
 
-- 使用该 Worker `input_schema.json` 中每个 `properties[].name` 作为 `custom` 的字段名
-- 严格遵守 schema 声明的 `type`、嵌套结构与数组形状
-- 对于 schema 中 `required: true` 的字段，必须显式提供
-- 如果 `custom` 为空，或结构与 Worker schema 不匹配，接口会返回 `400 Bad Request`
+要查看具体 Worker 的字段：
 
-要查看具体 Worker 的 `custom` 字段，请在 [CoreClaw Console](https://console.coreclaw.com) 中打开该 Worker，进入 **Input** 选项卡，点击右上角的 **API** 按钮，选择 **API clients** 即可查看可直接使用的代码片段。
+- **API**：调用 `GET /api/scraper?slug=<scraper_slug>`，从响应的 `data.parameters.custom` 获取。`properties[]` 中每一项对应 `input.parameters.custom` 的一个字段。
+- **Console**：在 [CoreClaw Console](https://console.coreclaw.com) 中打开该 Worker，进入 **Input** 选项卡，点击右上角的 **API** 按钮，选择 **API clients** 即可查看可直接使用的代码片段。
 
 ![Worker Input 选项卡中的 API clients 按钮](@/assets/docs/74.png)
+
+构造 `custom` 时：
+- 使用 `properties[].name` 作为字段名
+- 严格遵守声明的 `type`、嵌套结构与数组形状
+- 对于 `required: true` 的字段，必须显式提供
+- 如果 `custom` 为空，或结构不匹配，接口会返回 `400 Bad Request`
 
 ### 如何获取 `version`
 

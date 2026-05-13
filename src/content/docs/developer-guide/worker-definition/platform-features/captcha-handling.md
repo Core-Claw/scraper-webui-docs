@@ -85,12 +85,16 @@ if (result.status) {
 
 | CAPTCHA Type | solverType |
 |--------------|------------|
-| Cloudflare Turnstile | cloudflare |
+| Cloudflare Click CAPTCHA | cloudflare |
+| DataDome Slider CAPTCHA | datadome |
 | Google reCAPTCHA v2 | google-v2 |
 | Google reCAPTCHA v3 | google-v3 |
-| DataDome Slider CAPTCHA | datadome |
+| OOCL Slider CAPTCHA | oocl_slide |
+| PerimeterX Press-and-Hold CAPTCHA | perimeterx |
+| SHEIN Image Recognition Click CAPTCHA | shein_same_object_click |
 | Temu (all CAPTCHA types) | temu_auto |
 | TikTok Slider CAPTCHA | tiktok_slide_simple |
+| TikTok Double-Spiral Slider CAPTCHA | tiktok_slide_auto |
 
 :::note[Usage]
 When `status = true`, the CAPTCHA has been successfully handled. You can directly proceed with login, data collection, form submission, or other business logic.

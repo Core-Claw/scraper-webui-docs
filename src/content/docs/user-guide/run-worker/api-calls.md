@@ -70,18 +70,22 @@ POST /api/v1/scraper/run
 }
 ```
 
-`is_async` controls whether the run executes asynchronously. When `is_async=true` (default), `callback_url` is **required**. When `is_async=false` (sync mode), `callback_url` is optional.
+`is_async` controls whether the run executes asynchronously: `true` (default) for async, `false` to wait for completion. Provide `callback_url` when you need webhook delivery of results.
 
-`custom` is not a free-form string and not the old `custom_params` JSON string field. Its structure must match the Worker's `input_schema.json`.
+`custom` is not a free-form string and not the old `custom_params` JSON string field. Its structure varies per Worker — it is not a fixed static schema.
 
-- Use each `properties[].name` value from the Worker's `input_schema.json` as a key in `custom`
-- Follow the declared `type`, nested structure, and array shape
-- Provide every field whose schema sets `required: true`
-- If `custom` is empty or does not match the Worker's schema, the API returns `400 Bad Request`
+To find the exact fields for a specific Worker:
 
-To find the exact `custom` fields for a specific Worker, open the Worker in the [CoreClaw Console](https://console.coreclaw.com), go to the **Input** tab, click the **API** button in the top-right corner, and select **API clients** to view ready-to-use code snippets.
+- **API**: Call `GET /api/scraper?slug=<scraper_slug>` and read `data.parameters.custom` from the response. Each entry in `properties[]` maps to a field in `input.parameters.custom`.
+- **Console**: Open the Worker in the [CoreClaw Console](https://console.coreclaw.com), go to the **Input** tab, click the **API** button in the top-right corner, and select **API clients** to view ready-to-use code snippets.
 
 ![API clients button in Worker Input tab](@/assets/docs/74.png)
+
+When building `custom`:
+- Use each `properties[].name` as the key
+- Follow the declared `type`, nested structure, and array shape
+- Provide every field where `required: true`
+- If `custom` is empty or does not match, the API returns `400 Bad Request`
 
 ### How to get `version`
 

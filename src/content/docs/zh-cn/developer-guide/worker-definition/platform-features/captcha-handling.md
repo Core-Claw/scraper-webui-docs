@@ -85,12 +85,16 @@ if (result.status) {
 
 | 验证码类型 | solverType |
 | ---------- | ---------- |
-| Cloudflare Turnstile | cloudflare |
+| Cloudflare 点击验证码 | cloudflare |
+| DataDome 滑块验证码 | datadome |
 | Google reCAPTCHA v2 | google-v2 |
 | Google reCAPTCHA v3 | google-v3 |
-| DataDome 滑块验证码 | datadome |
+| OOCL 滑块验证码 | oocl_slide |
+| PerimeterX 按压验证码 | perimeterx |
+| SHEIN 图像识别点击验证码 | shein_same_object_click |
 | Temu（所有验证码类型） | temu_auto |
-| TikTok 滑块验证码 | tiktok_slide_simple |
+| TikTok 缺口滑块验证码 | tiktok_slide_simple |
+| TikTok 双螺旋滑块验证码 | tiktok_slide_auto |
 
 :::note[使用说明]
 当 `status = true` 时，验证码已成功处理。您可以直接继续登录、数据采集、表单提交或其他业务逻辑。
