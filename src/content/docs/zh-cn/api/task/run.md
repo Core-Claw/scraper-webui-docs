@@ -17,7 +17,9 @@ sidebar:
 
 ## `task_slug` 从哪里来
 
-`task_slug` 会在用户创建并保存 Task 模板时生成。这里不要传 `run_slug` 或 `scraper_slug`。
+`task_slug` 是 **任务 ID**——创建并保存 Task 模板时生成的唯一标识符。Task 是可复用的配置，将 Worker 与预设参数打包在一起。
+
+> **重要提示**：请勿将 `run_slug`（运行记录 ID）或 `scraper_slug`（Worker ID）传入此字段。每种 slug 类型用途不同，不可互换。
 
 ## 请求示例
 
@@ -32,7 +34,7 @@ sidebar:
 
 | 参数         | 示例值                                    | 类型   | 必填 | 说明 |
 | ------------ | ----------------------------------------- | ------ | ---- | ---- |
-| task_slug    | YOUR_TASK_SLUG                            | String | 是   | Task 模板唯一标识符 |
+| task_slug    | YOUR_TASK_SLUG                            | String | 是   | **任务 ID**——已保存的 Task 模板的唯一标识符 |
 | callback_url | https://your-callback.example.com/webhook | String | 是   | 用于接收 Task 运行结果的回调地址 |
 
 ## 响应示例
@@ -54,12 +56,12 @@ sidebar:
 | code     | 0                          | Integer | 全局状态码 |
 | message  | success                    | String  | 响应消息 |
 | data     | -                          | Object  | 响应数据 |
-| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行唯一标识符 |
+| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | **运行记录 ID**——本次执行的唯一标识符 |
 
 ## 校验行为
 
 - `callback_url` 为必填项。缺失时会返回 `400 Bad Request`。
-- 如果把 `run_slug` 或 `scraper_slug` 误传到 `task_slug` 字段，请求会在参数校验阶段失败。
+- 请勿将 `run_slug`（运行记录 ID）或 `scraper_slug`（Worker ID）传入 `task_slug` 字段——每种 slug 类型不同，不可互换。
 
 ## 错误响应
 

@@ -111,7 +111,7 @@ curl "https://openapi.coreclaw.com/api/store?search=amazon&limit=5"
 }
 ```
 
-保存 `slug` 用于下一步。
+保存 `slug`（这是 **Worker ID**，也称为 `scraper_slug`）用于下一步。
 
 ### 步骤 2：获取 Worker 详情
 
@@ -201,7 +201,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" \
 }
 ```
 
-保存 `run_slug` 以跟踪进度和获取结果。
+保存 `run_slug`（**运行记录 ID**）以跟踪进度和获取结果。
 
 ### 步骤 4：检查运行状态
 
@@ -322,8 +322,8 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/export" \
 | 4000 | 请求参数无效 | 根据 `/api/scraper` 检查参数名称和类型 |
 | 20001 | API 密钥无效 | 验证您的 API 密钥是否正确 |
 | 30001 | 余额不足 | 为您的账户充值 |
-| 50001 | Worker 不存在 | 检查 `scraper_slug` |
-| 70001 | 运行记录不存在 | 检查 `run_slug` |
+| 50001 | Worker 不存在 | 检查 `scraper_slug`（Worker ID） |
+| 70001 | 运行记录不存在 | 检查 `run_slug`（运行记录 ID） |
 
 ## 最佳实践
 

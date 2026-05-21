@@ -17,7 +17,11 @@ sidebar:
 
 ## `scraper_slug` 从哪里来
 
-每个 Worker 都有自己的 `scraper_slug`。您可以从 Worker 页面获取，也可以从[运行详情](/zh-cn/api/run/detail/)和[运行历史](/zh-cn/api/run/history/)返回的 `scraper_slug` 字段获取。
+`scraper_slug` 是 **Worker ID**——每个 Worker 的唯一标识符。每个 Worker 都有一个固定的 `scraper_slug`。
+
+获取方式：
+- 在 CoreClaw Console 的 Worker 详情页查看
+- 从[运行详情](/zh-cn/api/run/detail/)或[运行历史](/zh-cn/api/run/history/)返回的 `scraper_slug` 字段获取
 
 ## 请求示例
 
@@ -53,7 +57,7 @@ sidebar:
 
 | 参数         | 必填 | 类型    | 说明 |
 | ------------ | ---- | ------- | ---- |
-| scraper_slug | 是   | string  | Worker 唯一标识符 |
+| scraper_slug | 是   | string  | **Worker ID**——要运行的 Worker 的唯一标识符 |
 | version      | 是   | string  | Worker 版本 |
 | input        | 是   | object  | 输入参数 |
 | is_async     | 是   | boolean | `true`：异步执行（默认），`false`：同步执行（等待完成） |
@@ -96,7 +100,7 @@ sidebar:
 ## 校验行为
 
 - `callback_url` 在此端点可选。在 [`/api/v1/task/run`](/zh-cn/api/task/run/) 和 [`/api/v1/rerun`](/zh-cn/api/run/rerun/) 中**必填**。
-- 如果把 `run_slug` 或 `task_slug` 误传到 `scraper_slug` 字段，请求会在参数校验阶段失败。
+- 请勿将 `run_slug`（运行记录 ID）或 `task_slug`（任务 ID）传入 `scraper_slug` 字段——每种 slug 类型不同，不可互换。
 - 如果只提供通用 `system` 参数，但缺少该 Worker 描述符要求的 `custom` 字段，请求仍会失败。
 
 ## 响应示例
@@ -118,4 +122,4 @@ sidebar:
 | code     | 0                          | Integer | 全局状态码     |
 | message  | success                    | String  | 响应消息       |
 | data     | -                          | Object  | 响应数据       |
-| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行唯一标识符 |
+| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | **运行记录 ID**——本次执行的唯一标识符 |

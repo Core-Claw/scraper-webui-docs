@@ -17,7 +17,11 @@ Use this endpoint when you want to launch a Worker directly by its `scraper_slug
 
 ## Where `scraper_slug` comes from
 
-Every Worker has its own `scraper_slug`. You can get it from the Worker page, or from the `scraper_slug` field returned by [Run Detail](/api/run/detail/) and [Run History](/api/run/history/).
+`scraper_slug` is the **Worker ID** — a unique identifier for each Worker. Every Worker has one permanent `scraper_slug`.
+
+You can find it:
+- On the Worker detail page in CoreClaw Console
+- From the `scraper_slug` field returned by [Run Detail](/api/run/detail/) or [Run History](/api/run/history/)
 
 ## Request Example
 
@@ -53,7 +57,7 @@ Every Worker has its own `scraper_slug`. You can get it from the Worker page, or
 
 | Parameter    | Required | Type    | Description |
 | ------------ | -------- | ------- | ----------- |
-| scraper_slug | Yes      | string  | Unique Worker identifier |
+| scraper_slug | Yes      | string  | **Worker ID** — unique identifier for the Worker you want to run |
 | version      | Yes      | string  | Worker version |
 | input        | Yes      | object  | Input parameters |
 | is_async     | Yes      | boolean | `true`: async execution (default), `false`: sync execution (waits for completion) |
@@ -96,7 +100,7 @@ You can get the Worker version from:
 ## Validation behavior
 
 - `callback_url` is optional for this endpoint. It is **required** for [`/api/v1/task/run`](/api/task/run/) and [`/api/v1/rerun`](/api/run/rerun/).
-- Passing a `run_slug` or `task_slug` to `scraper_slug` causes request validation failure.
+- Do not pass a `run_slug` (Run Record ID) or `task_slug` (Task ID) to `scraper_slug` — each slug type is different and not interchangeable.
 - Providing only generic `system` parameters is not enough if the Worker requires `custom` fields defined by its descriptor.
 
 ## Response Example
@@ -118,4 +122,4 @@ You can get the Worker version from:
 | code      | 0                          | Integer | Global status code    |
 | message   | success                    | String  | Response message      |
 | data      | -                          | Object  | Response payload      |
-| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | Unique run identifier |
+| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | **Run Record ID** — unique identifier for this execution |

@@ -79,10 +79,26 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
 
 ## Slug Types
 
-| Slug | What it identifies | How to get it | Used by |
-| ---- | ------------------ | ------------- | ------- |
-| `scraper_slug` | A Worker | Each Worker has its own `scraper_slug`. You can get it from the Worker page, or from `scraper_slug` returned by [Run Detail](/api/run/detail/) or [Run History](/api/run/history/). | `/api/v1/scraper/run`, `/api/v1/run/list` |
-| `task_slug` | A saved Task template | Generated when a user creates and saves a Task template. | `/api/v1/task/run` |
-| `run_slug` | A specific run record | Returned after starting a Worker or a Task, and exposed by run APIs. | `/api/v1/run/detail`, `/api/v1/run/last/log`, `/api/v1/run/result/list`, `/api/v1/run/result/export`, `/api/v1/rerun`, `/api/v1/scraper/abort` |
+CoreClaw API uses three types of identifiers (slugs). Understanding the difference is essential for correct API usage.
 
-Do not mix these identifiers. Passing a `run_slug` to a `task_slug` or `scraper_slug` field results in request validation errors.
+| Slug | What it identifies | Description | Used by |
+| ---- | ------------------ | ----------- | ------- |
+| `scraper_slug` | **Worker ID** | The unique identifier for each Worker. Every Worker has one permanent `scraper_slug`. | `/api/v1/scraper/run`, `/api/v1/run/list` |
+| `task_slug` | **Task ID** | Generated when you create and save a Task template. A Task is a reusable configuration that bundles a Worker with preset parameters. | `/api/v1/task/run` |
+| `run_slug` | **Run Record ID** | Generated each time you execute a Worker or Task. Each run produces a unique `run_slug` to track that specific execution. | `/api/v1/run/detail`, `/api/v1/run/last/log`, `/api/v1/run/result/list`, `/api/v1/run/result/export`, `/api/v1/rerun`, `/api/v1/scraper/abort` |
+
+### Where to find each Slug
+
+**scraper_slug** (Worker ID) - Found on the Worker detail page:
+
+![scraper_slug location](/src/assets/docs/scraper_slug.png)
+
+**task_slug** (Task ID) - Found in your saved Task templates:
+
+![task_slug location](/src/assets/docs/task_slug.png)
+
+**run_slug** (Run Record ID) - Found in the run history or returned after starting a run:
+
+![run_slug location](/src/assets/docs/run_slug.png)
+
+> **Important**: Do not mix these identifiers. Each slug type serves a different purpose. Passing a `run_slug` to a `task_slug` or `scraper_slug` field will cause request validation errors.

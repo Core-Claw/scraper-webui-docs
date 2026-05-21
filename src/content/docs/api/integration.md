@@ -111,7 +111,7 @@ Response:
 }
 ```
 
-Save the `slug` for the next step.
+Save the `slug` (this is the **Worker ID**, also called `scraper_slug`) for the next step.
 
 ### Step 2: Get Worker Details
 
@@ -201,7 +201,7 @@ Response:
 }
 ```
 
-Save the `run_slug` to track progress and retrieve results.
+Save the `run_slug` (**Run Record ID**) to track progress and retrieve results.
 
 ### Step 4: Check Run Status
 
@@ -322,8 +322,8 @@ Your webhook endpoint should:
 | 4000 | Invalid request parameters | Check parameter names and types against `/api/scraper` |
 | 20001 | Invalid API key | Verify your API key is correct |
 | 30001 | Insufficient balance | Add funds to your account |
-| 50001 | Worker does not exist | Check the `scraper_slug` |
-| 70001 | Run record does not exist | Check the `run_slug` |
+| 50001 | Worker does not exist | Check the `scraper_slug` (Worker ID) |
+| 70001 | Run record does not exist | Check the `run_slug` (Run Record ID) |
 
 ## Best Practices
 

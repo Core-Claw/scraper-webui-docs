@@ -17,7 +17,9 @@ Use this endpoint when you already have a saved Task template and want to create
 
 ## Where `task_slug` comes from
 
-`task_slug` is generated when a user creates and saves a Task template. Do not pass a `run_slug` or `scraper_slug` here.
+`task_slug` is the **Task ID** — a unique identifier generated when you create and save a Task template. A Task is a reusable configuration that bundles a Worker with preset parameters.
+
+> **Important**: Do not pass a `run_slug` (Run Record ID) or `scraper_slug` (Worker ID) here. Each slug type serves a different purpose.
 
 ## Request Example
 
@@ -32,7 +34,7 @@ Use this endpoint when you already have a saved Task template and want to create
 
 | Parameter    | Example                                      | Type   | Required | Description |
 | ------------ | -------------------------------------------- | ------ | -------- | ----------- |
-| task_slug    | YOUR_TASK_SLUG                               | String | Yes      | Unique Task template identifier |
+| task_slug    | YOUR_TASK_SLUG                               | String | Yes      | **Task ID** — unique identifier for the saved Task template |
 | callback_url | https://your-callback.example.com/webhook    | String | Yes      | Callback URL for receiving Task run results |
 
 ## Response Example
@@ -54,12 +56,12 @@ Use this endpoint when you already have a saved Task template and want to create
 | code      | 0                          | Integer | Global status code    |
 | message   | success                    | String  | Response message      |
 | data      | -                          | Object  | Response payload      |
-| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | Unique run identifier |
+| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | **Run Record ID** — unique identifier for this execution |
 
 ## Validation behavior
 
 - `callback_url` is required. Omitting it returns `400 Bad Request`.
-- Passing a `run_slug` or `scraper_slug` instead of a valid `task_slug` results in request validation failure.
+- Do not pass a `run_slug` (Run Record ID) or `scraper_slug` (Worker ID) instead of a valid `task_slug` — each slug type is different and not interchangeable.
 
 ## Error Response
 

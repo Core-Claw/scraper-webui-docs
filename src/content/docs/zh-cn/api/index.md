@@ -79,10 +79,26 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
 
 ## 三种 Slug 的区别
 
-| Slug | 标识对象 | 获取方式 | 典型用途 |
-| ---- | -------- | -------- | -------- |
-| `scraper_slug` | 某个 Worker | 每个 Worker 都有自己的 `scraper_slug`。可以从 Worker 页面获取，或从[运行详情](/zh-cn/api/run/detail/)和[运行历史](/zh-cn/api/run/history/)返回的 `scraper_slug` 获取。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
-| `task_slug` | 已保存的 Task 模板 | 用户创建并保存 Task 模板时生成。 | `/api/v1/task/run` |
-| `run_slug` | 某一次具体运行记录 | 启动 Worker 或 Task 后返回，也会出现在运行相关接口里。 | `/api/v1/run/detail`、`/api/v1/run/last/log`、`/api/v1/run/result/list`、`/api/v1/run/result/export`、`/api/v1/rerun`、`/api/v1/scraper/abort` |
+CoreClaw API 使用三种标识符（slug）。理解它们的区别对于正确使用 API 至关重要。
 
-不要混用这些标识符。把 `run_slug` 传到 `task_slug` 或 `scraper_slug` 字段中，会直接触发请求参数校验错误。
+| Slug | 标识对象 | 说明 | 典型用途 |
+| ---- | -------- | ---- | -------- |
+| `scraper_slug` | **Worker ID** | 每个 Worker 的唯一标识符。每个 Worker 都有一个固定的 `scraper_slug`。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
+| `task_slug` | **任务 ID** | 创建并保存 Task 模板时生成。Task 是可复用的配置，将 Worker 与预设参数打包在一起。 | `/api/v1/task/run` |
+| `run_slug` | **运行记录 ID** | 每次执行 Worker 或 Task 时生成。每次运行都会产生一个唯一的 `run_slug`，用于追踪该次执行。 | `/api/v1/run/detail`、`/api/v1/run/last/log`、`/api/v1/run/result/list`、`/api/v1/run/result/export`、`/api/v1/rerun`、`/api/v1/scraper/abort` |
+
+### 各 Slug 的位置
+
+**scraper_slug**（Worker ID）- 位于 Worker 详情页：
+
+![scraper_slug 位置](/src/assets/docs/scraper_slug.png)
+
+**task_slug**（任务 ID）- 位于已保存的 Task 模板中：
+
+![task_slug 位置](/src/assets/docs/task_slug.png)
+
+**run_slug**（运行记录 ID）- 位于运行历史中，或启动运行后返回：
+
+![run_slug 位置](/src/assets/docs/run_slug.png)
+
+> **重要提示**：请勿混用这些标识符。每种 slug 类型有不同的用途。将 `run_slug` 传入 `task_slug` 或 `scraper_slug` 字段会导致请求参数校验错误。
