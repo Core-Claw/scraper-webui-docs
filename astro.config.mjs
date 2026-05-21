@@ -408,6 +408,13 @@ export default defineConfig({
                     collapsed: true,
                     items: [
                         {
+                            label: 'API Integration',
+                            slug: 'api/integration',
+                            translations: {
+                                'zh-CN': 'API 集成指南',
+                            },
+                        },
+                        {
                             label: 'Base URL & Authentication',
                             slug: 'api',
                             translations: {

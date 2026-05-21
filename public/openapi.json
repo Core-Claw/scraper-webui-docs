@@ -1,0 +1,2054 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CoreClaw API",
+    "description": "Canonical English-first OpenAPI contract for the CoreClaw skill repository. This spec focuses on workflow-critical endpoints used by AI agents and reflects verified runtime behavior where it differs from older generated docs.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "CoreClaw",
+      "url": "https://coreclaw.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.coreclaw.com",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Public",
+      "description": "Endpoints that can be called without an API key."
+    },
+    {
+      "name": "Runs",
+      "description": "Run creation, status, history, logs, and abort operations."
+    },
+    {
+      "name": "Results",
+      "description": "Inline result reading and export operations."
+    },
+    {
+      "name": "Tasks",
+      "description": "Saved task execution operations."
+    },
+    {
+      "name": "Account",
+      "description": "Account balance and traffic inspection."
+    }
+  ],
+  "paths": {
+    "/api/store": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Search scraper store",
+        "description": "Search the CoreClaw scraper catalog. Agents should use this endpoint to discover candidate scrapers before calling `/api/scraper` for live schema inspection.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Keyword used to search the scraper store.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of scraper records to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Store search completed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreSearchResponse"
+                },
+                "examples": {
+                  "amazon_search": {
+                    "summary": "Amazon-related scrapers",
+                    "value": {
+                      "code": 0,
+                      "message": "success",
+                      "data": {
+                        "scraper": [
+                          {
+                            "slug": "01KBHMS6A8H6A3K5FJY11MQ99Z",
+                            "title": "Amazon Product By ASIN",
+                            "description": "Extract product metadata such as seller, brand, pricing, ASIN, and reviews from Amazon product pages."
+                          },
+                          {
+                            "slug": "01KBHT00QRRZYZJQJ8P1R682VC",
+                            "title": "Amazon Product List By Keywords",
+                            "description": "Search Amazon by keywords and return structured product listing results."
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/scraper": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get scraper detail",
+        "description": "Return the live scraper contract. Agents must read this endpoint before constructing `/api/v1/scraper/run`. Use `data.version` exactly as returned, treat `data.parameters.system` as the default platform layer, and derive the shape of `input.parameters.custom` from `data.parameters.custom` rather than hardcoding fields.",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "query",
+            "description": "Unique scraper identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "01KJXYJ7KCHXM0PDZHQD5293XE"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scraper detail returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScraperDetailResponse"
+                },
+                "examples": {
+                  "scraper_detail": {
+                    "summary": "Live scraper contract",
+                    "value": {
+                      "code": 0,
+                      "message": "success",
+                      "data": {
+                        "version": "v1.0.2",
+                        "parameters": {
+                          "system": {
+                            "cpus": 0.125,
+                            "memory_bytes": 512,
+                            "max_total_charge": 0,
+                            "max_total_traffic": 0,
+                            "execute_limit_time_seconds": 1800
+                          },
+                          "custom": {
+                            "properties": [
+                              {
+                                "name": "startURLs",
+                                "type": "array",
+                                "title": "Start URLs",
+                                "editor": "requestListSources",
+                                "default": [
+                                  {
+                                    "url": "https://example.com"
+                                  }
+                                ],
+                                "required": true,
+                                "description": "Seed URLs consumed by the scraper."
+                              }
+                            ],
+                            "description": "Live custom parameter descriptor. Inspect this object at runtime and derive the actual request payload from it."
+                          }
+                        },
+                        "readme": "Provide one or more start URLs and choose the output fields required by your workflow."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "404": {
+            "$ref": "#/components/responses/ScraperNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/scraper/run": {
+      "post": {
+        "tags": [
+          "Runs"
+        ],
+        "summary": "Start scraper run",
+        "description": "Start a new Worker run by `scraper_slug`. Verified runtime rule: `callback_url` is optional; include it when webhook orchestration is needed. `version` must come from `/api/scraper`. `input.parameters.custom` is dynamic and must be derived from `/api/scraper`. `input.parameters.system.memory` is measured in MB and corresponds to `memory_bytes` returned by `/api/scraper`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartScraperRunRequest"
+              },
+              "examples": {
+                "async_run": {
+                  "summary": "Async run with callback",
+                  "value": {
+                    "scraper_slug": "01KGYERXPXTABWXMGQKFCE43M2",
+                    "version": "v1.0.1",
+                    "is_async": true,
+                    "input": {
+                      "parameters": {
+                        "system": {
+                          "cpus": 0.125,
+                          "memory": 512,
+                          "execute_limit_time_seconds": 1800,
+                          "max_total_charge": 0,
+                          "max_total_traffic": 0,
+                          "proxy_region": "US"
+                        },
+                        "custom": {
+                          "startURLs": [
+                            {
+                              "url": "https://example.com"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "callback_url": "https://your-callback.example.com/webhook"
+                  }
+                },
+                "sync_run": {
+                  "summary": "Sync run without callback",
+                  "value": {
+                    "scraper_slug": "01KGYERXPXTABWXMGQKFCE43M2",
+                    "version": "v1.0.1",
+                    "is_async": false,
+                    "input": {
+                      "parameters": {
+                        "system": {
+                          "cpus": 0.125,
+                          "memory": 512,
+                          "execute_limit_time_seconds": 1800,
+                          "max_total_charge": 0,
+                          "max_total_traffic": 0
+                        },
+                        "custom": {
+                          "startURLs": [
+                            {
+                              "url": "https://example.com"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Run accepted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSlugResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "404": {
+            "$ref": "#/components/responses/ScraperNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/task/run": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Start saved task run",
+        "description": "Launch a saved Task template as a new async run. `callback_url` is required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskRunRequest"
+              },
+              "example": {
+                "task_slug": "01KK0G4W9W4JYTWEA55KMG5QKP",
+                "callback_url": "https://your-callback.example.com/webhook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task run accepted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSlugResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "404": {
+            "$ref": "#/components/responses/TaskNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/rerun": {
+      "post": {
+        "tags": [
+          "Runs"
+        ],
+        "summary": "Rerun previous run",
+        "description": "Start a new async run using the same parameters as an existing `run_slug`. `callback_url` is required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RerunRequest"
+              },
+              "example": {
+                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH",
+                "callback_url": "https://your-callback.example.com/webhook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rerun accepted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunSlugResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "404": {
+            "$ref": "#/components/responses/RunRecordNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/run/detail": {
+      "post": {
+        "tags": [
+          "Runs"
+        ],
+        "summary": "Get run detail",
+        "description": "Return status and accounting information for a single run.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunSlugRequest"
+              },
+              "example": {
+                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Run detail returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDetailResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "status": 2,
+                    "err_msg": "",
+                    "slug": "01KS2A1M515HG7PZX9STTB0KPH",
+                    "scraper_title": "News Scraper 20260305",
+                    "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                    "results": 4,
+                    "usage": "0.0217",
+                    "started_at": 1773383784,
+                    "finished_at": 0,
+                    "duration": 0,
+                    "origin": "api",
+                    "traffic": 0,
+                    "version": "v1.0.1"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "404": {
+            "$ref": "#/components/responses/RunRecordNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/run/list": {
+      "post": {
+        "tags": [
+          "Runs"
+        ],
+        "summary": "List runs",
+        "description": "List historical runs. `status` and `scraper_slug` work as filters when supplied.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunListRequest"
+              },
+              "example": {
+                "page_index": 1,
+                "page_size": 20,
+                "status": 0,
+                "scraper_slug": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Run list returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunListResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "count": 2,
+                    "list": [
+                      {
+                        "status": 3,
+                        "err_msg": "",
+                        "slug": "01KS2A1M515HG7PZX9STTB0KPH",
+                        "scraper_title": "News Scraper 20260305",
+                        "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                        "results": 4,
+                        "usage": "0.0542",
+                        "started_at": 1773383784,
+                        "finished_at": 1773383790,
+                        "duration": 6,
+                        "origin": "api",
+                        "traffic": 23109,
+                        "version": "v1.0.1"
+                      },
+                      {
+                        "status": 4,
+                        "err_msg": "Navigation timeout of 30000 ms exceeded",
+                        "slug": "01KKGH9VYJ6YRDZBJKPEX2JPXC",
+                        "scraper_title": "News Scraper 20260305",
+                        "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                        "results": 0,
+                        "usage": "0.2925",
+                        "started_at": 1773302773,
+                        "finished_at": 1773302800,
+                        "duration": 27,
+                        "origin": "api",
+                        "traffic": 16413,
+                        "version": "v1.0.1"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/run/result/list": {
+      "post": {
+        "tags": [
+          "Results"
+        ],
+        "summary": "List run results",
+        "description": "Read paginated structured records for a completed or partially completed run. The shape of `data.list[]` is dynamic and depends on the Worker output schema.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunResultListRequest"
+              },
+              "example": {
+                "page_index": 1,
+                "page_size": 20,
+                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Result page returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunResultListResponse"
+                },
+                "examples": {
+                  "generic_result_page": {
+                    "summary": "Generic paginated records",
+                    "value": {
+                      "code": 0,
+                      "message": "success",
+                      "data": {
+                        "count": 2,
+                        "headers": [
+                          {
+                            "label": "title",
+                            "key": "title",
+                            "format": "text"
+                          },
+                          {
+                            "label": "rating",
+                            "key": "rating",
+                            "format": "number"
+                          }
+                        ],
+                        "list": [
+                          {
+                            "__coreclaw_data_id__": "record_1",
+                            "title": "Example title 1",
+                            "rating": 4.8
+                          },
+                          {
+                            "__coreclaw_data_id__": "record_2",
+                            "title": "Example title 2",
+                            "rating": 4.6
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "404": {
+            "$ref": "#/components/responses/RunRecordNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/run/result/export": {
+      "post": {
+        "tags": [
+          "Results"
+        ],
+        "summary": "Export run results",
+        "description": "Create a downloadable export file for run results. Use this for large datasets or when the caller needs a CSV or JSON artifact instead of inline analysis.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunResultExportRequest"
+              },
+              "example": {
+                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH",
+                "filter_keys": [],
+                "format": "csv"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Export file created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunResultExportResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "download_url": "https://<bucket>.cos.<region>.myqcloud.com/export/exported_result_csv_<uuid>.csv?q-signature=<SIGNATURE>"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "404": {
+            "$ref": "#/components/responses/RunRecordNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/run/last/log": {
+      "post": {
+        "tags": [
+          "Runs"
+        ],
+        "summary": "Get latest run logs",
+        "description": "Return a compact log page plus a URL for downloading the full log artifact.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunSlugRequest"
+              },
+              "example": {
+                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Run logs returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunLogsResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "all_logs_url": "https://smpfile.coreclaw.com/log/all_log_<uuid>_<timestamp>",
+                    "list": [
+                      {
+                        "type": 2,
+                        "group": "28596067108978688",
+                        "content": "SYSTEM: Subtask-[28596067108978688] - Preparing the execution environment.",
+                        "timestamp": 1773383784438
+                      },
+                      {
+                        "type": 2,
+                        "group": "28596067108978688",
+                        "content": "SYSTEM: Subtask-[28596067108978688] - Running...",
+                        "timestamp": 1773383784958
+                      }
+                    ],
+                    "result_count": 4
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "404": {
+            "$ref": "#/components/responses/RunRecordNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/scraper/abort": {
+      "post": {
+        "tags": [
+          "Runs"
+        ],
+        "summary": "Abort running worker task",
+        "description": "Abort a running Worker task. Send `run_slug` in the JSON request body.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunSlugRequest"
+              },
+              "example": {
+                "run_slug": "01KJYA4S1QQ1PMDVVRP7XH72C51"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Abort returned success with null data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptySuccessResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": null
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "404": {
+            "$ref": "#/components/responses/RunRecordNotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/AbortRunFailed"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/account/info": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Get account info",
+        "description": "Return account balance and remaining traffic quota.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "Send `{}` or omit the body."
+              },
+              "example": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account info returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountInfoResponse"
+                },
+                "example": {
+                  "code": 0,
+                  "message": "success",
+                  "data": {
+                    "balance": "100.00",
+                    "traffic": 178194757135,
+                    "traffic_expiration_at": 1775267018
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequestParameters"
+          },
+          "401": {
+            "$ref": "#/components/responses/InvalidApiKey"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "type": "object",
+        "description": "Generic error envelope returned by CoreClaw.",
+        "properties": {
+          "code": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Business status code returned by CoreClaw."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message."
+          },
+          "data": {
+            "description": "Error payload. Usually `null`, but the server may return any JSON value."
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "RunSlugRequest": {
+        "type": "object",
+        "properties": {
+          "run_slug": {
+            "type": "string",
+            "description": "Unique run identifier returned by CoreClaw."
+          }
+        },
+        "required": [
+          "run_slug"
+        ]
+      },
+      "SystemRunParameters": {
+        "type": "object",
+        "description": "Runtime system parameters used by `/api/v1/scraper/run`. Reuse defaults from `/api/scraper` when possible and override only the values you need.",
+        "properties": {
+          "cpus": {
+            "type": "number",
+            "description": "CPU cores allocated to the Worker."
+          },
+          "memory": {
+            "type": "integer",
+            "description": "Memory allocation in MB. This corresponds to `memory_bytes` returned by `/api/scraper`.",
+            "enum": [
+              512,
+              1024,
+              2048,
+              4096,
+              8192,
+              16384
+            ]
+          },
+          "execute_limit_time_seconds": {
+            "type": "integer",
+            "description": "Maximum execution time in seconds."
+          },
+          "max_total_charge": {
+            "type": "number",
+            "description": "Maximum allowed spend in USD."
+          },
+          "max_total_traffic": {
+            "type": "number",
+            "description": "Maximum allowed traffic consumption in MB."
+          },
+          "proxy_region": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 proxy region code. Defaults to `US` when omitted.",
+            "pattern": "^[A-Z]{2}$"
+          }
+        },
+        "required": [
+          "cpus",
+          "memory",
+          "execute_limit_time_seconds",
+          "max_total_charge",
+          "max_total_traffic"
+        ]
+      },
+      "ScraperSystemDefaults": {
+        "type": "object",
+        "description": "Default system parameter values exposed by `/api/scraper`.",
+        "properties": {
+          "cpus": {
+            "type": "number",
+            "description": "Default CPU allocation."
+          },
+          "memory_bytes": {
+            "type": "integer",
+            "description": "Default memory allocation in MB. Map this value to `input.parameters.system.memory` when calling `/api/v1/scraper/run`."
+          },
+          "max_total_charge": {
+            "type": "number",
+            "description": "Default maximum spend in USD."
+          },
+          "max_total_traffic": {
+            "type": "number",
+            "description": "Default maximum traffic consumption in MB."
+          },
+          "execute_limit_time_seconds": {
+            "type": "integer",
+            "description": "Default execution timeout in seconds."
+          }
+        },
+        "required": [
+          "cpus",
+          "memory_bytes",
+          "max_total_charge",
+          "max_total_traffic",
+          "execute_limit_time_seconds"
+        ]
+      },
+      "CustomParameterDescriptor": {
+        "type": "object",
+        "description": "Opaque live schema descriptor returned by `/api/scraper`. Treat this object as the source of truth for how to build `input.parameters.custom`. Do not assume fixed field names such as `startURLs` unless the live descriptor actually contains them.",
+        "additionalProperties": true
+      },
+      "RunInput": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "$ref": "#/components/schemas/SystemRunParameters"
+              },
+              "custom": {
+                "type": "object",
+                "description": "Scraper-specific input payload. Its structure is dynamic and must be derived from `/api/scraper`.",
+                "additionalProperties": true
+              }
+            },
+            "required": [
+              "system",
+              "custom"
+            ]
+          }
+        },
+        "required": [
+          "parameters"
+        ]
+      },
+      "StartScraperRunRequest": {
+        "type": "object",
+        "properties": {
+          "scraper_slug": {
+            "type": "string",
+            "description": "Unique scraper identifier."
+          },
+          "version": {
+            "type": "string",
+            "description": "Scraper version. Must be copied from `/api/scraper` -> `data.version`."
+          },
+          "is_async": {
+            "type": "boolean",
+            "description": "`true` returns immediately with `run_slug`; `false` performs a synchronous execution flow.",
+            "default": true
+          },
+          "input": {
+            "$ref": "#/components/schemas/RunInput"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for async completion callbacks. Optional; include it when webhook orchestration is needed.",
+            "example": "https://your-callback.example.com/webhook"
+          }
+        },
+        "required": [
+          "scraper_slug",
+          "version",
+          "is_async",
+          "input"
+        ]
+      },
+      "TaskRunRequest": {
+        "type": "object",
+        "properties": {
+          "task_slug": {
+            "type": "string",
+            "description": "Unique saved task identifier."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for async completion callbacks."
+          }
+        },
+        "required": [
+          "task_slug",
+          "callback_url"
+        ]
+      },
+      "RerunRequest": {
+        "type": "object",
+        "properties": {
+          "run_slug": {
+            "type": "string",
+            "description": "Historical run to replay."
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Webhook URL for async completion callbacks."
+          }
+        },
+        "required": [
+          "run_slug",
+          "callback_url"
+        ]
+      },
+      "RunSlugData": {
+        "type": "object",
+        "properties": {
+          "run_slug": {
+            "type": "string",
+            "description": "Unique run identifier returned by CoreClaw."
+          }
+        },
+        "required": [
+          "run_slug"
+        ]
+      },
+      "RunSlugResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Business status code."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable status message."
+          },
+          "data": {
+            "$ref": "#/components/schemas/RunSlugData"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "RunSummary": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Run status code: `1=ready`, `2=running`, `3=succeeded`, `4=failed`, `5=aborting`.",
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "err_msg": {
+            "type": "string",
+            "description": "Error message when the run fails; empty otherwise."
+          },
+          "slug": {
+            "type": "string",
+            "description": "Run slug."
+          },
+          "scraper_title": {
+            "type": "string",
+            "description": "Human-readable scraper title."
+          },
+          "scraper_slug": {
+            "type": "string",
+            "description": "Scraper slug associated with the run."
+          },
+          "results": {
+            "type": "integer",
+            "description": "Number of output records produced so far."
+          },
+          "usage": {
+            "type": "string",
+            "description": "Usage charge as a decimal string."
+          },
+          "started_at": {
+            "type": "integer",
+            "description": "Unix timestamp in seconds when the run started."
+          },
+          "finished_at": {
+            "type": "integer",
+            "description": "Unix timestamp in seconds when the run finished. `0` means not finished yet."
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Run duration in seconds."
+          },
+          "origin": {
+            "type": "string",
+            "description": "Source that created the run, typically `api` or `web`."
+          },
+          "traffic": {
+            "type": "integer",
+            "description": "Traffic consumed in bytes."
+          },
+          "version": {
+            "type": "string",
+            "description": "Scraper version used by the run."
+          }
+        },
+        "required": [
+          "status",
+          "err_msg",
+          "slug",
+          "scraper_title",
+          "scraper_slug",
+          "results",
+          "usage",
+          "started_at",
+          "finished_at",
+          "duration",
+          "origin",
+          "traffic",
+          "version"
+        ]
+      },
+      "RunDetailResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RunSummary"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "RunListRequest": {
+        "type": "object",
+        "properties": {
+          "page_index": {
+            "type": "integer",
+            "description": "1-based page index.",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Page size.",
+            "minimum": 1
+          },
+          "status": {
+            "type": "integer",
+            "description": "Optional status filter. `0` means all statuses.",
+            "enum": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "scraper_slug": {
+            "type": "string",
+            "description": "Optional scraper filter."
+          }
+        },
+        "required": [
+          "page_index",
+          "page_size"
+        ]
+      },
+      "RunListData": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "Total number of matching runs."
+          },
+          "list": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunSummary"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "list"
+        ]
+      },
+      "RunListResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RunListData"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "ResultHeader": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Display label for the column."
+          },
+          "key": {
+            "type": "string",
+            "description": "Field key used in each result record."
+          },
+          "format": {
+            "type": "string",
+            "description": "Output format hint such as `text`, `number`, or `date`."
+          }
+        },
+        "required": [
+          "label",
+          "key",
+          "format"
+        ]
+      },
+      "RunResultRecord": {
+        "type": "object",
+        "description": "Single output record. Keys are dynamic and map to `headers[].key`.",
+        "additionalProperties": true
+      },
+      "RunResultListRequest": {
+        "type": "object",
+        "properties": {
+          "page_index": {
+            "type": "integer",
+            "description": "1-based page index.",
+            "minimum": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Page size.",
+            "minimum": 1
+          },
+          "run_slug": {
+            "type": "string",
+            "description": "Run slug whose records should be listed."
+          }
+        },
+        "required": [
+          "page_index",
+          "page_size",
+          "run_slug"
+        ]
+      },
+      "RunResultListData": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "Total number of result records."
+          },
+          "headers": {
+            "type": "array",
+            "description": "Column definitions for the result records.",
+            "items": {
+              "$ref": "#/components/schemas/ResultHeader"
+            }
+          },
+          "list": {
+            "type": "array",
+            "description": "Paginated result records.",
+            "items": {
+              "$ref": "#/components/schemas/RunResultRecord"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "headers",
+          "list"
+        ]
+      },
+      "RunResultListResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RunResultListData"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "RunResultExportRequest": {
+        "type": "object",
+        "properties": {
+          "run_slug": {
+            "type": "string",
+            "description": "Run slug whose results should be exported."
+          },
+          "filter_keys": {
+            "type": "array",
+            "description": "Optional list of field keys to keep in the export. Use `[]` to export all fields.",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "format": {
+            "type": "string",
+            "description": "Export file format.",
+            "enum": [
+              "csv",
+              "json"
+            ]
+          }
+        },
+        "required": [
+          "run_slug",
+          "format"
+        ]
+      },
+      "RunResultExportData": {
+        "type": "object",
+        "properties": {
+          "download_url": {
+            "type": "string",
+            "description": "Temporary file download URL."
+          }
+        },
+        "required": [
+          "download_url"
+        ]
+      },
+      "RunResultExportResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RunResultExportData"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "LogEntry": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "integer",
+            "description": "Log level code: `1=Debug`, `2=Info`, `3=Warn`, `4=Error`.",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "group": {
+            "type": "string",
+            "description": "Subtask or log stream grouping identifier."
+          },
+          "content": {
+            "type": "string",
+            "description": "Log message content."
+          },
+          "timestamp": {
+            "type": "integer",
+            "description": "Unix timestamp in milliseconds."
+          }
+        },
+        "required": [
+          "type",
+          "group",
+          "content",
+          "timestamp"
+        ]
+      },
+      "RunLogsData": {
+        "type": "object",
+        "properties": {
+          "all_logs_url": {
+            "type": "string",
+            "description": "URL for downloading the full log archive."
+          },
+          "list": {
+            "type": "array",
+            "description": "Most recent log entries.",
+            "items": {
+              "$ref": "#/components/schemas/LogEntry"
+            }
+          },
+          "result_count": {
+            "type": "integer",
+            "description": "Number of result records produced by the run."
+          }
+        },
+        "required": [
+          "all_logs_url",
+          "list",
+          "result_count"
+        ]
+      },
+      "RunLogsResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/RunLogsData"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "EmptySuccessResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "AccountInfoData": {
+        "type": "object",
+        "properties": {
+          "balance": {
+            "type": "string",
+            "description": "Account balance as a decimal string."
+          },
+          "traffic": {
+            "type": "integer",
+            "description": "Remaining traffic quota in bytes."
+          },
+          "traffic_expiration_at": {
+            "type": "integer",
+            "description": "Unix timestamp in seconds when the traffic quota expires."
+          }
+        },
+        "required": [
+          "balance",
+          "traffic",
+          "traffic_expiration_at"
+        ]
+      },
+      "AccountInfoResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/AccountInfoData"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "ScraperStoreItem": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Unique scraper identifier."
+          },
+          "title": {
+            "type": "string",
+            "description": "Scraper title."
+          },
+          "description": {
+            "type": "string",
+            "description": "Scraper description from the store listing."
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "description"
+        ]
+      },
+      "StoreSearchData": {
+        "type": "object",
+        "properties": {
+          "scraper": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScraperStoreItem"
+            }
+          }
+        },
+        "required": [
+          "scraper"
+        ]
+      },
+      "StoreSearchResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/StoreSearchData"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "ScraperParameters": {
+        "type": "object",
+        "properties": {
+          "system": {
+            "$ref": "#/components/schemas/ScraperSystemDefaults"
+          },
+          "custom": {
+            "$ref": "#/components/schemas/CustomParameterDescriptor"
+          }
+        },
+        "required": [
+          "system",
+          "custom"
+        ]
+      },
+      "ScraperDetailData": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Current scraper version, for example `v1.0.2`."
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/ScraperParameters"
+          },
+          "readme": {
+            "type": "string",
+            "description": "Human-readable scraper instructions."
+          }
+        },
+        "required": [
+          "version",
+          "parameters",
+          "readme"
+        ]
+      },
+      "ScraperDetailResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ScraperDetailData"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      }
+    },
+    "responses": {
+      "InternalServerError": {
+        "description": "Server-side or platform-level failure.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 5000,
+              "message": "Network error, try again",
+              "data": null
+            }
+          }
+        }
+      },
+      "InvalidRequestParameters": {
+        "description": "The request body, query string, or field values do not satisfy the current API contract.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 4000,
+              "message": "Invalid request parameters",
+              "data": null
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "The caller is not authorized to access the requested resource.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 4010,
+              "message": "Task does not belong to you",
+              "data": null
+            }
+          }
+        }
+      },
+      "ResourceNotFound": {
+        "description": "The requested resource does not exist.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 4040,
+              "message": "Run record does not exist",
+              "data": null
+            }
+          }
+        }
+      },
+      "RateLimitExceeded": {
+        "description": "Too many requests were sent in a short period.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 4290,
+              "message": "Too many requests, please try again later",
+              "data": null
+            }
+          }
+        }
+      },
+      "UserNotFound": {
+        "description": "The user account associated with the request could not be found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 10001,
+              "message": "User unavailable",
+              "data": null
+            }
+          }
+        }
+      },
+      "UserDisabled": {
+        "description": "The user account is disabled.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 10002,
+              "message": "User unavailable",
+              "data": null
+            }
+          }
+        }
+      },
+      "InvalidApiKey": {
+        "description": "The supplied API key is invalid.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 20001,
+              "message": "Invalid API key",
+              "data": null
+            }
+          }
+        }
+      },
+      "ExpiredApiKey": {
+        "description": "The supplied API key has expired.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 20002,
+              "message": "API key has expired",
+              "data": null
+            }
+          }
+        }
+      },
+      "BalanceInsufficient": {
+        "description": "The account balance is insufficient for the requested action.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 30001,
+              "message": "Balance is not enough",
+              "data": null
+            }
+          }
+        }
+      },
+      "TrafficInsufficient": {
+        "description": "The account does not have enough traffic quota.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 30002,
+              "message": "Account traffic is insufficient. Please purchase a traffic package to enable normal operation.",
+              "data": null
+            }
+          }
+        }
+      },
+      "ScraperNotFound": {
+        "description": "The specified scraper does not exist.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 50001,
+              "message": "Script does not exist",
+              "data": null
+            }
+          }
+        }
+      },
+      "RunFailed": {
+        "description": "The scraper run failed.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 50002,
+              "message": "Script run failed",
+              "data": null
+            }
+          }
+        }
+      },
+      "ScraperVersionUnavailable": {
+        "description": "The requested scraper version is not available.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 50003,
+              "message": "The script version is not available",
+              "data": null
+            }
+          }
+        }
+      },
+      "TaskNotFound": {
+        "description": "The specified task does not exist.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 60001,
+              "message": "Task does not exist",
+              "data": null
+            }
+          }
+        }
+      },
+      "RunRecordNotFound": {
+        "description": "The specified run record does not exist.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 70001,
+              "message": "Run record does not exist",
+              "data": null
+            }
+          }
+        }
+      },
+      "AbortRunFailed": {
+        "description": "The platform failed to abort the run.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            },
+            "example": {
+              "code": 70002,
+              "message": "Failed to abort run",
+              "data": null
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "api-key"
+      }
+    }
+  },
+  "security": []
+}

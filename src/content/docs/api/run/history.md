@@ -28,8 +28,8 @@ Send the request body with **Content-Type: application/json**.
 | ------------ | ------- | ------- | -------- | ----------- |
 | page_index   | 1       | Integer | Yes      | Current page number |
 | page_size    | 20      | Integer | Yes      | Items per page |
-| status       | 0       | Integer | Yes      | Run status: 0 All, 1 Ready, 2 Running, 3 Succeeded, 4 Failed, 5 Aborted |
-| scraper_slug | -       | String  | Yes      | Unique Worker identifier |
+| status       | 0       | Integer | No       | Run status: 0 All, 1 Ready, 2 Running, 3 Succeeded, 4 Failed, 5 Aborted |
+| scraper_slug | -       | String  | No       | Unique Worker identifier |
 
 ## Response Example
 
