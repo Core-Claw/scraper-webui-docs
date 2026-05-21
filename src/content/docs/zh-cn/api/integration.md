@@ -7,28 +7,31 @@ sidebar:
 
 CoreClaw 平台的所有功能都可以通过 REST API 控制。本指南将带您完成从获取 API 密钥到发起第一次 API 调用的完整集成过程。
 
-## 目录
+## 快速测试
 
-- [API 密钥](#api-密钥)
-  - [如何获取 API 密钥](#如何获取-api-密钥)
-  - [保护您的 API 密钥](#保护您的-api-密钥)
-- [身份验证](#身份验证)
-  - [公开端点](#公开端点)
-- [基础 URL](#基础-url)
-- [OpenAPI 规范](#openapi-规范)
-- [快速开始：您的第一次 API 调用](#快速开始您的第一次-api-调用)
-  - [步骤 1：搜索 Worker](#步骤-1搜索-worker)
-  - [步骤 2：获取 Worker 详情](#步骤-2获取-worker-详情)
-  - [步骤 3：运行 Worker](#步骤-3运行-worker)
-  - [步骤 4：检查运行状态](#步骤-4检查运行状态)
-  - [步骤 5：获取结果](#步骤-5获取结果)
-- [同步与异步执行](#同步与异步执行)
-  - [异步模式（默认）](#异步模式默认)
-  - [同步模式](#同步模式)
-- [Webhook 集成](#webhook-集成)
-- [常见错误](#常见错误)
-- [最佳实践](#最佳实践)
-- [API 参考](#api-参考)
+使用单个命令验证您的 API 密钥是否有效：
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
+  -H "api-key: YOUR_API_KEY" \
+  -H "content-type: application/json" \
+  --data "{}"
+```
+
+预期响应：
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "balance": "10.00",
+    "traffic": "1000"
+  }
+}
+```
+
+如果收到 `code: 20001`，说明 API 密钥无效。请检查密钥后重试。
 
 ## API 密钥
 
@@ -132,7 +135,7 @@ curl "https://openapi.coreclaw.com/api/scraper?slug=01KNXSHE0Y7DZKF1N8B1EMFX35"
     "parameters": {
       "system": {
         "cpus": 0.125,
-        "memory_bytes": 512,
+        "memory": 512,
         "execute_limit_time_seconds": 1800
       },
       "custom": {
@@ -155,7 +158,7 @@ curl "https://openapi.coreclaw.com/api/scraper?slug=01KNXSHE0Y7DZKF1N8B1EMFX35"
 **重要提示**：
 - 完全按照返回的 `data.version` 使用
 - 根据 `data.parameters.custom.properties` 构建 `input.parameters.custom`
-- 此端点中的 `memory_bytes` = `/api/v1/scraper/run` 中的 `memory`
+- 此端点中的 `memory` 对应 `/api/v1/scraper/run` 中的 `memory`（单位均为 MB）
 
 ### 步骤 3：运行 Worker
 
@@ -287,7 +290,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/export" \
 
 - `is_async: false`
 - 等待执行完成
-- 直接返回结果（最长 30 秒超时）
+- 直接返回结果（最长 5 分钟超时）
 - 适用于快速、小型任务
 
 ```json
@@ -296,7 +299,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/export" \
 }
 ```
 
-## Webhook 集成
+## Webhook 成成
 
 使用异步模式并设置 `callback_url` 时，CoreClaw 会在运行完成后向您的端点发送 POST 请求：
 
@@ -353,6 +356,126 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "content-type: application/json" \
   --data "{}"
 ```
+
+## 故障排查
+
+### 常见问题
+
+#### `4000 Invalid request parameters`
+
+这是最常见的错误。请检查以下原因：
+
+| 原因 | 解决方案 |
+|------|----------|
+| `version` 不匹配 | 从 `/api/scraper` 获取 `version`，不要硬编码 |
+| `custom` 架构不匹配 | 根据 `data.parameters.custom.properties` 构建 `custom` |
+| 缺少 `is_async` | 添加 `"is_async": true` 或 `"is_async": false` |
+| JSON 语法错误 | 验证 JSON 格式，特别是在 Windows 上 |
+
+#### Windows PowerShell JSON 转义问题
+
+**问题**：PowerShell 会破坏内联 JSON 字符串，导致 `4000 Invalid request parameters`。
+
+**解决方案**：使用 `--data-binary @file.json` 从文件读取：
+
+```powershell
+# 创建 JSON 文件
+@'
+{
+  "scraper_slug": "YOUR_SCRAPER_SLUG",
+  "version": "v1.0.0",
+  "is_async": true,
+  "input": {
+    "parameters": {
+      "system": {"cpus": 0.125, "memory": 512},
+      "custom": {}
+    }
+  }
+}
+'@ | Out-File -Encoding utf8 request.json
+
+# 使用文件配合 curl
+curl.exe -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" `
+  -H "api-key: YOUR_API_KEY" `
+  -H "Content-Type: application/json" `
+  --data-binary "@request.json"
+```
+
+#### 速率限制 (429)
+
+当超过速率限制时，实现指数退避：
+
+```python
+import time
+
+def retry_with_backoff(func, max_retries=5):
+    for attempt in range(max_retries):
+        result = func()
+        if result.get("code") != 4290:
+            return result
+        wait_time = (2 ** attempt) * 1  # 1, 2, 4, 8, 16 秒
+        time.sleep(wait_time)
+    return result
+```
+
+#### Worker 特定的 Custom 参数
+
+每个 Worker 有不同的 `custom` 参数。**永远不要假设字段名**。
+
+**错误**（硬编码）：
+```json
+{
+  "custom": {
+    "startURLs": [{"url": "https://example.com"}]
+  }
+}
+```
+
+**正确**（从 `/api/scraper` 获取）：
+```python
+# 获取实时架构
+response = requests.get(f"https://openapi.coreclaw.com/api/scraper?slug={scraper_slug}")
+schema = response.json()["data"]["parameters"]["custom"]["properties"]
+
+# 根据架构构建 custom 参数
+custom_params = {}
+for prop in schema:
+    name = prop["name"]
+    if prop.get("required"):
+        custom_params[name] = prop.get("default", [])
+```
+
+### 调试检查清单
+
+当出现问题时，请检查：
+
+1. **API 密钥**：运行 [快速测试](#快速测试) 验证
+2. **版本**：从 `/api/scraper` 获取最新的 `version`
+3. **Custom 架构**：检查 Worker 的 `data.parameters.custom.properties`
+4. **JSON 格式**：使用 JSON 验证器检查格式
+5. **Windows Shell**：使用 `--data-binary @file.json` 代替内联 JSON
+
+## 代码示例
+
+多种编程语言的完整示例：
+
+| 语言 | 描述 |
+|------|------|
+| [Python](/zh-cn/api/examples/python/) | 使用 requests 库的完整异步工作流 |
+| [Node.js](/zh-cn/api/examples/nodejs/) | 使用 axios 的完整异步工作流 |
+| [Java](/zh-cn/api/examples/java/) | 使用 java.net.http（Java 11+） |
+| [PHP](/zh-cn/api/examples/php/) | 使用内置 curl 扩展 |
+| [Go](/zh-cn/api/examples/go/) | 使用 net/http 包 |
+
+### 依赖安装
+
+| 语言 | 安装命令 |
+|------|----------|
+| Python | `pip install requests` |
+| Node.js | `npm install axios` |
+| Java | 无外部依赖（使用 `java.net.http`） |
+| PHP | 无外部依赖（使用 `curl`） |
+| Go | 无外部依赖（使用 `net/http`） |
 
 ## API 参考
 

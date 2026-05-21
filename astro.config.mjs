@@ -541,6 +541,50 @@ export default defineConfig({
                                 },
                             ],
                         },
+                        {
+                            label: 'Code Examples',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': '代码示例',
+                            },
+                            items: [
+                                {
+                                    label: 'Python',
+                                    slug: 'api/examples/python',
+                                    translations: {
+                                        'zh-CN': 'Python',
+                                    },
+                                },
+                                {
+                                    label: 'Node.js',
+                                    slug: 'api/examples/nodejs',
+                                    translations: {
+                                        'zh-CN': 'Node.js',
+                                    },
+                                },
+                                {
+                                    label: 'Java',
+                                    slug: 'api/examples/java',
+                                    translations: {
+                                        'zh-CN': 'Java',
+                                    },
+                                },
+                                {
+                                    label: 'PHP',
+                                    slug: 'api/examples/php',
+                                    translations: {
+                                        'zh-CN': 'PHP',
+                                    },
+                                },
+                                {
+                                    label: 'Go',
+                                    slug: 'api/examples/go',
+                                    translations: {
+                                        'zh-CN': 'Go',
+                                    },
+                                },
+                            ],
+                        },
                     ],
                 },
                 {

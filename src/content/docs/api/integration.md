@@ -7,28 +7,31 @@ sidebar:
 
 All aspects of the CoreClaw platform can be controlled via a REST API. This guide walks you through the complete integration process from obtaining an API key to making your first API call.
 
-## Table of Contents
+## Quick Test
 
-- [API Key](#api-key)
-  - [How to get your API key](#how-to-get-your-api-key)
-  - [Protect your API key](#protect-your-api-key)
-- [Authentication](#authentication)
-  - [Public endpoints](#public-endpoints)
-- [Base URL](#base-url)
-- [OpenAPI Specification](#openapi-specification)
-- [Quick Start: Your First API Call](#quick-start-your-first-api-call)
-  - [Step 1: Search for a Worker](#step-1-search-for-a-worker)
-  - [Step 2: Get Worker Details](#step-2-get-worker-details)
-  - [Step 3: Run the Worker](#step-3-run-the-worker)
-  - [Step 4: Check Run Status](#step-4-check-run-status)
-  - [Step 5: Get Results](#step-5-get-results)
-- [Sync vs Async Execution](#sync-vs-async-execution)
-  - [Async mode (default)](#async-mode-default)
-  - [Sync mode](#sync-mode)
-- [Webhook Integration](#webhook-integration)
-- [Common Errors](#common-errors)
-- [Best Practices](#best-practices)
-- [API Reference](#api-reference)
+Verify your API key is valid with a single command:
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
+  -H "api-key: YOUR_API_KEY" \
+  -H "content-type: application/json" \
+  --data "{}"
+```
+
+Expected response:
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "balance": "10.00",
+    "traffic": "1000"
+  }
+}
+```
+
+If you receive `code: 20001`, your API key is invalid. Check the key and try again.
 
 ## API Key
 
@@ -132,7 +135,7 @@ Response includes:
     "parameters": {
       "system": {
         "cpus": 0.125,
-        "memory_bytes": 512,
+        "memory": 512,
         "execute_limit_time_seconds": 1800
       },
       "custom": {
@@ -155,7 +158,7 @@ Response includes:
 **Important**: 
 - Use `data.version` exactly as returned
 - Build `input.parameters.custom` from `data.parameters.custom.properties`
-- `memory_bytes` in this endpoint = `memory` in `/api/v1/scraper/run`
+- `memory` in this endpoint corresponds to `memory` in `/api/v1/scraper/run` (both in MB)
 
 ### Step 3: Run the Worker
 
@@ -287,7 +290,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/export" \
 
 - `is_async: false`
 - Waits until execution completes
-- Returns results directly (up to 30 seconds timeout)
+- Returns results directly (up to 5 minutes timeout)
 - Best for quick, small tasks
 
 ```json
@@ -353,6 +356,126 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "content-type: application/json" \
   --data "{}"
 ```
+
+## Troubleshooting
+
+### Common Issues
+
+#### `4000 Invalid request parameters`
+
+This is the most common error. Check these causes:
+
+| Cause | Solution |
+|-------|----------|
+| `version` mismatched | Get `version` from `/api/scraper`, don't hardcode |
+| `custom` schema mismatch | Build `custom` from `data.parameters.custom.properties` |
+| Missing `is_async` | Add `"is_async": true` or `"is_async": false` |
+| JSON syntax error | Validate JSON format, especially on Windows |
+
+#### Windows PowerShell JSON Escaping
+
+**Problem**: PowerShell mangles inline JSON strings, causing `4000 Invalid request parameters`.
+
+**Solution**: Use `--data-binary @file.json` to read from a file:
+
+```powershell
+# Create JSON file
+@'
+{
+  "scraper_slug": "YOUR_SCRAPER_SLUG",
+  "version": "v1.0.0",
+  "is_async": true,
+  "input": {
+    "parameters": {
+      "system": {"cpus": 0.125, "memory": 512},
+      "custom": {}
+    }
+  }
+}
+'@ | Out-File -Encoding utf8 request.json
+
+# Use file with curl
+curl.exe -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" `
+  -H "api-key: YOUR_API_KEY" `
+  -H "Content-Type: application/json" `
+  --data-binary "@request.json"
+```
+
+#### Rate Limiting (429)
+
+When you exceed rate limits, implement exponential backoff:
+
+```python
+import time
+
+def retry_with_backoff(func, max_retries=5):
+    for attempt in range(max_retries):
+        result = func()
+        if result.get("code") != 4290:
+            return result
+        wait_time = (2 ** attempt) * 1  # 1, 2, 4, 8, 16 seconds
+        time.sleep(wait_time)
+    return result
+```
+
+#### Worker-Specific Custom Parameters
+
+Each Worker has different `custom` parameters. **Never assume field names**.
+
+**Wrong** (hardcoded):
+```json
+{
+  "custom": {
+    "startURLs": [{"url": "https://example.com"}]
+  }
+}
+```
+
+**Correct** (from `/api/scraper`):
+```python
+# Get live schema
+response = requests.get(f"https://openapi.coreclaw.com/api/scraper?slug={scraper_slug}")
+schema = response.json()["data"]["parameters"]["custom"]["properties"]
+
+# Build custom params from schema
+custom_params = {}
+for prop in schema:
+    name = prop["name"]
+    if prop.get("required"):
+        custom_params[name] = prop.get("default", [])
+```
+
+### Debug Checklist
+
+When things go wrong, check:
+
+1. **API Key**: Run [Quick Test](#quick-test) to verify
+2. **Version**: Get fresh `version` from `/api/scraper`
+3. **Custom Schema**: Inspect `data.parameters.custom.properties` for the Worker
+4. **JSON Format**: Validate with a JSON linter
+5. **Windows Shell**: Use `--data-binary @file.json` instead of inline JSON
+
+## Code Examples
+
+Complete examples in multiple programming languages:
+
+| Language | Description |
+|----------|-------------|
+| [Python](/api/examples/python/) | Full async workflow with requests library |
+| [Node.js](/api/examples/nodejs/) | Full async workflow with axios |
+| [Java](/api/examples/java/) | Using java.net.http (Java 11+) |
+| [PHP](/api/examples/php/) | Using built-in curl extension |
+| [Go](/api/examples/go/) | Using net/http package |
+
+### Dependencies
+
+| Language | Install Command |
+|----------|-----------------|
+| Python | `pip install requests` |
+| Node.js | `npm install axios` |
+| Java | No external dependencies (uses `java.net.http`) |
+| PHP | No external dependencies (uses `curl`) |
+| Go | No external dependencies (uses `net/http`) |
 
 ## API Reference
 
