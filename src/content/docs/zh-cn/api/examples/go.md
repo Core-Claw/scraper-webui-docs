@@ -247,7 +247,3 @@ func getResults(runSlug string) (*ResultData, error) {
 | 3 | 成功 |
 | 4 | 失败 |
 | 5 | 中止中 |
-
-## 下一步
-
-- [返回集成指南](/zh-cn/api/integration/)

@@ -251,8 +251,3 @@ if __name__ == "__main__":
 | 3 | 成功 |
 | 4 | 失败 |
 | 5 | 中止中 |
-
-## 下一步
-
-- [返回集成指南](/zh-cn/api/integration/)
-- [Node.js 示例](/zh-cn/api/examples/nodejs/)
