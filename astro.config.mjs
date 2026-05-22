@@ -32,6 +32,55 @@ export default defineConfig({
         starlight({
             plugins: [starlightImageZoom()],
             title: 'CoreClaw',
+            expressiveCode: {
+                // Use github-dark/light for now — they're well-tested and
+                // legible. We tone down the chrome via styleOverrides so
+                // they fit the site's quieter teal palette instead of
+                // shouting in primary GitHub colours.
+                themes: ['github-dark', 'github-light'],
+                styleOverrides: {
+                    borderRadius: '10px',
+                    borderColor: 'hsla(220, 14%, 60%, 0.22)',
+                    // System monospace stack — looks native on macOS / Windows
+                    // / Linux without shipping a webfont. JetBrains Mono and
+                    // Fira Code only kick in if the user already has them.
+                    codeFontFamily:
+                        'ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", "Fira Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace',
+                    codeFontSize: '0.8125rem',
+                    codeLineHeight: '1.7',
+                    codePaddingBlock: '0.95rem',
+                    codePaddingInline: '1.1rem',
+                    // Lift line-numbers / scroll-bars to subtle teal
+                    scrollbarThumbColor: 'hsla(199, 50%, 50%, 0.25)',
+                    scrollbarThumbHoverColor: 'hsla(199, 50%, 50%, 0.5)',
+                    // Frame chrome (window bar, file tab) — neutral, then
+                    // a thin teal underline to mark active state
+                    frames: {
+                        editorActiveTabBackground: 'transparent',
+                        editorActiveTabBorderColor: 'transparent',
+                        editorActiveTabIndicatorTopColor: 'transparent',
+                        editorActiveTabIndicatorBottomColor:
+                            'hsl(199, 89%, 50%)',
+                        editorTabBarBackground: 'transparent',
+                        editorTabBarBorderBottomColor:
+                            'hsla(220, 14%, 60%, 0.18)',
+                        editorTabBorderRadius: '6px',
+                        terminalTitlebarBackground:
+                            'hsla(220, 14%, 96%, 0.6)',
+                        terminalTitlebarBorderBottomColor:
+                            'hsla(220, 14%, 60%, 0.18)',
+                        terminalTitlebarForeground: 'hsl(220, 14%, 32%)',
+                        terminalBackground: '#0f1117',
+                        terminalTitlebarDotsForeground:
+                            'hsla(220, 14%, 70%, 0.6)',
+                        terminalTitlebarDotsOpacity: '0.7',
+                        frameBoxShadowCssValue:
+                            '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+                        tooltipSuccessBackground: 'hsl(151, 55%, 40%)',
+                        tooltipSuccessForeground: 'white',
+                    },
+                },
+            },
             logo: {
                 src: './src/assets/logo.png',
                 alt: 'CoreClaw Logo',
@@ -51,6 +100,13 @@ export default defineConfig({
                 MobileMenuFooter: './src/components/MobileMenuFooter.astro',
                 TableOfContents: './src/components/TableOfContents.astro',
                 Banner: './src/components/Banner.astro',
+                PageTitle: './src/components/PageTitle.astro',
+                Footer: './src/components/Footer.astro',
+            },
+            editLink: {
+                // Adjust the path/branch if the docs source moves.
+                baseUrl:
+                    'https://github.com/Core-Claw/scraper-webui-docs/edit/main/',
             },
             customCss: [
                 './src/styles/common.css',
@@ -421,6 +477,16 @@ export default defineConfig({
                                 'zh-CN': '基础 URL 与认证',
                             },
                         },
+                        // Account info comes early — users typically hit it
+                        // first to verify their API key and check balance
+                        // before doing anything else.
+                        {
+                            label: 'Account Info',
+                            slug: 'api/account/info',
+                            translations: {
+                                'zh-CN': '账户信息',
+                            },
+                        },
                         {
                             label: 'Worker',
                             collapsed: true,
@@ -428,18 +494,12 @@ export default defineConfig({
                                 'zh-CN': 'Worker',
                             },
                             items: [
+                                // Highest-frequency action goes first.
                                 {
                                     label: 'Start Worker',
                                     slug: 'api/worker/run',
                                     translations: {
                                         'zh-CN': '运行爬虫',
-                                    },
-                                },
-                                {
-                                    label: 'Abort Worker',
-                                    slug: 'api/worker/abort',
-                                    translations: {
-                                        'zh-CN': '中止爬虫',
                                     },
                                 },
                                 {
@@ -456,6 +516,13 @@ export default defineConfig({
                                         'zh-CN': '搜索 Worker',
                                     },
                                 },
+                                {
+                                    label: 'Abort Worker',
+                                    slug: 'api/worker/abort',
+                                    translations: {
+                                        'zh-CN': '中止爬虫',
+                                    },
+                                },
                             ],
                         },
                         {
@@ -464,14 +531,12 @@ export default defineConfig({
                             translations: {
                                 'zh-CN': 'Runs',
                             },
+                            // Reordered by usage flow: after starting a
+                            // worker you check its detail, fetch results,
+                            // read logs, export, rerun if needed; History
+                            // is the catch-all browse-everything endpoint
+                            // and goes last.
                             items: [
-                                {
-                                    label: 'Run History',
-                                    slug: 'api/run/history',
-                                    translations: {
-                                        'zh-CN': '运行历史',
-                                    },
-                                },
                                 {
                                     label: 'Run Detail',
                                     slug: 'api/run/detail',
@@ -507,39 +572,23 @@ export default defineConfig({
                                         'zh-CN': '重新运行',
                                     },
                                 },
-                            ],
-                        },
-                        {
-                            label: 'Tasks',
-                            collapsed: true,
-                            translations: {
-                                'zh-CN': 'Tasks',
-                            },
-                            items: [
                                 {
-                                    label: 'Start Task',
-                                    slug: 'api/task/run',
+                                    label: 'Run History',
+                                    slug: 'api/run/history',
                                     translations: {
-                                        'zh-CN': '运行任务（模板）',
+                                        'zh-CN': '运行历史',
                                     },
                                 },
                             ],
                         },
+                        // Single-endpoint group flattened — was a one-item
+                        // collapsible folder, now shows up directly.
                         {
-                            label: 'Account',
-                            collapsed: true,
+                            label: 'Start Task',
+                            slug: 'api/task/run',
                             translations: {
-                                'zh-CN': '账户',
+                                'zh-CN': '运行任务（模板）',
                             },
-                            items: [
-                                {
-                                    label: 'Account Info',
-                                    slug: 'api/account/info',
-                                    translations: {
-                                        'zh-CN': '账户信息',
-                                    },
-                                },
-                            ],
                         },
                         {
                             label: 'Code Examples',

@@ -1,0 +1,50 @@
+---
+/**
+ * PageTitle override — places the page title and the "Copy for LLMs"
+ * dropdown on a single row at the top of the article.
+ */
+import CopyForLLMs from './CopyForLLMs.astro'
+
+// Starlight pins the page H1 anchor to `_top`. Hardcoded because
+// `@astrojs/starlight/constants` is not part of the package exports map
+// in Starlight 0.38.
+const PAGE_TITLE_ID = '_top'
+---
+
+<div class="page-title-row">
+    <h1 id={PAGE_TITLE_ID}>{Astro.locals.starlightRoute.entry.data.title}</h1>
+    <div class="page-title-actions print:hidden">
+        <CopyForLLMs />
+    </div>
+</div>
+
+<style>
+    .page-title-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .page-title-row h1 {
+        margin-top: 1rem;
+        font-size: var(--sl-text-h1);
+        line-height: var(--sl-line-height-headings);
+        font-weight: 600;
+        color: var(--sl-color-white);
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .page-title-actions {
+        margin-top: 1.25rem;
+        flex: 0 0 auto;
+    }
+
+    @media (max-width: 50rem) {
+        .page-title-actions {
+            margin-top: 0.5rem;
+        }
+    }
+</style>

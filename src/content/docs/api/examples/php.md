@@ -161,7 +161,7 @@ function getResults(string $runSlug, string $apiKey): array
 // Build request params
 $requestParams = [
     "scraper_slug" => "YOUR_SCRAPER_SLUG",
-    "version" => "v1.0.0",  // Get from /api/scraper
+    "version" => "<version>",  // Get from /api/scraper
     "is_async" => true,
     "input" => [
         "parameters" => [

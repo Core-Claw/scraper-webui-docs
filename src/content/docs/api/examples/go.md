@@ -56,7 +56,7 @@ func main() {
     // Build request params
     requestParams := map[string]interface{}{
         "scraper_slug": "YOUR_SCRAPER_SLUG",
-        "version":      "v1.0.0", // Get from /api/scraper
+        "version":      "<version>", // Get from /api/scraper
         "is_async":     true,
         "input": map[string]interface{}{
             "parameters": map[string]interface{}{

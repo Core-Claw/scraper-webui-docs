@@ -1,0 +1,910 @@
+---
+/**
+ * ApiPlayground — embeds a try-it-out form for one OpenAPI operation.
+ *
+ * Reads `public/openapi.json` at build time (no runtime spec fetch),
+ * resolves `$ref` schemas, and renders:
+ *
+ *   - A header with method + path + summary
+ *   - Optional API-key field (only when `security` requires it)
+ *   - Query / path parameter inputs
+ *   - A body editor area that includes:
+ *       • the request body schema description
+ *       • a "Required / Optional" badge
+ *       • a fields table (name · type · required · description) so the
+ *         user can see what to fill at a glance
+ *       • a "Reset to example" button
+ *   - A response panel: status badge + latency + pretty JSON
+ *
+ * Props:
+ *   method  — HTTP method, case-insensitive
+ *   path    — OpenAPI path, e.g. "/api/v1/scraper/run"
+ *   server  — optional override of the spec's first server URL
+ */
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+
+export interface Props {
+    method: string
+    path: string
+    server?: string
+}
+
+const { method, path: opPath, server } = Astro.props
+const methodUp = method.toUpperCase()
+
+const specPath = path.join(process.cwd(), 'public', 'openapi.json')
+let spec: any = null
+let loadError: string | null = null
+try {
+    spec = JSON.parse(await readFile(specPath, 'utf8'))
+} catch (err) {
+    loadError = err instanceof Error ? err.message : String(err)
+}
+
+// -- $ref resolution ------------------------------------------------------
+// OpenAPI specs use `$ref: "#/components/schemas/Foo"` extensively. Resolve
+// these at build time so the rendered field table reflects the real schema.
+function resolveRef(ref: string): any {
+    if (!spec || !ref.startsWith('#/')) return null
+    const parts = ref.slice(2).split('/')
+    let cur: any = spec
+    for (const p of parts) {
+        if (cur == null) return null
+        cur = cur[p]
+    }
+    return cur
+}
+
+function deref(node: any, seen = new Set<string>()): any {
+    if (!node || typeof node !== 'object') return node
+    if (node.$ref && typeof node.$ref === 'string') {
+        if (seen.has(node.$ref)) return {} // break cycles
+        seen.add(node.$ref)
+        return deref(resolveRef(node.$ref), seen)
+    }
+    if (Array.isArray(node)) return node.map(n => deref(n, seen))
+    const out: any = {}
+    for (const k of Object.keys(node)) out[k] = deref(node[k], seen)
+    return out
+}
+
+// -- Operation lookup -----------------------------------------------------
+const op = spec?.paths?.[opPath]?.[methodUp.toLowerCase()] ?? null
+const opResolved = deref(op)
+const defaultServer =
+    server || spec?.servers?.[0]?.url || 'https://openapi.coreclaw.com'
+
+// -- Body schema + example ------------------------------------------------
+function pickFirstExample(content: any): unknown | null {
+    if (!content) return null
+    const json = content['application/json']
+    if (!json) return null
+    if (json.examples) {
+        const firstKey = Object.keys(json.examples)[0]
+        if (firstKey) return json.examples[firstKey].value
+    }
+    if (json.example !== undefined) return json.example
+    return null
+}
+
+const bodyContent =
+    opResolved?.requestBody?.content?.['application/json'] ?? null
+const bodySchema = bodyContent?.schema ?? null
+const bodyRequired = !!opResolved?.requestBody?.required
+const bodyDescription = (
+    opResolved?.requestBody?.description ||
+    bodySchema?.description ||
+    ''
+).trim()
+const exampleBody = pickFirstExample(opResolved?.requestBody?.content)
+const exampleBodyStr =
+    exampleBody !== null ? JSON.stringify(exampleBody, null, 2) : ''
+
+// "Trivial body" = the spec says you can send `{}` or nothing.
+// Schema is an empty object with no properties, and any provided example
+// is itself empty. We hide the textarea in this case — making the user
+// stare at a literal `{}` adds no value and creates the false impression
+// that they need to fill something in.
+function isEmptyExample(v: unknown): boolean {
+    if (v === null || v === undefined) return true
+    if (typeof v !== 'object') return false
+    if (Array.isArray(v)) return v.length === 0
+    return Object.keys(v as Record<string, unknown>).length === 0
+}
+const hasProperties =
+    bodySchema?.type === 'object' &&
+    bodySchema?.properties &&
+    Object.keys(bodySchema.properties).length > 0
+const isTrivialBody =
+    !!bodyContent && !hasProperties && isEmptyExample(exampleBody)
+
+// Walk the top-level body schema to expose a flat "fields" table.
+type Field = {
+    name: string
+    type: string
+    required: boolean
+    description: string
+}
+function flattenTopLevelFields(schema: any): Field[] {
+    if (!schema || schema.type !== 'object') return []
+    const props = schema.properties || {}
+    const required = new Set<string>(schema.required || [])
+    return Object.keys(props).map(name => {
+        const p = props[name] || {}
+        let type = p.type || 'any'
+        if (type === 'array' && p.items?.type) type = `${p.items.type}[]`
+        if (Array.isArray(p.enum)) type = `enum (${p.enum.length})`
+        return {
+            name,
+            type,
+            required: required.has(name),
+            description: (p.description || '').trim(),
+        }
+    })
+}
+const bodyFields = flattenTopLevelFields(bodySchema)
+
+// -- Parameters -----------------------------------------------------------
+const parameters: any[] = (opResolved?.parameters || []).filter(
+    (p: any) => p.in === 'query' || p.in === 'path'
+)
+
+// -- Auth -----------------------------------------------------------------
+const needsApiKey =
+    Array.isArray(opResolved?.security) &&
+    opResolved.security.length > 0 &&
+    !opResolved.security.every((s: any) => Object.keys(s).length === 0)
+
+// Stable id so multiple playgrounds on the same page don't collide
+const id = `api-playground-${methodUp.toLowerCase()}-${opPath
+    .replace(/[^a-z0-9]+/gi, '-')
+    .replace(/(^-|-$)/g, '')}`
+---
+
+{loadError ? (
+    <div class="api-playground api-playground--error">
+        <strong>Playground unavailable:</strong> {loadError}
+    </div>
+) : !op ? (
+    <div class="api-playground api-playground--error">
+        <strong>Playground unavailable:</strong> operation <code>{methodUp} {opPath}</code> not found in <code>openapi.json</code>.
+    </div>
+) : (
+    <api-playground
+        class="api-playground"
+        id={id}
+        data-method={methodUp}
+        data-path={opPath}
+        data-server={defaultServer}
+        data-needs-api-key={needsApiKey ? 'true' : 'false'}
+        data-example-body={exampleBodyStr}>
+        <div class="ap-head">
+            <span class={`ap-method ap-method--${methodUp.toLowerCase()}`}>{methodUp}</span>
+            <code class="ap-path">{opPath}</code>
+            {opResolved.summary && <span class="ap-summary">{opResolved.summary}</span>}
+        </div>
+
+        <div class="ap-body">
+            {needsApiKey && (
+                <div class="ap-field">
+                    <div class="ap-label-row">
+                        <label class="ap-label" for={`${id}-key`}>api-key</label>
+                        <span class="ap-pill ap-pill--required">Required</span>
+                    </div>
+                    <input
+                        id={`${id}-key`}
+                        type="password"
+                        class="ap-input"
+                        autocomplete="off"
+                        spellcheck="false"
+                        data-role="api-key"
+                        placeholder="Paste your API key"
+                    />
+                    <p class="ap-hint">Stored only in this browser tab. Sent only to <code>{defaultServer}</code>.</p>
+                </div>
+            )}
+
+            {parameters.length > 0 && (
+                <div class="ap-section">
+                    <div class="ap-section-title">Parameters</div>
+                    {parameters.map((param: any) => (
+                        <div class="ap-field">
+                            <div class="ap-label-row">
+                                <label class="ap-label" for={`${id}-p-${param.name}`}>{param.name}</label>
+                                <span class="ap-pill-meta">
+                                    {param.in}{param.schema?.type ? ` · ${param.schema.type}` : ''}
+                                </span>
+                                {param.required && <span class="ap-pill ap-pill--required">Required</span>}
+                            </div>
+                            <input
+                                id={`${id}-p-${param.name}`}
+                                type="text"
+                                class="ap-input"
+                                spellcheck="false"
+                                data-role="param"
+                                data-param-name={param.name}
+                                data-param-in={param.in}
+                                placeholder={param.example ?? param.schema?.default ?? param.description ?? ''}
+                                value={param.schema?.default ?? ''}
+                            />
+                            {param.description && <p class="ap-hint">{param.description}</p>}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {(bodyContent || exampleBodyStr) && (
+                isTrivialBody ? (
+                    <div class="ap-section">
+                        <div class="ap-section-title">
+                            <span>Body</span>
+                            <span class="ap-pill ap-pill--optional">Not required</span>
+                        </div>
+                        <div class="ap-body-empty">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4"/>
+                                <path d="M12 8h.01"/>
+                            </svg>
+                            <span>
+                                This endpoint takes no body parameters.
+                                {bodyDescription && <em class="ap-body-empty-spec"> Spec: <code>{bodyDescription}</code></em>}
+                            </span>
+                        </div>
+                    </div>
+                ) : (
+                    <div class="ap-section">
+                        <div class="ap-section-title">
+                            <span>Body</span>
+                            <span class={`ap-pill ${bodyRequired ? 'ap-pill--required' : 'ap-pill--optional'}`}>
+                                {bodyRequired ? 'Required' : 'Optional'}
+                            </span>
+                            <span class="ap-section-format">application/json</span>
+                        </div>
+
+                        {bodyDescription && <p class="ap-section-desc">{bodyDescription}</p>}
+
+                        {bodyFields.length > 0 && (
+                            <div class="ap-fields">
+                                <div class="ap-fields-row ap-fields-head">
+                                    <span>Field</span>
+                                    <span>Type</span>
+                                    <span>Required</span>
+                                    <span>Description</span>
+                                </div>
+                                {bodyFields.map(f => (
+                                    <div class="ap-fields-row">
+                                        <code class="ap-fields-name">{f.name}</code>
+                                        <span class="ap-fields-type">{f.type}</span>
+                                        <span class={f.required ? 'ap-fields-req' : 'ap-fields-opt'}>
+                                            {f.required ? 'yes' : '—'}
+                                        </span>
+                                        <span class="ap-fields-desc">{f.description}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div class="ap-body-editor-head">
+                            <span class="ap-body-editor-title">Request body (JSON)</span>
+                            {exampleBodyStr && (
+                                <button type="button" class="ap-link-btn" data-role="reset-example">Reset to example</button>
+                            )}
+                        </div>
+                        <textarea
+                            class="ap-textarea"
+                            rows="10"
+                            spellcheck="false"
+                            data-role="body"
+                            placeholder={bodyRequired ? '{ ... }' : 'Optional — leave empty or send {}'}>{exampleBodyStr}</textarea>
+                    </div>
+                )
+            )}
+
+            <div class="ap-actions">
+                <button type="button" class="ap-send" data-role="send">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polygon points="6 3 20 12 6 21 6 3"/>
+                    </svg>
+                    Send Request
+                </button>
+                <button type="button" class="ap-reset-all" data-role="reset-all">Clear all</button>
+            </div>
+
+            <div class="ap-response" data-role="response" hidden>
+                <div class="ap-response-head">
+                    <span class="ap-status" data-role="status"></span>
+                    <span class="ap-latency" data-role="latency"></span>
+                </div>
+                <pre class="ap-response-body"><code data-role="response-body"></code></pre>
+            </div>
+        </div>
+    </api-playground>
+)}
+
+<script>
+    class ApiPlayground extends HTMLElement {
+        connectedCallback() {
+            const send = this.querySelector<HTMLButtonElement>('[data-role="send"]')
+            const resetExample = this.querySelector<HTMLButtonElement>('[data-role="reset-example"]')
+            const resetAll = this.querySelector<HTMLButtonElement>('[data-role="reset-all"]')
+            const apiKeyInput = this.querySelector<HTMLInputElement>('[data-role="api-key"]')
+            const bodyEl = this.querySelector<HTMLTextAreaElement>('[data-role="body"]')
+            const exampleBody = this.dataset.exampleBody || ''
+
+            // Persist api-key per-tab so users don't re-paste between operations.
+            if (apiKeyInput) {
+                const stored = sessionStorage.getItem('coreclaw-doc-api-key')
+                if (stored) apiKeyInput.value = stored
+                apiKeyInput.addEventListener('input', () => {
+                    sessionStorage.setItem(
+                        'coreclaw-doc-api-key',
+                        apiKeyInput.value
+                    )
+                })
+            }
+
+            const paramEls = Array.from(
+                this.querySelectorAll<HTMLInputElement>('[data-role="param"]')
+            )
+            const initialParams = paramEls.map(el => el.value)
+
+            send?.addEventListener('click', () => this.sendRequest())
+
+            resetExample?.addEventListener('click', () => {
+                if (bodyEl && exampleBody) bodyEl.value = exampleBody
+            })
+
+            resetAll?.addEventListener('click', () => {
+                if (bodyEl) bodyEl.value = exampleBody
+                paramEls.forEach((el, i) => (el.value = initialParams[i]))
+                this.hideResponse()
+            })
+        }
+
+        async sendRequest() {
+            const method = this.dataset.method!
+            const opPath = this.dataset.path!
+            const server = this.dataset.server!
+            const needsKey = this.dataset.needsApiKey === 'true'
+
+            const apiKeyInput = this.querySelector<HTMLInputElement>('[data-role="api-key"]')
+            const bodyEl = this.querySelector<HTMLTextAreaElement>('[data-role="body"]')
+            const send = this.querySelector<HTMLButtonElement>('[data-role="send"]')
+
+            // Build URL — substitute path params, append query params.
+            let url = opPath
+            const queryPairs: string[] = []
+            this.querySelectorAll<HTMLInputElement>('[data-role="param"]').forEach(el => {
+                const name = el.dataset.paramName!
+                const where = el.dataset.paramIn!
+                const value = el.value.trim()
+                if (!value) return
+                if (where === 'path') {
+                    url = url.replace(`{${name}}`, encodeURIComponent(value))
+                } else {
+                    queryPairs.push(
+                        `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
+                    )
+                }
+            })
+            if (queryPairs.length) url += `?${queryPairs.join('&')}`
+
+            // Headers
+            const headers: Record<string, string> = {
+                'content-type': 'application/json',
+            }
+            if (needsKey && apiKeyInput?.value.trim()) {
+                headers['api-key'] = apiKeyInput.value.trim()
+            }
+
+            // Body — only re-stringify if user actually typed something
+            let body: string | undefined
+            if (bodyEl && bodyEl.value.trim()) {
+                try {
+                    body = JSON.stringify(JSON.parse(bodyEl.value))
+                } catch (err) {
+                    this.showResponse(
+                        '400',
+                        'Invalid JSON in request body',
+                        err instanceof Error ? err.message : String(err),
+                        0
+                    )
+                    return
+                }
+            }
+
+            send && (send.disabled = true)
+            const t0 = performance.now()
+            try {
+                const res = await fetch(server.replace(/\/$/, '') + url, {
+                    method,
+                    headers,
+                    body: method === 'GET' || method === 'HEAD' ? undefined : body,
+                    mode: 'cors',
+                })
+                const ms = Math.round(performance.now() - t0)
+                const text = await res.text()
+                let pretty = text
+                try {
+                    pretty = JSON.stringify(JSON.parse(text), null, 2)
+                } catch {
+                    /* keep non-JSON as-is */
+                }
+                this.showResponse(String(res.status), res.statusText, pretty, ms)
+            } catch (err) {
+                const ms = Math.round(performance.now() - t0)
+                this.showResponse(
+                    'ERR',
+                    'Network error',
+                    err instanceof Error ? err.message : String(err),
+                    ms
+                )
+            } finally {
+                send && (send.disabled = false)
+            }
+        }
+
+        showResponse(status: string, statusText: string, body: string, ms: number) {
+            const wrap = this.querySelector<HTMLDivElement>('[data-role="response"]')!
+            const statusEl = this.querySelector<HTMLSpanElement>('[data-role="status"]')!
+            const latencyEl = this.querySelector<HTMLSpanElement>('[data-role="latency"]')!
+            const bodyEl = this.querySelector<HTMLElement>('[data-role="response-body"]')!
+
+            wrap.removeAttribute('hidden')
+            statusEl.textContent = `${status} ${statusText}`.trim()
+            statusEl.className = 'ap-status'
+            const code = parseInt(status, 10)
+            if (code >= 200 && code < 300) statusEl.classList.add('is-ok')
+            else if (code >= 400) statusEl.classList.add('is-err')
+            else statusEl.classList.add('is-warn')
+            latencyEl.textContent = ms ? `${ms} ms` : ''
+            bodyEl.textContent = body
+        }
+
+        hideResponse() {
+            const wrap = this.querySelector<HTMLDivElement>('[data-role="response"]')!
+            wrap.setAttribute('hidden', '')
+        }
+    }
+
+    if (!customElements.get('api-playground')) {
+        customElements.define('api-playground', ApiPlayground)
+    }
+</script>
+
+<style>
+    .api-playground {
+        --ap-mono:
+            ui-monospace, 'SF Mono', 'Cascadia Code', 'Source Code Pro',
+            Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+        --ap-border: hsla(220, 14%, 60%, 0.22);
+        --ap-border-strong: hsla(220, 14%, 60%, 0.35);
+        --ap-surface: var(--sl-color-bg);
+        --ap-surface-soft: hsla(220, 14%, 96%, 0.6);
+        --ap-text: var(--sl-color-text);
+        --ap-muted: var(--sl-color-gray-3);
+
+        display: block;
+        margin: 1.75rem 0;
+        border: 1px solid var(--ap-border);
+        border-radius: 12px;
+        background: var(--ap-surface);
+        overflow: hidden;
+    }
+
+    :root[data-theme='dark'] .api-playground {
+        --ap-border: hsla(220, 14%, 70%, 0.18);
+        --ap-border-strong: hsla(220, 14%, 70%, 0.32);
+        --ap-surface-soft: hsla(220, 14%, 14%, 0.6);
+    }
+
+    .api-playground--error {
+        padding: 0.85rem 1.1rem;
+        background: hsla(0, 72%, 51%, 0.06);
+        border-color: hsla(0, 72%, 51%, 0.28);
+        color: var(--ap-text);
+        border-radius: 12px;
+    }
+
+    /* ---------- Header ---------- */
+    .ap-head {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid var(--ap-border);
+        background: var(--ap-surface-soft);
+        flex-wrap: wrap;
+    }
+
+    .ap-method {
+        display: inline-block;
+        padding: 0.18rem 0.55rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: white;
+        font-family: var(--ap-mono);
+        line-height: 1.3;
+    }
+    .ap-method--get { background: hsl(199, 70%, 45%); }
+    .ap-method--post { background: hsl(151, 55%, 40%); }
+    .ap-method--put { background: hsl(38, 80%, 48%); }
+    .ap-method--patch { background: hsl(38, 80%, 48%); }
+    .ap-method--delete { background: hsl(0, 65%, 55%); }
+
+    .ap-path {
+        font-family: var(--ap-mono) !important;
+        font-size: 0.875rem !important;
+        color: var(--ap-text) !important;
+        background: transparent !important;
+        border: 0 !important;
+        padding: 0 !important;
+    }
+
+    .ap-summary {
+        margin-inline-start: auto;
+        font-size: 0.8125rem;
+        color: var(--ap-muted);
+    }
+
+    /* ---------- Body ---------- */
+    .ap-body { padding: 0.95rem 1rem 1.1rem; }
+
+    .ap-section {
+        margin-top: 1.1rem;
+        padding-top: 1.1rem;
+        border-top: 1px dashed var(--ap-border);
+    }
+    .ap-section:first-child {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    .ap-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        margin-bottom: 0.45rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--ap-text);
+    }
+    .ap-section-format {
+        margin-inline-start: auto;
+        font-family: var(--ap-mono);
+        font-size: 0.7rem;
+        color: var(--ap-muted);
+        font-weight: 400;
+    }
+
+    .ap-section-desc {
+        margin: 0 0 0.65rem;
+        color: var(--ap-muted);
+        font-size: 0.8125rem;
+        line-height: 1.55;
+    }
+    .ap-section-desc :global(code) {
+        background: var(--ap-surface-soft) !important;
+        border: 0 !important;
+        padding: 0.1em 0.35em !important;
+        border-radius: 3px !important;
+        font-size: 0.85em !important;
+    }
+
+    /* "This endpoint takes no body" notice — replaces the textarea when
+       the spec's body schema is empty or just literally `{}`. */
+    .ap-body-empty {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.55rem;
+        padding: 0.7rem 0.85rem;
+        border-radius: 8px;
+        background: var(--ap-surface-soft);
+        border: 1px dashed var(--ap-border);
+        color: var(--ap-muted);
+        font-size: 0.8125rem;
+        line-height: 1.55;
+    }
+    .ap-body-empty svg {
+        flex-shrink: 0;
+        margin-top: 0.15rem;
+        color: hsl(var(--core-primary-hsl));
+    }
+    .ap-body-empty-spec {
+        font-style: normal;
+        color: var(--ap-muted);
+    }
+    .ap-body-empty-spec :global(code) {
+        background: transparent !important;
+        border: 0 !important;
+        padding: 0 !important;
+        font-size: 0.85em !important;
+    }
+
+    /* ---------- Pills ---------- */
+    .ap-pill {
+        display: inline-block;
+        padding: 0.1rem 0.45rem;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        border-radius: 999px;
+        line-height: 1.45;
+        border: 1px solid transparent;
+    }
+    .ap-pill--required {
+        background: hsla(0, 72%, 51%, 0.1);
+        color: hsl(0, 72%, 45%);
+        border-color: hsla(0, 72%, 51%, 0.28);
+    }
+    :root[data-theme='dark'] .ap-pill--required {
+        color: hsl(0, 72%, 70%);
+    }
+    .ap-pill--optional {
+        background: hsla(220, 14%, 60%, 0.12);
+        color: var(--ap-muted);
+        border-color: var(--ap-border-strong);
+    }
+    .ap-pill-meta {
+        font-family: var(--ap-mono);
+        font-size: 0.7rem;
+        color: var(--ap-muted);
+    }
+
+    /* ---------- Field input ---------- */
+    .ap-field { margin: 0.6rem 0 0; }
+    .ap-field:first-child { margin-top: 0; }
+
+    .ap-label-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.3rem;
+    }
+    .ap-label {
+        font-family: var(--ap-mono);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--ap-text);
+    }
+
+    .ap-input,
+    .ap-textarea {
+        width: 100%;
+        padding: 0.5rem 0.7rem;
+        border-radius: 8px;
+        border: 1px solid var(--ap-border);
+        background: var(--ap-surface);
+        color: var(--ap-text);
+        font-family: var(--ap-mono);
+        font-size: 0.8125rem;
+        line-height: 1.55;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ap-input:hover,
+    .ap-textarea:hover {
+        border-color: var(--ap-border-strong);
+    }
+    .ap-input:focus,
+    .ap-textarea:focus {
+        outline: 0;
+        border-color: hsl(var(--core-primary-hsl));
+        box-shadow: 0 0 0 3px hsla(var(--core-primary-hsl), 0.15);
+    }
+    .ap-textarea {
+        resize: vertical;
+        min-height: 7.5rem;
+    }
+    .ap-input::placeholder,
+    .ap-textarea::placeholder {
+        color: var(--sl-color-gray-4);
+    }
+
+    .ap-hint {
+        margin: 0.3rem 0 0;
+        font-size: 0.75rem;
+        color: var(--ap-muted);
+        line-height: 1.5;
+    }
+    .ap-hint :global(code) {
+        background: var(--ap-surface-soft) !important;
+        border: 0 !important;
+        padding: 0.1em 0.35em !important;
+        font-size: 0.85em !important;
+    }
+
+    /* ---------- Body fields table ---------- */
+    .ap-fields {
+        margin: 0.4rem 0 0.7rem;
+        border: 1px solid var(--ap-border);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--ap-surface-soft);
+    }
+    .ap-fields-row {
+        display: grid;
+        grid-template-columns: minmax(7rem, auto) minmax(5rem, auto) 5rem 1fr;
+        gap: 0.85rem;
+        padding: 0.55rem 0.85rem;
+        align-items: center;
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        border-bottom: 1px solid var(--ap-border);
+    }
+    .ap-fields-row:last-child { border-bottom: 0; }
+    .ap-fields-head {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--ap-muted);
+        background: hsla(220, 14%, 92%, 0.5);
+    }
+    :root[data-theme='dark'] .ap-fields-head {
+        background: hsla(220, 14%, 18%, 0.6);
+    }
+    .ap-fields-name {
+        font-family: var(--ap-mono) !important;
+        font-size: 0.8125rem !important;
+        background: transparent !important;
+        border: 0 !important;
+        padding: 0 !important;
+        color: var(--ap-text) !important;
+        font-weight: 600;
+    }
+    .ap-fields-type {
+        font-family: var(--ap-mono);
+        color: var(--ap-muted);
+        font-size: 0.75rem;
+    }
+    .ap-fields-req {
+        color: hsl(0, 72%, 45%);
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+    :root[data-theme='dark'] .ap-fields-req { color: hsl(0, 72%, 70%); }
+    .ap-fields-opt { color: var(--sl-color-gray-4); font-size: 0.75rem; }
+    .ap-fields-desc {
+        color: var(--ap-muted);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 38rem) {
+        .ap-fields-row {
+            grid-template-columns: 1fr 1fr;
+            row-gap: 0.25rem;
+        }
+        .ap-fields-head { display: none; }
+        .ap-fields-name { grid-column: 1 / -1; }
+        .ap-fields-desc { grid-column: 1 / -1; }
+    }
+
+    /* ---------- Body editor head ---------- */
+    .ap-body-editor-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0.4rem 0 0.35rem;
+    }
+    .ap-body-editor-title {
+        font-size: 0.75rem;
+        color: var(--ap-muted);
+    }
+    .ap-link-btn {
+        background: transparent;
+        border: 0;
+        color: hsl(var(--core-primary-hsl));
+        font-size: 0.75rem;
+        cursor: pointer;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+    }
+    .ap-link-btn:hover {
+        background: hsla(var(--core-primary-hsl), 0.08);
+    }
+
+    /* ---------- Actions ---------- */
+    .ap-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1.1rem;
+    }
+
+    .ap-send,
+    .ap-reset-all {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.05rem;
+        border-radius: 8px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border: 1px solid transparent;
+    }
+    .ap-send {
+        background: hsl(var(--core-primary-hsl));
+        color: white;
+    }
+    .ap-send:hover { background: hsl(var(--core-secondary-hsl)); }
+    .ap-send:disabled { opacity: 0.6; cursor: progress; }
+    .ap-reset-all {
+        background: transparent;
+        color: var(--ap-muted);
+        border-color: var(--ap-border);
+    }
+    .ap-reset-all:hover {
+        color: var(--ap-text);
+        border-color: var(--ap-border-strong);
+    }
+
+    /* ---------- Response ---------- */
+    .ap-response {
+        margin-top: 1.2rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid var(--ap-border);
+    }
+    .ap-response-head {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin-bottom: 0.5rem;
+    }
+    .ap-status {
+        display: inline-block;
+        padding: 0.18rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        font-family: var(--ap-mono);
+        letter-spacing: 0.02em;
+    }
+    .ap-status.is-ok {
+        background: hsla(151, 55%, 40%, 0.12);
+        color: hsl(151, 55%, 32%);
+    }
+    .ap-status.is-warn {
+        background: hsla(38, 80%, 48%, 0.14);
+        color: hsl(38, 80%, 38%);
+    }
+    .ap-status.is-err {
+        background: hsla(0, 65%, 55%, 0.12);
+        color: hsl(0, 65%, 45%);
+    }
+    :root[data-theme='dark'] .ap-status.is-ok { color: hsl(151, 55%, 60%); }
+    :root[data-theme='dark'] .ap-status.is-warn { color: hsl(38, 80%, 65%); }
+    :root[data-theme='dark'] .ap-status.is-err { color: hsl(0, 65%, 70%); }
+
+    .ap-latency {
+        font-size: 0.75rem;
+        color: var(--ap-muted);
+        font-family: var(--ap-mono);
+    }
+    .ap-response-body {
+        margin: 0;
+        padding: 0.85rem 1rem;
+        border-radius: 8px;
+        background: hsla(220, 14%, 96%, 0.7);
+        max-height: 24rem;
+        overflow: auto;
+        font-size: 0.8125rem;
+        font-family: var(--ap-mono);
+        line-height: 1.55;
+    }
+    :root[data-theme='dark'] .ap-response-body {
+        background: hsla(220, 14%, 12%, 0.7);
+    }
+    .ap-response-body code {
+        background: transparent !important;
+        border: 0 !important;
+        padding: 0 !important;
+        color: inherit !important;
+        font-family: inherit !important;
+        white-space: pre;
+    }
+</style>

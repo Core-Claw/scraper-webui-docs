@@ -45,7 +45,7 @@ POST /api/v1/scraper/run
 ```json
 {
   "scraper_slug": "YOUR_SCRAPER_SLUG",
-  "version": "v1.1.0",
+  "version": "<version>",
   "input": {
     "parameters": {
       "system": {

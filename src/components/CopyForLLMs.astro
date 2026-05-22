@@ -1,0 +1,341 @@
+---
+/**
+ * CopyForLLMs - dropdown button group for copying / opening current page as Markdown.
+ *
+ * Renders four actions:
+ *   1. Copy as Markdown
+ *   2. View as Markdown (open .md endpoint)
+ *   3. Open in ChatGPT
+ *   4. Open in Claude
+ *
+ * The component is locale-aware via the surrounding pathname.
+ */
+---
+
+<copy-for-llms class="copy-for-llms" data-i18n-zh data-i18n-en>
+    <button class="cfl-trigger" type="button" aria-haspopup="menu" aria-expanded="false">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="cfl-label" data-label-en="Copy for LLMs" data-label-zh="复制给 LLM">Copy for LLMs</span>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="cfl-caret"
+            aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+    </button>
+    <div class="cfl-menu" role="menu" hidden>
+        <button
+            class="cfl-item"
+            role="menuitem"
+            type="button"
+            data-action="copy"
+            data-label-en="Copy as Markdown"
+            data-label-zh="复制为 Markdown"
+            data-desc-en="Copy this page rendered as Markdown to your clipboard"
+            data-desc-zh="把当前页转成 Markdown 复制到剪贴板">
+            <span class="cfl-item-title">Copy as Markdown</span>
+            <span class="cfl-item-desc">Copy this page rendered as Markdown to your clipboard</span>
+        </button>
+        <button
+            class="cfl-item"
+            role="menuitem"
+            type="button"
+            data-action="view"
+            data-label-en="View as Markdown"
+            data-label-zh="查看 Markdown"
+            data-desc-en="Open the .md endpoint in a new tab"
+            data-desc-zh="新标签页打开 .md 文本">
+            <span class="cfl-item-title">View as Markdown</span>
+            <span class="cfl-item-desc">Open the .md endpoint in a new tab</span>
+        </button>
+        <button
+            class="cfl-item"
+            role="menuitem"
+            type="button"
+            data-action="chatgpt"
+            data-label-en="Open in ChatGPT"
+            data-label-zh="在 ChatGPT 中打开"
+            data-desc-en="Ask ChatGPT to read this page"
+            data-desc-zh="让 ChatGPT 读这一页">
+            <span class="cfl-item-title">Open in ChatGPT</span>
+            <span class="cfl-item-desc">Ask ChatGPT to read this page</span>
+        </button>
+        <button
+            class="cfl-item"
+            role="menuitem"
+            type="button"
+            data-action="claude"
+            data-label-en="Open in Claude"
+            data-label-zh="在 Claude 中打开"
+            data-desc-en="Ask Claude to read this page"
+            data-desc-zh="让 Claude 读这一页">
+            <span class="cfl-item-title">Open in Claude</span>
+            <span class="cfl-item-desc">Ask Claude to read this page</span>
+        </button>
+    </div>
+</copy-for-llms>
+
+<script>
+    class CopyForLLMs extends HTMLElement {
+        connectedCallback() {
+            const trigger = this.querySelector('.cfl-trigger') as HTMLButtonElement
+            const menu = this.querySelector('.cfl-menu') as HTMLDivElement
+            const items = this.querySelectorAll<HTMLButtonElement>('.cfl-item')
+
+            this.applyLocale()
+
+            trigger.addEventListener('click', e => {
+                e.stopPropagation()
+                this.toggle()
+            })
+
+            document.addEventListener('click', e => {
+                if (!this.contains(e.target as Node)) this.close()
+            })
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') this.close()
+            })
+
+            items.forEach(item => {
+                item.addEventListener('click', () => {
+                    const action = item.dataset.action
+                    if (action) this.run(action, item)
+                })
+            })
+        }
+
+        get markdownUrl() {
+            const path = window.location.pathname.replace(/\/$/, '')
+            // Map /foo/bar/ -> /foo/bar.md ; / -> /index.md
+            const target = path === '' ? '/index' : path
+            return new URL(target + '.md', window.location.origin).toString()
+        }
+
+        get isZh() {
+            return window.location.pathname.startsWith('/zh-cn')
+        }
+
+        applyLocale() {
+            const isZh = this.isZh
+            this.querySelectorAll<HTMLElement>('[data-label-en]').forEach(el => {
+                const en = el.dataset.labelEn
+                const zh = el.dataset.labelZh
+                if (!en || !zh) return
+                if (el.classList.contains('cfl-label')) {
+                    el.textContent = isZh ? zh : en
+                    return
+                }
+                const titleEl = el.querySelector('.cfl-item-title')
+                if (titleEl) titleEl.textContent = isZh ? zh : en
+            })
+            this.querySelectorAll<HTMLElement>('[data-desc-en]').forEach(el => {
+                const en = el.dataset.descEn
+                const zh = el.dataset.descZh
+                if (!en || !zh) return
+                const descEl = el.querySelector('.cfl-item-desc')
+                if (descEl) descEl.textContent = isZh ? zh : en
+            })
+        }
+
+        toggle() {
+            const menu = this.querySelector('.cfl-menu') as HTMLDivElement
+            const trigger = this.querySelector('.cfl-trigger') as HTMLButtonElement
+            const open = !menu.hasAttribute('hidden')
+            if (open) this.close()
+            else {
+                menu.removeAttribute('hidden')
+                trigger.setAttribute('aria-expanded', 'true')
+            }
+        }
+
+        close() {
+            const menu = this.querySelector('.cfl-menu') as HTMLDivElement
+            const trigger = this.querySelector('.cfl-trigger') as HTMLButtonElement
+            menu.setAttribute('hidden', '')
+            trigger.setAttribute('aria-expanded', 'false')
+        }
+
+        async run(action: string, item: HTMLButtonElement) {
+            const url = this.markdownUrl
+            switch (action) {
+                case 'copy':
+                    await this.copy(url, item)
+                    break
+                case 'view':
+                    window.open(url, '_blank', 'noopener,noreferrer')
+                    this.close()
+                    break
+                case 'chatgpt': {
+                    const prompt = this.isZh
+                        ? `请阅读 ${url} 并基于其内容回答我的问题。`
+                        : `Read ${url} so I can ask questions about it.`
+                    window.open(
+                        `https://chat.openai.com/?q=${encodeURIComponent(prompt)}`,
+                        '_blank',
+                        'noopener,noreferrer'
+                    )
+                    this.close()
+                    break
+                }
+                case 'claude': {
+                    const prompt = this.isZh
+                        ? `请阅读 ${url} 并基于其内容回答我的问题。`
+                        : `Read ${url} so I can ask questions about it.`
+                    window.open(
+                        `https://claude.ai/new?q=${encodeURIComponent(prompt)}`,
+                        '_blank',
+                        'noopener,noreferrer'
+                    )
+                    this.close()
+                    break
+                }
+            }
+        }
+
+        async copy(url: string, item: HTMLButtonElement) {
+            const titleEl = item.querySelector('.cfl-item-title') as HTMLElement
+            const original = titleEl.textContent || ''
+            const isZh = this.isZh
+            try {
+                titleEl.textContent = isZh ? '正在拉取…' : 'Fetching…'
+                const res = await fetch(url, { headers: { Accept: 'text/markdown' } })
+                if (!res.ok) throw new Error(`HTTP ${res.status}`)
+                const text = await res.text()
+                await navigator.clipboard.writeText(text)
+                titleEl.textContent = isZh ? '已复制 ✓' : 'Copied ✓'
+            } catch (err) {
+                console.error('[CopyForLLMs] copy failed', err)
+                titleEl.textContent = isZh ? '复制失败' : 'Copy failed'
+            } finally {
+                setTimeout(() => {
+                    titleEl.textContent = original
+                    this.close()
+                }, 1200)
+            }
+        }
+    }
+
+    if (!customElements.get('copy-for-llms')) {
+        customElements.define('copy-for-llms', CopyForLLMs)
+    }
+</script>
+
+<style>
+    .copy-for-llms {
+        position: relative;
+        display: inline-flex;
+        font-size: var(--sl-text-sm);
+    }
+
+    .cfl-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.65rem;
+        border: 1px solid var(--sl-color-gray-5);
+        border-radius: 0.5rem;
+        background: var(--sl-color-bg);
+        color: var(--sl-color-text);
+        cursor: pointer;
+        font-weight: 500;
+        line-height: 1;
+        transition: border-color 120ms ease, background 120ms ease;
+    }
+
+    .cfl-trigger:hover {
+        border-color: hsl(var(--core-primary-hsl));
+        background: var(--sl-color-gray-7, var(--sl-color-bg));
+    }
+
+    .cfl-trigger[aria-expanded='true'] {
+        border-color: hsl(var(--core-primary-hsl));
+    }
+
+    .cfl-caret {
+        opacity: 0.6;
+    }
+
+    .cfl-menu {
+        position: absolute;
+        top: calc(100% + 0.4rem);
+        right: 0;
+        min-width: 17rem;
+        padding: 0.35rem;
+        background: var(--sl-color-bg);
+        border: 1px solid var(--sl-color-gray-5);
+        border-radius: 0.6rem;
+        box-shadow: var(--core-shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .cfl-menu[hidden] {
+        display: none;
+    }
+
+    .cfl-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.15rem;
+        padding: 0.5rem 0.65rem;
+        border: 0;
+        background: transparent;
+        color: var(--sl-color-text);
+        text-align: left;
+        border-radius: 0.4rem;
+        cursor: pointer;
+        transition: background 120ms ease;
+    }
+
+    .cfl-item:hover,
+    .cfl-item:focus-visible {
+        background: var(--sl-color-gray-6, rgba(0, 0, 0, 0.04));
+        outline: none;
+    }
+
+    .cfl-item-title {
+        font-weight: 600;
+        font-size: var(--sl-text-sm);
+        line-height: 1.2;
+    }
+
+    .cfl-item-desc {
+        font-size: var(--sl-text-xs);
+        color: var(--sl-color-gray-3);
+        line-height: 1.3;
+    }
+
+    @media (max-width: 50rem) {
+        .cfl-label {
+            display: none;
+        }
+        .cfl-trigger {
+            padding: 0.4rem 0.5rem;
+        }
+    }
+</style>

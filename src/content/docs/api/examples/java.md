@@ -171,7 +171,7 @@ public class CoreClawExample {
         return """
             {
                 "scraper_slug": "YOUR_SCRAPER_SLUG",
-                "version": "v1.0.0",
+                "version": "<version>",
                 "is_async": true,
                 "input": {
                     "parameters": {

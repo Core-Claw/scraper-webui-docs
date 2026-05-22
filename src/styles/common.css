@@ -1,6 +1,8 @@
 :root {
     --sl-font: IBM Plex Sans Variable, sans-serif;
-    --sl-content-width: 65rem;
+    /* Tighter content column for better line-length on long-form prose.
+       Stripe / Linear / Vercel docs settle around 50–58rem. */
+    --sl-content-width: 56rem;
     /* Professional theme: Soft Teal/Indigo - Inspired by Astro Docs, StackBlitz */
     --core-primary-hsl: 199, 89%, 38%; /* Teal-600: #0891B2 - softer on eyes */
     --core-secondary-hsl: 224, 76%, 48%; /* Indigo-500: #6366F1 */
@@ -58,19 +60,25 @@
 }
 
 :root[data-theme='dark'] .site-title {
+    /* Brighter palette so the gradient stays readable against the dark
+       header background even at the dimmest point of the animation cycle. */
     background: linear-gradient(
         135deg,
-        #14b8a6,
-        #818cf8,
-        #2dd4bf,
-        #818cf8,
-        #14b8a6
+        #5eead4,
+        #a5b4fc,
+        #99f6e4,
+        #a5b4fc,
+        #5eead4
     );
     background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: gradient-shift 6s ease infinite;
+    /* Subtle glow as a fallback when -webkit-background-clip isn't supported
+       and to lift the text further off the dark backdrop. */
+    filter: drop-shadow(0 0 6px hsla(180, 90%, 70%, 0.15));
+    font-weight: 700;
 }
 
 /* ========================================
@@ -399,30 +407,115 @@
 
 /* ========================================
    Code Blocks & Syntax Highlighting
+
+   Strategy:
+     - System monospace stack (no webfont dependency)
+     - Single soft neutral border, no double-up with EC's own border
+     - Light surface uses #f7f9fc (cool grey-50) for low-glare reading
+     - Dark surface uses #0f1117 to match the header / hero treatment
+     - Inline `code` is a single subtle pill, never a coloured badge
    ======================================== */
+
+:root {
+    /* Reused by ApiPlayground, inline code, code-block fallbacks */
+    --core-mono:
+        ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono',
+        'Fira Code', 'Source Code Pro', Menlo, Consolas,
+        'DejaVu Sans Mono', monospace;
+}
+
+.expressive-code {
+    margin: 1.5rem 0;
+}
+
 .expressive-code .frame {
-    border-radius: var(--core-radius);
-    box-shadow: var(--core-shadow-md);
+    border-radius: 10px;
+    border: 1px solid hsla(220, 14%, 60%, 0.22);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    overflow: hidden;
+    background: transparent;
 }
-
 :root[data-theme='dark'] .expressive-code .frame {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-color: hsla(220, 14%, 70%, 0.18);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.4);
 }
 
-.sl-markdown-content code:not(:where(.not-content *)) {
+.expressive-code .frame pre {
+    background: #f7f9fc;
+}
+:root[data-theme='dark'] .expressive-code .frame pre {
+    background: #0f1117;
+}
+
+/* File-name tab / terminal title — neutral background, soft separator */
+.expressive-code .frame.is-terminal .header,
+.expressive-code .frame .header {
+    background: transparent;
+    border-bottom: 1px solid hsla(220, 14%, 60%, 0.16);
+}
+:root[data-theme='dark'] .expressive-code .frame .header {
+    border-bottom-color: hsla(220, 14%, 70%, 0.16);
+}
+
+/* Reserve gutter on the right so the absolute-positioned copy button
+   doesn't overlap short single-line code (`pnpm install`, `curl ...`). */
+.expressive-code pre {
+    padding-inline-end: 3.25rem !important;
+}
+
+.expressive-code .copy {
+    inset-inline-end: 0.5rem;
+    top: 0.5rem;
+}
+
+.expressive-code .copy button {
+    border-radius: 6px;
+    background: hsla(220, 14%, 60%, 0.1) !important;
+    border: 1px solid hsla(220, 14%, 60%, 0.22) !important;
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+.expressive-code .copy button:hover {
+    background: hsla(var(--core-primary-hsl), 0.16) !important;
+    border-color: hsl(var(--core-primary-hsl)) !important;
+    transform: translateY(-1px);
+}
+:root[data-theme='dark'] .expressive-code .copy button {
+    background: hsla(220, 14%, 70%, 0.08) !important;
+    border-color: hsla(220, 14%, 70%, 0.2) !important;
+}
+:root[data-theme='dark'] .expressive-code .copy button:hover {
+    background: hsla(var(--core-primary-hsl), 0.22) !important;
+    border-color: hsl(var(--core-primary-hsl)) !important;
+}
+
+/* Inline code — soft neutral pill so it reads as "a snippet" rather than
+   "a coloured tag". Slightly tinted in dark mode for contrast. */
+.sl-markdown-content code:not(:where(.not-content *, pre code)) {
     border-radius: 4px;
-    padding: 0.2em 0.4em;
-    background-color: hsla(var(--core-primary-hsl), 0.1);
+    padding: 0.15em 0.4em;
+    font-size: 0.88em;
+    font-family: var(--core-mono);
+    background: hsla(220, 14%, 60%, 0.12);
+    border: 1px solid transparent;
+    color: hsl(var(--core-primary-hsl));
+}
+:root[data-theme='dark']
+    .sl-markdown-content
+    code:not(:where(.not-content *, pre code)) {
+    background: hsla(220, 14%, 70%, 0.14);
     color: hsl(var(--core-primary-hsl));
 }
 
-.sl-markdown-content pre {
-    border-radius: var(--core-radius);
-}
-
-.sl-markdown-content pre code {
-    background-color: transparent;
+/* Inside a real code block, tokens never inherit the pill background. */
+.sl-markdown-content pre code,
+.expressive-code .frame pre code {
+    background: transparent !important;
+    border: 0 !important;
     color: inherit;
+    padding: 0;
 }
 
 /* ========================================
@@ -576,24 +669,10 @@
     font-size: 0.875em;
 }
 
-/* Technical terms and code references */
-.sl-markdown-content code {
-    background: linear-gradient(
-        135deg,
-        hsla(var(--core-primary-hsl), 0.08),
-        hsla(var(--core-secondary-hsl), 0.06)
-    );
-    border: 1px solid hsla(var(--core-primary-hsl), 0.12);
-}
-
-:root[data-theme='dark'] .sl-markdown-content code {
-    background: linear-gradient(
-        135deg,
-        hsla(var(--core-primary-hsl), 0.12),
-        hsla(var(--core-secondary-hsl), 0.08)
-    );
-    border-color: hsla(var(--core-primary-hsl), 0.2);
-}
+/* Technical terms and code references — inline code styling lives in the
+   "Code Blocks & Syntax Highlighting" section above. This block previously
+   re-applied a gradient + border combo here, which made every backtick in
+   prose look like a coloured badge. Intentionally left empty. */
 
 /* List item bullets - custom style */
 .sl-markdown-content ul {
@@ -671,6 +750,155 @@ aside.danger::before {
 
 aside.caution::before {
     background: linear-gradient(90deg, hsl(30, 90%, 50%), hsl(20, 85%, 45%));
+}
+
+/* ========================================
+   <details> folding — used inline in long docs (e.g. API integration
+   troubleshooting). The browser-default disclosure widget is too quiet,
+   so we treat it like a soft card with a teal accent.
+   ======================================== */
+.sl-markdown-content details {
+    margin: 1.25rem 0;
+    border: 1px solid hsla(var(--core-primary-hsl), 0.18);
+    border-radius: var(--core-radius);
+    background: hsla(var(--core-primary-hsl), 0.03);
+    overflow: hidden;
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.sl-markdown-content details:hover {
+    border-color: hsla(var(--core-primary-hsl), 0.32);
+}
+
+.sl-markdown-content details[open] {
+    background: hsla(var(--core-primary-hsl), 0.05);
+    border-color: hsla(var(--core-primary-hsl), 0.28);
+}
+
+:root[data-theme='dark'] .sl-markdown-content details {
+    background: hsla(var(--core-primary-hsl), 0.06);
+    border-color: hsla(var(--core-primary-hsl), 0.22);
+}
+:root[data-theme='dark'] .sl-markdown-content details[open] {
+    background: hsla(var(--core-primary-hsl), 0.1);
+    border-color: hsla(var(--core-primary-hsl), 0.36);
+}
+
+.sl-markdown-content details > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.85rem 1.1rem;
+    font-weight: 600;
+    color: var(--sl-color-text);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    user-select: none;
+}
+
+.sl-markdown-content details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.sl-markdown-content details > summary::before {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    color: hsl(var(--core-primary-hsl));
+    transition: transform 0.18s ease;
+    flex-shrink: 0;
+}
+
+.sl-markdown-content details[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.sl-markdown-content details > *:not(summary) {
+    padding: 0 1.1rem;
+}
+
+.sl-markdown-content details > *:nth-last-child(1):not(summary) {
+    padding-bottom: 0.85rem;
+}
+
+.sl-markdown-content details > summary + * {
+    margin-top: 0.5rem;
+    border-top: 1px solid hsla(var(--core-primary-hsl), 0.12);
+    padding-top: 0.85rem;
+}
+
+:root[data-theme='dark'] .sl-markdown-content details > summary + * {
+    border-top-color: hsla(var(--core-primary-hsl), 0.18);
+}
+
+/* ========================================
+   Aside / Callout polish — icon + bold label per type
+   ======================================== */
+.sl-markdown-content aside {
+    /* Reserve space on the left for the inline icon */
+    padding-inline-start: 3rem;
+    position: relative;
+}
+
+.sl-markdown-content aside .sl-aside-content {
+    /* Starlight's inner wrapper — make sure it stays under our absolute icon */
+    position: relative;
+}
+
+.sl-markdown-content aside::after {
+    content: '';
+    position: absolute;
+    top: 1.05rem;
+    inset-inline-start: 1.05rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: currentColor;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    opacity: 0.85;
+}
+
+/* ℹ Note */
+.sl-markdown-content aside.note::after {
+    color: hsl(var(--core-primary-hsl));
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/></svg>");
+}
+
+/* ✓ Tip */
+.sl-markdown-content aside.tip::after {
+    color: hsl(142, 71%, 45%);
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>");
+}
+
+/* ⚠ Caution / Warning */
+.sl-markdown-content aside.caution::after,
+.sl-markdown-content aside.warning::after {
+    color: hsl(38, 92%, 50%);
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'/></svg>");
+}
+
+/* ✕ Danger */
+.sl-markdown-content aside.danger::after {
+    color: hsl(0, 72%, 51%);
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z'/></svg>");
+}
+
+/* Bold the aside title when Starlight emits one */
+.sl-markdown-content aside .sl-aside-title {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
 }
 
 /* ========================================

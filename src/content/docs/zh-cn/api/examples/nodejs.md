@@ -165,7 +165,7 @@ async function main() {
     // 构建请求参数（基于 /api/scraper 返回的 schema）
     const requestParams = {
         scraper_slug: "YOUR_SCRAPER_SLUG",
-        version: "v1.0.0",  // 从 /api/scraper 获取
+        version: "<version>",  // 从 /api/scraper 获取
         is_async: true,
         input: {
             parameters: {

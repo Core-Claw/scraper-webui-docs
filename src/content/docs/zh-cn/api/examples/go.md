@@ -56,7 +56,7 @@ func main() {
     // 构建请求参数
     requestParams := map[string]interface{}{
         "scraper_slug": "YOUR_SCRAPER_SLUG",
-        "version":      "v1.0.0", // 从 /api/scraper 获取
+        "version":      "<version>", // 从 /api/scraper 获取
         "is_async":     true,
         "input": map[string]interface{}{
             "parameters": map[string]interface{}{
