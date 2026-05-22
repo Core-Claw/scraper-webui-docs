@@ -1,0 +1,42 @@
+# Normalize all text files to LF in the repo (Git's "normalized" form),
+# while letting Windows checkouts auto-convert to CRLF on disk if Git is
+# configured that way. This kills the CRLF/LF diff churn we've seen
+# whenever someone edits a file from a Windows-default editor.
+*               text=auto eol=lf
+
+# Source code — explicit, in case some files don't get caught by `text=auto`
+*.ts            text eol=lf
+*.tsx           text eol=lf
+*.js            text eol=lf
+*.mjs           text eol=lf
+*.cjs           text eol=lf
+*.jsx           text eol=lf
+*.astro         text eol=lf
+*.css           text eol=lf
+*.html          text eol=lf
+*.json          text eol=lf
+*.md            text eol=lf
+*.mdx           text eol=lf
+*.svg           text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+
+# Shell scripts — must stay LF or they break on Linux
+*.sh            text eol=lf
+*.mjs           text eol=lf
+
+# Lockfile — large and noisy in diffs; mark as such
+pnpm-lock.yaml  text eol=lf -diff
+
+# Binary assets — never touch these
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.webp          binary
+*.ico           binary
+*.pdf           binary
+*.woff          binary
+*.woff2         binary
+*.ttf           binary
+*.otf           binary
