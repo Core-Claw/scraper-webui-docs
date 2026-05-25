@@ -91,14 +91,14 @@ CoreClaw API uses three types of identifiers (slugs). Understanding the differen
 
 **scraper_slug** (Worker ID) - Found on the Worker detail page:
 
-![scraper_slug location](/src/assets/docs/scraper_slug.png)
+![scraper_slug location](@/assets/docs/scraper_slug.png)
 
 **task_slug** (Task ID) - Found in your saved Task templates:
 
-![task_slug location](/src/assets/docs/task_slug.png)
+![task_slug location](@/assets/docs/task_slug.png)
 
 **run_slug** (Run Record ID) - Found in the run history or returned after starting a run:
 
-![run_slug location](/src/assets/docs/run_slug.png)
+![run_slug location](@/assets/docs/run_slug.png)
 
 > **Important**: Do not mix these identifiers. Each slug type serves a different purpose. Passing a `run_slug` to a `task_slug` or `scraper_slug` field will cause request validation errors.

@@ -91,14 +91,14 @@ CoreClaw API 使用三种标识符（slug）。理解它们的区别对于正确
 
 **scraper_slug**（Worker ID）- 位于 Worker 详情页：
 
-![scraper_slug 位置](/src/assets/docs/scraper_slug.png)
+![scraper_slug 位置](@/assets/docs/scraper_slug.png)
 
 **task_slug**（任务 ID）- 位于已保存的 Task 模板中：
 
-![task_slug 位置](/src/assets/docs/task_slug.png)
+![task_slug 位置](@/assets/docs/task_slug.png)
 
 **run_slug**（运行记录 ID）- 位于运行历史中，或启动运行后返回：
 
-![run_slug 位置](/src/assets/docs/run_slug.png)
+![run_slug 位置](@/assets/docs/run_slug.png)
 
 > **重要提示**：请勿混用这些标识符。每种 slug 类型有不同的用途。将 `run_slug` 传入 `task_slug` 或 `scraper_slug` 字段会导致请求参数校验错误。
