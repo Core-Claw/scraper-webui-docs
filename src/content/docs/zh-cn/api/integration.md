@@ -147,7 +147,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" \
 ```json
 {
   "code": 0,
-  "data": { "run_slug": "01KS2A1M515HG7PZX9STTB0KPH" }
+  "data": { "run_slug": "01KSFDS8XWTJME33C08XMCR6B9" }
 }
 ```
 
@@ -159,7 +159,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" \
 curl -X POST "https://openapi.coreclaw.com/api/v1/run/detail" \
   -H "api-key: YOUR_API_KEY" \
   -H "content-type: application/json" \
-  --data '{"run_slug": "01KS2A1M515HG7PZX9STTB0KPH"}'
+  --data '{"run_slug": "01KSFDS8XWTJME33C08XMCR6B9"}'
 ```
 
 状态码：`1` 就绪，`2` 运行中，`3` 成功，`4` 失败，`5` 正在中止。
@@ -171,7 +171,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/list" \
   -H "api-key: YOUR_API_KEY" \
   -H "content-type: application/json" \
   --data '{
-    "run_slug": "01KS2A1M515HG7PZX9STTB0KPH",
+    "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
     "page_index": 1,
     "page_size": 20
   }'
@@ -190,7 +190,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/list" \
 
 ```json
 {
-  "run_slug": "01KS2A1M515HG7PZX9STTB0KPH",
+  "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
   "status": 3,
   "results": 20,
   "usage": "0.06"

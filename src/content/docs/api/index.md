@@ -17,7 +17,7 @@ https://openapi.coreclaw.com
 
 | Parameter Name | Example Value    | Type   | Required | Description |
 | -------------- | ---------------- | ------ | -------- | ----------- |
-| api-key        | <YOUR_API_KEY>   | string | Yes      | Your API key for authentication |
+| api-key        | <YOUR_API_KEY>   | string | Yes      | Your API key. Get it from [Console Settings → API & Integrations](https://console.coreclaw.com/settings/integrations) |
 | content-type   | application/json | string | Yes      | Request content type |
 
 > **Note:** `/api/scraper` and `/api/store` are public endpoints that do not require an API key.

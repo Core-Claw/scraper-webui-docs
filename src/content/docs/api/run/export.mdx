@@ -1,15 +1,22 @@
----
+﻿---
 title: Export Run Result
 description: Export the results of a Worker run.
 sidebar:
-    order: 5
+    order: 4
 ---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
 
 **Method:** `POST`
 
 **Endpoint:** `/api/v1/run/result/export`
 
 Send the request body with **Content-Type: application/json**.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v1/run/result/export" />
 
 ## Request Example
 
@@ -26,7 +33,7 @@ Send the request body with **Content-Type: application/json**.
 | Parameter   | Example        | Type   | Required | Description                  |
 | ----------- | -------------- | ------ | -------- | ---------------------------- |
 | run_slug    | YOUR_RUN_SLUG  | String | Yes      | Unique run identifier        |
-| filter_keys | -              | String[]  | Yes      | Fields to export             |
+| filter_keys | []             | String[]  | Yes      | Fields to export. Use `[]` to export all fields |
 | format      | csv            | String | Yes      | Export format: `csv` or `json` |
 
 ## Response Example

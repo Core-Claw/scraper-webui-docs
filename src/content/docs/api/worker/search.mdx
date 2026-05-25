@@ -1,15 +1,22 @@
----
+﻿---
 title: Search Workers
 description: Search for available Workers in the CoreClaw store.
 sidebar:
-    order: 4
+    order: 1
 ---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
 
 **Method:** `GET`
 
 **Endpoint:** `/api/store`
 
 Send the request with query parameters. No authentication required.
+
+## Try it
+
+<ApiPlayground method="GET" path="/api/store" />
 
 > The `search` parameter must be non-empty. An empty search returns an error.
 
@@ -24,7 +31,7 @@ curl "https://openapi.coreclaw.com/api/store?search=news&limit=10"
 | Parameter | Example | Type    | Required | Description            |
 | --------- | ------- | ------- | -------- | ---------------------- |
 | search    | news    | String  | Yes      | Search keyword (non-empty) |
-| limit     | 10      | Integer | Yes      | Max number of results  |
+| limit     | 10      | Integer | No       | Max number of results (default 10)  |
 
 ## Response Example
 
@@ -35,7 +42,7 @@ curl "https://openapi.coreclaw.com/api/store?search=news&limit=10"
     "data": {
         "scraper": [
             {
-                "slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+                "slug": "01KPD6M5YVHWCNQCRK32BD02TP",
                 "title": "News Collection 20260305",
                 "description": "Collect news articles from major news websites"
             }
@@ -64,6 +71,6 @@ curl "https://openapi.coreclaw.com/api/store?search=news&limit=10"
 
 | Parameter   | Example                          | Type   | Description               |
 | ----------- | -------------------------------- | ------ | ------------------------- |
-| slug        | 01KJXYJ7KCHXM0PDZHQD5293XE      | String | Unique Worker identifier (`scraper_slug`) |
+| slug        | 01KPD6M5YVHWCNQCRK32BD02TP      | String | Unique Worker identifier (`scraper_slug`) |
 | title       | News Collection 20260305         | String | Worker title              |
 | description | Collect news articles from major news websites | String | Worker description        |

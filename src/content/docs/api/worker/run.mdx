@@ -2,14 +2,21 @@
 title: Start Worker
 description: Start a Worker run.
 sidebar:
-    order: 1
+    order: 3
 ---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
 
 **Method:** `POST`
 
 **Endpoint:** `/api/v1/scraper/run`
 
 Send the request body with **Content-Type: application/json**.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v1/scraper/run" />
 
 ## When to use this endpoint
 
@@ -67,7 +74,7 @@ You can find it:
 
 | Parameter                   | Example | Type   | Required | Description |
 | --------------------------- | ------- | ------ | -------- | ----------- |
-| proxy_region                | CH    | string | Yes      | Execution node (ISO 3166-1 alpha-2 country code). Common: `US`, `CN`, `HK`, `JP`, `SG`, `DE`, `GB`, `FR`. See Swagger definition for the full list of supported codes. |
+| proxy_region                | US    | string | No       | Execution node (ISO 3166-1 alpha-2 country code). Common: `US`, `CN`, `HK`, `JP`, `SG`, `DE`, `GB`, `FR`. See Swagger definition for the full list of supported codes. |
 | cpus                        | 0.125 | number | Yes      | Container CPU cores |
 | memory                      | 512   | integer | Yes      | Container memory size in MB. Supported values: `512`, `1024`, `2048`, `4096`, `8192`, `16384` |
 | execute_limit_time_seconds  | 1800    | integer | Yes      | Container execution timeout in seconds |
@@ -110,7 +117,7 @@ You can get the Worker version from:
     "code": 0,
     "message": "success",
     "data": {
-        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+        "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
     }
 }
 ```
@@ -122,4 +129,4 @@ You can get the Worker version from:
 | code      | 0                          | Integer | Global status code    |
 | message   | success                    | String  | Response message      |
 | data      | -                          | Object  | Response payload      |
-| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | **Run Record ID** — unique identifier for this execution |
+| run_slug  | 01KSFDS8XWTJME33C08XMCR6B9 | String  | **Run Record ID** — unique identifier for this execution |

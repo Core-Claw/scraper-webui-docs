@@ -2,14 +2,22 @@
 title: 运行爬虫
 description: 启动 Worker 运行
 sidebar:
-    order: 1
+    order: 3
 ---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
 
 **方法：** `POST`
 
 **端点：** `/api/v1/scraper/run`
 
 使用 **Content-Type: application/json** 发送请求体。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v1/scraper/run" />
+
 
 ## 什么时候使用这个接口
 
@@ -67,7 +75,7 @@ sidebar:
 
 | 参数                       | 示例  | 类型   | 必填 | 说明 |
 | -------------------------- | ----- | ------ | ---- | ---- |
-| proxy_region               | CH    | string | 是   | 执行节点（ISO 3166-1 alpha-2 国家代码）。常用：`US`、`CN`、`HK`、`JP`、`SG`、`DE`、`GB`、`FR`。完整支持列表请参考 Swagger 定义。 |
+| proxy_region               | US    | string | 否   | 执行节点（ISO 3166-1 alpha-2 国家代码）。常用：`US`、`CN`、`HK`、`JP`、`SG`、`DE`、`GB`、`FR`。完整支持列表请参考 Swagger 定义。 |
 | cpus                       | 0.125 | number | 是   | 容器 CPU 核心数 |
 | memory                     | 512   | integer | 是   | 容器内存大小（MB）。支持的值：`512`、`1024`、`2048`、`4096`、`8192`、`16384` |
 | execute_limit_time_seconds | 1800  | integer | 是   | 容器执行超时（秒） |
@@ -110,7 +118,7 @@ sidebar:
     "code": 0,
     "message": "success",
     "data": {
-        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+        "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
     }
 }
 ```
@@ -122,4 +130,4 @@ sidebar:
 | code     | 0                          | Integer | 全局状态码     |
 | message  | success                    | String  | 响应消息       |
 | data     | -                          | Object  | 响应数据       |
-| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | **运行记录 ID**——本次执行的唯一标识符 |
+| run_slug | 01KSFDS8XWTJME33C08XMCR6B9 | String  | **运行记录 ID**——本次执行的唯一标识符 |

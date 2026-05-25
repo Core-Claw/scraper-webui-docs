@@ -17,7 +17,7 @@ https://openapi.coreclaw.com
 
 | 参数名 | 示例值 | 类型 | 必填 | 说明 |
 | ------ | ------ | ---- | ---- | ---- |
-| api-key | <YOUR_API_KEY> | string | 是 | 您的 API 密钥，用于身份验证 |
+| api-key | <YOUR_API_KEY> | string | 是 | 您的 API 密钥。可在 [控制台设置 → API 与集成](https://console.coreclaw.com/settings/integrations) 获取 |
 | content-type | application/json | string | 是 | 请求内容类型 |
 
 > **说明：** `/api/scraper` 和 `/api/store` 为公开端点，无需 API 密钥即可访问。

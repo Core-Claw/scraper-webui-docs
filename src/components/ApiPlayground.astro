@@ -226,7 +226,7 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                                 data-param-name={param.name}
                                 data-param-in={param.in}
                                 placeholder={param.example ?? param.schema?.default ?? param.description ?? ''}
-                                value={param.schema?.default ?? ''}
+                                value={param.schema?.default ?? param.example ?? ''}
                             />
                             {param.description && <p class="ap-hint">{param.description}</p>}
                         </div>

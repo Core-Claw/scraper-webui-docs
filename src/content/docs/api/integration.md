@@ -147,7 +147,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" \
 ```json
 {
   "code": 0,
-  "data": { "run_slug": "01KS2A1M515HG7PZX9STTB0KPH" }
+  "data": { "run_slug": "01KSFDS8XWTJME33C08XMCR6B9" }
 }
 ```
 
@@ -159,7 +159,7 @@ Save the `run_slug` (**Run Record ID**) to track progress and retrieve results.
 curl -X POST "https://openapi.coreclaw.com/api/v1/run/detail" \
   -H "api-key: YOUR_API_KEY" \
   -H "content-type: application/json" \
-  --data '{"run_slug": "01KS2A1M515HG7PZX9STTB0KPH"}'
+  --data '{"run_slug": "01KSFDS8XWTJME33C08XMCR6B9"}'
 ```
 
 Status codes: `1` Ready, `2` Running, `3` Succeeded, `4` Failed, `5` Aborting.
@@ -171,7 +171,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/list" \
   -H "api-key: YOUR_API_KEY" \
   -H "content-type: application/json" \
   --data '{
-    "run_slug": "01KS2A1M515HG7PZX9STTB0KPH",
+    "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
     "page_index": 1,
     "page_size": 20
   }'
@@ -190,7 +190,7 @@ In async mode, supply `callback_url` and CoreClaw will POST a notification to yo
 
 ```json
 {
-  "run_slug": "01KS2A1M515HG7PZX9STTB0KPH",
+  "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
   "status": 3,
   "results": 20,
   "usage": "0.06"

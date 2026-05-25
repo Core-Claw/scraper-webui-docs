@@ -5,11 +5,18 @@ sidebar:
     order: 1
 ---
 
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+
 **Method:** `POST`
 
 **Endpoint:** `/api/v1/task/run`
 
 Send the request body with **Content-Type: application/json**.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v1/task/run" />
 
 ## When to use this endpoint
 
@@ -44,7 +51,7 @@ Use this endpoint when you already have a saved Task template and want to create
     "code": 0,
     "message": "success",
     "data": {
-        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+        "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
     }
 }
 ```
@@ -56,7 +63,7 @@ Use this endpoint when you already have a saved Task template and want to create
 | code      | 0                          | Integer | Global status code    |
 | message   | success                    | String  | Response message      |
 | data      | -                          | Object  | Response payload      |
-| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | **Run Record ID** — unique identifier for this execution |
+| run_slug  | 01KSFDS8XWTJME33C08XMCR6B9 | String  | **Run Record ID** — unique identifier for this execution |
 
 ## Validation behavior
 

@@ -1,15 +1,23 @@
----
+﻿---
 title: 导出运行结果
 description: 导出 Worker 运行结果
 sidebar:
-    order: 5
+    order: 4
 ---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
 
 **方法：** `POST`
 
 **端点：** `/api/v1/run/result/export`
 
 使用 **Content-Type: application/json** 发送请求体。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v1/run/result/export" />
+
 
 ## 请求示例
 
@@ -26,7 +34,7 @@ sidebar:
 | 参数        | 示例值        | 类型   | 必填 | 说明 |
 | ----------- | ------------- | ------ | ---- | ---- |
 | run_slug    | YOUR_RUN_SLUG | String | 是   | 运行唯一标识符 |
-| filter_keys | -             | String[]  | 是   | 要导出的字段 |
+| filter_keys | []            | String[]  | 是   | 要导出的字段。使用 `[]` 导出全部字段 |
 | format      | csv           | String | 是   | 导出格式：`csv` 或 `json` |
 
 ## 响应示例

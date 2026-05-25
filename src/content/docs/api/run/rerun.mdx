@@ -5,11 +5,18 @@ sidebar:
     order: 6
 ---
 
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+
 **Method:** `POST`
 
 **Endpoint:** `/api/v1/rerun`
 
 Send the request body with **Content-Type: application/json**.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v1/rerun" />
 
 ## Request Example
 
@@ -36,7 +43,7 @@ Example callback URL: `https://your-callback.example.com/webhook`
     "code": 0,
     "message": "success",
     "data": {
-        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+        "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
     }
 }
 ```
@@ -48,4 +55,4 @@ Example callback URL: `https://your-callback.example.com/webhook`
 | code      | 0                          | Integer | Global status code    |
 | message   | success                    | String  | Response message      |
 | data      | -                          | Object  | Response payload      |
-| run_slug  | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | Unique run identifier |
+| run_slug  | 01KSFDS8XWTJME33C08XMCR6B9 | String  | Unique run identifier |

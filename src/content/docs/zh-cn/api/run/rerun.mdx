@@ -5,11 +5,19 @@ sidebar:
     order: 6
 ---
 
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+
 **方法：** `POST`
 
 **端点：** `/api/v1/rerun`
 
 使用 **Content-Type: application/json** 发送请求体。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v1/rerun" />
+
 
 ## 请求示例
 
@@ -34,7 +42,7 @@ sidebar:
     "code": 0,
     "message": "success",
     "data": {
-        "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ"
+        "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
     }
 }
 ```
@@ -46,4 +54,4 @@ sidebar:
 | code     | 0                          | Integer | 全局状态码 |
 | message  | success                    | String  | 响应消息 |
 | data     | -                          | Object  | 响应数据 |
-| run_slug | 01KKDXV2G26BT7NH4ZQR2R4NPZ | String  | 运行唯一标识符 |
+| run_slug | 01KSFDS8XWTJME33C08XMCR6B9 | String  | 运行唯一标识符 |

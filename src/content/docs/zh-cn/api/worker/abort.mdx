@@ -2,14 +2,22 @@
 title: 中止爬虫
 description: 中止正在运行的 Worker 任务
 sidebar:
-    order: 2
+    order: 4
 ---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
 
 **方法：** `POST`
 
 **端点：** `/api/v1/scraper/abort`
 
 使用 **Content-Type: application/json** 发送请求体。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v1/scraper/abort" />
+
 
 ## 请求示例
 

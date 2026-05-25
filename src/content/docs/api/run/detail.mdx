@@ -5,11 +5,18 @@ sidebar:
     order: 2
 ---
 
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+
 **Method:** `POST`
 
 **Endpoint:** `/api/v1/run/detail`
 
 Send the request body with **Content-Type: application/json**.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v1/run/detail" />
 
 ## Request Example
 
@@ -34,9 +41,9 @@ Send the request body with **Content-Type: application/json**.
     "data": {
         "status": 2,
         "err_msg": "",
-        "slug": "01KKJYJ4HH0R9K7XD856MAE1WH",
+        "slug": "01KSFDS8XWTJME33C08XMCR6B9",
         "scraper_title": "News Collection 20260305",
-        "scraper_slug": "01KJXYJ7KCHXM0PDZHQD5293XE",
+        "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP",
         "results": 4,
         "usage": "0.0217",
         "started_at": 1773383784,
@@ -44,7 +51,7 @@ Send the request body with **Content-Type: application/json**.
         "duration": 0,
         "origin": "api",
         "traffic": 0,
-        "version": "v1.0.1"
+        "version": "v1.0.5"
     }
 }
 ```
@@ -58,9 +65,9 @@ Send the request body with **Content-Type: application/json**.
 | data         | -                          | Object  | Response payload                                                  |
 | status       | 3                          | Integer | Run status: 1 Ready, 2 Running, 3 Succeeded, 4 Failed, 5 Aborted |
 | err_msg      | -                          | String  | Error message                                                     |
-| slug         | 01KKJYJ4HH0R9K7XD856MAE1WH | String  | Unique run identifier                                             |
+| slug         | 01KSFDS8XWTJME33C08XMCR6B9 | String  | Unique run identifier                                             |
 | scraper_title | News Collection 20260305   | String  | Worker title                                                      |
-| scraper_slug  | 01KJXYJ7KCHXM0PDZHQD5293XE | String  | Unique Worker identifier                                          |
+| scraper_slug  | 01KPD6M5YVHWCNQCRK32BD02TP | String  | Unique Worker identifier                                          |
 | results      | 4                          | Integer | Number of collected results                                       |
 | usage        | 0.0217                     | String  | Device usage cost in USD                                          |
 | started_at   | 1773383784                 | Integer | Start timestamp                                                   |
@@ -68,7 +75,7 @@ Send the request body with **Content-Type: application/json**.
 | duration     | 0                          | Integer | Execution duration in seconds                                     |
 | origin       | api                        | String  | Run source: `api` or `web`                                        |
 | traffic      | 0                          | Integer | Traffic usage in bytes                                            |
-| version      | v1.0.1                     | String  | Worker version                                                    |
+| version      | v1.0.5                     | String  | Worker version                                                    |
 
 ## Error Response
 

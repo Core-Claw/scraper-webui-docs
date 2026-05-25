@@ -1,9 +1,12 @@
----
+﻿---
 title: Worker Detail
 description: Get the details of a Worker, including its parameter schema, readme, and latest version.
 sidebar:
-    order: 3
+    order: 2
 ---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
 
 **Method:** `GET`
 
@@ -11,17 +14,21 @@ sidebar:
 
 Send the request with query parameters. No authentication required.
 
+## Try it
+
+<ApiPlayground method="GET" path="/api/scraper" />
+
 ## Request Example
 
 ```bash
-curl "https://openapi.coreclaw.com/api/scraper?slug=01KJXYJ7KCHXM0PDZHQD5293XE"
+curl "https://openapi.coreclaw.com/api/scraper?slug=01KPD6M5YVHWCNQCRK32BD02TP"
 ```
 
 #### Parameters
 
 | Parameter | Example                          | Type   | Required | Description               |
 | --------- | -------------------------------- | ------ | -------- | ------------------------- |
-| slug      | 01KJXYJ7KCHXM0PDZHQD5293XE      | String | Yes      | Unique Worker identifier (`scraper_slug`) |
+| slug      | 01KPD6M5YVHWCNQCRK32BD02TP      | String | Yes      | Unique Worker identifier (`scraper_slug`) |
 
 ## Response Example
 
@@ -33,7 +40,7 @@ curl "https://openapi.coreclaw.com/api/scraper?slug=01KJXYJ7KCHXM0PDZHQD5293XE"
         "parameters": {
             "system": {
                 "cpus": 0.125,
-                "memory_bytes": 512,
+                "memory": 512,
                 "max_total_charge": 0,
                 "max_total_traffic": 0,
                 "execute_limit_time_seconds": 1800
@@ -55,7 +62,7 @@ curl "https://openapi.coreclaw.com/api/scraper?slug=01KJXYJ7KCHXM0PDZHQD5293XE"
             }
         },
         "readme": "# Worker README\n\nThis is the Worker description.",
-        "version": "v1.0.1"
+        "version": "v1.0.5"
     }
 }
 ```
@@ -74,16 +81,16 @@ curl "https://openapi.coreclaw.com/api/scraper?slug=01KJXYJ7KCHXM0PDZHQD5293XE"
 | ---------- | ------- | ------ | --------------------------------- |
 | parameters | -       | Object | Worker parameter schema           |
 | readme     | -       | String | Worker readme (Markdown)          |
-| version    | v1.0.1  | String | Latest Worker version             |
+| version    | v1.0.5  | String | Latest Worker version             |
 
 ##### `parameters.system` Fields
 
-> **Note:** This endpoint returns `memory_bytes`, while [Start Worker](/api/worker/run/) uses `memory` as the request field name. Both represent the same value in MB.
+> **Note:** This endpoint returns `memory`, while [Start Worker](/api/worker/run/) uses `memory` as the request field name. Both represent the same value in MB.
 
 | Parameter                   | Example | Type    | Description                        |
 | --------------------------- | ------- | ------- | ---------------------------------- |
 | cpus                        | 0.125   | number  | Device CPU cores                   |
-| memory_bytes                | 512     | Integer | Device memory (MB)                 |
+| memory                | 512     | Integer | Device memory (MB)                 |
 | max_total_charge            | 0       | Integer | Maximum execution charge (USD)     |
 | max_total_traffic           | 0       | Integer | Maximum execution traffic (MB)     |
 | execute_limit_time_seconds  | 1800    | Integer | Execution timeout (seconds)        |
@@ -104,7 +111,7 @@ Each item in `properties`:
 | type        | array                             | String  | Parameter type             |
 | title       | Start URLs                        | String  | Display title              |
 | editor      | json                              | String  | Editor type                |
-| default     | [{"url": "https://example.com"}]  | Array   | Default value              |
+| default     | Array of objects with `url` field  | Array   | Default value              |
 | required    | true                              | Boolean | Whether required           |
 | description | List of URLs to start crawling from | String | Parameter description      |
 

@@ -57,7 +57,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "google"
           },
           {
             "name": "limit",
@@ -134,7 +135,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "01KJXYJ7KCHXM0PDZHQD5293XE"
+            "example": "01KPD6M5YVHWCNQCRK32BD02TP"
           }
         ],
         "responses": {
@@ -156,7 +157,7 @@
                         "parameters": {
                           "system": {
                             "cpus": 0.125,
-                            "memory_bytes": 512,
+                            "memory": 512,
                             "max_total_charge": 0,
                             "max_total_traffic": 0,
                             "execute_limit_time_seconds": 1800
@@ -210,7 +211,7 @@
           "Runs"
         ],
         "summary": "Start scraper run",
-        "description": "Start a new Worker run by `scraper_slug`. Verified runtime rule: `callback_url` is optional; include it when webhook orchestration is needed. `version` must come from `/api/scraper`. `input.parameters.custom` is dynamic and must be derived from `/api/scraper`. `input.parameters.system.memory` is measured in MB and corresponds to `memory_bytes` returned by `/api/scraper`.",
+        "description": "Start a new Worker run by `scraper_slug`. Verified runtime rule: `callback_url` is optional; include it when webhook orchestration is needed. `version` must come from `/api/scraper`. `input.parameters.custom` is dynamic and must be derived from `/api/scraper`. `input.parameters.system.memory` is measured in MB and corresponds to `memory` returned by `/api/scraper`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -222,8 +223,8 @@
                 "async_run": {
                   "summary": "Async run with callback",
                   "value": {
-                    "scraper_slug": "01KGYERXPXTABWXMGQKFCE43M2",
-                    "version": "v1.0.1",
+                    "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP",
+                    "version": "v1.0.5",
                     "is_async": true,
                     "input": {
                       "parameters": {
@@ -236,9 +237,11 @@
                           "proxy_region": "US"
                         },
                         "custom": {
-                          "startURLs": [
+                          "url": [
                             {
-                              "url": "https://example.com"
+                              "lang": "en",
+                              "detail_url": "https://www.google.com/maps/place/Burger+King",
+                              "max_reviews_per_place": 20
                             }
                           ]
                         }
@@ -250,8 +253,8 @@
                 "sync_run": {
                   "summary": "Sync run without callback",
                   "value": {
-                    "scraper_slug": "01KGYERXPXTABWXMGQKFCE43M2",
-                    "version": "v1.0.1",
+                    "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP",
+                    "version": "v1.0.5",
                     "is_async": false,
                     "input": {
                       "parameters": {
@@ -263,9 +266,11 @@
                           "max_total_traffic": 0
                         },
                         "custom": {
-                          "startURLs": [
+                          "url": [
                             {
-                              "url": "https://example.com"
+                              "lang": "en",
+                              "detail_url": "https://www.google.com/maps/place/Burger+King",
+                              "max_reviews_per_place": 20
                             }
                           ]
                         }
@@ -273,6 +278,33 @@
                     }
                   }
                 }
+              },
+              "example": {
+                "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP",
+                "version": "v1.0.5",
+                "is_async": true,
+                "input": {
+                  "parameters": {
+                    "system": {
+                      "cpus": 0.125,
+                      "memory": 512,
+                      "execute_limit_time_seconds": 1800,
+                      "max_total_charge": 0,
+                      "max_total_traffic": 0,
+                      "proxy_region": "US"
+                    },
+                    "custom": {
+                      "url": [
+                        {
+                          "lang": "en",
+                          "detail_url": "https://www.google.com/maps/place/Burger+King",
+                          "max_reviews_per_place": 20
+                        }
+                      ]
+                    }
+                  }
+                },
+                "callback_url": "https://your-callback.example.com/webhook"
               }
             }
           }
@@ -333,7 +365,7 @@
                 "$ref": "#/components/schemas/TaskRunRequest"
               },
               "example": {
-                "task_slug": "01KK0G4W9W4JYTWEA55KMG5QKP",
+                "task_slug": "01KSFDXRNYGKT3NNE11EMR4W5X",
                 "callback_url": "https://your-callback.example.com/webhook"
               }
             }
@@ -395,7 +427,7 @@
                 "$ref": "#/components/schemas/RerunRequest"
               },
               "example": {
-                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH",
+                "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
                 "callback_url": "https://your-callback.example.com/webhook"
               }
             }
@@ -457,7 +489,7 @@
                 "$ref": "#/components/schemas/RunSlugRequest"
               },
               "example": {
-                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+                "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
               }
             }
           }
@@ -531,9 +563,9 @@
               },
               "example": {
                 "page_index": 1,
-                "page_size": 20,
+                "page_size": 10,
                 "status": 0,
-                "scraper_slug": ""
+                "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP"
               }
             }
           }
@@ -624,8 +656,8 @@
               },
               "example": {
                 "page_index": 1,
-                "page_size": 20,
-                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+                "page_size": 10,
+                "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
               }
             }
           }
@@ -715,8 +747,11 @@
                 "$ref": "#/components/schemas/RunResultExportRequest"
               },
               "example": {
-                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH",
-                "filter_keys": [],
+                "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
+                "filter_keys": [
+                  "title",
+                  "address"
+                ],
                 "format": "csv"
               }
             }
@@ -778,7 +813,7 @@
                 "$ref": "#/components/schemas/RunSlugRequest"
               },
               "example": {
-                "run_slug": "01KS2A1M515HG7PZX9STTB0KPH"
+                "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
               }
             }
           }
@@ -854,7 +889,7 @@
                 "$ref": "#/components/schemas/RunSlugRequest"
               },
               "example": {
-                "run_slug": "01KJYA4S1QQ1PMDVVRP7XH72C51"
+                "run_slug": "01KSFDS8XWTJME33C08XMCR6B9"
               }
             }
           }
@@ -990,7 +1025,8 @@
         "properties": {
           "run_slug": {
             "type": "string",
-            "description": "Unique run identifier returned by CoreClaw."
+            "description": "Unique run identifier returned by CoreClaw.",
+            "example": "01KSFDS8XWTJME33C08XMCR6B9"
           }
         },
         "required": [
@@ -1007,7 +1043,7 @@
           },
           "memory": {
             "type": "integer",
-            "description": "Memory allocation in MB. This corresponds to `memory_bytes` returned by `/api/scraper`.",
+            "description": "Memory allocation in MB. Corresponds to the memory value returned by /api/scraper.",
             "enum": [
               512,
               1024,
@@ -1032,7 +1068,8 @@
           "proxy_region": {
             "type": "string",
             "description": "ISO 3166-1 alpha-2 proxy region code. Defaults to `US` when omitted.",
-            "pattern": "^[A-Z]{2}$"
+            "pattern": "^[A-Z]{2}$",
+            "default": "US"
           }
         },
         "required": [
@@ -1051,9 +1088,9 @@
             "type": "number",
             "description": "Default CPU allocation."
           },
-          "memory_bytes": {
+          "memory": {
             "type": "integer",
-            "description": "Default memory allocation in MB. Map this value to `input.parameters.system.memory` when calling `/api/v1/scraper/run`."
+            "description": "Default memory allocation in MB."
           },
           "max_total_charge": {
             "type": "number",
@@ -1070,7 +1107,7 @@
         },
         "required": [
           "cpus",
-          "memory_bytes",
+          "memory",
           "max_total_charge",
           "max_total_traffic",
           "execute_limit_time_seconds"
@@ -1111,11 +1148,13 @@
         "properties": {
           "scraper_slug": {
             "type": "string",
-            "description": "Unique scraper identifier."
+            "description": "Unique scraper identifier.",
+            "example": "01KPD6M5YVHWCNQCRK32BD02TP"
           },
           "version": {
             "type": "string",
-            "description": "Scraper version. Must be copied from `/api/scraper` -> `data.version`."
+            "description": "Scraper version. Must be copied from `/api/scraper` -> `data.version`.",
+            "example": "v1.0.5"
           },
           "is_async": {
             "type": "boolean",
@@ -1412,12 +1451,14 @@
           "page_index": {
             "type": "integer",
             "description": "1-based page index.",
-            "minimum": 1
+            "minimum": 1,
+            "default": 1
           },
           "page_size": {
             "type": "integer",
             "description": "Page size.",
-            "minimum": 1
+            "minimum": 1,
+            "default": 10
           },
           "run_slug": {
             "type": "string",
@@ -1425,8 +1466,6 @@
           }
         },
         "required": [
-          "page_index",
-          "page_size",
           "run_slug"
         ]
       },
@@ -1450,12 +1489,22 @@
             "items": {
               "$ref": "#/components/schemas/RunResultRecord"
             }
+          },
+          "page_index": {
+            "type": "integer",
+            "description": "Current page number (1-based)."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of records per page."
           }
         },
         "required": [
           "count",
           "headers",
-          "list"
+          "list",
+          "page_index",
+          "page_size"
         ]
       },
       "RunResultListResponse": {
@@ -1503,6 +1552,7 @@
         },
         "required": [
           "run_slug",
+          "filter_keys",
           "format"
         ]
       },
