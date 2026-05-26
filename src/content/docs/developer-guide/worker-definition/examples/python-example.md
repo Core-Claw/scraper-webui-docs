@@ -10,7 +10,7 @@ Learn how to build a Worker using Python.
 ## GitHub Repository
 
 Python Script Demo Repository:
-[PythonScirptDemo](https://github.com/Core-Claw/PythonScirptDemo)
+[Python-Worker-Demo](https://github.com/Core-Claw/Python-Worker-Demo)
 
 ---
 

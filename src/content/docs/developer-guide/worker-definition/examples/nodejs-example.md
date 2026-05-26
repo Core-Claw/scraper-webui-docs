@@ -10,7 +10,7 @@ Learn how to build a Worker using Node.js.
 ## GitHub Repository
 
 Node.js Script Demo Repository:
-[NodeScirptDemo](https://github.com/Core-Claw/NodeScirptDemo)
+[Node-Worker-Demo](https://github.com/Core-Claw/Node-Worker-Demo)
 
 ---
 

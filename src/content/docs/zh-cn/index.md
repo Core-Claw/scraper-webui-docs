@@ -1,4 +1,4 @@
----
+﻿---
 title: "文档中心"
 description: "CoreClaw 致力于为不同背景和技术能力的用户提供高效、稳定、可扩展的数据采集解决方案。"
 template: splash
@@ -254,7 +254,7 @@ template: splash
 					<div class="updates-item-title">邀请计划上线</div>
 					<div class="updates-item-desc">邀请好友注册获取奖励活动</div>
 				</div>
-				<span class="updates-item-date">2025-04-16</span>
+				<span class="updates-item-date">2026-04-16</span>
 			</a>
 		</div>
 		<div class="updates-hint">💡 文档持续更新中</div>

@@ -10,7 +10,7 @@ sidebar:
 ## GitHub 仓库
 
 Go 脚本示例仓库：
-[GoScirptDemo](https://github.com/Core-Claw/GoScirptDemo)
+[Go-Worker-Demo](https://github.com/Core-Claw/Go-Worker-Demo)
 
 ---
 

@@ -10,7 +10,7 @@ Learn how to build a Worker using Go.
 ## GitHub Repository
 
 Go Script Demo Repository:
-[GoScirptDemo](https://github.com/Core-Claw/GoScirptDemo)
+[Go-Worker-Demo](https://github.com/Core-Claw/Go-Worker-Demo)
 
 ---
 

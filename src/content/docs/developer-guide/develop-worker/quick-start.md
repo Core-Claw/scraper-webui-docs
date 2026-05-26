@@ -35,19 +35,19 @@ Local mode development support (running Workers locally with the CoreClaw SDK) i
 
 Choose your preferred language and clone the demo repository:
 
-- **Python**: [PythonScirptDemo](https://github.com/Core-Claw/PythonScirptDemo)
-- **Node.js**: [NodeScirptDemo](https://github.com/Core-Claw/NodeScirptDemo)
-- **Go**: [GoScirptDemo](https://github.com/Core-Claw/GoScirptDemo)
+- **Python**: [Python-Worker-Demo](https://github.com/Core-Claw/Python-Worker-Demo)
+- **Node.js**: [Node-Worker-Demo](https://github.com/Core-Claw/Node-Worker-Demo)
+- **Go**: [Go-Worker-Demo](https://github.com/Core-Claw/Go-Worker-Demo)
 
 ```bash
 # Python
-git clone https://github.com/Core-Claw/PythonScirptDemo.git
+git clone https://github.com/Core-Claw/Python-Worker-Demo.git
 
 # Node.js
-git clone https://github.com/Core-Claw/NodeScirptDemo.git
+git clone https://github.com/Core-Claw/Node-Worker-Demo.git
 
 # Go
-git clone https://github.com/Core-Claw/GoScirptDemo.git
+git clone https://github.com/Core-Claw/Go-Worker-Demo.git
 ```
 
 ### 2. Project Structure

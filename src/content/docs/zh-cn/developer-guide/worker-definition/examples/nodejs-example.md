@@ -10,7 +10,7 @@ sidebar:
 ## GitHub 仓库
 
 Node.js 脚本示例仓库：
-[NodeScirptDemo](https://github.com/Core-Claw/NodeScirptDemo)
+[Node-Worker-Demo](https://github.com/Core-Claw/Node-Worker-Demo)
 
 ---
 

@@ -581,8 +581,6 @@ export default defineConfig({
                                 },
                             ],
                         },
-                        // Single-endpoint group flattened — was a one-item
-                        // collapsible folder, now shows up directly.
                         {
                             label: 'Start Task',
                             slug: 'api/task/run',

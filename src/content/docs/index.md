@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Home'
 description: CoreClaw is dedicated to providing efficient, stable, and scalable data acquisition solutions for users with diverse backgrounds and technical capabilities.
 template: splash
@@ -254,7 +254,7 @@ template: splash
 					<div class="updates-item-title">Invitation Program Launched</div>
 					<div class="updates-item-desc">Invite friends to register and earn rewards through the new invitation campaign</div>
 				</div>
-				<span class="updates-item-date">2025-04-16</span>
+				<span class="updates-item-date">2026-04-16</span>
 			</a>
 		</div>
 		<div class="updates-hint">💡 Documentation is continuously updated</div>

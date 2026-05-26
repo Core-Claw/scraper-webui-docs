@@ -35,19 +35,19 @@ CoreClaw 支持两种 Worker 开发方式：
 
 选择您偏好的语言并克隆演示仓库：
 
-- **Python**：[PythonScirptDemo](https://github.com/Core-Claw/PythonScirptDemo)
-- **Node.js**：[NodeScirptDemo](https://github.com/Core-Claw/NodeScirptDemo)
-- **Go**：[GoScirptDemo](https://github.com/Core-Claw/GoScirptDemo)
+- **Python**：[Python-Worker-Demo](https://github.com/Core-Claw/Python-Worker-Demo)
+- **Node.js**：[Node-Worker-Demo](https://github.com/Core-Claw/Node-Worker-Demo)
+- **Go**：[Go-Worker-Demo](https://github.com/Core-Claw/Go-Worker-Demo)
 
 ```bash
 # Python
-git clone https://github.com/Core-Claw/PythonScirptDemo.git
+git clone https://github.com/Core-Claw/Python-Worker-Demo.git
 
 # Node.js
-git clone https://github.com/Core-Claw/NodeScirptDemo.git
+git clone https://github.com/Core-Claw/Node-Worker-Demo.git
 
 # Go
-git clone https://github.com/Core-Claw/GoScirptDemo.git
+git clone https://github.com/Core-Claw/Go-Worker-Demo.git
 ```
 
 ### 2. 项目结构

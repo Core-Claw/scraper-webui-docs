@@ -10,7 +10,7 @@ sidebar:
 ## GitHub 仓库
 
 Python 脚本示例仓库：
-[PythonScirptDemo](https://github.com/Core-Claw/PythonScirptDemo)
+[Python-Worker-Demo](https://github.com/Core-Claw/Python-Worker-Demo)
 
 ---
 
