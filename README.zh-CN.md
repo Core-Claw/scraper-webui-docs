@@ -124,4 +124,4 @@ pnpm run preview      # 预览构建结果
 
 - [Astro 文档](https://docs.astro.build/)
 - [Starlight 文档](https://starlight.astro.build/)
-- [CoreClaw 文档（线上）](https://docs.coreclaw.com/
+- [CoreClaw 文档（线上）](https://docs.coreclaw.com/)
