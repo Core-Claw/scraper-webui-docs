@@ -499,7 +499,7 @@ export default defineConfig({
                                     label: 'Start Worker',
                                     slug: 'api/worker/run',
                                     translations: {
-                                        'zh-CN': '运行爬虫',
+                                        'zh-CN': '运行 Worker',
                                     },
                                 },
                                 {
@@ -520,7 +520,7 @@ export default defineConfig({
                                     label: 'Abort Worker',
                                     slug: 'api/worker/abort',
                                     translations: {
-                                        'zh-CN': '中止爬虫',
+                                        'zh-CN': '中止 Worker',
                                     },
                                 },
                             ],

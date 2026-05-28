@@ -11,7 +11,7 @@ CoreClaw 文档按受众划分为以下内容区域：
 ### 内容区域
 
 | 区域 | 受众 | 内容 |
-| --- | --- | --- |
+|------|------|------|
 | 用户指南 | 终端用户 | 运行 Worker、查看结果、计费规则、API 调用、常见问题 |
 | 开发者指南 | Worker 开发者 | 构建、测试、发布和变现 Worker |
 | API 参考 | API 调用方 | 完整的接口文档，含请求/响应 schema |
@@ -57,7 +57,7 @@ OpenAPI 规范文件位于 `public/openapi.json`，通过 `/openapi.json` 对外
 
 ## 仓库结构
 
-```text
+```
 .
 ├── public/                         # 静态资源（直接输出）
 │   ├── openapi.json                #   OpenAPI 规范（通过 /openapi.json 提供）
@@ -93,7 +93,7 @@ OpenAPI 规范文件位于 `public/openapi.json`，通过 `/openapi.json` 对外
 ## 技术栈
 
 | 组件 | 用途 |
-| --- | --- |
+|------|------|
 | [Astro](https://astro.build/) | 静态站点生成 |
 | [Starlight](https://starlight.astro.build/) | 文档主题（侧边栏、搜索、国际化） |
 | [React](https://react.dev/) | 交互式 UI 组件 |
@@ -124,4 +124,4 @@ pnpm run preview      # 预览构建结果
 
 - [Astro 文档](https://docs.astro.build/)
 - [Starlight 文档](https://starlight.astro.build/)
-- [CoreClaw 文档（线上）](https://docs.coreclaw.com/)
+- [CoreClaw 文档（线上）](https://docs.coreclaw.com/
