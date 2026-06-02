@@ -215,7 +215,19 @@ Business Logic & Data Processing
 └── Local storage or real-time delivery
 ```
 
-## 6. Conclusion
+## 6. Browser Backends and Connection Endpoints
+
+Browser automation frameworks and browser backends are separate layers:
+
+| Layer | Examples | Responsibility |
+| --- | --- | --- |
+| Automation framework | Playwright, Puppeteer, Selenium, DrissionPage | Provides the API used by Worker code |
+| Browser backend | Remote fingerprint browser, Lightpanda | Runs the actual browser process and network environment |
+| Platform runtime | `ChromeWs`, `ChromeHttp`, `LightpandaDomain`, `PROXY_AUTH` | Injects connection endpoints and credentials |
+
+For example, Playwright can connect to either the remote fingerprint browser through `ChromeWs` or the Lightpanda CDP endpoint through `LightpandaDomain`. The scraping logic still uses Playwright APIs; only the remote browser endpoint changes.
+
+## 7. Conclusion
 
 When the target website is a **modern Web application** rather than a traditional static page, **using a real browser environment is not an optimization—it is a prerequisite**.
 

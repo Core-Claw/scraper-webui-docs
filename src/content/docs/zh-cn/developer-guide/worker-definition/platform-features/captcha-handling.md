@@ -32,6 +32,12 @@ Captchas.automaticSolver
 | timeout | number | 验证码绕过最大等待时间（秒） |
 | solverType | string | 验证码类型（见下方映射表） |
 
+### 返回值处理
+
+`Captchas.automaticSolver` 不保证一定成功。该命令可能返回 `status=false`，也可能在目标页面没有可识别验证码时返回类似 `target page don't have verify code` 的信息。
+
+调用方必须先根据返回的 `status` 分支处理，再决定是否继续后续流程。不要只假设验证码已经绕过成功；非成功返回应结合当前页面状态和业务逻辑处理。
+
 ## 各框架示例
 
 ### DrissionPage (Python)
@@ -46,7 +52,7 @@ result = page.run_cdp(
 if result.get("status", False) == True:
     print("绕过成功")
 else:
-    print("绕过失败")
+    print(f"绕过未完成: {result}")
 ```
 
 ### Playwright (Python)
@@ -64,6 +70,8 @@ result = await cdp_session.send(
 
 if result.get("status", False):
     print("绕过成功")
+else:
+    print(f"绕过未完成: {result}")
 ```
 
 ### Puppeteer (Node.js)
@@ -78,6 +86,8 @@ const result = await client.send('Captchas.automaticSolver', {
 
 if (result.status) {
     console.log('绕过成功')
+} else {
+    console.log('绕过未完成:', result)
 }
 ```
 
@@ -97,5 +107,5 @@ if (result.status) {
 | TikTok 双螺旋滑块验证码 | tiktok_slide_auto |
 
 :::note[使用说明]
-当 `status = true` 时，验证码已成功处理。您可以直接继续登录、数据采集、表单提交或其他业务逻辑。
+当 `status = true` 时，验证码已成功处理。如果 `status = false`，或返回信息为 `target page don't have verify code`，需要先检查当前页面状态并显式处理该分支，再继续登录、数据采集、表单提交或其他业务逻辑。
 :::

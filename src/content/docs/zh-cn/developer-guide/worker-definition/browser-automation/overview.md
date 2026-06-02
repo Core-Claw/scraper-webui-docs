@@ -212,7 +212,19 @@ SDK
 | DrissionPage, Playwright, Selenium, Puppeteer  | 页面访问、JS 渲染、DOM 解析   |
 | 指纹浏览器环境                                 | 由平台统一托管（代理 / 指纹） |
 
-## 五、结论
+## 五、浏览器后端与连接端点
+
+浏览器自动化框架和浏览器后端属于不同层级：
+
+| 层级 | 示例 | 职责 |
+| --- | --- | --- |
+| 自动化框架 | Playwright、Puppeteer、Selenium、DrissionPage | 提供 Worker 代码使用的 API |
+| 浏览器后端 | 远程指纹浏览器、Lightpanda | 运行真实浏览器进程和网络环境 |
+| 平台运行环境 | `ChromeWs`、`ChromeHttp`、`LightpandaDomain`、`PROXY_AUTH` | 注入连接端点和认证信息 |
+
+例如，Playwright 既可以通过 `ChromeWs` 连接远程指纹浏览器，也可以通过 `LightpandaDomain` 连接 Lightpanda CDP 端点。采集逻辑仍然使用 Playwright API，变化的只是远程浏览器端点。
+
+## 六、结论
 
 > 当目标站点是"现代Web应用"而非"传统网页"时，使用真实浏览器环境不是优化选择，而是基本前提。
 

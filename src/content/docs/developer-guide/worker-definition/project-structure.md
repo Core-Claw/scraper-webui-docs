@@ -36,7 +36,7 @@ sidebar:
 ### Go Project
 
 ```
-├── main.go                 # Main entry file
+├── main.go                 # Source entry file
 ├── go.mod                  # Go module file
 ├── go.sum                  # Go dependencies checksum
 ├── README.md               # Project documentation
@@ -52,7 +52,8 @@ sidebar:
 
 ### Core Entry File
 
-- **main.py** / **main.js** / **main.go**: The main entry point for the Worker project.
+- **main.py** / **main.js**: The runtime entry point for Python and Node.js Workers.
+- **main.go**: The source entry point for Go Workers. Go ZIP uploads must include the compiled Linux amd64 executable `main` at the ZIP root.
 - The filename **must** be `main`, with the extension depending on the chosen language.
 
 ### Dependency Management

@@ -292,6 +292,7 @@ export default defineConfig({
                                 {
                                     label: 'Output Schema',
                                     slug: 'developer-guide/worker-definition/output-schema',
+                                    badge: { text: 'Required', variant: 'danger' },
                                     translations: {
                                         'zh-CN': '输出配置',
                                     },
@@ -353,6 +354,13 @@ export default defineConfig({
                                             slug: 'developer-guide/worker-definition/browser-automation/playwright',
                                             translations: {
                                                 'zh-CN': 'Playwright',
+                                            },
+                                        },
+                                        {
+                                            label: 'Lightpanda',
+                                            slug: 'developer-guide/worker-definition/browser-automation/lightpanda',
+                                            translations: {
+                                                'zh-CN': 'Lightpanda',
                                             },
                                         },
                                         {

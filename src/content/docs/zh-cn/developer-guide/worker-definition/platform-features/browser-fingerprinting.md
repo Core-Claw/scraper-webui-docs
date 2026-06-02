@@ -21,6 +21,8 @@ sidebar:
 | **连接方式** | `WebSocket` |
 | **认证变量** | `PROXY_AUTH` |
 | **认证格式** | `username:password` |
+| **指纹浏览器端点** | `ChromeWs` |
+| **Lightpanda 端点** | `LightpandaDomain` |
 | **定价** | 内置，无额外费用 |
 
 ## Python 示例

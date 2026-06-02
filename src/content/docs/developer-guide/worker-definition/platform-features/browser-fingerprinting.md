@@ -21,6 +21,8 @@ This environment is used for operations that require a real browser context, suc
 | **Connection Method** | `WebSocket` |
 | **Authentication Variable** | `PROXY_AUTH` |
 | **Authentication Format** | `username:password` |
+| **Fingerprint Browser Endpoint** | `ChromeWs` |
+| **Lightpanda Endpoint** | `LightpandaDomain` |
 | **Pricing** | Built-in, no additional cost |
 
 ## Python Example

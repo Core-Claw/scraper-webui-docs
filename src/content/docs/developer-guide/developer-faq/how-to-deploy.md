@@ -80,5 +80,5 @@ Before publishing, test your Worker:
 **Cause:** Incorrect file names
 
 **Solution:**
-- Entry file must be `main.py` / `main.js` / `main.go`
+- Runtime entry must be `main.py` for Python, `main.js` for Node.js, or the compiled Linux amd64 executable `main` for Go
 - Check file paths in code

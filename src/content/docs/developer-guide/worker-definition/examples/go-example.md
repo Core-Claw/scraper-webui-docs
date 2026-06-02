@@ -14,7 +14,7 @@ Go Script Demo Repository:
 
 ---
 
-## Required Files (Project Root Directory)
+## Required Files (Source Project Root Directory)
 
 ```text
 ├── main.go              # Script source file
@@ -28,11 +28,21 @@ Go Script Demo Repository:
     └── sdk_grpc.pb.go
 ```
 
+## Required Files (Uploaded ZIP Root Directory)
+
+```text
+├── main                 # Compiled Linux amd64 executable
+├── input_schema.json    # Input form configuration
+└── output_schema.json   # Output table configuration
+```
+
+The uploaded ZIP can include additional runtime assets if your Worker needs them, but `main` must be present at the ZIP root and executable on Linux.
+
 ### File Overview
 
 | File | Description |
 | ---- | ----------- |
-| **main.go** | Script source file (execution entry) |
+| **main.go** | Script source entry file |
 | **go.mod** | Go module definition file |
 | **go.sum** | Dependencies checksum file |
 | **input_schema.json** | UI input form configuration file |
@@ -42,6 +52,18 @@ Go Script Demo Repository:
 | **GoSdk/sdk_grpc.pb.go** | Network communication module |
 
 The `GoSdk/` directory contains the three required SDK files. Together they form the script's **toolbox**, providing all essential capabilities for Worker execution and interaction with the platform backend.
+
+## Source, Upload, and Runtime Structure
+
+Go Workers have three separate layers:
+
+| Layer | Required content |
+| ----- | ---------------- |
+| Source project | `main.go`, `go.mod`, `go.sum`, `GoSdk/`, `input_schema.json`, `output_schema.json` |
+| Uploaded ZIP | A Linux amd64 executable named `main` at the ZIP root |
+| Platform runtime | The compiled `main` process and any runtime files explicitly included in the package |
+
+The source entry is `main.go`. The upload and runtime entry is the compiled executable `main`. Do not assume that source files such as `main.go`, `go.mod`, `go.sum`, or `GoSdk/` are still present in the current working directory after the platform starts the Worker.
 
 :::important
 Go scripts must be compiled before uploading. Build a Linux executable and include it in the ZIP package:
@@ -54,6 +76,10 @@ go build -o main ./main.go
 ```
 
 It is recommended to use [UPX](https://upx.github.io/) to compress the executable and significantly reduce file size.
+:::
+
+:::caution[Windows packaging]
+Some ordinary Windows compression tools can drop the Linux executable bit from the Go `main` binary. If that bit is lost, the Worker may fail before user code starts, sometimes without Worker logs. For Go ZIP uploads, prefer creating the final archive in Linux or WSL after running `chmod +x main`.
 :::
 
 ---
@@ -158,7 +184,7 @@ for _, item := range collectedData {
 
 ---
 
-## Script Entry File (main.go)
+## Source Entry File (main.go)
 
 ### Complete Example
 

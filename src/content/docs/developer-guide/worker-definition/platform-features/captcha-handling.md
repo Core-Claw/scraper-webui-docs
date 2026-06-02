@@ -32,6 +32,12 @@ Captchas.automaticSolver
 | timeout | number | Maximum wait time for CAPTCHA bypass (seconds) |
 | solverType | string | CAPTCHA type (see mapping table below) |
 
+### Return Value Handling
+
+`Captchas.automaticSolver` does not guarantee success. The command may return `status=false`, or a message such as `target page don't have verify code` when the target page has no detectable verification code.
+
+Always branch on the returned `status` before continuing. Treat non-success responses according to your page state and business flow instead of assuming that the CAPTCHA was solved.
+
 ## Framework Examples
 
 ### DrissionPage (Python)
@@ -46,7 +52,7 @@ result = page.run_cdp(
 if result.get("status", False) == True:
     print("Bypass successful")
 else:
-    print("Bypass failed")
+    print(f"Bypass not completed: {result}")
 ```
 
 ### Playwright (Python)
@@ -64,6 +70,8 @@ result = await cdp_session.send(
 
 if result.get("status", False):
     print("Bypass successful")
+else:
+    print(f"Bypass not completed: {result}")
 ```
 
 ### Puppeteer (Node.js)
@@ -78,6 +86,8 @@ const result = await client.send('Captchas.automaticSolver', {
 
 if (result.status) {
     console.log('Bypass successful')
+} else {
+    console.log('Bypass not completed:', result)
 }
 ```
 
@@ -97,5 +107,5 @@ if (result.status) {
 | TikTok Double-Spiral Slider CAPTCHA | tiktok_slide_auto |
 
 :::note[Usage]
-When `status = true`, the CAPTCHA has been successfully handled. You can directly proceed with login, data collection, form submission, or other business logic.
+When `status = true`, the CAPTCHA has been successfully handled. If `status = false` or the response says `target page don't have verify code`, check the current page state and handle that branch explicitly before continuing with login, data collection, form submission, or other business logic.
 :::

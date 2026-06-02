@@ -36,7 +36,7 @@ sidebar:
 ### Go 项目
 
 ```
-├── main.go                 # 主入口文件
+├── main.go                 # 源码入口文件
 ├── go.mod                  # Go 模块文件
 ├── go.sum                  # Go 依赖校验
 ├── README.md               # 项目文档
@@ -52,7 +52,8 @@ sidebar:
 
 ### 核心入口文件
 
-- **main.py** / **main.js** / **main.go**：Worker 项目的主入口点。
+- **main.py** / **main.js**：Python 和 Node.js Worker 的运行入口点。
+- **main.go**：Go Worker 的源码入口点。Go ZIP 上传必须在根目录包含编译后的 Linux amd64 可执行文件 `main`。
 - 文件名**必须**是 `main`，扩展名取决于所选语言。
 
 ### 依赖管理

@@ -14,7 +14,7 @@ Go 脚本示例仓库：
 
 ---
 
-## 必需文件（项目根目录）
+## 必需文件（源码项目根目录）
 
 ```text
 ├── main.go              # 脚本源码文件
@@ -28,11 +28,21 @@ Go 脚本示例仓库：
     └── sdk_grpc.pb.go
 ```
 
+## 必需文件（上传 ZIP 根目录）
+
+```text
+├── main                 # 编译后的 Linux amd64 可执行文件
+├── input_schema.json    # 输入表单配置
+└── output_schema.json   # 输出表格配置
+```
+
+如果 Worker 运行时需要其他资源文件，也可以一起放入上传 ZIP；但 `main` 必须位于 ZIP 根目录，并且在 Linux 上具有可执行权限。
+
 ### 文件概览
 
 | 文件 | 说明 |
 | ---- | ---- |
-| **main.go** | 脚本源码文件（执行入口） |
+| **main.go** | 脚本源码入口文件 |
 | **go.mod** | Go 模块定义文件 |
 | **go.sum** | 依赖校验和文件 |
 | **input_schema.json** | UI 输入表单配置文件 |
@@ -42,6 +52,18 @@ Go 脚本示例仓库：
 | **GoSdk/sdk_grpc.pb.go** | 网络通信模块 |
 
 `GoSdk/` 目录包含三个必需的 SDK 文件。它们共同构成脚本的**工具箱**，提供 Worker 执行和与平台后端交互所需的所有核心能力。
+
+## 源码、上传包与运行时结构
+
+Go Worker 需要区分三层结构：
+
+| 层级 | 必需内容 |
+| ---- | -------- |
+| 源码项目 | `main.go`、`go.mod`、`go.sum`、`GoSdk/`、`input_schema.json`、`output_schema.json` |
+| 上传 ZIP | ZIP 根目录下名为 `main` 的 Linux amd64 可执行文件 |
+| 平台运行时 | 编译后的 `main` 进程，以及打包时明确保留的运行时文件 |
+
+源码入口是 `main.go`。上传和运行入口是编译后的可执行文件 `main`。平台启动 Worker 后，不要假设 `main.go`、`go.mod`、`go.sum` 或 `GoSdk/` 等源码文件仍存在于当前工作目录。
 
 :::important
 Go 脚本必须先编译再上传。构建 Linux 可执行文件并包含在 ZIP 包中：
@@ -54,6 +76,10 @@ go build -o main ./main.go
 ```
 
 建议使用 [UPX](https://upx.github.io/) 压缩可执行文件，显著减小体积。
+:::
+
+:::caution[Windows 打包注意事项]
+部分普通 Windows 压缩工具可能会丢失 Go `main` 二进制文件的 Linux executable bit。如果该权限位丢失，Worker 可能在用户代码启动前失败，有时不会产生 Worker 日志。Go ZIP 上传建议在 Linux 或 WSL 中执行 `chmod +x main` 后再创建最终压缩包。
 :::
 
 ---
@@ -158,7 +184,7 @@ for _, item := range collectedData {
 
 ---
 
-## 脚本入口文件（main.go）
+## 源码入口文件（main.go）
 
 ### 完整示例
 

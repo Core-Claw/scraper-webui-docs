@@ -80,5 +80,5 @@ sidebar:
 **原因：** 文件名不正确
 
 **解决方案：**
-- 入口文件必须是 `main.py` / `main.js` / `main.go`
+- 运行入口必须是 Python 的 `main.py`、Node.js 的 `main.js`，或 Go 编译后的 Linux amd64 可执行文件 `main`
 - 检查代码中的文件路径
