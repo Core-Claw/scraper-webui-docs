@@ -327,3 +327,4 @@ Developers can logically group multiple configuration items by using specific fi
 1. **Write clear descriptions**: Make sure `description` is clear and accurate. This helps your script get discovered by more target users.
 2. **Set sensible defaults**: A reasonable `default` value lets users run the script immediately and greatly lowers the barrier to entry.
 3. **Validate required fields**: For parameters without which the script cannot run, such as login cookies or the main URL, be sure to set `"required": true`.
+4. **Max results naming**: If your Worker accepts a maximum-results parameter, use the field name `max_results`. This is the conventional name recognized by the platform and downstream integrations.

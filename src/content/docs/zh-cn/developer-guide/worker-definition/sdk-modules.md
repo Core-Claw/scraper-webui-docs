@@ -185,6 +185,7 @@ res, err := coresdk.Result.SetTableHeader(ctx, headers)
 * **key**：代码中使用的唯一标识（建议小写+下划线）
 * **format**：数据类型，支持以下值：
   * `"text"`：字符串/文本
+  * `"number"`：数值（整数或浮点数）
   * `"integer"`：整数
   * `"boolean"`：布尔值（true / false）
   * `"array"`：列表/数组
@@ -237,7 +238,7 @@ for i, news := range newsData {
 
 ##### 注意事项
 
-* 表头定义和数据推送**顺序不限**
+* 表头定义**必须在第一次推送数据之前完成**
 * 数据的 key **必须与表头 key 完全一致**（区分大小写）
 * 数据必须**逐条推送**
 * 建议每次推送后记录日志

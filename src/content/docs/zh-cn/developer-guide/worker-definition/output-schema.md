@@ -44,7 +44,7 @@ sidebar:
 | 属性           | 是否必填 | 说明                                                       |
 | -------------- | -------- | ---------------------------------------------------------- |
 | **name**       | 是       | 列标识符。必须与 `push_data` 中使用的键名一致。必须唯一。 |
-| **type**       | 是       | 列的数据类型。支持：`string`、`integer`、`boolean`、`array`、`object` |
+| **type**       | 是       | 列的数据类型。支持：`string`、`number`、`integer`、`boolean`、`array`、`object` |
 | **description**| 否       | 列描述。在 UI 中作为列标题标签显示。                       |
 
 ## 与 SDK 的关系

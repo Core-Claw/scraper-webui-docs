@@ -185,6 +185,7 @@ res, err := coresdk.Result.SetTableHeader(ctx, headers)
 * **key**: Unique identifier used in code (recommended lowercase with underscores)
 * **format**: Data type, supported values:
   * `"text"`: String / text
+  * `"number"`: Number (integer or float)
   * `"integer"`: Integer
   * `"boolean"`: Boolean (true / false)
   * `"array"`: List / array
@@ -237,7 +238,7 @@ for i, news := range newsData {
 
 ##### Important Notes
 
-* Header definition and data pushing **can be done in either order**
+* Header definition **must be done before** the first data push
 * Data keys **must exactly match** the header keys (case-sensitive)
 * Data must be pushed **one record at a time**
 * Logging after each push is recommended

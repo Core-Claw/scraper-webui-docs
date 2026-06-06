@@ -44,7 +44,7 @@ Each column definition contains the following properties:
 | Property       | Required | Description                                                                                   |
 | -------------- | -------- | --------------------------------------------------------------------------------------------- |
 | **name**       | Yes      | Column identifier. Must match the key name used in `push_data`. Must be unique.              |
-| **type**       | Yes      | Data type of the column. Supported values: `string`, `integer`, `boolean`, `array`, `object` |
+| **type**       | Yes      | Data type of the column. Supported values: `string`, `number`, `integer`, `boolean`, `array`, `object` |
 | **description**| No       | Column description. Displayed as the column header label in the UI.                          |
 
 ## Relationship with SDK
