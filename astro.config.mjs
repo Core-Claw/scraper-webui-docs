@@ -643,6 +643,31 @@ export default defineConfig({
                     ],
                 },
                 {
+                    label: 'Integrations',
+                    collapsed: true,
+                    translations: {
+                        'zh-CN': '集成',
+                    },
+                    items: [
+                        {
+                            label: 'Workflows & notifications',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': '工作流与通知',
+                            },
+                            items: [
+                                {
+                                    label: 'n8n',
+                                    slug: 'integrations/workflows-and-notifications/n8n',
+                                    translations: {
+                                        'zh-CN': 'n8n',
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
                     label: 'Events',
                     collapsed: true,
                     translations: {
