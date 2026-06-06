@@ -1,9 +1,9 @@
 ---
-
-## title: n8n
+title: n8n
 description: Connect CoreClaw to n8n workflows using the CoreClaw community node
 sidebar:
   order: 1
+---
 
 Use [n8n](https://n8n.io/) to build automated workflows that trigger CoreClaw Workers, poll run status, and route results to any service — no code required.
 
@@ -212,6 +212,8 @@ Full API reference: [API Integration](/api/integration/).
 2. Check **Settings → Community Nodes** — the node should be listed there.
 3. If using n8n Cloud, ensure verified community nodes are enabled in the Cloud Admin Panel.
 
+
+
 **Invalid API key error**
 
 1. Verify the API key in the [CoreClaw Console](https://console.coreclaw.com/settings/integrations).
@@ -226,6 +228,8 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
 ```
 
 A successful response contains `code: 0`.
+
+
 
 **Worker-specific input fields**
 
@@ -243,3 +247,4 @@ curl "https://openapi.coreclaw.com/api/scraper?slug=YOUR_SCRAPER_SLUG"
 ```
 
 The response contains `data.parameters.custom.properties` — each entry maps to an input field.
+
