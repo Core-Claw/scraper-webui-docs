@@ -36,15 +36,15 @@ For n8n Cloud users, installation is straightforward — search and add the node
 2. Open the **nodes panel** (click the **+** button on the canvas).
 3. Search for **CoreClaw** in the community node registry.
 
-![Search for CoreClaw node in n8n](@/assets/docs/n8n-1.png)
+Search for CoreClaw node in n8n
 
-4. Click **Install node** to add the CoreClaw node to your instance.
+1. Click **Install node** to add the CoreClaw node to your instance.
 
-![Install n8n-nodes-coreclaw package](@/assets/docs/n8n-2.png)
+Install n8n-nodes-coreclaw package
 
 After installation, you can find the CoreClaw node under **Community Nodes** in the nodes panel.
 
-![CoreClaw node in Community Nodes list](@/assets/docs/n8n-3.png)
+CoreClaw node in Community Nodes list
 
 ### Create credentials
 
@@ -53,14 +53,14 @@ Before using the CoreClaw node, you need to create a credential with your CoreCl
 1. In n8n, go to **Credentials** → **Add Credential**.
 2. Search for **CoreClaw API** and select it.
 
-![Create CoreClaw API credential](@/assets/docs/n8n-4.png)
+Create CoreClaw API credential
 
-3. Enter a name for the credential (e.g., "CoreClaw Production").
-4. In the **API Key** field, paste the API key you copied from the [CoreClaw Console](https://console.coreclaw.com/settings/integrations).
+1. Enter a name for the credential (e.g., "CoreClaw Production").
+2. In the **API Key** field, paste the API key you copied from the [CoreClaw Console](https://console.coreclaw.com/settings/integrations).
 
-![Enter API key and save credential](@/assets/docs/n8n-5.png)
+Enter API key and save credential
 
-5. Click **Save** to store the credential.
+1. Click **Save** to store the credential.
 
 You can now use this credential in any CoreClaw node in your workflows.
 
@@ -95,30 +95,36 @@ The CoreClaw node is organized by **resource** (Scraper, Run, Task, Account). Se
 
 Search the CoreClaw marketplace for ready-to-run scrapers by keyword.
 
-| Field   | Description                                                            |
-| ------- | ---------------------------------------------------------------------- |
-| **Query** | Keyword matched against scraper title / description / tags             |
-| **Limit** | Max number of results to return (1–100, default: 50)                   |
+
+| Field     | Description                                                |
+| --------- | ---------------------------------------------------------- |
+| **Query** | Keyword matched against scraper title / description / tags |
+| **Limit** | Max number of results to return (1–100, default: 50)       |
+
 
 #### Get Details
 
 Fetch the full spec of a scraper: current version, system defaults, custom input schema, and README.
 
-| Field          | Description                                                            |
-| -------------- | ---------------------------------------------------------------------- |
-| **Scraper**    | Pick from the marketplace list, or paste a slug directly               |
+
+| Field       | Description                                              |
+| ----------- | -------------------------------------------------------- |
+| **Scraper** | Pick from the marketplace list, or paste a slug directly |
+
 
 #### Run
 
 Start an asynchronous scraper run with custom parameters.
 
-| Field                | Description                                                              |
-| -------------------- | ------------------------------------------------------------------------ |
-| **Scraper**          | Pick from the marketplace list, or paste a slug directly                 |
-| **Version**          | Scraper version string (required). Obtain from **Get Details** → version |
-| **Custom Parameters**| Scraper-specific input parameters as JSON (schema from Get Details)      |
-| **System Parameters**| Optional JSON overrides for cpus, memory, timeout, max charge, traffic  |
-| **Callback URL**     | Optional webhook URL for async notifications                             |
+
+| Field                 | Description                                                              |
+| --------------------- | ------------------------------------------------------------------------ |
+| **Scraper**           | Pick from the marketplace list, or paste a slug directly                 |
+| **Version**           | Scraper version string (required). Obtain from **Get Details** → version |
+| **Custom Parameters** | Scraper-specific input parameters as JSON (schema from Get Details)      |
+| **System Parameters** | Optional JSON overrides for cpus, memory, timeout, max charge, traffic   |
+| **Callback URL**      | Optional webhook URL for async notifications                             |
+
 
 :::caution
 **Version is required.** The node does not support "leave empty for latest". Always obtain the correct version string from **Get Details** first.
@@ -132,9 +138,11 @@ Get the `scraper_slug` (Worker Slug) from the Worker page in the [CoreClaw Conso
 
 Get the current execution status of a run (status, started_at, duration, cost).
 
-| Field        | Description                                        |
-| ------------ | -------------------------------------------------- |
+
+| Field        | Description                                                 |
+| ------------ | ----------------------------------------------------------- |
 | **Run Slug** | The run identifier returned when starting a scraper or task |
+
 
 Status codes: `1` Ready, `2` Running, `3` Succeeded, `4` Failed, `5` Aborting.
 
@@ -142,56 +150,68 @@ Status codes: `1` Ready, `2` Running, `3` Succeeded, `4` Failed, `5` Aborting.
 
 List the user's historical scraper runs with pagination and filters.
 
-| Field          | Description                                         |
-| -------------- | --------------------------------------------------- |
-| **Return All** | Whether to return all results or only up to a limit |
+
+| Field          | Description                                          |
+| -------------- | ---------------------------------------------------- |
+| **Return All** | Whether to return all results or only up to a limit  |
 | **Limit**      | Max number of results to return (1–200, default: 50) |
-| **Filters**    | Filter by status and/or scraper slug                |
+| **Filters**    | Filter by status and/or scraper slug                 |
+
 
 #### Get Results
 
 Get paginated result records from a completed run.
 
-| Field          | Description                                         |
-| -------------- | --------------------------------------------------- |
-| **Run Slug**   | The run identifier                                  |
-| **Return All** | Whether to return all results or only up to a limit |
-| **Limit**      | Max number of results to return (1–500, default: 50)|
+
+| Field          | Description                                          |
+| -------------- | ---------------------------------------------------- |
+| **Run Slug**   | The run identifier                                   |
+| **Return All** | Whether to return all results or only up to a limit  |
+| **Limit**      | Max number of results to return (1–500, default: 50) |
+
 
 #### Export Results
 
 Export a run's full result set as a downloadable CSV or JSON file.
 
-| Field          | Description                                                            |
-| -------------- | ---------------------------------------------------------------------- |
-| **Run Slug**   | The run identifier                                                   |
-| **Format**     | `csv` (human-readable, opens in Excel) or `json` (preserves nesting)   |
-| **Filter Keys**| Comma-separated field keys to include. Leave empty for all fields.     |
+
+| Field           | Description                                                          |
+| --------------- | -------------------------------------------------------------------- |
+| **Run Slug**    | The run identifier                                                   |
+| **Format**      | `csv` (human-readable, opens in Excel) or `json` (preserves nesting) |
+| **Filter Keys** | Comma-separated field keys to include. Leave empty for all fields.   |
+
 
 #### Get Logs
 
 Fetch execution logs from a run for debugging or understanding failures.
 
-| Field        | Description                 |
-| ------------ | --------------------------- |
-| **Run Slug** | The run identifier          |
+
+| Field        | Description        |
+| ------------ | ------------------ |
+| **Run Slug** | The run identifier |
+
 
 #### Abort
 
 Cancel an in-progress scraper run.
 
+
 | Field        | Description                 |
 | ------------ | --------------------------- |
 | **Run Slug** | The run identifier to abort |
+
 
 #### Rerun
 
 Re-run a previous run with the exact same parameters.
 
-| Field          | Description                                                            |
-| -------------- | ---------------------------------------------------------------------- |
-| **Run Slug**   | The run identifier to rerun                                          |
-| **Callback URL**| Optional webhook URL for async notifications                           |
+
+| Field            | Description                                  |
+| ---------------- | -------------------------------------------- |
+| **Run Slug**     | The run identifier to rerun                  |
+| **Callback URL** | Optional webhook URL for async notifications |
+
 
 ### Task resource
 
@@ -199,10 +219,12 @@ Re-run a previous run with the exact same parameters.
 
 Run a pre-configured saved task from the CoreClaw console. Task parameters are stored with the task itself, so no custom input is needed.
 
-| Field          | Description                                                            |
-| -------------- | ---------------------------------------------------------------------- |
-| **Task Slug**  | Saved task identifier from the CoreClaw Console → Tasks page           |
-| **Callback URL**| Optional webhook URL for async notifications                           |
+
+| Field            | Description                                                  |
+| ---------------- | ------------------------------------------------------------ |
+| **Task Slug**    | Saved task identifier from the CoreClaw Console → Tasks page |
+| **Callback URL** | Optional webhook URL for async notifications                 |
+
 
 ### Account resource
 
@@ -236,6 +258,7 @@ For operations not covered by the CoreClaw node, use the **HTTP Request** node t
 
 ### Configuration
 
+
 | Field             | Value                                            |
 | ----------------- | ------------------------------------------------ |
 | Method            | `POST` (most endpoints)                          |
@@ -245,7 +268,9 @@ For operations not covered by the CoreClaw node, use the **HTTP Request** node t
 | Header Value      | Your CoreClaw API key                            |
 | Body Content Type | `JSON`                                           |
 
+
 ### Common endpoints
+
 
 | Action                  | Method | Endpoint                           |
 | ----------------------- | ------ | ---------------------------------- |
@@ -256,6 +281,7 @@ For operations not covered by the CoreClaw node, use the **HTTP Request** node t
 | Get results (paginated) | `POST` | `/api/v1/run/result/list`          |
 | Export results (file)   | `POST` | `/api/v1/run/result/export`        |
 | Abort a run             | `POST` | `/api/v1/scraper/abort`            |
+
 
 Full API reference: [API Integration](/api/integration/).
 

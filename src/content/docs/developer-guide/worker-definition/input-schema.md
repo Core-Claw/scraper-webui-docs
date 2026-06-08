@@ -258,7 +258,40 @@ You can choose different `editor` types based on your needs to improve the user 
 }
 ```
 
-### 10. String List (`stringList`)
+### 10. URL Request Source (`requestListSource`)
+
+Similar to `requestList`, but allows you to define additional custom parameters for each URL entry via `param_list`.
+
+```json
+{
+    "name": "url",
+    "type": "array",
+    "title": "startURLs",
+    "editor": "requestListSource",
+    "default": [
+        {
+            "url": "https://www.instagram.com/espn",
+            "num_of_posts": "10"
+        }
+    ],
+    "param_list": [
+        {
+            "param": "url",
+            "title": "URL",
+            "required": true,
+            "description": "The URL to scrape"
+        },
+        {
+            "param": "num_of_posts",
+            "title": "Maximum Posts",
+            "description": "Maximum number of posts to fetch"
+        }
+    ],
+    "description": "The URLs of the website to scrape"
+}
+```
+
+### 11. String List (`stringList`)
 
 ```json
 {

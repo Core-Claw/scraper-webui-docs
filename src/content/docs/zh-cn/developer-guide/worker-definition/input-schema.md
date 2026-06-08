@@ -260,7 +260,40 @@ sidebar:
 }
 ```
 
-### 10. 字符串列表 (stringList)
+### 10. URL 请求列表源 (requestListSource)
+
+与 `requestList` 类似，但允许通过 `param_list` 为每个 URL 条目定义额外的自定义参数。
+
+```json
+{
+    "name": "url",
+    "type": "array",
+    "title": "startURLs",
+    "editor": "requestListSource",
+    "default": [
+        {
+            "url": "https://www.instagram.com/espn",
+            "num_of_posts": "10"
+        }
+    ],
+    "param_list": [
+        {
+            "param": "url",
+            "title": "URL",
+            "required": true,
+            "description": "要采集的 URL 地址"
+        },
+        {
+            "param": "num_of_posts",
+            "title": "最大帖子数",
+            "description": "最多获取的帖子数量"
+        }
+    ],
+    "description": "要采集的网站 URL"
+}
+```
+
+### 11. 字符串列表 (stringList)
 
 ```json
 {
