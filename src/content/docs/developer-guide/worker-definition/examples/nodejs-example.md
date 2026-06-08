@@ -129,6 +129,25 @@ for (const item of collectedData) {
 - Data must be pushed **one row at a time**
 - Add logging after each push to track progress
 
+#### Step 3: Upsert Data (Update or Insert)
+
+Use `upsertData` to update existing records or insert new ones based on a unique key. This is useful when you need to re-scrape and update previously collected data:
+
+```javascript
+const data = {
+    id: "test-1",
+    title: "Updated Title",
+    description: "Updated description",
+}
+await coresdk.result.upsertData(data, 'id')
+```
+
+**How it works**:
+- If a record with the same unique key exists, it will be updated
+- If no matching record is found, a new record will be inserted
+- The unique key must exist in the data object
+- **Important**: The unique key field must also be defined in `output_schema.json`, or the platform cannot match and update rows correctly
+
 ---
 
 ## Script Entry File (main.js)
@@ -246,3 +265,6 @@ A: Add the package to the `dependencies` field in `package.json` and re-upload t
 
 **Q: What if installation fails?**
 A: Check that the package name and version are correct. Verify network connectivity or try an alternative version.
+
+**Q: What is the difference between pushData and upsertData?**
+A: `pushData` always appends a new row. `upsertData` updates an existing row if the unique key matches, or inserts a new row if no match is found. Use `upsertData` when you need to update previously scraped data.

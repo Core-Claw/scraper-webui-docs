@@ -129,6 +129,25 @@ for (const item of collectedData) {
 - 数据需要**逐条推送**，不能一次性推送多条
 - 建议在每次推送后记录日志，方便跟踪执行进度
 
+#### 第三步：更新或插入数据（Upsert）
+
+使用 `upsertData` 根据唯一键更新现有记录或插入新记录。这在需要重新采集并更新已有数据时非常有用：
+
+```javascript
+const data = {
+    id: "test-1",
+    title: "更新后的标题",
+    description: "更新后的描述",
+}
+await coresdk.result.upsertData(data, 'id')
+```
+
+**工作原理**：
+- 如果存在相同唯一键的记录，则更新该记录
+- 如果找不到匹配记录，则插入新记录
+- 唯一键必须存在于数据对象中
+- **重要**：唯一键字段必须在 `output_schema.json` 中定义，否则平台无法正确匹配和更新行
+
 ---
 
 ## 脚本入口文件（main.js）
@@ -246,3 +265,6 @@ run()
 
 **问：安装失败怎么办？**
 答：检查包名和版本是否正确，确认网络连接正常或尝试其他版本。
+
+**问：pushData 和 upsertData 有什么区别？**
+答：`pushData` 始终追加新行。`upsertData` 如果唯一键匹配则更新现有行，如果不匹配则插入新行。当需要更新已采集的数据时，使用 `upsertData`。

@@ -182,6 +182,29 @@ for _, item := range collectedData {
 - Data must be pushed **one row at a time** as a JSON string
 - Add logging after each push to track progress
 
+#### Step 3: Upsert Data (Update or Insert)
+
+Use `UpsertData` to update existing records or insert new ones based on a unique key. This is useful when you need to re-scrape and update previously collected data:
+
+```go
+data := map[string]any{
+    "id":          "test-1",
+    "title":       "Updated Title",
+    "description": "Updated description",
+}
+res, err := coresdk.Result.UpsertData(ctx, data, "id")
+if err != nil {
+    coresdk.Log.Error(ctx, fmt.Sprintf("Failed to upsert data: %v", err))
+    return
+}
+```
+
+**How it works**:
+- If a record with the same unique key exists, it will be updated
+- If no matching record is found, a new record will be inserted
+- The unique key must exist in the data map
+- **Important**: The unique key field must also be defined in `output_schema.json`, or the platform cannot match and update rows correctly
+
 ---
 
 ## Source Entry File (main.go)
@@ -372,3 +395,6 @@ A: Run `go get <package>` locally, then commit the updated `go.mod` and `go.sum`
 
 **Q: What if the build fails?**
 A: Check that all dependencies are correctly listed in `go.mod` and `go.sum`. Verify that you are building with `CGO_ENABLED=0 GOOS=linux GOARCH=amd64`.
+
+**Q: What is the difference between PushData and UpsertData?**
+A: `PushData` always appends a new row. `UpsertData` updates an existing row if the unique key matches, or inserts a new row if no match is found. Use `UpsertData` when you need to update previously scraped data.

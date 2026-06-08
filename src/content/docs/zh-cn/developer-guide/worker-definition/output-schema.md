@@ -98,3 +98,32 @@ coresdk.Result.PushData(ctx, string(data))
 1. **字段名一致**：确保 `output_schema.json` 中的 `name` 值与 `push_data` 调用中使用的键名完全一致。
 2. **描述清晰**：使用 `description` 提供有意义的列标签，帮助用户理解数据含义。
 3. **类型准确**：正确设置 `type`，以便平台正确渲染和导出数据。
+4. **Upsert 唯一键**：使用 `upsert_data` / `upsertData` / `UpsertData` 时，确保唯一键字段也在 `output_schema.json` 中定义。平台需要该列才能正确匹配并更新现有行。
+
+## Upsert 数据注意事项
+
+使用 **upsert** 功能（通过唯一键更新或插入）时，`output_schema.json` 必须包含唯一键列。否则，平台无法匹配现有记录进行更新。
+
+### 示例
+
+如果你的脚本使用 `upsert_data(data, "id")`，`output_schema.json` 应包含：
+
+```json
+[
+  {
+    "name": "id",
+    "type": "string",
+    "description": "唯一 ID"
+  },
+  {
+    "name": "title",
+    "type": "string",
+    "description": "标题"
+  }
+]
+```
+
+**要点**：
+- 唯一键（如 `"id"`）必须作为列存在于 `output_schema.json` 中
+- 每个传给 `upsert_data` 的数据对象都必须包含该唯一键值
+- 适用于所有三种语言：Python（`upsert_data`）、Node.js（`upsertData`）和 Go（`UpsertData`）

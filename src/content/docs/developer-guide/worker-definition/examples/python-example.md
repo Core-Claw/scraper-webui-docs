@@ -128,11 +128,91 @@ for item in collected_data:
 - Data must be pushed **one row at a time**
 - Add logging after each push to track progress
 
+#### Step 3: Upsert Data (Update or Insert)
+
+Use `upsert_data` to update existing records or insert new ones based on a unique key. This is useful when you need to re-scrape and update previously collected data:
+
+```python
+data = {
+    "id": "test-1",
+    "title": "Updated Title",
+    "description": "Updated description",
+}
+CoreSDK.Result.upsert_data(data, "id")
+```
+
+**How it works**:
+- If a record with the same unique key exists, it will be updated
+- If no matching record is found, a new record will be inserted
+- The unique key must exist in the data dictionary
+- **Important**: The unique key field must also be defined in `output_schema.json`, or the platform cannot match and update rows correctly
+
 ---
 
 ## Script Entry File (main.py)
 
-### Complete Example
+### Synchronous vs Asynchronous
+
+CoreClaw **supports both synchronous and asynchronous styles** for Python Workers. Choose the one that best fits your needs:
+
+| Style | Entry Point | Best For |
+|-------|-------------|----------|
+| **Synchronous** | `def main():` | Simple scripts, sequential execution |
+| **Asynchronous** | `async def run():` + `asyncio.run(run())` | Concurrent I/O, async libraries (aiohttp, etc.) |
+
+**Synchronous example** (recommended for beginners):
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import os
+from sdk import CoreSDK
+
+def main():
+    try:
+        # 1. Get input parameters
+        input_json_dict = CoreSDK.Parameter.get_input_json_dict()
+        CoreSDK.Log.debug(f"Input parameters: {input_json_dict}")
+
+        # 2. Proxy configuration (read from environment variables)
+        proxy_auth = os.environ.get("PROXY_AUTH")
+        CoreSDK.Log.info(f"Proxy auth: {proxy_auth}")
+
+        # 3. Business logic
+        url = input_json_dict.get('url')
+        CoreSDK.Log.info(f"Processing URL: {url}")
+
+        result = {
+            "url": url,
+            "status": "success",
+        }
+
+        # 4. Push result data
+        CoreSDK.Result.push_data(result)
+
+        # 5. Set table headers
+        headers = [
+            {"label": "URL", "key": "url", "format": "text"},
+            {"label": "Status", "key": "status", "format": "text"},
+        ]
+        CoreSDK.Result.set_table_header(headers)
+
+        CoreSDK.Log.info("Script execution completed")
+
+    except Exception as e:
+        CoreSDK.Log.error(f"Execution error: {e}")
+        CoreSDK.Result.push_data({
+            "error": str(e),
+            "error_code": "500",
+            "status": "failed"
+        })
+        raise
+
+if __name__ == "__main__":
+    main()
+```
+
+**Asynchronous example** (for advanced use cases):
 
 ```python
 #!/usr/bin/env python3
@@ -209,6 +289,7 @@ cffi==2.0.0
 cssselect==1.3.0
 curl_cffi==0.13.0
 grpcio==1.80.0
+protobuf==6.31.1
 python-dateutil
 tenacity
 ```
@@ -229,6 +310,7 @@ tenacity
 #### Ensuring Proper Execution
 
 - **grpcio** and **protobuf** must be included (required by the SDK)
+- **protobuf version must match** the one used to generate `sdk_pb2.py` (check `sdk_pb2.py` header for the exact version)
 - All third-party libraries must be listed
 - Core dependencies should use fixed versions for stability
 - Update dependencies regularly for security and bug fixes
@@ -248,3 +330,6 @@ A: Add a new line to `requirements.txt` and re-upload the ZIP package. The platf
 
 **Q: What if installation fails?**
 A: Check network connectivity or package mirrors. If the issue persists, verify the package name and version.
+
+**Q: Can I use both sync and async code in the same Worker?**
+A: Yes. CoreClaw supports both styles. Choose the one that best fits your use case. Async is recommended when using async libraries like `aiohttp` or when you need concurrent I/O.

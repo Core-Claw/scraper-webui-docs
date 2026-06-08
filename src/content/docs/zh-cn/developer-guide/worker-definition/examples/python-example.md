@@ -128,11 +128,91 @@ for item in collected_data:
 - 数据需要**逐条推送**，不能一次性推送多条
 - 建议在每次推送后记录日志，方便跟踪执行进度
 
+#### 第三步：更新或插入数据（Upsert）
+
+使用 `upsert_data` 根据唯一键更新现有记录或插入新记录。这在需要重新采集并更新已有数据时非常有用：
+
+```python
+data = {
+    "id": "test-1",
+    "title": "更新后的标题",
+    "description": "更新后的描述",
+}
+CoreSDK.Result.upsert_data(data, "id")
+```
+
+**工作原理**：
+- 如果存在相同唯一键的记录，则更新该记录
+- 如果找不到匹配记录，则插入新记录
+- 唯一键必须存在于数据字典中
+- **重要**：唯一键字段必须在 `output_schema.json` 中定义，否则平台无法正确匹配和更新行
+
 ---
 
 ## 脚本入口文件（main.py）
 
-### 完整示例
+### 同步与异步
+
+CoreClaw **同时支持同步和异步** Python Worker 风格。选择最适合你需求的风格：
+
+| 风格 | 入口点 | 适用场景 |
+|------|--------|----------|
+| **同步** | `def main():` | 简单脚本、顺序执行 |
+| **异步** | `async def run():` + `asyncio.run(run())` | 并发 I/O、异步库（aiohttp 等） |
+
+**同步示例**（适合初学者）：
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import os
+from sdk import CoreSDK
+
+def main():
+    try:
+        # 1. 获取输入参数
+        input_json_dict = CoreSDK.Parameter.get_input_json_dict()
+        CoreSDK.Log.debug(f"输入参数: {input_json_dict}")
+
+        # 2. 代理配置（从环境变量读取）
+        proxy_auth = os.environ.get("PROXY_AUTH")
+        CoreSDK.Log.info(f"代理认证信息: {proxy_auth}")
+
+        # 3. 业务逻辑
+        url = input_json_dict.get('url')
+        CoreSDK.Log.info(f"正在处理 URL: {url}")
+
+        result = {
+            "url": url,
+            "status": "success",
+        }
+
+        # 4. 推送结果数据
+        CoreSDK.Result.push_data(result)
+
+        # 5. 设置表格表头
+        headers = [
+            {"label": "URL", "key": "url", "format": "text"},
+            {"label": "状态", "key": "status", "format": "text"},
+        ]
+        CoreSDK.Result.set_table_header(headers)
+
+        CoreSDK.Log.info("脚本执行完成")
+
+    except Exception as e:
+        CoreSDK.Log.error(f"执行错误: {e}")
+        CoreSDK.Result.push_data({
+            "error": str(e),
+            "error_code": "500",
+            "status": "failed"
+        })
+        raise
+
+if __name__ == "__main__":
+    main()
+```
+
+**异步示例**（适合高级场景）：
 
 ```python
 #!/usr/bin/env python3
@@ -209,6 +289,7 @@ cffi==2.0.0
 cssselect==1.3.0
 curl_cffi==0.13.0
 grpcio==1.80.0
+protobuf==6.31.1
 python-dateutil
 tenacity
 ```
@@ -229,6 +310,7 @@ tenacity
 #### 确保正常执行
 
 - **grpcio** 和 **protobuf** 必须包含（SDK 所需）
+- **protobuf 版本必须与 `sdk_pb2.py` 的生成版本一致**（查看 `sdk_pb2.py` 文件头部获取确切版本）
 - 所有第三方库必须列出
 - 核心依赖应使用固定版本以确保稳定性
 - 定期更新依赖以确保安全性和稳定性
@@ -248,3 +330,6 @@ tenacity
 
 **问：安装失败怎么办？**
 答：检查网络连接或包镜像源。如果问题持续，请确认包名和版本是否正确。
+
+**问：可以同时使用同步和异步代码吗？**
+答：可以。CoreClaw 同时支持两种风格。选择最适合你使用场景的风格。当使用 aiohttp 等异步库或需要并发 I/O 时，推荐使用异步风格。
