@@ -166,6 +166,7 @@ curl -X POST https://mcp.coreclaw.com/mcp/search_scrapers \
 ## 下一步
 
 - [→ 配置 Claude Desktop](/zh-cn/integrations/ai/mcp/claude-desktop/)
+- [→ 配置 Claude CLI](/zh-cn/integrations/ai/mcp/claude-cli/)
 - [→ 配置 Codex Desktop](/zh-cn/integrations/ai/mcp/codex-desktop/)
 - [→ 浏览所有平台指南](/zh-cn/integrations/ai/mcp/)
 - [→ 阅读 CoreClaw API 文档](/zh-cn/api/)

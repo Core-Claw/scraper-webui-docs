@@ -166,6 +166,7 @@ This is particularly useful for integration with platforms like **Coze** that us
 ## Next Steps
 
 - [→ Set up Claude Desktop](/integrations/ai/mcp/claude-desktop/)
+- [→ Set up Claude CLI](/integrations/ai/mcp/claude-cli/)
 - [→ Set up Codex Desktop](/integrations/ai/mcp/codex-desktop/)
 - [→ Browse all platform guides](/integrations/ai/mcp/)
 - [→ Read the CoreClaw API documentation](/api/)

@@ -21,7 +21,7 @@ VS Code with Copilot supports MCP via **Streamable HTTP** transport. You can con
 
 1. Open VS Code
 2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS)
-3. Type and select **"MCP: Open User Configuration"**
+3. Type and select **"MCP: Add Server"** or **"MCP: Open User Configuration"**
 4. This opens your `mcp.json` file
 
 ### Step 2: Add the CoreClaw MCP configuration

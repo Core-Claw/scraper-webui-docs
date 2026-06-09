@@ -14,7 +14,7 @@ Connect ChatGPT (via OpenAI's platform) to the CoreClaw MCP Server so you can se
 
 ## Configuration
 
-ChatGPT supports MCP connectors through its **Apps & Connectors** feature. You'll create a custom connector pointing to CoreClaw's MCP server.
+ChatGPT supports MCP connectors through its **Apps & Connectors** feature (available to ChatGPT Plus/Pro users with Developer Mode enabled). You'll create a custom connector pointing to CoreClaw's MCP server.
 
 ### Step 1: Enable Developer Mode
 
@@ -58,6 +58,7 @@ Once connected, you can ask ChatGPT to perform scraping tasks:
 ## Limitations
 
 - MCP integration in ChatGPT is **beta** and may have limited availability
+- Requires ChatGPT Plus or Pro subscription
 - Tool selection/execution can be **slow**
 - **Custom connectors** require Developer mode
 - Some scrapers may trigger **Safety Scan** warnings
