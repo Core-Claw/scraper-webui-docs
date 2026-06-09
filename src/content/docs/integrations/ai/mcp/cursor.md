@@ -14,7 +14,7 @@ Connect [Cursor](https://cursor.com) IDE to the CoreClaw MCP Server so your AI c
 
 ## Configuration
 
-Cursor supports MCP via **Streamable HTTP** transport. You can configure it via a project-level or global configuration file.
+Cursor supports MCP via **Streamable HTTP** transport. You can configure it by creating an `mcp.json` file in your project or global settings.
 
 ### Step 1: Create the MCP configuration file
 
@@ -44,6 +44,8 @@ Cursor supports MCP via **Streamable HTTP** transport. You can configure it via 
 ```
 
 Replace `scraper_api_YOUR_KEY_HERE` with your actual CoreClaw API key.
+
+![Cursor IDE MCP Configuration](@/assets/docs/mcp-4.png)
 
 ### Step 3: Restart Cursor
 

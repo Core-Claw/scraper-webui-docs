@@ -2,7 +2,7 @@
 title: Codex CLI
 description: Connect OpenAI Codex CLI to CoreClaw MCP Server via Streamable HTTP.
 sidebar:
-  order: 2
+  order: 10
 ---
 
 Connect [OpenAI Codex CLI](https://github.com/openai/codex) to the CoreClaw MCP Server so you can search for scrapers, run them, and retrieve data directly from your terminal conversations.
@@ -48,8 +48,6 @@ Alternatively, you can place the config at `~/.config/codex/mcp.json` (macOS/Lin
 1. Start Codex with the MCP configuration
 2. Ask Codex: *"Search for Amazon scrapers on CoreClaw"*
 3. Codex should invoke `search_scrapers` and return results
-
-![Codex CLI MCP Configuration](/src/assets/docs/mcp-1.png)
 
 ## Example conversation
 

@@ -14,45 +14,32 @@ Connect [Claude Desktop](https://claude.ai/download) to the CoreClaw MCP Server 
 
 ## Configuration
 
-Claude Desktop supports MCP via **Streamable HTTP** transport. Add the following to your Claude Desktop configuration file.
+Claude Desktop supports MCP via **Streamable HTTP** transport. You can configure it through the graphical interface.
 
-### Step 1: Open the configuration file
+### Step 1: Open Settings
 
-**macOS:**
-```
-~/Library/Application Support/Claude/claude_desktop_config.json
-```
+1. Open Claude Desktop
+2. Click on your profile icon (bottom left) → **Settings**
+3. Navigate to **Connectors & Extensions**
 
-**Windows:**
-```
-%APPDATA%\Claude\claude_desktop_config.json
-```
+### Step 2: Add MCP Server
 
-**Linux:**
-```
-~/.config/Claude/claude_desktop_config.json
-```
-
-### Step 2: Add the CoreClaw MCP configuration
-
-```json
-{
-  "mcpServers": {
-    "coreclaw": {
-      "url": "https://mcp.coreclaw.com/mcp",
-      "headers": {
-        "api-key": "scraper_api_YOUR_KEY_HERE"
-      }
-    }
-  }
-}
-```
+1. Click **Add MCP Server** or **+**
+2. Fill in the form:
+   - **Name**: `CoreClaw`
+   - **Transport**: `HTTP`
+   - **URL**: `https://mcp.coreclaw.com/mcp`
+   - **Headers**:
+     - `api-key`: `scraper_api_YOUR_KEY_HERE`
 
 Replace `scraper_api_YOUR_KEY_HERE` with your actual CoreClaw API key.
 
-### Step 3: Restart Claude Desktop
+![Claude Desktop MCP Configuration](@/assets/docs/mcp-2.png)
 
-After saving the configuration file, **completely restart Claude Desktop** for the changes to take effect.
+### Step 3: Save and restart
+
+1. Click **Save**
+2. **Restart Claude Desktop** for the changes to take effect
 
 ## Verify the connection
 
@@ -60,8 +47,6 @@ After saving the configuration file, **completely restart Claude Desktop** for t
 2. Look for the **tool icon** (hammer 🔨) in the message input area — this indicates MCP tools are available
 3. Ask Claude: *"Search for Amazon scrapers on CoreClaw"*
 4. Claude should call `search_scrapers` and return results
-
-![Claude Desktop MCP Configuration](/src/assets/docs/mcp-2.png)
 
 ## Example conversation
 

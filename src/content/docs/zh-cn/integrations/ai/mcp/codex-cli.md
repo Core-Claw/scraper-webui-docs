@@ -2,7 +2,7 @@
 title: Codex CLI
 description: 通过 Streamable HTTP 将 OpenAI Codex CLI 连接到 CoreClaw MCP 服务。
 sidebar:
-  order: 2
+  order: 10
 ---
 
 将 [OpenAI Codex CLI](https://github.com/openai/codex) 连接到 CoreClaw MCP 服务，让您可以直接从终端对话中搜索爬虫、运行任务并获取数据。
@@ -48,8 +48,6 @@ codex --mcp-config codex-mcp.json
 1. 使用 MCP 配置启动 Codex
 2. 询问 Codex：*"在 CoreClaw 上搜索 Amazon 爬虫"*
 3. Codex 应该调用 `search_scrapers` 并返回结果
-
-![Codex CLI MCP 配置](/src/assets/docs/mcp-1.png)
 
 ## 对话示例
 

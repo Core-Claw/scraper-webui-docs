@@ -109,7 +109,7 @@ search_scrapers("amazon")
 | 平台 | 配置方式 | 指南 |
 |------|---------|------|
 | **Claude Desktop** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/claude-desktop/) |
-| **Codex CLI** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/codex-cli/) |
+| **Codex Desktop** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/codex-desktop/) |
 | **Cursor** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/cursor/) |
 | **ChatGPT** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/chatgpt/) |
 | **VS Code** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/vscode/) |
@@ -165,6 +165,6 @@ curl -X POST https://mcp.coreclaw.com/mcp/search_scrapers \
 ## 下一步
 
 - [→ 配置 Claude Desktop](/zh-cn/integrations/ai/mcp/claude-desktop/)
-- [→ 配置 Codex CLI](/zh-cn/integrations/ai/mcp/codex-cli/)
+- [→ 配置 Codex Desktop](/zh-cn/integrations/ai/mcp/codex-desktop/)
 - [→ 浏览所有平台指南](/zh-cn/integrations/ai/mcp/)
 - [→ 阅读 CoreClaw API 文档](/zh-cn/api/)

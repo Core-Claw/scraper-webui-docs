@@ -14,7 +14,7 @@ sidebar:
 
 ## 配置步骤
 
-Cursor 通过 **Streamable HTTP** 传输协议支持 MCP。您可以通过项目级或全局配置文件进行配置。
+Cursor 通过 **Streamable HTTP** 传输协议支持 MCP。您可以通过创建 `mcp.json` 文件在项目或全局设置中进行配置。
 
 ### 步骤 1：创建 MCP 配置文件
 
@@ -44,6 +44,8 @@ Cursor 通过 **Streamable HTTP** 传输协议支持 MCP。您可以通过项目
 ```
 
 将 `scraper_api_YOUR_KEY_HERE` 替换为您的实际 CoreClaw API 密钥。
+
+![Cursor IDE MCP 配置](@/assets/docs/mcp-4.png)
 
 ### 步骤 3：重启 Cursor
 

@@ -678,6 +678,13 @@ export default defineConfig({
                                             },
                                         },
                                         {
+                                            label: 'Codex Desktop',
+                                            slug: 'integrations/ai/mcp/codex-desktop',
+                                            translations: {
+                                                'zh-CN': 'Codex Desktop',
+                                            },
+                                        },
+                                        {
                                             label: 'Codex CLI',
                                             slug: 'integrations/ai/mcp/codex-cli',
                                             translations: {
