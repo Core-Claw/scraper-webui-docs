@@ -678,6 +678,13 @@ export default defineConfig({
                                             },
                                         },
                                         {
+                                            label: 'Claude CLI',
+                                            slug: 'integrations/ai/mcp/claude-cli',
+                                            translations: {
+                                                'zh-CN': 'Claude CLI',
+                                            },
+                                        },
+                                        {
                                             label: 'Codex Desktop',
                                             slug: 'integrations/ai/mcp/codex-desktop',
                                             translations: {

@@ -109,6 +109,7 @@ search_scrapers("amazon")
 | 平台 | 配置方式 | 指南 |
 |------|---------|------|
 | **Claude Desktop** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/claude-desktop/) |
+| **Claude CLI** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/claude-cli/) |
 | **Codex Desktop** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/codex-desktop/) |
 | **Cursor** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/cursor/) |
 | **ChatGPT** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/chatgpt/) |

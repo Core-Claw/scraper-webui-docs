@@ -109,6 +109,7 @@ Configure CoreClaw MCP on your favorite AI agent platform:
 | Platform | Configuration | Guide |
 |----------|--------------|-------|
 | **Claude Desktop** | Streamable HTTP | [→ Setup Guide](/integrations/ai/mcp/claude-desktop/) |
+| **Claude CLI** | Streamable HTTP | [→ Setup Guide](/integrations/ai/mcp/claude-cli/) |
 | **Codex Desktop** | Streamable HTTP | [→ Setup Guide](/integrations/ai/mcp/codex-desktop/) |
 | **Cursor** | Streamable HTTP | [→ Setup Guide](/integrations/ai/mcp/cursor/) |
 | **ChatGPT** | Streamable HTTP | [→ Setup Guide](/integrations/ai/mcp/chatgpt/) |
