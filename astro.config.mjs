@@ -650,6 +650,94 @@ export default defineConfig({
                     },
                     items: [
                         {
+                            label: 'AI',
+                            collapsed: true,
+                            translations: {
+                                'zh-CN': 'AI',
+                            },
+                            items: [
+                                {
+                                    label: 'MCP Server',
+                                    collapsed: true,
+                                    translations: {
+                                        'zh-CN': 'MCP 服务',
+                                    },
+                                    items: [
+                                        {
+                                            label: 'Overview',
+                                            slug: 'integrations/ai/mcp',
+                                            translations: {
+                                                'zh-CN': '概述',
+                                            },
+                                        },
+                                        {
+                                            label: 'Claude Desktop',
+                                            slug: 'integrations/ai/mcp/claude-desktop',
+                                            translations: {
+                                                'zh-CN': 'Claude Desktop',
+                                            },
+                                        },
+                                        {
+                                            label: 'Codex CLI',
+                                            slug: 'integrations/ai/mcp/codex-cli',
+                                            translations: {
+                                                'zh-CN': 'Codex CLI',
+                                            },
+                                        },
+                                        {
+                                            label: 'Cursor',
+                                            slug: 'integrations/ai/mcp/cursor',
+                                            translations: {
+                                                'zh-CN': 'Cursor',
+                                            },
+                                        },
+                                        {
+                                            label: 'ChatGPT',
+                                            slug: 'integrations/ai/mcp/chatgpt',
+                                            translations: {
+                                                'zh-CN': 'ChatGPT',
+                                            },
+                                        },
+                                        {
+                                            label: 'VS Code',
+                                            slug: 'integrations/ai/mcp/vscode',
+                                            translations: {
+                                                'zh-CN': 'VS Code',
+                                            },
+                                        },
+                                        {
+                                            label: 'Windsurf',
+                                            slug: 'integrations/ai/mcp/windsurf',
+                                            translations: {
+                                                'zh-CN': 'Windsurf',
+                                            },
+                                        },
+                                        {
+                                            label: 'Cline',
+                                            slug: 'integrations/ai/mcp/cline',
+                                            translations: {
+                                                'zh-CN': 'Cline',
+                                            },
+                                        },
+                                        {
+                                            label: 'n8n',
+                                            slug: 'integrations/ai/mcp/n8n',
+                                            translations: {
+                                                'zh-CN': 'n8n',
+                                            },
+                                        },
+                                        {
+                                            label: 'Generic HTTP',
+                                            slug: 'integrations/ai/mcp/generic-http',
+                                            translations: {
+                                                'zh-CN': '通用 HTTP',
+                                            },
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
                             label: 'Workflows & notifications',
                             collapsed: true,
                             translations: {
