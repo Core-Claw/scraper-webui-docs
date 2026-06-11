@@ -36,15 +36,15 @@ For n8n Cloud users, installation is straightforward — search and add the node
 2. Open the **nodes panel** (click the **+** button on the canvas).
 3. Search for **CoreClaw** in the community node registry.
 
-Search for CoreClaw node in n8n
+![Search for CoreClaw node in n8n](@/assets/docs/n8n-1.png)
 
-1. Click **Install node** to add the CoreClaw node to your instance.
+4. Click **Install node** to add the CoreClaw node to your instance.
 
-Install n8n-nodes-coreclaw package
+![Install n8n-nodes-coreclaw package](@/assets/docs/n8n-2.png)
 
 After installation, you can find the CoreClaw node under **Community Nodes** in the nodes panel.
 
-CoreClaw node in Community Nodes list
+![CoreClaw node in Community Nodes list](@/assets/docs/n8n-3.png)
 
 ### Create credentials
 
@@ -53,14 +53,14 @@ Before using the CoreClaw node, you need to create a credential with your CoreCl
 1. In n8n, go to **Credentials** → **Add Credential**.
 2. Search for **CoreClaw API** and select it.
 
-Create CoreClaw API credential
+![Create CoreClaw API credential](@/assets/docs/n8n-4.png)
 
-1. Enter a name for the credential (e.g., "CoreClaw Production").
-2. In the **API Key** field, paste the API key you copied from the [CoreClaw Console](https://console.coreclaw.com/settings/integrations).
+3. Enter a name for the credential (e.g., "CoreClaw Production").
+4. In the **API Key** field, paste the API key you copied from the [CoreClaw Console](https://console.coreclaw.com/settings/integrations).
 
-Enter API key and save credential
+![Enter API key and save credential](@/assets/docs/n8n-5.png)
 
-1. Click **Save** to store the credential.
+5. Click **Save** to store the credential.
 
 You can now use this credential in any CoreClaw node in your workflows.
 
@@ -299,13 +299,16 @@ Full API reference: [API Integration](/api/integration/).
 
 ## Troubleshooting
 
-**Node not appearing after installation**
+<details>
+<summary><strong>Node not appearing after installation</strong></summary>
 
 1. Refresh the n8n page.
 2. Check **Settings → Community Nodes** — the node should be listed there.
 3. If using n8n Cloud, ensure verified community nodes are enabled in the Cloud Admin Panel.
+</details>
 
-**Invalid API key error**
+<details>
+<summary><strong>Invalid API key error</strong></summary>
 
 1. Verify the API key in the [CoreClaw Console](https://console.coreclaw.com/settings/integrations).
 2. Ensure there are no extra spaces or line breaks in the credential.
@@ -319,8 +322,10 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
 ```
 
 A successful response contains `code: 0`.
+</details>
 
-**Worker-specific input fields**
+<details>
+<summary><strong>Worker-specific input fields</strong></summary>
 
 Each Worker has different input parameters. To find the correct fields:
 
@@ -336,3 +341,4 @@ curl "https://openapi.coreclaw.com/api/scraper?slug=YOUR_SCRAPER_SLUG"
 ```
 
 The response contains `data.parameters.custom.properties` — each entry maps to an input field.
+</details>
