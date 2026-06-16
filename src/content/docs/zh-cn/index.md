@@ -161,19 +161,28 @@ head:
 		color: #cbd5e1;
 	}
 	:root[data-theme='dark'] .hero-btn-primary {
-		background: linear-gradient(135deg, #1aa6a3, #5eead4);
-		box-shadow: 0 4px 14px rgba(94,234,212,.18);
+		background: linear-gradient(135deg, #0a3a63, #0f7f7c);
+		box-shadow: 0 4px 14px rgba(15,127,124,.22);
 	}
 	:root[data-theme='dark'] .hero-btn-primary:hover {
-		box-shadow: 0 8px 20px rgba(94,234,212,.28);
+		box-shadow: 0 8px 20px rgba(15,127,124,.32);
 	}
 	:root[data-theme='dark'] .hero-btn-secondary {
-		background: transparent;
-		border-color: #5eead4;
-		color: #5eead4;
+		background: rgba(10,58,99,.18);
+		border-color: #0f7f7c;
+		color: #c5e7e6 !important;
 	}
 	:root[data-theme='dark'] .hero-btn-secondary:hover {
-		background: rgba(94,234,212,0.1);
+		background: rgba(15,127,124,.22);
+		border-color: #0f7f7c;
+		color: #ffffff !important;
+	}
+	:root[data-theme='dark'] a.hero-btn-secondary,
+	:root[data-theme='dark'] a.hero-btn-secondary:visited {
+		color: #c5e7e6 !important;
+	}
+	:root[data-theme='dark'] a.hero-btn-secondary:hover {
+		color: #ffffff !important;
 	}
 	@media (max-width: 50rem) {
 		.hero-title { font-size: 1.75rem; }

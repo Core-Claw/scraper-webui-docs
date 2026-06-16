@@ -124,7 +124,7 @@ for (const item of collectedData) {
 ```
 
 **Important**:
-- Setting headers and pushing data can be done in any order
+- Set table headers before pushing data
 - Keys in pushData must match keys in table headers exactly
 - Data must be pushed **one row at a time**
 - Add logging after each push to track progress
@@ -179,15 +179,15 @@ async function run() {
             status: 'success',
         }
 
-        // 4. Push result data
-        await coresdk.result.pushData(result)
-
-        // 5. Set table headers
+        // 4. Set table headers
         const headers = [
             { label: 'URL', key: 'url', format: 'text' },
             { label: 'Status', key: 'status', format: 'text' },
         ]
         await coresdk.result.setTableHeader(headers)
+
+        // 5. Push result data
+        await coresdk.result.pushData(result)
 
         await coresdk.log.info('Script execution completed')
     } catch (err) {
@@ -212,7 +212,7 @@ The script follows four stages:
 1. **Receive instructions** — Get input parameters (URLs, keywords, etc.) from the platform
 2. **Network setup** — Configure proxy via `PROXY_AUTH` environment variable for accessing external websites
 3. **Execute task** — Run the core scraping logic on target pages
-4. **Report results** — Push collected data back to the platform and set table headers
+4. **Report results** — Set table headers first, then push collected data back to the platform
 
 ---
 

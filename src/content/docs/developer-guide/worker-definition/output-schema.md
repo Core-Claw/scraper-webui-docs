@@ -51,7 +51,7 @@ Each column definition contains the following properties:
 
 The `name` field in `output_schema.json` must match the key names used when calling `push_data` in your script.
 
-For example, with the above configuration, your script should push data like this:
+For example, with the above configuration, each pushed row should use matching keys as shown below. In complete Worker code, call `set_table_header` before calling `push_data`.
 
 ### Python
 

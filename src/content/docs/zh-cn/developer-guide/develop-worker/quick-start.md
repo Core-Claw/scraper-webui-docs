@@ -105,15 +105,15 @@ async def run():
             "status": "success",
         }
 
-        # 4. 推送结果数据
-        CoreSDK.Result.push_data(result)
-
-        # 5. 设置表格表头
+        # 4. 设置表格表头
         headers = [
             {"label": "URL", "key": "url", "format": "text"},
             {"label": "状态", "key": "status", "format": "text"},
         ]
         CoreSDK.Result.set_table_header(headers)
+
+        # 5. 推送结果数据
+        CoreSDK.Result.push_data(result)
 
         CoreSDK.Log.info("脚本执行完成")
 

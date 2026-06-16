@@ -177,7 +177,7 @@ for _, item := range collectedData {
 ```
 
 **Important**:
-- Setting headers and pushing data can be done in any order
+- Set table headers before pushing data
 - Keys in PushData must match keys in table headers exactly
 - Data must be pushed **one row at a time** as a JSON string
 - Add logging after each push to track progress
@@ -299,7 +299,20 @@ func run() {
     ip := strings.TrimSpace(string(body))
     coresdk.Log.Info(ctx, fmt.Sprintf("Current IP: %s", ip))
 
-    // 5. Push result data
+    // 5. Set table headers
+    headers := []*coresdk.TableHeaderItem{
+        {Label: "Title", Key: "title", Format: "text"},
+        {Label: "Content", Key: "content", Format: "text"},
+    }
+
+    res, err := coresdk.Result.SetTableHeader(ctx, headers)
+    if err != nil {
+        coresdk.Log.Error(ctx, fmt.Sprintf("Failed to set table header: %v", err))
+        return
+    }
+    fmt.Printf("SetTableHeader Response: %+v\n", res)
+
+    // 6. Push result data
     type result struct {
         Title   string `json:"title"`
         Content string `json:"content"`
@@ -320,19 +333,6 @@ func run() {
         fmt.Printf("PushData Response: %+v\n", res)
     }
 
-    // 6. Set table headers
-    headers := []*coresdk.TableHeaderItem{
-        {Label: "Title", Key: "title", Format: "text"},
-        {Label: "Content", Key: "content", Format: "text"},
-    }
-
-    res, err := coresdk.Result.SetTableHeader(ctx, headers)
-    if err != nil {
-        coresdk.Log.Error(ctx, fmt.Sprintf("Failed to set table header: %v", err))
-        return
-    }
-    fmt.Printf("SetTableHeader Response: %+v\n", res)
-
     coresdk.Log.Info(ctx, "Script execution completed")
 }
 
@@ -348,7 +348,7 @@ The script follows four stages:
 1. **Receive instructions** — Get input parameters (URLs, keywords, etc.) from the platform
 2. **Network setup** — Configure proxy via `PROXY_AUTH` environment variable for accessing external websites
 3. **Execute task** — Run the core scraping logic on target pages
-4. **Report results** — Push collected data back to the platform and set table headers
+4. **Report results** — Set table headers first, then push collected data back to the platform
 
 ---
 

@@ -177,7 +177,7 @@ for _, item := range collectedData {
 ```
 
 **重要提醒**：
-- 设置表头与推送数据的顺序可以颠倒
+- 必须先设置表头，再推送数据
 - 推送数据时，结构体中的 key 必须与表头中定义的 key 完全一致
 - 数据需要**逐条推送**，以 JSON 字符串格式
 - 建议在每次推送后记录日志，方便跟踪执行进度
@@ -300,7 +300,20 @@ func run() {
     ip := strings.TrimSpace(string(body))
     coresdk.Log.Info(ctx, fmt.Sprintf("当前IP地址: %s", ip))
 
-    // 5. 推送结果数据
+    // 5. 设置表格表头
+    headers := []*coresdk.TableHeaderItem{
+        {Label: "标题", Key: "title", Format: "text"},
+        {Label: "内容", Key: "content", Format: "text"},
+    }
+
+    res, err := coresdk.Result.SetTableHeader(ctx, headers)
+    if err != nil {
+        coresdk.Log.Error(ctx, fmt.Sprintf("设置表头失败: %v", err))
+        return
+    }
+    fmt.Printf("SetTableHeader Response: %+v\n", res)
+
+    // 6. 推送结果数据
     type result struct {
         Title   string `json:"title"`
         Content string `json:"content"`
@@ -321,19 +334,6 @@ func run() {
         fmt.Printf("PushData Response: %+v\n", res)
     }
 
-    // 6. 设置表格表头
-    headers := []*coresdk.TableHeaderItem{
-        {Label: "标题", Key: "title", Format: "text"},
-        {Label: "内容", Key: "content", Format: "text"},
-    }
-
-    res, err := coresdk.Result.SetTableHeader(ctx, headers)
-    if err != nil {
-        coresdk.Log.Error(ctx, fmt.Sprintf("设置表头失败: %v", err))
-        return
-    }
-    fmt.Printf("SetTableHeader Response: %+v\n", res)
-
     coresdk.Log.Info(ctx, "脚本执行完成")
 }
 
@@ -349,7 +349,7 @@ func main() {
 1. **接收指令** — 从平台获取输入参数（URL、关键词等）
 2. **网络配置** — 通过 `PROXY_AUTH` 环境变量配置代理，访问外部网站
 3. **执行任务** — 在目标页面上运行核心采集逻辑
-4. **上报结果** — 将采集数据推送回平台并设置表格表头
+4. **上报结果** — 先设置表格表头，再将采集数据推送回平台
 
 ---
 

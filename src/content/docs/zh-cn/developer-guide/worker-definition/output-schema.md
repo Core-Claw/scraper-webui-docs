@@ -51,7 +51,7 @@ sidebar:
 
 `output_schema.json` 中的 `name` 字段必须与脚本中调用 `push_data` 时使用的键名一致。
 
-例如，使用上述配置时，脚本应推送如下数据：
+例如，使用上述配置时，每条上报数据应使用如下匹配的字段名。完整 Worker 代码中，必须先调用 `set_table_header` 设置表头，再调用 `push_data` 上报数据。
 
 ### Python
 

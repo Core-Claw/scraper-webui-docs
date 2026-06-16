@@ -123,7 +123,7 @@ for item in collected_data:
 ```
 
 **重要提醒**：
-- 设置表头与推送数据的顺序可以颠倒
+- 必须先设置表头，再推送数据
 - 推送数据时，字典中的 key 必须与表头中定义的 key 完全一致
 - 数据需要**逐条推送**，不能一次性推送多条
 - 建议在每次推送后记录日志，方便跟踪执行进度
@@ -187,15 +187,15 @@ def main():
             "status": "success",
         }
 
-        # 4. 推送结果数据
-        CoreSDK.Result.push_data(result)
-
-        # 5. 设置表格表头
+        # 4. 设置表格表头
         headers = [
             {"label": "URL", "key": "url", "format": "text"},
             {"label": "状态", "key": "status", "format": "text"},
         ]
         CoreSDK.Result.set_table_header(headers)
+
+        # 5. 推送结果数据
+        CoreSDK.Result.push_data(result)
 
         CoreSDK.Log.info("脚本执行完成")
 
@@ -240,15 +240,15 @@ async def run():
             "status": "success",
         }
 
-        # 4. 推送结果数据
-        CoreSDK.Result.push_data(result)
-
-        # 5. 设置表格表头
+        # 4. 设置表格表头
         headers = [
             {"label": "URL", "key": "url", "format": "text"},
             {"label": "状态", "key": "status", "format": "text"},
         ]
         CoreSDK.Result.set_table_header(headers)
+
+        # 5. 推送结果数据
+        CoreSDK.Result.push_data(result)
 
         CoreSDK.Log.info("脚本执行完成")
 
@@ -272,7 +272,7 @@ if __name__ == "__main__":
 1. **接收指令** — 从平台获取输入参数（URL、关键词等）
 2. **网络配置** — 通过 `PROXY_AUTH` 环境变量配置代理，访问外部网站
 3. **执行任务** — 在目标页面上运行核心采集逻辑
-4. **上报结果** — 将采集数据推送回平台并设置表格表头
+4. **上报结果** — 先设置表格表头，再将采集数据推送回平台
 
 ---
 

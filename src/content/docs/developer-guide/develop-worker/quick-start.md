@@ -105,15 +105,15 @@ async def run():
             "status": "success",
         }
 
-        # 4. Push result data
-        CoreSDK.Result.push_data(result)
-
-        # 5. Set table headers
+        # 4. Set table headers
         headers = [
             {"label": "URL", "key": "url", "format": "text"},
             {"label": "Status", "key": "status", "format": "text"},
         ]
         CoreSDK.Result.set_table_header(headers)
+
+        # 5. Push result data
+        CoreSDK.Result.push_data(result)
 
         CoreSDK.Log.info("Script execution completed")
 

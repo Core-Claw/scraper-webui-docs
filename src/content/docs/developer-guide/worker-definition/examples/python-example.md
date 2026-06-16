@@ -123,7 +123,7 @@ for item in collected_data:
 ```
 
 **Important**:
-- Setting headers and pushing data can be done in any order
+- Set table headers before pushing data
 - Keys in push_data must match keys in table headers exactly
 - Data must be pushed **one row at a time**
 - Add logging after each push to track progress
@@ -187,15 +187,15 @@ def main():
             "status": "success",
         }
 
-        # 4. Push result data
-        CoreSDK.Result.push_data(result)
-
-        # 5. Set table headers
+        # 4. Set table headers
         headers = [
             {"label": "URL", "key": "url", "format": "text"},
             {"label": "Status", "key": "status", "format": "text"},
         ]
         CoreSDK.Result.set_table_header(headers)
+
+        # 5. Push result data
+        CoreSDK.Result.push_data(result)
 
         CoreSDK.Log.info("Script execution completed")
 
@@ -240,15 +240,15 @@ async def run():
             "status": "success",
         }
 
-        # 4. Push result data
-        CoreSDK.Result.push_data(result)
-
-        # 5. Set table headers
+        # 4. Set table headers
         headers = [
             {"label": "URL", "key": "url", "format": "text"},
             {"label": "Status", "key": "status", "format": "text"},
         ]
         CoreSDK.Result.set_table_header(headers)
+
+        # 5. Push result data
+        CoreSDK.Result.push_data(result)
 
         CoreSDK.Log.info("Script execution completed")
 
@@ -272,7 +272,7 @@ The script follows four stages:
 1. **Receive instructions** — Get input parameters (URLs, keywords, etc.) from the platform
 2. **Network setup** — Configure proxy via `PROXY_AUTH` environment variable for accessing external websites
 3. **Execute task** — Run the core scraping logic on target pages
-4. **Report results** — Push collected data back to the platform and set table headers
+4. **Report results** — Set table headers first, then push collected data back to the platform
 
 ---
 
