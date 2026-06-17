@@ -346,11 +346,10 @@ sidebar:
     "default": [
         "restaurant",
         "school"
-```
-
     ]
 }
 ```
+
 
 ---
 
@@ -377,11 +376,10 @@ sidebar:
             "editor": "stringList",
             "description": "Username(s) to search. One per line.",
             "default": [
-                {
-                    "string": "john_doe"
-            "default": [
                 "john_doe"
             ],
+            "required": true
+        },
         {
             "title": "Timeout (secs)",
             "name": "timeout",

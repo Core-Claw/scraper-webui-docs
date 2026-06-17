@@ -312,7 +312,6 @@ Similar to `requestList`, but allows you to define additional custom parameters 
 ```
 
 ### 11. String List (`stringList`)
-### 11. String List (`stringList`)
 
 Object array with custom key names:
 
@@ -348,9 +347,6 @@ OR plain string array:
 }
 ```
 
-    ]
-}
-```
 
 ---
 
@@ -380,7 +376,6 @@ Developers can logically group multiple configuration items by using specific fi
             "default": [
                 "john_doe"
             ],
-            "required": true
         },
         {
             "title": "Timeout (secs)",
