@@ -1,4 +1,4 @@
----
+﻿---
 title: Worker 输入配置 (Input Schema)
 description: Worker 输入配置 (Input Schema) 使用手册
 sidebar:
@@ -241,6 +241,8 @@ sidebar:
 
 ### 9. URL 地址列表 (requestList)
 
+对象数组，支持自定义键名：
+
 ```json
 {
     "name": "startURLs",
@@ -249,15 +251,34 @@ sidebar:
     "editor": "requestList",
     "default": [
         {
-            "url": "https://example.com/page1"
+            "url_path": "https://example.com/page1"
         },
         {
-            "url": "https://example.com/page2"
+            "url_path": "https://example.com/page2"
         }
     ],
     "required": true,
     "description": "The URLs of the website to scrape"
 }
+```
+
+或纯字符串数组：
+
+```json
+{
+    "name": "startURLs",
+    "type": "array",
+    "title": "Start URLs",
+    "editor": "requestList",
+    "default": [
+        "https://example.com/page1",
+        "https://example.com/page2"
+    ],
+    "required": true,
+    "description": "The URLs of the website to scrape"
+}
+```
+
 ```
 
 ### 10. URL 请求列表源 (requestListSource)
@@ -294,6 +315,9 @@ sidebar:
 ```
 
 ### 11. 字符串列表 (stringList)
+### 11. 字符串列表 (stringList)
+
+对象数组，支持自定义键名：
 
 ```json
 {
@@ -303,11 +327,30 @@ sidebar:
     "editor": "stringList",
     "default": [
         {
-            "string": "restaurant"
+            "keyword": "restaurant"
         },
         {
-            "string": "school"
+            "keyword": "school"
         }
+    ]
+}
+```
+
+或纯字符串数组：
+
+```json
+{
+    "title": "Search term(s)",
+    "name": "searchTerms",
+    "type": "array",
+    "editor": "stringList",
+    "default": [
+        "restaurant",
+        "school"
+    ]
+}
+```
+
     ]
 }
 ```

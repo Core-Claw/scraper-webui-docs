@@ -1,4 +1,4 @@
----
+﻿---
 title: Worker Input Configuration (Input Schema)
 description: A manual for Worker input configuration (Input Schema)
 sidebar:
@@ -239,6 +239,8 @@ You can choose different `editor` types based on your needs to improve the user 
 
 ### 9. URL List (`requestList`)
 
+Object array with custom key names:
+
 ```json
 {
     "name": "startURLs",
@@ -247,16 +249,34 @@ You can choose different `editor` types based on your needs to improve the user 
     "editor": "requestList",
     "default": [
         {
-            "url": "https://example.com/page1"
+            "url_path": "https://example.com/page1"
         },
         {
-            "url": "https://example.com/page2"
+            "url_path": "https://example.com/page2"
         }
     ],
     "required": true,
     "description": "The URLs of the website to scrape"
 }
 ```
+
+OR plain string array:
+
+```json
+{
+    "name": "startURLs",
+    "type": "array",
+    "title": "Start URLs",
+    "editor": "requestList",
+    "default": [
+        "https://example.com/page1",
+        "https://example.com/page2"
+    ],
+    "required": true,
+    "description": "The URLs of the website to scrape"
+}
+```
+
 
 ### 10. URL Request Source (`requestListSource`)
 
@@ -292,6 +312,9 @@ Similar to `requestList`, but allows you to define additional custom parameters 
 ```
 
 ### 11. String List (`stringList`)
+### 11. String List (`stringList`)
+
+Object array with custom key names:
 
 ```json
 {
@@ -301,11 +324,30 @@ Similar to `requestList`, but allows you to define additional custom parameters 
     "editor": "stringList",
     "default": [
         {
-            "string": "restaurant"
+            "keyword": "restaurant"
         },
         {
-            "string": "school"
+            "keyword": "school"
         }
+    ]
+}
+```
+
+OR plain string array:
+
+```json
+{
+    "title": "Search term(s)",
+    "name": "searchTerms",
+    "type": "array",
+    "editor": "stringList",
+    "default": [
+        "restaurant",
+        "school"
+    ]
+}
+```
+
     ]
 }
 ```
