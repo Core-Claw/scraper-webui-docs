@@ -70,7 +70,6 @@ Each API request may return a success code or an error code. You can use these c
 Most API requests require authentication using your API key. The public endpoints `/api/scraper` and `/api/store` do not require authentication. Include the key in the request header of every authenticated call.
 
 ### Using the API Key
-### Using the API Key
 
 The recommended way is to pass your API key in the `api-key` header:
 
