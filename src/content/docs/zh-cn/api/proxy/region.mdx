@@ -1,0 +1,71 @@
+﻿---
+title: 代理区域列表
+description: 获取 Worker 运行时可用的代理区域列表。
+sidebar:
+    order: 5
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+
+**方法：** `GET`
+
+**端点：** `/api/proxy/region`
+
+返回 Worker 运行时可选的代理区域列表。
+
+## 在线试用
+
+<ApiPlayground method="GET" path="/api/proxy/region" />
+
+## 请求示例
+
+```bash
+curl "https://openapi.coreclaw.com/api/proxy/region"
+```
+
+#### 参数说明
+
+该接口当前无必填参数。
+
+## 响应示例
+
+```json
+{
+    "code": 0,
+    "message": "success",
+    "data": {
+        "list": [
+            {
+                "code": "US",
+                "name": "United States"
+            },
+            {
+                "code": "DE",
+                "name": "Germany"
+            }
+        ]
+    }
+}
+```
+
+#### 响应字段
+
+| 参数    | 示例    | 类型    | 说明       |
+| ------- | ------- | ------- | ---------- |
+| code    | 0       | Integer | 全局状态码 |
+| message | success | String  | 响应消息   |
+| data    | -       | Object  | 响应数据   |
+
+##### `data` 字段
+
+| 参数 | 示例 | 类型  | 说明           |
+| ---- | ---- | ----- | -------------- |
+| list | -    | Array | 可用区域列表   |
+
+##### `list[]` 字段
+
+| 参数 | 示例 | 类型   | 说明             |
+| ---- | ---- | ------ | ---------------- |
+| code | US   | String | 区域代码         |
+| name | United States | String | 区域显示名称 |

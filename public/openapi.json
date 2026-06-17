@@ -992,6 +992,72 @@
           }
         ]
       }
+    },
+    "/api/proxy/region": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "List proxy regions",
+        "description": "Return the current proxy region catalog available for Worker runtime.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Proxy region list returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "example": "US"
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "United States"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "name"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "list"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
     }
   },
   "components": {

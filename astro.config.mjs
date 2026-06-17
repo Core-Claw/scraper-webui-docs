@@ -1,4 +1,4 @@
-// @ts-check
+﻿// @ts-check
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import starlightImageZoom from 'starlight-image-zoom'
@@ -493,6 +493,13 @@ export default defineConfig({
                             slug: 'api/account/info',
                             translations: {
                                 'zh-CN': '账户信息',
+                            },
+                        },
+                        {
+                            label: 'Proxy Region List',
+                            slug: 'api/proxy/region',
+                            translations: {
+                                'zh-CN': '代理区域列表',
                             },
                         },
                         {

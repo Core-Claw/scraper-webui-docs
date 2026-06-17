@@ -1,4 +1,4 @@
----
+﻿---
 title: Publish Your Worker
 description: Publish your script as a private script or to the CoreClaw Store
 sidebar:
@@ -9,9 +9,9 @@ CoreClaw supports publishing both **private scripts** and **public scripts**. Al
 
 ---
 
-## Upload Restrictions
+## Upload Methods
 
-> Currently, **only ZIP archive files are supported** for script uploads. Please ensure your file format is correct before uploading.
+> You can upload scripts as a **ZIP archive** or import directly from **GitHub**. If you use GitHub import, you can also manage versions by branch, tag, or commit. For details, see [Deployment](/developer-guide/deployment/).
 
 ---
 

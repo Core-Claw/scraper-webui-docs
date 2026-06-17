@@ -1,4 +1,4 @@
----
+﻿---
 title: 发布 Worker
 description: 将脚本发布为私有脚本或发布到 CoreClaw Store
 sidebar:
@@ -9,9 +9,9 @@ CoreClaw 支持发布**私有脚本**和**公开脚本**。所有脚本执行文
 
 ---
 
-## 上传限制
+## 上传方式
 
-> 目前，**仅支持 ZIP 压缩包文件**上传脚本。请确保上传前文件格式正确。
+> 现在支持使用 **ZIP 压缩包**上传脚本，也支持直接从 **GitHub** 导入。使用 GitHub 导入时，还可以按分支、标签或提交版本进行版本管理。详见 [部署](/zh-cn/developer-guide/deployment/)。
 
 ---
 

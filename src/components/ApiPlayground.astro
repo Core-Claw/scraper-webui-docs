@@ -1,4 +1,4 @@
----
+﻿---
 /**
  * ApiPlayground — embeds a try-it-out form for one OpenAPI operation.
  *
@@ -186,7 +186,7 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
         </div>
 
         <div class="ap-body">
-            {needsApiKey && (
+            {needsApiKey ? (
                 <div class="ap-field">
                     <div class="ap-label-row">
                         <label class="ap-label" for={`${id}-key`}>api-key</label>
@@ -202,6 +202,31 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                         placeholder="Paste your API key"
                     />
                     <p class="ap-hint">Stored only in this browser tab. Sent only to <code>{defaultServer}</code>.</p>
+                </div>
+            ) : (
+                <div class="ap-section">
+                    <div class="ap-section-title">
+                        <span>api-key</span>
+                        <span class="ap-pill ap-pill--optional">Not required</span>
+                    </div>
+                    <p class="ap-section-desc">This is a public endpoint and does not require an API key.</p>
+                </div>
+            )}
+
+            {!bodyContent && !exampleBodyStr && (
+                <div class="ap-section">
+                    <div class="ap-section-title">
+                        <span>Body</span>
+                        <span class="ap-pill ap-pill--optional">Not required</span>
+                    </div>
+                    <div class="ap-body-empty">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4"/>
+                            <path d="M12 8h.01"/>
+                        </svg>
+                        <span>This endpoint takes no body parameters.</span>
+                    </div>
                 </div>
             )}
 
@@ -818,11 +843,12 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
     .ap-reset-all {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.55rem 1.05rem;
-        border-radius: 8px;
-        font-size: 0.8125rem;
+        gap: 0.35rem;
+        padding: 0.38rem 0.78rem;
+        border-radius: 7px;
+        font-size: 0.78rem;
         font-weight: 600;
+        line-height: 1.2;
         cursor: pointer;
         transition: all 0.15s ease;
         border: 1px solid transparent;

@@ -1,4 +1,4 @@
----
+﻿---
 title: Base URL & Authentication
 description: API base URL, request headers, and global status codes
 sidebar:
@@ -63,6 +63,7 @@ Each API request may return a success code or an error code. You can use these c
 | 10 | `POST` | `/api/v1/rerun` | [Re-run](/api/run/rerun/) |
 | 11 | `POST` | `/api/v1/task/run` | [Start Task](/api/task/run/) |
 | 12 | `POST` | `/api/v1/account/info` | [Account Info](/api/account/info/) |
+| 13 | `GET` | `/api/proxy/region` | [Proxy Region List](/api/proxy/region/) |
 
 ## Authentication
 
@@ -102,3 +103,5 @@ CoreClaw API uses three types of identifiers (slugs). Understanding the differen
 ![run_slug location](@/assets/docs/run_slug.png)
 
 > **Important**: Do not mix these identifiers. Each slug type serves a different purpose. Passing a `run_slug` to a `task_slug` or `scraper_slug` field will cause request validation errors.
+>
+> In addition to the ID format shown above, `scraper_slug` also supports the newer GitHub path format such as `coreclaw/google-maps-scraper`.

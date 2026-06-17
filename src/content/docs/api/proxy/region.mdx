@@ -1,0 +1,71 @@
+﻿---
+title: Proxy Region List
+description: Get available proxy regions for Worker execution.
+sidebar:
+    order: 5
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+
+**Method:** `GET`
+
+**Endpoint:** `/api/proxy/region`
+
+Returns the available proxy region list for Worker runtime proxy selection.
+
+## Try it
+
+<ApiPlayground method="GET" path="/api/proxy/region" />
+
+## Request Example
+
+```bash
+curl "https://openapi.coreclaw.com/api/proxy/region"
+```
+
+#### Parameters
+
+This endpoint currently accepts no required parameters.
+
+## Response Example
+
+```json
+{
+    "code": 0,
+    "message": "success",
+    "data": {
+        "list": [
+            {
+                "code": "US",
+                "name": "United States"
+            },
+            {
+                "code": "DE",
+                "name": "Germany"
+            }
+        ]
+    }
+}
+```
+
+#### Response Fields
+
+| Parameter | Example | Type    | Description        |
+| --------- | ------- | ------- | ------------------ |
+| code      | 0       | Integer | Global status code |
+| message   | success | String  | Response message   |
+| data      | -       | Object  | Response payload   |
+
+##### `data` Fields
+
+| Parameter | Example | Type  | Description             |
+| --------- | ------- | ----- | ----------------------- |
+| list      | -       | Array | Available region list   |
+
+##### `list[]` Fields
+
+| Parameter | Example | Type   | Description                  |
+| --------- | ------- | ------ | ---------------------------- |
+| code      | US      | String | Region code                  |
+| name      | United States | String | Region display name      |

@@ -1,4 +1,4 @@
----
+﻿---
 title: 基础地址与身份验证
 description: API 基础地址、请求头和全局状态码
 sidebar:
@@ -63,6 +63,7 @@ https://openapi.coreclaw.com
 | 10 | `POST` | `/api/v1/rerun` | [重新运行](/zh-cn/api/run/rerun/) |
 | 11 | `POST` | `/api/v1/task/run` | [运行任务](/zh-cn/api/task/run/) |
 | 12 | `POST` | `/api/v1/account/info` | [账户信息](/zh-cn/api/account/info/) |
+| 13 | `GET` | `/api/proxy/region` | [代理区域列表](/zh-cn/api/proxy/region/) |
 
 ## 身份验证
 
@@ -102,3 +103,5 @@ CoreClaw API 使用三种标识符（slug）。理解它们的区别对于正确
 ![run_slug 位置](@/assets/docs/run_slug.png)
 
 > **重要提示**：请勿混用这些标识符。每种 slug 类型有不同的用途。将 `run_slug` 传入 `task_slug` 或 `scraper_slug` 字段会导致请求参数校验错误。
+>
+> 除截图中的 ID 格式外，`scraper_slug` 也支持新的 GitHub 路径格式，例如 `coreclaw/google-maps-scraper`。
