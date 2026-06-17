@@ -1,4 +1,4 @@
-﻿---
+---
 title: Worker Input Configuration (Input Schema)
 description: A manual for Worker input configuration (Input Schema)
 sidebar:
@@ -247,12 +247,12 @@ Object array with custom key names:
     "type": "array",
     "title": "Start URLs",
     "editor": "requestList",
+    "default": [
+        {
             "key": "value1"
+        },
         {
-            "url_path": "https://example.com/page1"
             "key": "value2"
-        {
-            "url_path": "https://example.com/page2"
         }
     ],
     "required": true,
@@ -266,11 +266,11 @@ OR plain string array:
 {
     "name": "startURLs",
     "type": "array",
+    "title": "Start URLs",
+    "editor": "requestList",
+    "default": [
         "value1",
         "value2"
-    "default": [
-        "https://example.com/page1",
-        "https://example.com/page2"
     ],
     "required": true,
     "description": "The URLs of the website to scrape"
@@ -372,7 +372,6 @@ Developers can logically group multiple configuration items by using specific fi
             "type": "array",
             "editor": "stringList",
             "description": "Username(s) to search. One per line.",
-            "default": [
             "default": [
                 "john_doe"
             ],
