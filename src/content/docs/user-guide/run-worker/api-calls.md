@@ -1,4 +1,4 @@
----
+﻿---
 title: API Calls
 description: Run Workers and Task templates programmatically via the CoreClaw API
 sidebar:
@@ -28,7 +28,7 @@ For the full endpoint reference, see [Base URL & Authentication](/api/).
 
 | Slug | What it identifies | How to get it | Used by |
 | ---- | ------------------ | ------------- | ------- |
-| `scraper_slug` | A Worker | Each Worker has its own `scraper_slug`. You can get it from the Worker page, or from `scraper_slug` returned by [Run Detail](/api/run/detail/) or [Run History](/api/run/history/). | `/api/v1/scraper/run`, `/api/v1/run/list` |
+| `scraper_slug` | A Worker | Each Worker has its own `scraper_slug`. You can get it from the Worker page, or from `scraper_slug` returned by [Run Detail](/api/run/detail/) or [Run History](/api/run/history/). Supports both GitHub path format (e.g. `coreclaw/google-maps-scraper`) and legacy ID format (e.g. `01KPD6M5YQADCQKGVKPDZVYC63`). | `/api/v1/scraper/run`, `/api/v1/run/list` |
 | `task_slug` | A saved Task template | Generated when a user creates and saves a Task template. | `/api/v1/task/run` |
 | `run_slug` | A specific run record | Returned after starting a Worker or a Task, and exposed by run APIs. | `/api/v1/run/detail`, `/api/v1/run/last/log`, `/api/v1/run/result/list`, `/api/v1/run/result/export`, `/api/v1/rerun`, `/api/v1/scraper/abort` |
 

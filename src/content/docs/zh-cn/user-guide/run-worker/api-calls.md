@@ -1,4 +1,4 @@
----
+﻿---
 title: API 调用
 description: 通过 CoreClaw API 编程运行 Worker 与 Task 模板
 sidebar:
@@ -28,7 +28,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
 
 | Slug | 标识对象 | 获取方式 | 典型用途 |
 | ---- | -------- | -------- | -------- |
-| `scraper_slug` | 某个 Worker | 每个 Worker 都有自己的 `scraper_slug`。可以从 Worker 页面获取，或从[运行详情](/zh-cn/api/run/detail/)和[运行历史](/zh-cn/api/run/history/)返回的 `scraper_slug` 获取。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
+| `scraper_slug` | 某个 Worker | 每个 Worker 都有自己的 `scraper_slug`。可以从 Worker 页面获取，或从[运行详情](/zh-cn/api/run/detail/)和[运行历史](/zh-cn/api/run/history/)返回的 `scraper_slug` 获取。同时支持 GitHub 路径格式（如 `coreclaw/google-maps-scraper`）和旧版 ID 格式（如 `01KPD6M5YQADCQKGVKPDZVYC63`）。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
 | `task_slug` | 已保存的 Task 模板 | 用户创建并保存 Task 模板时生成。 | `/api/v1/task/run` |
 | `run_slug` | 某一次具体运行记录 | 启动 Worker 或 Task 后返回，也会出现在运行相关接口里。 | `/api/v1/run/detail`、`/api/v1/run/last/log`、`/api/v1/run/result/list`、`/api/v1/run/result/export`、`/api/v1/rerun`、`/api/v1/scraper/abort` |
 

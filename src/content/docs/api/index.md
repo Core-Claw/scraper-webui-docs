@@ -84,7 +84,7 @@ CoreClaw API uses three types of identifiers (slugs). Understanding the differen
 
 | Slug | What it identifies | Description | Used by |
 | ---- | ------------------ | ----------- | ------- |
-| `scraper_slug` | **Worker ID** | The unique identifier for each Worker. Every Worker has one permanent `scraper_slug`. | `/api/v1/scraper/run`, `/api/v1/run/list` |
+| `scraper_slug` | **Worker ID** | The unique identifier for each Worker. Every Worker has one permanent `scraper_slug`. Supports both GitHub path format (e.g. `coreclaw/google-maps-scraper`) and legacy ID format (e.g. `01KPD6M5YQADCQKGVKPDZVYC63`). | `/api/v1/scraper/run`, `/api/v1/run/list` |
 | `task_slug` | **Task ID** | Generated when you create and save a Task template. A Task is a reusable configuration that bundles a Worker with preset parameters. | `/api/v1/task/run` |
 | `run_slug` | **Run Record ID** | Generated each time you execute a Worker or Task. Each run produces a unique `run_slug` to track that specific execution. | `/api/v1/run/detail`, `/api/v1/run/last/log`, `/api/v1/run/result/list`, `/api/v1/run/result/export`, `/api/v1/rerun`, `/api/v1/scraper/abort` |
 
@@ -104,4 +104,4 @@ CoreClaw API uses three types of identifiers (slugs). Understanding the differen
 
 > **Important**: Do not mix these identifiers. Each slug type serves a different purpose. Passing a `run_slug` to a `task_slug` or `scraper_slug` field will cause request validation errors.
 >
-> In addition to the ID format shown above, `scraper_slug` also supports the newer GitHub path format such as `coreclaw/google-maps-scraper`.
+> In addition to the ID format shown above, `scraper_slug` also supports the GitHub path format, for example `coreclaw/google-maps-scraper`. Both formats are fully compatible — the legacy ID format (e.g. `01KPD6M5YQADCQKGVKPDZVYC63`) continues to work.

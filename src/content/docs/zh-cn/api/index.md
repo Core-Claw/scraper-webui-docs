@@ -84,7 +84,7 @@ CoreClaw API 使用三种标识符（slug）。理解它们的区别对于正确
 
 | Slug | 标识对象 | 说明 | 典型用途 |
 | ---- | -------- | ---- | -------- |
-| `scraper_slug` | **Worker ID** | 每个 Worker 的唯一标识符。每个 Worker 都有一个固定的 `scraper_slug`。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
+| `scraper_slug` | **Worker ID** | 每个 Worker 的唯一标识符。每个 Worker 都有一个固定的 `scraper_slug`。同时支持 GitHub 路径格式（如 `coreclaw/google-maps-scraper`）和旧版 ID 格式（如 `01KPD6M5YQADCQKGVKPDZVYC63`）。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
 | `task_slug` | **任务 ID** | 创建并保存 Task 模板时生成。Task 是可复用的配置，将 Worker 与预设参数打包在一起。 | `/api/v1/task/run` |
 | `run_slug` | **运行记录 ID** | 每次执行 Worker 或 Task 时生成。每次运行都会产生一个唯一的 `run_slug`，用于追踪该次执行。 | `/api/v1/run/detail`、`/api/v1/run/last/log`、`/api/v1/run/result/list`、`/api/v1/run/result/export`、`/api/v1/rerun`、`/api/v1/scraper/abort` |
 
@@ -104,4 +104,4 @@ CoreClaw API 使用三种标识符（slug）。理解它们的区别对于正确
 
 > **重要提示**：请勿混用这些标识符。每种 slug 类型有不同的用途。将 `run_slug` 传入 `task_slug` 或 `scraper_slug` 字段会导致请求参数校验错误。
 >
-> 除截图中的 ID 格式外，`scraper_slug` 也支持新的 GitHub 路径格式，例如 `coreclaw/google-maps-scraper`。
+> 除截图中的 ID 格式外，`scraper_slug` 也支持 GitHub 路径格式，例如 `coreclaw/google-maps-scraper`。两种格式完全兼容——旧版 ID 格式（如 `01KPD6M5YQADCQKGVKPDZVYC63`）仍然可用。
