@@ -315,7 +315,6 @@ sidebar:
 ```
 
 ### 11. 字符串列表 (stringList)
-### 11. 字符串列表 (stringList)
 
 对象数组，支持自定义键名：
 
@@ -347,8 +346,6 @@ sidebar:
     "default": [
         "restaurant",
         "school"
-    ]
-}
 ```
 
     ]
@@ -382,10 +379,9 @@ sidebar:
             "default": [
                 {
                     "string": "john_doe"
-                }
+            "default": [
+                "john_doe"
             ],
-            "required": true
-        },
         {
             "title": "Timeout (secs)",
             "name": "timeout",

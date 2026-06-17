@@ -377,9 +377,8 @@ Developers can logically group multiple configuration items by using specific fi
             "editor": "stringList",
             "description": "Username(s) to search. One per line.",
             "default": [
-                {
-                    "string": "john_doe"
-                }
+            "default": [
+                "john_doe"
             ],
             "required": true
         },
