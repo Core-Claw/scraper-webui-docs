@@ -1,4 +1,4 @@
----
+﻿---
 title: n8n
 description: Connect CoreClaw to n8n workflows using the CoreClaw community node
 sidebar:
@@ -120,14 +120,14 @@ Start an asynchronous scraper run with custom parameters.
 | Field                 | Description                                                              |
 | --------------------- | ------------------------------------------------------------------------ |
 | **Scraper**           | Pick from the marketplace list, or paste a slug directly                 |
-| **Version**           | Scraper version string (required). Obtain from **Get Details** → version |
+| **Version**           | Scraper version string (optional — defaults to latest). Obtain from **Get Details** → version |
 | **Custom Parameters** | Scraper-specific input parameters as JSON (schema from Get Details)      |
 | **System Parameters** | Optional JSON overrides for cpus, memory, timeout, max charge, traffic   |
 | **Callback URL**      | Optional webhook URL for async notifications                             |
 
 
 :::caution
-**Version is required.** The node does not support "leave empty for latest". Always obtain the correct version string from **Get Details** first.
+**Version is optional.** If left empty, the platform uses the latest version automatically. To pin a specific version, obtain the version string from **Get Details** first.
 :::
 
 Get the `scraper_slug` (Worker Slug) from the Worker page in the [CoreClaw Console](https://console.coreclaw.com/store) or from the API (`GET /api/scraper?slug=<scraper_slug>`).

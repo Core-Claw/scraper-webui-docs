@@ -45,7 +45,7 @@ POST /api/v1/scraper/run
 ```json
 {
   "scraper_slug": "YOUR_SCRAPER_SLUG",
-  "version": "<version>",
+  "version": "<version>",  // 可选 — 默认使用最新版本
   "input": {
     "parameters": {
       "system": {
@@ -87,8 +87,8 @@ POST /api/v1/scraper/run
 - 对于 `required: true` 的字段，必须显式提供
 - 如果 `custom` 为空，或结构不匹配，接口会返回 `400 Bad Request`
 
-### 如何获取 `version`
 
+`version` 为可选字段。如不填写，平台将自动使用最新版本。如需指定版本，可通过以下方式获取：
 可以从以下位置获得：
 
 - Worker 页面显示的版本号

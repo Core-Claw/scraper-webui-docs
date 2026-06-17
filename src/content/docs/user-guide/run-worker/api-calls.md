@@ -45,7 +45,7 @@ POST /api/v1/scraper/run
 ```json
 {
   "scraper_slug": "YOUR_SCRAPER_SLUG",
-  "version": "<version>",
+  "version": "<version>",  // Optional — defaults to latest version
   "input": {
     "parameters": {
       "system": {
@@ -86,9 +86,9 @@ When building `custom`:
 - Follow the declared `type`, nested structure, and array shape
 - Provide every field where `required: true`
 - If `custom` is empty or does not match, the API returns `400 Bad Request`
-
 ### How to get `version`
 
+`version` is optional. If omitted, the platform uses the latest version automatically. To pin a specific version, use one of the following sources:
 Use one of the following sources:
 
 - the Worker version shown on the Worker page

@@ -1,4 +1,4 @@
----
+﻿---
 title: 运行 Worker
 description: 启动 Worker 运行
 sidebar:
@@ -36,7 +36,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 ```json
 {
     "scraper_slug": "YOUR_SCRAPER_SLUG",
-    "version": "YOUR_WORKER_VERSION",
+    "version": "YOUR_WORKER_VERSION",  // 可选 — 默认使用最新版本
     "input": {
         "parameters": {
             "system": {
@@ -66,7 +66,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 | 参数         | 必填 | 类型    | 说明 |
 | ------------ | ---- | ------- | ---- |
 | scraper_slug | 是   | string  | **Worker ID**——要运行的 Worker 的唯一标识符 |
-| version      | 是   | string  | Worker 版本 |
+| version      | 否   | string  | Worker 版本。如不填写，默认使用最新版本。 |
 | input        | 是   | object  | 输入参数 |
 | is_async     | 是   | boolean | `true`：异步执行（默认），`false`：同步执行（等待完成） |
 | callback_url | 否   | string  | 用于接收运行结果的回调地址 |

@@ -1,4 +1,4 @@
----
+﻿---
 title: Start Worker
 description: Start a Worker run.
 sidebar:
@@ -34,7 +34,7 @@ You can find it:
 
 ```json
 {
-    "scraper_slug": "YOUR_SCRAPER_SLUG",
+    "version": "YOUR_WORKER_VERSION",  // Optional — defaults to latest version
     "version": "YOUR_WORKER_VERSION",
     "input": {
         "parameters": {
@@ -65,7 +65,7 @@ You can find it:
 | Parameter    | Required | Type    | Description |
 | ------------ | -------- | ------- | ----------- |
 | scraper_slug | Yes      | string  | **Worker ID** — unique identifier for the Worker you want to run |
-| version      | Yes      | string  | Worker version |
+| version      | No       | string  | Worker version. If omitted, defaults to the latest version. |
 | input        | Yes      | object  | Input parameters |
 | is_async     | Yes      | boolean | `true`: async execution (default), `false`: sync execution (waits for completion) |
 | callback_url | No       | string  | Callback URL for receiving run results |
