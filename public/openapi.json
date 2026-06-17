@@ -1,4 +1,4 @@
-{
+﻿{
   "openapi": "3.1.0",
   "info": {
     "title": "CoreClaw API",
@@ -135,7 +135,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "01KPD6M5YVHWCNQCRK32BD02TP"
+            "example": "coreclaw/google-maps-scraper"
           }
         ],
         "responses": {
@@ -223,7 +223,7 @@
                 "async_run": {
                   "summary": "Async run with callback",
                   "value": {
-                    "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP",
+                    "scraper_slug": "coreclaw/google-maps-scraper",
                     "version": "v1.0.5",
                     "is_async": true,
                     "input": {
@@ -253,7 +253,7 @@
                 "sync_run": {
                   "summary": "Sync run without callback",
                   "value": {
-                    "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP",
+                    "scraper_slug": "coreclaw/google-maps-scraper",
                     "version": "v1.0.5",
                     "is_async": false,
                     "input": {
@@ -280,7 +280,7 @@
                 }
               },
               "example": {
-                "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP",
+                "scraper_slug": "coreclaw/google-maps-scraper",
                 "version": "v1.0.5",
                 "is_async": true,
                 "input": {
@@ -565,7 +565,7 @@
                 "page_index": 1,
                 "page_size": 10,
                 "status": 0,
-                "scraper_slug": "01KPD6M5YVHWCNQCRK32BD02TP"
+                "scraper_slug": "coreclaw/google-maps-scraper"
               }
             }
           }
@@ -1215,7 +1215,7 @@
           "scraper_slug": {
             "type": "string",
             "description": "Unique scraper identifier.",
-            "example": "01KPD6M5YVHWCNQCRK32BD02TP"
+            "example": "coreclaw/google-maps-scraper"
           },
           "version": {
             "type": "string",
