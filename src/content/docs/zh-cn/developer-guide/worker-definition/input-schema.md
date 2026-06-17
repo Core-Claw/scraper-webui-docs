@@ -251,10 +251,10 @@ sidebar:
     "editor": "requestList",
     "default": [
         {
-            "url_path": "https://example.com/page1"
+            "key": "value1"
         },
         {
-            "url_path": "https://example.com/page2"
+            "key": "value2"
         }
     ],
     "required": true,
@@ -271,8 +271,8 @@ sidebar:
     "title": "Start URLs",
     "editor": "requestList",
     "default": [
-        "https://example.com/page1",
-        "https://example.com/page2"
+        "value1",
+        "value2"
     ],
     "required": true,
     "description": "The URLs of the website to scrape"
@@ -325,10 +325,10 @@ sidebar:
     "editor": "stringList",
     "default": [
         {
-            "keyword": "restaurant"
+            "key": "value1"
         },
         {
-            "keyword": "school"
+            "key": "value2"
         }
     ]
 }
@@ -343,8 +343,8 @@ sidebar:
     "type": "array",
     "editor": "stringList",
     "default": [
-        "restaurant",
-        "school"
+        "value1",
+        "value2"
     ]
 }
 ```

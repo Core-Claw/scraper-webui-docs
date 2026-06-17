@@ -247,10 +247,10 @@ Object array with custom key names:
     "type": "array",
     "title": "Start URLs",
     "editor": "requestList",
-    "default": [
+            "key": "value1"
         {
             "url_path": "https://example.com/page1"
-        },
+            "key": "value2"
         {
             "url_path": "https://example.com/page2"
         }
@@ -266,8 +266,8 @@ OR plain string array:
 {
     "name": "startURLs",
     "type": "array",
-    "title": "Start URLs",
-    "editor": "requestList",
+        "value1",
+        "value2"
     "default": [
         "https://example.com/page1",
         "https://example.com/page2"
@@ -323,10 +323,10 @@ Object array with custom key names:
     "editor": "stringList",
     "default": [
         {
-            "keyword": "restaurant"
+            "key": "value1"
         },
         {
-            "keyword": "school"
+            "key": "value2"
         }
     ]
 }
@@ -341,8 +341,8 @@ OR plain string array:
     "type": "array",
     "editor": "stringList",
     "default": [
-        "restaurant",
-        "school"
+        "value1",
+        "value2"
     ]
 }
 ```
