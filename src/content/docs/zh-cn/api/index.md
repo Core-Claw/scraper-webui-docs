@@ -71,12 +71,27 @@ https://openapi.coreclaw.com
 
 ### 使用 API 密钥
 
+
+推荐通过 `api-key` 请求头传递 API 密钥：
+
 ```bash
 curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "api-key: YOUR_API_KEY" \
   -H "content-type: application/json" \
   --data "{}"
 ```
+
+也可以使用标准的 `Authorization: Bearer` 请求头。这种方式适合集成了默认使用 Bearer 认证的第三方工具（如 Postman、n8n、Swagger UI）：
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "content-type: application/json" \
+  --data "{}"
+```
+
+两种方式完全等价，请根据实际场景选择。
+
 
 ## 三种 Slug 的区别
 

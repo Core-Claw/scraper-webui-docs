@@ -70,6 +70,9 @@ Each API request may return a success code or an error code. You can use these c
 Most API requests require authentication using your API key. The public endpoints `/api/scraper` and `/api/store` do not require authentication. Include the key in the request header of every authenticated call.
 
 ### Using the API Key
+### Using the API Key
+
+The recommended way is to pass your API key in the `api-key` header:
 
 ```bash
 curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
@@ -77,6 +80,18 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
   -H "content-type: application/json" \
   --data "{}"
 ```
+
+Alternatively, you can use the standard `Authorization: Bearer` header. This is useful when integrating with third-party tools that default to Bearer authentication (e.g. Postman, n8n, Swagger UI):
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "content-type: application/json" \
+  --data "{}"
+```
+
+Both methods are equivalent — use whichever fits your workflow.
+
 
 ## Slug Types
 
