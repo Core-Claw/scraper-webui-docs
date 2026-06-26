@@ -112,7 +112,7 @@ export default defineConfig({
                 './src/styles/common.css',
                 '@fontsource-variable/ibm-plex-sans/index.css',
             ],
-            favicon: '/logo.png',
+            favicon: '/logo.png?v=159725d0',
             sidebar: [
 
                 {
