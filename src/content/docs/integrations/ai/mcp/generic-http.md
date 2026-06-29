@@ -1,20 +1,18 @@
 ---
 title: Generic HTTP Client
-description: Connect any MCP-compatible HTTP client to CoreClaw MCP Server.
+description: Connect any Streamable HTTP MCP client or REST-style tool caller to CoreClaw MCP Server.
 sidebar:
   order: 9
 ---
 
-Connect any MCP-compatible client that supports **Streamable HTTP** transport to the CoreClaw MCP Server.
+Connect any client that supports **Streamable HTTP MCP** to the hosted CoreClaw MCP Server. For platforms that cannot speak MCP JSON-RPC directly, the server also exposes REST-compatible per-tool endpoints.
 
 ## Prerequisites
 
-- An MCP client that supports Streamable HTTP transport
-- A CoreClaw account with an API key — get it from [Console → Settings → API & Integrations](https://console.coreclaw.com/settings/integrations)
+- An MCP client that supports Streamable HTTP, or an HTTP automation platform that can send `POST` requests.
+- A CoreClaw account with an API key from [Console -> Settings -> API & Integrations](https://console.coreclaw.com/settings/integrations).
 
-## Configuration
-
-Any MCP client that supports Streamable HTTP can connect to CoreClaw using the following configuration:
+## MCP Configuration
 
 ```json
 {
@@ -22,53 +20,82 @@ Any MCP client that supports Streamable HTTP can connect to CoreClaw using the f
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "scraper_api_YOUR_KEY_HERE"
+        "api-key": "YOUR_CORECLAW_API_KEY"
       }
     }
   }
 }
 ```
 
-Replace `scraper_api_YOUR_KEY_HERE` with your actual CoreClaw API key.
+The service also accepts `X-API-Key` and `Authorization: Bearer YOUR_CORECLAW_API_KEY` headers when your client supports those formats better.
 
 ## REST Compatible Endpoints
 
-In addition to the standard MCP endpoint at `/mcp`, CoreClaw MCP Server also exposes REST-compatible endpoints at `/mcp/<tool_name>` for clients that prefer per-tool HTTP APIs:
+Every MCP tool is also available as:
 
-```bash
-# Example: Search scrapers via REST
-curl -X POST https://mcp.coreclaw.com/mcp/search_scrapers \
-  -H "Content-Type: application/json" \
-  -H "api-key: scraper_api_YOUR_KEY" \
-  -d '{"query": "amazon", "limit": 5}'
+```text
+POST https://mcp.coreclaw.com/mcp/<tool_name>
 ```
 
-### Available REST endpoints
+Pass the tool arguments as a JSON object in the request body:
+
+```bash
+curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
+  -H "Content-Type: application/json" \
+  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -d '{"keyword":"amazon","offset":0,"limit":5}'
+```
+
+Authenticated example:
+
+```bash
+curl -X POST https://mcp.coreclaw.com/mcp/run_worker \
+  -H "Content-Type: application/json" \
+  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -d '{"worker_id":"YOUR_WORKER_ID","version":"latest","input_json":"{\"keyword\":\"coffee\",\"limit\":10}","is_async":true}'
+```
+
+## Available REST Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/mcp/search_scrapers` | POST | Search CoreClaw Store |
-| `/mcp/get_scraper_details` | POST | Get scraper details |
-| `/mcp/run_scraper` | POST | Run a scraper |
-| `/mcp/get_run_status` | POST | Check run status |
-| `/mcp/get_run_results` | POST | Get run results |
-| `/mcp/export_run_results` | POST | Export results |
-| `/mcp/list_runs` | POST | List historical runs |
-| `/mcp/abort_run` | POST | Abort a run |
-| `/mcp/get_run_logs` | POST | Get run logs |
-| `/mcp/run_task` | POST | Run a saved task |
-| `/mcp/rerun` | POST | Re-run a previous run |
-| `/mcp/get_account_info` | POST | Get account info |
+| `/mcp/list_proxy_regions` | POST | List proxy region codes |
+| `/mcp/list_store_workers` | POST | Search public Store workers |
+| `/mcp/list_workers` | POST | List authenticated user's workers |
+| `/mcp/get_worker` | POST | Get worker detail |
+| `/mcp/get_worker_input_schema` | POST | Get worker input schema |
+| `/mcp/list_worker_tasks` | POST | List saved worker tasks |
+| `/mcp/get_account_info` | POST | Get account balance and traffic quota |
+| `/mcp/run_worker` | POST | Run a worker with ad-hoc input |
+| `/mcp/run_worker_task` | POST | Run a saved worker task |
+| `/mcp/list_worker_runs` | POST | List run history |
+| `/mcp/get_last_worker_run` | POST | Get the account's latest run |
+| `/mcp/get_worker_run` | POST | Get a run by `run_id` |
+| `/mcp/get_worker_last_run` | POST | Get latest run for a worker |
+| `/mcp/list_last_worker_run_results` | POST | List latest account run results |
+| `/mcp/export_last_worker_run_results` | POST | Export latest account run results |
+| `/mcp/get_last_worker_run_log` | POST | Get latest account run logs |
+| `/mcp/list_worker_run_results` | POST | List results for a run |
+| `/mcp/export_worker_run_results` | POST | Export results for a run |
+| `/mcp/get_worker_run_log` | POST | Get logs for a run |
+| `/mcp/list_worker_last_run_results` | POST | List latest results for a worker |
+| `/mcp/export_worker_last_run_results` | POST | Export latest results for a worker |
+| `/mcp/get_worker_last_run_log` | POST | Get latest logs for a worker |
+| `/mcp/rerun_last_worker_run` | POST | Rerun the account's latest run |
+| `/mcp/rerun_worker_run` | POST | Rerun a specific run |
+| `/mcp/rerun_worker_last_run` | POST | Rerun the latest run for a worker |
+| `/mcp/abort_last_worker_run` | POST | Abort the account's latest active run |
+| `/mcp/abort_worker_run` | POST | Abort a specific active run |
+| `/mcp/abort_worker_last_run` | POST | Abort latest active run for a worker |
 
 ## Testing with curl
 
-You can test the MCP connection using curl:
+Initialize the MCP session:
 
 ```bash
-# Test connection (initialize)
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: scraper_api_YOUR_KEY" \
+  -H "api-key: YOUR_CORECLAW_API_KEY" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
@@ -79,48 +106,65 @@ curl -X POST https://mcp.coreclaw.com/mcp \
       "clientInfo": {"name": "test", "version": "1.0"}
     }
   }'
+```
 
-# List available tools
+List available tools:
+
+```bash
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: scraper_api_YOUR_KEY" \
+  -H "api-key: YOUR_CORECLAW_API_KEY" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
+```
 
-# Call a tool (search scrapers)
+Call a tool through MCP JSON-RPC:
+
+```bash
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: scraper_api_YOUR_KEY" \
+  -H "api-key: YOUR_CORECLAW_API_KEY" \
   -d '{
     "jsonrpc": "2.0",
     "id": 3,
     "method": "tools/call",
     "params": {
-      "name": "search_scrapers",
-      "arguments": {"query": "amazon", "limit": 5}
+      "name": "list_store_workers",
+      "arguments": {"keyword": "amazon", "offset": 0, "limit": 5}
     }
   }'
 ```
+
+## Common Arguments
+
+- `worker_id`: Worker slug or owner path. Encode `owner/name` as `owner~name`.
+- `run_id`: Worker run identifier returned by `run_worker`, `run_worker_task`, or run lookup tools.
+- `worker_task_id`: Saved worker task slug returned by `list_worker_tasks`.
+- `offset` / `limit`: Pagination values. `limit` is usually 1-100.
+- `format`: Export format, `csv` or `json`.
+- `filter_keys`: Comma-separated output fields to include in an export.
+- `input_json`: Worker business input JSON string for `run_worker`.
+- `raw_input_json`: Advanced full CoreClaw input object for `run_worker`; do not combine it with `input_json`.
 
 ## Troubleshooting
 
 ### Connection errors
 
-- Verify the URL is exactly `https://mcp.coreclaw.com/mcp`
-- Ensure the `api-key` header is set correctly
-- Check that your client supports Streamable HTTP transport
+- Verify the URL is exactly `https://mcp.coreclaw.com/mcp`.
+- Ensure your client supports Streamable HTTP MCP.
+- For REST-compatible calls, use `POST /mcp/<tool_name>`.
 
 ### Authentication errors
 
-- Ensure the `api-key` header value matches your CoreClaw API key exactly
-- Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations)
+- Ensure one supported auth header is present: `api-key`, `X-API-Key`, or `Authorization: Bearer ...`.
+- Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations).
 
-### Tools not loading
+### Tool errors
 
-- Confirm your client supports MCP protocol version `2024-11-05`
-- Check client logs for detailed error messages
-- Try the REST endpoints as a fallback
+- Use `list_store_workers` or `list_workers` to confirm `worker_id`.
+- Use `get_worker_input_schema` before composing `input_json`.
+- Use `get_worker_run_log` when a run fails or stalls.
 
-## Next steps
+## Next Steps
 
-- [→ Back to MCP overview](/integrations/ai/mcp/)
-- [→ CoreClaw API documentation](/api/)
+- [Back to MCP overview](/integrations/ai/mcp/)
+- [CoreClaw API documentation](/api/)

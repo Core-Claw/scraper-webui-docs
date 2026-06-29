@@ -5,79 +5,75 @@ sidebar:
   order: 4
 ---
 
-Connect ChatGPT (via OpenAI's platform) to the CoreClaw MCP Server so you can search for scrapers, run them, and retrieve data directly from your ChatGPT conversations.
+Connect ChatGPT through a custom MCP connector to the CoreClaw MCP Server so you can discover CoreClaw workers, run them, monitor runs, and retrieve results directly from ChatGPT conversations.
 
 ## Prerequisites
 
 - An OpenAI account with ChatGPT access
-- A CoreClaw account with an API key — get it from [Console → Settings → API & Integrations](https://console.coreclaw.com/settings/integrations)
+- A CoreClaw account with an API key from [Console -> Settings -> API & Integrations](https://console.coreclaw.com/settings/integrations)
 
 ## Configuration
 
-ChatGPT supports MCP connectors through its **Apps & Connectors** feature (available to ChatGPT Plus/Pro users with Developer Mode enabled). You'll create a custom connector pointing to CoreClaw's MCP server.
+ChatGPT supports MCP connectors through its **Apps & Connectors** feature when available for your account. Create a custom connector that points to CoreClaw's hosted MCP endpoint.
 
 ### Step 1: Enable Developer Mode
 
-1. Open ChatGPT settings
-2. Navigate to **Developer Mode** and enable it
-3. The message input box should now have an orange outline
+1. Open ChatGPT settings.
+2. Navigate to **Developer Mode** and enable it.
+3. Confirm that custom connector creation is available.
 
-### Step 2: Create an MCP connector
+### Step 2: Create an MCP Connector
 
-1. In ChatGPT, go to **Settings > Apps & Connectors > Create**
+1. In ChatGPT, go to **Settings > Apps & Connectors > Create**.
 2. Fill in the fields:
    - **Name**: `coreclaw-mcp`
-   - **Description**: CoreClaw MCP Server for web scraping
+   - **Description**: CoreClaw MCP Server for worker discovery, execution, results, exports, and logs
    - **MCP Server URL**: `https://mcp.coreclaw.com/mcp`
-   - **Authentication**: Select OAuth or API Key (if available)
+   - **Authentication**: choose API key or custom header if available
 3. Add the header:
    - **Header name**: `api-key`
-   - **Header value**: `scraper_api_YOUR_KEY_HERE`
+   - **Header value**: `YOUR_CORECLAW_API_KEY`
 
-### Step 3: Save and authorize
+### Step 3: Save and Authorize
 
-1. Select **Create**
-2. Authorize the connection when prompted
+1. Select **Create**.
+2. Authorize the connection when prompted.
 
-## Verify the connection
+## Verify the Connection
 
-1. Open a **new chat** in ChatGPT
-2. Click **+** near the message composer → **More**
-3. Select your **CoreClaw MCP** connector
-4. Ask: *"Search for Amazon scrapers on CoreClaw"*
-5. ChatGPT should invoke `search_scrapers` and return results
+1. Open a new chat in ChatGPT.
+2. Select your **CoreClaw MCP** connector from the composer tools or connectors menu.
+3. Ask: *"Find Amazon workers on CoreClaw."*
+4. ChatGPT should call `list_store_workers` and return matching workers.
 
-## Example conversation
+## Example Conversation
 
-Once connected, you can ask ChatGPT to perform scraping tasks:
-
-> **You:** Find a Google Maps scraper and extract restaurant data near Times Square, New York.
+> **You:** Find a Google Maps worker and extract restaurant data near Times Square, New York.
 >
-> **ChatGPT:** I'll search for a Google Maps scraper and run it for you. *[Calls `search_scrapers` → `get_scraper_details` → `run_scraper` → polls status → returns results]*
+> **ChatGPT:** I'll find a Google Maps worker, inspect its input schema, and run it for you. *[Calls `list_store_workers` -> `get_worker_input_schema` -> `run_worker` -> `get_worker_run` -> `list_worker_run_results`]*
 
 ## Limitations
 
-- MCP integration in ChatGPT is **beta** and may have limited availability
-- Requires ChatGPT Plus or Pro subscription
-- Tool selection/execution can be **slow**
-- **Custom connectors** require Developer mode
-- Some scrapers may trigger **Safety Scan** warnings
+- MCP connector availability in ChatGPT can vary by account and plan.
+- Tool selection and execution can be slower than a direct API integration.
+- Custom connectors may require Developer Mode.
+- Some worker runs may trigger safety or confirmation prompts.
 
 ## Troubleshooting
 
 ### Connector not appearing
 
-- Ensure Developer Mode is enabled
-- Check that the MCP Server URL is exactly `https://mcp.coreclaw.com/mcp`
-- Verify your API key is correct
+- Ensure Developer Mode is enabled.
+- Check that the MCP Server URL is exactly `https://mcp.coreclaw.com/mcp`.
+- Verify your API key is correct.
 
 ### Tools fail to load
 
-- ChatGPT may silently downgrade or disable connectors
-- Try removing and re-adding the connector
-- Check ChatGPT's status page for MCP service availability
+- Try removing and re-adding the connector.
+- Confirm the connector sends the `api-key` header.
+- Check ChatGPT service status and connector logs if available.
 
-## Next steps
+## Next Steps
 
-- [→ Back to MCP overview](/integrations/ai/mcp/)
-- [→ CoreClaw API documentation](/api/)
+- [Back to MCP overview](/integrations/ai/mcp/)
+- [CoreClaw API documentation](/api/)

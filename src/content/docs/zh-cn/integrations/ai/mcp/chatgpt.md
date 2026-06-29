@@ -5,79 +5,75 @@ sidebar:
   order: 4
 ---
 
-将 ChatGPT（通过 OpenAI 平台）连接到 CoreClaw MCP 服务，让您可以直接从 ChatGPT 对话中搜索爬虫、运行任务并获取数据。
+通过自定义 MCP 连接器将 ChatGPT 连接到 CoreClaw MCP 服务，让您可以直接从 ChatGPT 对话中发现 CoreClaw Worker、运行任务、查询状态并获取结果。
 
 ## 前提条件
 
 - 拥有 ChatGPT 访问权限的 OpenAI 账户
-- CoreClaw 账户及 API 密钥 — 从 [控制台 → 设置 → API & 集成](https://console.coreclaw.com/settings/integrations) 获取
+- CoreClaw 账户及 API 密钥，可在 [控制台 -> 设置 -> API & 集成](https://console.coreclaw.com/settings/integrations) 获取
 
 ## 配置步骤
 
-ChatGPT 通过 **应用与连接器** 功能支持 MCP 连接器。您需要创建一个指向 CoreClaw MCP 服务的自定义连接器。
+当您的账户支持 **应用与连接器** 功能时，可以创建一个指向 CoreClaw 托管 MCP 入口的自定义连接器。
 
 ### 步骤 1：启用开发者模式
 
-1. 打开 ChatGPT 设置
-2. 导航到 **开发者模式** 并启用
-3. 消息输入框应出现橙色边框
+1. 打开 ChatGPT 设置。
+2. 导航到 **开发者模式** 并启用。
+3. 确认可创建自定义连接器。
 
 ### 步骤 2：创建 MCP 连接器
 
-1. 在 ChatGPT 中，前往 **设置 > 应用与连接器 > 创建**
+1. 在 ChatGPT 中前往 **设置 > 应用与连接器 > 创建**。
 2. 填写字段：
    - **名称**：`coreclaw-mcp`
-   - **描述**：CoreClaw MCP 服务用于网页抓取
+   - **描述**：CoreClaw MCP 服务，用于 Worker 发现、执行、结果、导出和日志
    - **MCP 服务器 URL**：`https://mcp.coreclaw.com/mcp`
-   - **认证**：选择 OAuth 或 API Key（如可用）
+   - **认证**：如可用，选择 API Key 或自定义请求头
 3. 添加请求头：
    - **请求头名称**：`api-key`
-   - **请求头值**：`scraper_api_YOUR_KEY_HERE`
+   - **请求头值**：`YOUR_CORECLAW_API_KEY`
 
 ### 步骤 3：保存并授权
 
-1. 点击 **创建**
-2. 出现提示时授权连接
+1. 点击 **创建**。
+2. 出现提示时授权连接。
 
 ## 验证连接
 
-1. 在 ChatGPT 中打开**新对话**
-2. 点击消息编辑器旁的 **+** → **更多**
-3. 选择您的 **CoreClaw MCP** 连接器
-4. 询问：*"在 CoreClaw 上搜索 Amazon 爬虫"*
-5. ChatGPT 应该调用 `search_scrapers` 并返回结果
+1. 在 ChatGPT 中打开新对话。
+2. 在编辑器工具或连接器菜单中选择 **CoreClaw MCP** 连接器。
+3. 询问：*"在 CoreClaw 上查找 Amazon Worker。"*
+4. ChatGPT 应该调用 `list_store_workers` 并返回匹配的 Worker。
 
 ## 对话示例
 
-连接成功后，您可以要求 ChatGPT 执行抓取任务：
-
-> **您：** 找个 Google Maps 爬虫，提取纽约时代广场附近的餐厅数据。
+> **您：** 找个 Google Maps Worker，提取纽约时代广场附近的餐厅数据。
 >
-> **ChatGPT：** 我来搜索 Google Maps 爬虫并为您运行。*[调用 `search_scrapers` → `get_scraper_details` → `run_scraper` → 轮询状态 → 返回结果]*
+> **ChatGPT：** 我会查找 Google Maps Worker，查看输入 schema，然后为您运行。*[调用 `list_store_workers` -> `get_worker_input_schema` -> `run_worker` -> `get_worker_run` -> `list_worker_run_results`]*
 
 ## 限制说明
 
-- ChatGPT 中的 MCP 集成处于 **Beta** 阶段，可能有限可用性
-- 需要 ChatGPT Plus 或 Pro 订阅
-- 工具选择/执行可能**较慢**
-- **自定义连接器**需要开发者模式
-- 某些爬虫可能触发**安全检查**警告
+- ChatGPT MCP 连接器可用性可能因账户和套餐而异。
+- 工具选择和执行可能比直接 API 集成更慢。
+- 自定义连接器可能需要开发者模式。
+- 某些 Worker 运行可能触发安全或确认提示。
 
 ## 故障排除
 
 ### 连接器未出现
 
-- 确保已启用开发者模式
-- 检查 MCP 服务器 URL 是否准确为 `https://mcp.coreclaw.com/mcp`
-- 验证 API 密钥是否正确
+- 确保已启用开发者模式。
+- 检查 MCP 服务器 URL 是否准确为 `https://mcp.coreclaw.com/mcp`。
+- 验证 API 密钥是否正确。
 
 ### 工具加载失败
 
-- ChatGPT 可能会静默降级或禁用连接器
-- 尝试移除并重新添加连接器
-- 查看 ChatGPT 状态页面了解 MCP 服务可用性
+- 尝试移除并重新添加连接器。
+- 确认连接器会发送 `api-key` 请求头。
+- 如可用，查看 ChatGPT 服务状态和连接器日志。
 
 ## 下一步
 
-- [→ 返回 MCP 概览](/zh-cn/integrations/ai/mcp/)
-- [→ CoreClaw API 文档](/zh-cn/api/)
+- [返回 MCP 概览](/zh-cn/integrations/ai/mcp/)
+- [CoreClaw API 文档](/zh-cn/api/)

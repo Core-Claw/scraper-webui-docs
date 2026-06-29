@@ -5,20 +5,20 @@ sidebar:
   order: 11
 ---
 
-Connect [Claude CLI](https://github.com/anthropics/claude-code) (also known as Claude Code) to the CoreClaw MCP Server so you can search for scrapers, run them, and retrieve data directly from your terminal conversations.
+Connect [Claude CLI](https://github.com/anthropics/claude-code) (Claude Code) to the CoreClaw MCP Server so you can discover CoreClaw workers, run them, monitor runs, and retrieve results directly from terminal conversations.
 
 ## Prerequisites
 
 - [Claude CLI](https://github.com/anthropics/claude-code) installed (`npm install -g @anthropics/claude-code`)
-- A CoreClaw account with an API key — get it from [Console → Settings → API & Integrations](https://console.coreclaw.com/settings/integrations)
+- A CoreClaw account with an API key from [Console -> Settings -> API & Integrations](https://console.coreclaw.com/settings/integrations)
 
 ## Configuration
 
-Claude CLI supports MCP via **Streamable HTTP** transport. You can configure it via a JSON config file.
+Claude CLI supports MCP via **Streamable HTTP** transport. Configure it with a JSON config file.
 
 ### Step 1: Create or edit the MCP configuration file
 
-Create a file named `claude-mcp.json` in your project directory (or anywhere you prefer):
+Create a file named `claude-mcp.json` in your project directory, or use your preferred MCP config location:
 
 ```json
 {
@@ -26,14 +26,14 @@ Create a file named `claude-mcp.json` in your project directory (or anywhere you
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "scraper_api_YOUR_KEY_HERE"
+        "api-key": "YOUR_CORECLAW_API_KEY"
       }
     }
   }
 }
 ```
 
-Replace `scraper_api_YOUR_KEY_HERE` with your actual CoreClaw API key.
+Replace `YOUR_CORECLAW_API_KEY` with your actual CoreClaw API key.
 
 ### Step 2: Launch Claude CLI with the MCP config
 
@@ -41,41 +41,40 @@ Replace `scraper_api_YOUR_KEY_HERE` with your actual CoreClaw API key.
 claude --mcp-config claude-mcp.json
 ```
 
-Alternatively, you can place the config at `~/.config/claude/mcp.json` (macOS/Linux) or `%APPDATA%\claude\mcp.json` (Windows) for automatic loading.
+Alternatively, place the config at `~/.config/claude/mcp.json` on macOS/Linux or `%APPDATA%\claude\mcp.json` on Windows if your Claude installation loads that path automatically.
 
-## Verify the connection
+## Verify the Connection
 
-1. Start Claude CLI with the MCP configuration
-2. Ask Claude: *"Search for Amazon scrapers on CoreClaw"*
-3. Claude should invoke `search_scrapers` and return results
+1. Start Claude CLI with the MCP configuration.
+2. Ask Claude: *"Find Amazon workers on CoreClaw."*
+3. Claude should call `list_store_workers` and return matching workers.
 
-## Example conversation
+## Example Conversation
 
-Once connected, you can perform scraping tasks directly from your terminal:
-
-> **You:** Find a Twitter scraper and extract the latest tweets from @elonmusk
+> **You:** Find a Google Maps worker and extract restaurant data near Times Square, New York.
 >
-> **Claude:** I'll search for a Twitter scraper and run it for you. *[Calls `search_scrapers` → `get_scraper_details` → `run_scraper` → polls status → returns results]*
+> **Claude:** I'll find a Google Maps worker, inspect its input schema, and run it for you. *[Calls `list_store_workers` -> `get_worker_input_schema` -> `run_worker` -> `get_worker_run` -> `list_worker_run_results`]*
 
 ## Troubleshooting
 
 ### MCP config not loading
 
-- Verify the JSON file path is correct when using `--mcp-config`
-- Ensure the JSON is valid (no trailing commas, proper quotes)
-- Check Claude CLI version — MCP support requires recent versions
+- Verify the JSON file path passed to `--mcp-config`.
+- Ensure the JSON is valid.
+- Restart the Claude session after config changes.
 
 ### Authentication errors
 
-- Ensure the `api-key` header value matches your CoreClaw API key exactly
-- Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations)
+- Ensure the `api-key` header value matches your CoreClaw API key exactly.
+- The hosted MCP service also accepts `X-API-Key` and `Authorization: Bearer YOUR_CORECLAW_API_KEY`.
+- Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations).
 
 ### Tools not available
 
-- Confirm Claude CLI supports Streamable HTTP transport
-- Try restarting the Claude session after config changes
+- Confirm Claude CLI supports Streamable HTTP MCP.
+- Check the Claude session logs for MCP connection errors.
 
-## Next steps
+## Next Steps
 
-- [→ Back to MCP overview](/integrations/ai/mcp/)
-- [→ CoreClaw API documentation](/api/)
+- [Back to MCP overview](/integrations/ai/mcp/)
+- [CoreClaw API documentation](/api/)

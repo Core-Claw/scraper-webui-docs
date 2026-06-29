@@ -5,70 +5,70 @@ sidebar:
   order: 2
 ---
 
-Connect [OpenAI Codex](https://openai.com/codex) Desktop App to the CoreClaw MCP Server so you can search for scrapers, run them, and retrieve data directly from your Codex conversations.
+Connect [OpenAI Codex](https://openai.com/codex) Desktop App to the CoreClaw MCP Server so you can discover CoreClaw workers, run them, monitor runs, and retrieve results directly from Codex conversations.
 
 ## Prerequisites
 
 - [Codex Desktop App](https://openai.com/codex) installed
-- A CoreClaw account with an API key — get it from [Console → Settings → API & Integrations](https://console.coreclaw.com/settings/integrations)
+- A CoreClaw account with an API key from [Console -> Settings -> API & Integrations](https://console.coreclaw.com/settings/integrations)
 
 ## Configuration
 
-Codex Desktop supports MCP via **Streamable HTTP** transport. You can configure it through the graphical interface.
+Codex Desktop supports MCP via **Streamable HTTP** transport. Configure it through the graphical interface.
 
 ### Step 1: Open Settings
 
-1. Open Codex Desktop
-2. Click on your profile icon → **Settings**
-3. Navigate to **Connectors & Extensions**
+1. Open Codex Desktop.
+2. Click your profile icon -> **Settings**.
+3. Navigate to **Connectors & Extensions**.
 
 ### Step 2: Add MCP Server
 
-1. Click **Add MCP Server** or **+**
+1. Click **Add MCP Server** or **+**.
 2. Fill in the form:
    - **Name**: `CoreClaw`
    - **Transport**: `HTTP`
    - **URL**: `https://mcp.coreclaw.com/mcp`
    - **Headers**:
-     - `api-key`: `scraper_api_YOUR_KEY_HERE`
+     - `api-key`: `YOUR_CORECLAW_API_KEY`
 
-Replace `scraper_api_YOUR_KEY_HERE` with your actual CoreClaw API key.
+Replace `YOUR_CORECLAW_API_KEY` with your actual CoreClaw API key.
 
 ![Codex Desktop MCP Configuration](@/assets/docs/mcp-1.png)
 
-### Step 3: Save and restart
+### Step 3: Save and Restart
 
-1. Click **Save**
-2. **Restart Codex Desktop** for the changes to take effect
+1. Click **Save**.
+2. Restart Codex Desktop for the changes to take effect.
 
-## Verify the connection
+## Verify the Connection
 
-1. Open Codex Desktop and start a new conversation
-2. Look for the **tool icon** in the message input area — this indicates MCP tools are available
-3. Ask: *"Search for Amazon scrapers on CoreClaw"*
-4. Codex should invoke `search_scrapers` and return results
+1. Open Codex Desktop and start a new conversation.
+2. Look for the tool icon in the message input area.
+3. Ask: *"Find Amazon workers on CoreClaw."*
+4. Codex should call `list_store_workers` and return matching workers.
 
-## Example conversation
+## Example Conversation
 
-Once connected, you can ask Codex to perform scraping tasks:
-
-> **You:** Find a Twitter scraper and extract the latest tweets from @elonmusk
+> **You:** Find a Google Maps worker and extract restaurant data near Central Park, New York.
 >
-> **Codex:** I'll search for a Twitter scraper and run it for you. *[Calls `search_scrapers` → `get_scraper_details` → `run_scraper` → polls status → returns results]*
+> **Codex:** I'll find a Google Maps worker, inspect its input schema, and run it for you. *[Calls `list_store_workers` -> `get_worker_input_schema` -> `run_worker` -> `get_worker_run` -> `list_worker_run_results`]*
 
 ## Troubleshooting
 
 ### Tools not appearing
 
-- **Restart Codex Desktop** — MCP changes require a full restart
-- Verify your API key is correct and active
+- Restart Codex Desktop after changing MCP settings.
+- Verify the MCP URL is exactly `https://mcp.coreclaw.com/mcp`.
+- Verify your API key is correct and active.
 
 ### Authentication errors
 
-- Ensure the `api-key` header value matches your CoreClaw API key exactly
-- Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations)
+- Ensure the `api-key` header value matches your CoreClaw API key exactly.
+- The hosted MCP service also accepts `X-API-Key` and `Authorization: Bearer YOUR_CORECLAW_API_KEY`.
+- Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations).
 
-## Next steps
+## Next Steps
 
-- [→ Back to MCP overview](/integrations/ai/mcp/)
-- [→ CoreClaw API documentation](/api/)
+- [Back to MCP overview](/integrations/ai/mcp/)
+- [CoreClaw API documentation](/api/)

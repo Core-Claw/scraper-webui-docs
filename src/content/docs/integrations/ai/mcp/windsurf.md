@@ -5,24 +5,24 @@ sidebar:
   order: 6
 ---
 
-Connect [Windsurf](https://windsurf.com) IDE to the CoreClaw MCP Server so your AI coding assistant can search for scrapers, run them, and retrieve data directly within your editor.
+Connect [Windsurf](https://windsurf.com) IDE to the CoreClaw MCP Server so your AI coding assistant can discover CoreClaw workers, run them, monitor runs, and retrieve results directly within your editor.
 
 ## Prerequisites
 
 - [Windsurf](https://windsurf.com) installed
-- A CoreClaw account with an API key — get it from [Console → Settings → API & Integrations](https://console.coreclaw.com/settings/integrations)
+- A CoreClaw account with an API key from [Console -> Settings -> API & Integrations](https://console.coreclaw.com/settings/integrations)
 
 ## Configuration
 
-Windsurf supports MCP via **Streamable HTTP** transport. You can configure it via the MCP settings panel.
+Windsurf supports MCP via **Streamable HTTP** transport. Configure it in the MCP settings panel.
 
-### Step 1: Open MCP settings
+### Step 1: Open MCP Settings
 
-1. Open Windsurf
-2. Go to **Settings → MCP**
-3. Click **Add MCP Server**
+1. Open Windsurf.
+2. Go to **Settings -> MCP**.
+3. Click **Add MCP Server**.
 
-### Step 2: Add the CoreClaw MCP configuration
+### Step 2: Add the CoreClaw MCP Configuration
 
 Fill in the form:
 
@@ -30,43 +30,41 @@ Fill in the form:
 - **Transport**: `HTTP`
 - **URL**: `https://mcp.coreclaw.com/mcp`
 - **Headers**:
-  - `api-key`: `scraper_api_YOUR_KEY_HERE`
+  - `api-key`: `YOUR_CORECLAW_API_KEY`
 
-Replace `scraper_api_YOUR_KEY_HERE` with your actual CoreClaw API key.
+Replace `YOUR_CORECLAW_API_KEY` with your actual CoreClaw API key.
 
-### Step 3: Save and restart
+### Step 3: Save and Restart
 
-1. Click **Save**
-2. **Restart Windsurf** for the changes to take effect
+1. Click **Save**.
+2. Restart Windsurf for the changes to take effect.
 
-## Verify the connection
+## Verify the Connection
 
-1. Open Windsurf and start a new Cascade chat
-2. Ask: *"Search for Amazon scrapers on CoreClaw"*
-3. Windsurf should invoke `search_scrapers` and return results
+1. Open Windsurf and start a new Cascade chat.
+2. Ask: *"Find Amazon workers on CoreClaw."*
+3. Windsurf should call `list_store_workers` and return matching workers.
 
-## Example conversation
+## Example Conversation
 
-Once connected, you can ask Windsurf to perform scraping tasks:
-
-> **You:** Find a Google Maps scraper and extract restaurant data near Times Square, New York.
+> **You:** Find a Google Maps worker and extract restaurant data near Times Square, New York.
 >
-> **Windsurf:** I'll search for a Google Maps scraper and run it for you. *[Calls `search_scrapers` → `get_scraper_details` → `run_scraper` → polls status → returns results]*
+> **Windsurf:** I'll find a Google Maps worker, inspect its input schema, and run it for you. *[Calls `list_store_workers` -> `get_worker_input_schema` -> `run_worker` -> `get_worker_run` -> `list_worker_run_results`]*
 
 ## Troubleshooting
 
 ### Tools not appearing
 
-- **Restart Windsurf** — MCP changes require a restart
-- Ensure the MCP server URL is correct
-- Check that the `api-key` header is set
+- Restart Windsurf after MCP config changes.
+- Ensure the MCP server URL is exactly `https://mcp.coreclaw.com/mcp`.
+- Check that the `api-key` header is set.
 
 ### Authentication errors
 
-- Ensure the `api-key` header value matches your CoreClaw API key exactly
-- Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations)
+- Ensure the `api-key` header value matches your CoreClaw API key exactly.
+- Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations).
 
-## Next steps
+## Next Steps
 
-- [→ Back to MCP overview](/integrations/ai/mcp/)
-- [→ CoreClaw API documentation](/api/)
+- [Back to MCP overview](/integrations/ai/mcp/)
+- [CoreClaw API documentation](/api/)

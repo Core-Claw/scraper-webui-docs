@@ -1,32 +1,36 @@
 ---
 title: CoreClaw MCP 服务
-description: 通过 Model Context Protocol (MCP) 将 AI Agent 连接到 CoreClaw 平台——搜索爬虫、运行任务、获取数据，全部通过自然语言完成。
+description: 通过 Model Context Protocol (MCP) 将 AI Agent 连接到 CoreClaw，用自然语言发现 Worker、运行任务、查询状态并获取结果。
 sidebar:
   order: 0
 ---
 
-CoreClaw MCP 服务让 AI 应用通过 [Model Context Protocol (MCP)](https://modelcontextprotocol.io) 与 CoreClaw 平台进行交互。连接后，您的 AI Agent 可以搜索 CoreClaw Store 中的爬虫、使用自定义参数运行它们，并获取结构化数据——全部通过自然语言对话完成。
+CoreClaw MCP 服务通过 [Model Context Protocol (MCP)](https://modelcontextprotocol.io) 暴露 CoreClaw OpenAPI v2 的公开工作流。连接后，AI Agent 可以发现 CoreClaw Worker、查看输入 schema、运行 Worker 或已保存任务、查询运行状态、读取日志，并导出结构化结果。
 
 ## 架构
 
-```
-用户对话 → AI Agent → MCP 协议 → coreclaw-mcp-server → CoreClaw REST API
-                            (HTTP)      (Go 二进制)      (openapi.coreclaw.com)
+```text
+用户对话 -> AI Agent -> MCP 协议 -> CoreClaw MCP 服务 -> CoreClaw OpenAPI v2
+                              HTTP       mcp.coreclaw.com      openapi.coreclaw.com
 ```
 
-服务部署在 **`https://mcp.coreclaw.com`**，支持 **Streamable HTTP** 传输协议，任何兼容 MCP 的客户端都可以直接连接，无需安装本地依赖。
+托管的 Streamable HTTP 入口是：
+
+```text
+https://mcp.coreclaw.com/mcp
+```
+
+优先使用托管入口。仅在开发、调试或客户端只支持本地 stdio 时，才需要本地运行 `coreclaw-mcp-server`。
 
 ## 前提条件
 
-- CoreClaw 账户 — 如没有请 [注册](https://console.coreclaw.com/sign-up)
-- CoreClaw API 密钥 — 在 [CoreClaw 控制台](https://console.coreclaw.com/settings/integrations) 的 **设置 → API & 集成** 页面获取
-- 兼容 MCP 的客户端 — 参见下方 [支持的平台](#支持的平台)
-
-> **API 密钥格式：** 您的密钥格式类似 `scraper_api_XXX...`。请妥善保管，切勿泄露。
+- CoreClaw 账户。如果还没有账户，请先 [注册](https://console.coreclaw.com/sign-up)。
+- CoreClaw API 密钥，可在 [控制台 -> 设置 -> API & 集成](https://console.coreclaw.com/settings/integrations) 获取。
+- 支持 MCP 的客户端。参见下方 [支持的平台](#支持的平台)。
 
 ## 快速开始
 
-在您的 MCP 客户端中添加以下配置：
+在 MCP 客户端中添加以下配置：
 
 ```json
 {
@@ -34,139 +38,169 @@ CoreClaw MCP 服务让 AI 应用通过 [Model Context Protocol (MCP)](https://mo
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "scraper_api_YOUR_KEY_HERE"
+        "api-key": "YOUR_CORECLAW_API_KEY"
       }
     }
   }
 }
 ```
 
-配置完成后，您的 AI Agent 即可开始发现和使用 CoreClaw 爬虫。
+保存配置后，如果客户端要求重启或重新加载，请完成对应操作。之后 AI Agent 就可以在对话中调用 CoreClaw 工具。
 
 ## 认证方式
 
-CoreClaw MCP 服务采用 **请求级 API 密钥认证**，通过 `api-key` 请求头传递：
+托管 MCP 服务支持以下任一请求头：
 
-- 每个请求必须在 headers 中包含 `"api-key": "scraper_api_..."`
-- 密钥在每次请求时由 CoreClaw 后端验证
-- 无需本地环境变量或 OAuth 流程
+- `api-key: YOUR_CORECLAW_API_KEY`
+- `X-API-Key: YOUR_CORECLAW_API_KEY`
+- `Authorization: Bearer YOUR_CORECLAW_API_KEY`
 
-> **安全提示：** 切勿将 API 密钥提交到版本控制系统。请使用客户端的安全凭据存储功能。
+MCP 服务会把认证信息转发给 CoreClaw OpenAPI v2，上游请求统一使用 `Authorization: Bearer <token>`。
+
+> 不要把 API 密钥提交到版本控制系统。客户端支持安全凭据存储时，请优先使用该能力。
 
 ## 可用工具
 
-CoreClaw MCP 服务提供 **12 个工具**，覆盖 CoreClaw API 的全部功能：
+CoreClaw MCP 服务公开 **28 个 OpenAPI v2 工具**。Worker 版本创建/更新接口和 Worker internal 详情接口属于内部接口，不会通过 MCP 暴露。
 
-### 发现类（无需 API Key）
-
-| 工具 | 说明 | 对应 API |
-|------|------|---------|
-| `search_scrapers` | 按关键词搜索 CoreClaw Store 中的爬虫 | `GET /api/store` |
-| `get_scraper_details` | 获取爬虫版本、参数 schema 和 README | `GET /api/scraper` |
-
-### 执行类（需要 API Key）
+### 发现与预检查
 
 | 工具 | 说明 | 对应 API |
 |------|------|---------|
-| `run_scraper` | 启动异步爬虫任务 | `POST /api/v1/scraper/run` |
-| `get_run_status` | 查询运行状态（就绪/运行中/成功/失败） | `POST /api/v1/run/detail` |
-| `get_run_results` | 获取分页结果数据 | `POST /api/v1/run/result/list` |
-| `export_run_results` | 导出 CSV/JSON 文件 | `POST /api/v1/run/result/export` |
+| `list_proxy_regions` | 查询代理地区代码和名称 | `GET /api/v2/proxy/region` |
+| `list_store_workers` | 搜索公开 Store Worker | `GET /api/v2/store` |
+| `list_workers` | 列出当前账户拥有的 Worker | `GET /api/v2/workers` |
+| `get_worker` | 获取 Worker 元数据、版本、README 和参数信息 | `GET /api/v2/workers/{workerId}` |
+| `get_worker_input_schema` | 获取 Worker 公开输入 schema | `GET /api/v2/workers/{workerId}/input-schema` |
+| `list_worker_tasks` | 列出当前账户保存的 Worker 任务 | `GET /api/v2/worker-tasks` |
+| `get_account_info` | 查询账户余额、流量额度和过期时间 | `GET /api/v2/users/account` |
 
-### 管理类（需要 API Key）
+### 执行
 
 | 工具 | 说明 | 对应 API |
 |------|------|---------|
-| `list_runs` | 查看带过滤的历史运行记录 | `POST /api/v1/run/list` |
-| `abort_run` | 中止运行中的爬虫 | `POST /api/v1/scraper/abort` |
-| `get_run_logs` | 获取运行日志用于调试 | `POST /api/v1/run/last/log` |
-| `run_task` | 执行保存的任务模板 | `POST /api/v1/task/run` |
-| `rerun` | 用相同参数重新运行之前的任务 | `POST /api/v1/rerun` |
-| `get_account_info` | 查询余额、流量和过期时间 | `POST /api/v1/account/info` |
+| `run_worker` | 使用临时 JSON 输入运行 Worker | `POST /api/v2/workers/{workerId}/runs` |
+| `run_worker_task` | 运行已保存的 Worker 任务 | `POST /api/v2/worker-tasks/{workerTaskId}/runs` |
+
+### 运行查询
+
+| 工具 | 说明 | 对应 API |
+|------|------|---------|
+| `list_worker_runs` | 查询运行历史 | `GET /api/v2/worker-runs` |
+| `get_last_worker_run` | 查询当前账户最近一次运行 | `GET /api/v2/worker-runs/last` |
+| `get_worker_run` | 通过 `run_id` 查询指定运行 | `GET /api/v2/worker-runs/{runId}` |
+| `get_worker_last_run` | 查询指定 Worker 最近一次运行 | `GET /api/v2/workers/{workerId}/runs/last` |
+
+### 结果、导出和日志
+
+| 工具 | 说明 | 对应 API |
+|------|------|---------|
+| `list_last_worker_run_results` | 查看当前账户最近一次运行结果 | `GET /api/v2/worker-runs/last/result` |
+| `export_last_worker_run_results` | 导出当前账户最近一次运行结果 | `GET /api/v2/worker-runs/last/export` |
+| `get_last_worker_run_log` | 查看当前账户最近一次运行日志 | `GET /api/v2/worker-runs/last/log` |
+| `list_worker_run_results` | 查看指定运行结果 | `GET /api/v2/worker-runs/{runId}/result` |
+| `export_worker_run_results` | 导出指定运行结果 | `GET /api/v2/worker-runs/{runId}/result/export` |
+| `get_worker_run_log` | 查看指定运行日志 | `GET /api/v2/worker-runs/{runId}/log` |
+| `list_worker_last_run_results` | 查看指定 Worker 最近一次运行结果 | `GET /api/v2/workers/{workerId}/runs/last/result` |
+| `export_worker_last_run_results` | 导出指定 Worker 最近一次运行结果 | `GET /api/v2/workers/{workerId}/runs/last/export` |
+| `get_worker_last_run_log` | 查看指定 Worker 最近一次运行日志 | `GET /api/v2/workers/{workerId}/runs/last/log` |
+
+### 重跑和控制
+
+| 工具 | 说明 | 对应 API |
+|------|------|---------|
+| `rerun_last_worker_run` | 重跑当前账户最近一次运行 | `POST /api/v2/worker-runs/last/rerun` |
+| `rerun_worker_run` | 重跑指定运行 | `POST /api/v2/worker-runs/{runId}/rerun` |
+| `rerun_worker_last_run` | 重跑指定 Worker 最近一次运行 | `POST /api/v2/workers/{workerId}/runs/last/rerun` |
+| `abort_last_worker_run` | 停止当前账户最近一次活跃运行 | `POST /api/v2/worker-runs/last/abort` |
+| `abort_worker_run` | 停止指定活跃运行 | `POST /api/v2/worker-runs/{runId}/abort` |
+| `abort_worker_last_run` | 停止指定 Worker 最近一次活跃运行 | `POST /api/v2/workers/{workerId}/runs/last/abort` |
 
 ## 典型工作流
 
-当您要求 AI Agent 抓取数据时，它通常会遵循以下流程：
+临时运行一个 Worker 时，通常按这个顺序调用：
 
+```text
+list_store_workers(keyword)
+  -> get_worker_input_schema(worker_id)
+    -> run_worker(worker_id, input_json, is_async=true)
+      -> get_worker_run(run_id)
+        -> list_worker_run_results(run_id) 或 export_worker_run_results(run_id)
 ```
-search_scrapers("amazon") 
-  → get_scraper_details("amazon-product-scraper")
-    → run_scraper(slug, version, custom_params)
-      → get_run_status(run_slug) [轮询直到 status=3]
-        → get_run_results(run_slug)
+
+运行已保存任务时，使用：
+
+```text
+list_worker_tasks(worker_id)
+  -> run_worker_task(worker_task_id, is_async=true)
+    -> get_worker_run(run_id)
+      -> list_worker_run_results(run_id)
 ```
 
-**对话示例：**
+如果 Worker 输入 schema 需要代理地区，先调用 `list_proxy_regions`。只有在用户明确要求重试或重复运行时才使用 `rerun_*` 工具；只有在用户明确要求停止运行时才使用 `abort_*` 工具。
 
-> **您：** 找个 Amazon 爬虫，帮我提取这个商品的数据：https://www.amazon.com/dp/B0CHHSFMRL
->
-> **AI：** 我来搜索 Amazon 爬虫，检查参数后为您运行。*[执行上述工作流]*
+## Worker 输入
+
+调用 `run_worker` 时，把业务字段放在 `input_json` 中：
+
+```json
+{
+  "worker_id": "YOUR_WORKER_ID",
+  "version": "latest",
+  "input_json": "{\"keyword\":\"coffee\",\"limit\":10}",
+  "is_async": true
+}
+```
+
+MCP 服务会把 `input_json` 包装为 CoreClaw 使用的 `input.parameters.custom`。高级调用方可以通过 `raw_input_json` 直接传完整 CoreClaw `input` 对象，但不能同时传 `input_json` 和 `raw_input_json`。
 
 ## 支持的平台
 
-在您的 AI Agent 平台上配置 CoreClaw MCP：
-
 | 平台 | 配置方式 | 指南 |
-|------|---------|------|
-| **Claude Desktop** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/claude-desktop/) |
-| **Claude CLI** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/claude-cli/) |
-| **Codex Desktop** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/codex-desktop/) |
-| **Cursor** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/cursor/) |
-| **ChatGPT** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/chatgpt/) |
-| **VS Code** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/vscode/) |
-| **Windsurf** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/windsurf/) |
-| **Cline** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/cline/) |
-| **n8n** | Streamable HTTP | [→ 配置指南](/zh-cn/integrations/ai/mcp/n8n/) |
-| **通用 HTTP** | 任意 MCP 客户端 | [→ 配置指南](/zh-cn/integrations/ai/mcp/generic-http/) |
+|------|----------|------|
+| **Claude Desktop** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/claude-desktop/) |
+| **Claude CLI** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/claude-cli/) |
+| **Codex Desktop** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/codex-desktop/) |
+| **Cursor** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/cursor/) |
+| **ChatGPT** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/chatgpt/) |
+| **VS Code** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/vscode/) |
+| **Windsurf** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/windsurf/) |
+| **Cline** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/cline/) |
+| **n8n** | Streamable HTTP | [配置指南](/zh-cn/integrations/ai/mcp/n8n/) |
+| **通用 HTTP** | 任意 Streamable HTTP MCP 客户端或 REST 风格工具调用方 | [配置指南](/zh-cn/integrations/ai/mcp/generic-http/) |
 
 ## REST 兼容端点
 
-除了标准的 MCP 端点 `/mcp` 之外，CoreClaw MCP 服务还在 `/mcp/<tool_name>` 暴露了 REST 兼容端点，供偏好按工具调用 HTTP API 的平台使用：
+除了标准 MCP 端点 `/mcp`，服务还提供 REST 兼容入口 `/mcp/<tool_name>`，适合偏好按工具发起 HTTP 请求的平台：
 
 ```bash
-# 示例：通过 REST 搜索爬虫
-curl -X POST https://mcp.coreclaw.com/mcp/search_scrapers \
+curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
   -H "Content-Type: application/json" \
-  -H "api-key: scraper_api_YOUR_KEY" \
-  -d '{"query": "amazon", "limit": 5}'
+  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -d '{"keyword":"amazon","offset":0,"limit":5}'
 ```
 
-这对于与 **Coze** 等使用 HTTP 插件模型的平台集成特别有用。
-
-## 速率限制与性能
-
-- **每秒 30 次请求/用户**
-- 超出限制返回 HTTP `429` — 请实现指数退避重试
-- 结果实时流式传输；大数据集可能需要更长时间
+更多 JSON-RPC 和 REST 示例见 [通用 HTTP 客户端](/zh-cn/integrations/ai/mcp/generic-http/)。
 
 ## 故障排除
 
-### 连接错误
-
-| 症状 | 原因 | 解决方案 |
-|---------|-------|----------|
-| `Invalid API key` (code 20001) | 密钥错误或已过期 | 在控制台 → 设置 → API & 集成 中验证密钥 |
-| `Rate limit exceeded` (code 4290) | 请求过于频繁 | 添加指数退避重试逻辑 |
-| `Worker does not exist` (code 50001) | scraper_slug 错误 | 从 search_scrapers 结果中确认 slug |
-| 工具无法加载 | 客户端不支持 HTTP 传输 | 使用 stdio 模式或更新客户端 |
-
-### 调试清单
-
-1. **验证 API 密钥：** 用 `get_account_info` 进行快速测试
-2. **检查传输协议：** 确保客户端支持 Streamable HTTP
-3. **验证请求头：** 确认 `api-key` 请求头设置正确
-4. **查看日志：** 检查 MCP 客户端日志获取详细错误信息
+| 现象 | 可能原因 | 处理方式 |
+|------|----------|----------|
+| `Invalid API key` | 密钥缺失、错误或已过期 | 在控制台 -> 设置 -> API & 集成中验证密钥 |
+| `Worker does not exist` (`50001`) | `worker_id` 错误 | 使用 `list_store_workers` 或 `list_workers` 获取返回的 slug/path |
+| 工具没有出现 | 客户端没有加载 Streamable HTTP MCP 配置 | 重启客户端并检查 MCP 配置路径 |
+| 运行已启动但没有结果行 | 运行仍在进行或已经失败 | 轮询 `get_worker_run`；失败时调用 `get_worker_run_log` |
+| 代理地区被拒绝 | 代理地区代码无效 | 调用 `list_proxy_regions` 并使用返回的地区代码 |
 
 ## 限制说明
 
-- **仅支持 HTTP 模式：** CoreClaw MCP 服务仅支持 Streamable HTTP 传输。仅支持 stdio（本地进程）的客户端需要在本地运行二进制文件。
-- **无 OAuth：** 认证仅通过 API 密钥请求头完成 — 不支持 OAuth 或令牌刷新流程。
-- **Beta 状态：** MCP 协议和工具可用性可能会演进。查看 [更新日志](/zh-cn/changelog/) 了解最新变化。
+- 托管服务使用 Streamable HTTP。只支持本地 stdio 的客户端需要本地运行 `coreclaw-mcp-server`。
+- 认证基于 API key；托管入口不需要 OAuth。
+- 内部接口不会通过 MCP 暴露，包括 Worker 版本创建/更新和 Worker internal 详情。
 
 ## 下一步
 
-- [→ 配置 Claude Desktop](/zh-cn/integrations/ai/mcp/claude-desktop/)
-- [→ 配置 Claude CLI](/zh-cn/integrations/ai/mcp/claude-cli/)
-- [→ 配置 Codex Desktop](/zh-cn/integrations/ai/mcp/codex-desktop/)
-- [→ 浏览所有平台指南](/zh-cn/integrations/ai/mcp/)
-- [→ 阅读 CoreClaw API 文档](/zh-cn/api/)
+- [配置 Claude Desktop](/zh-cn/integrations/ai/mcp/claude-desktop/)
+- [配置 Codex Desktop](/zh-cn/integrations/ai/mcp/codex-desktop/)
+- [配置通用 HTTP](/zh-cn/integrations/ai/mcp/generic-http/)
+- [阅读 CoreClaw API 文档](/zh-cn/api/)
