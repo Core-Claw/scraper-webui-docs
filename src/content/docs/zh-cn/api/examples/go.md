@@ -1,17 +1,15 @@
 ---
-title: Go 示例
-description: CoreClaw API 集成的完整 Go 示例
+title: "Go 示例"
+description: "CoreClaw API v2 集成代码示例"
 sidebar:
   order: 5
 ---
 
-完整的 Go 示例，展示如何运行 Worker 并获取结果。
+下面示例覆盖认证检查、启动 Worker、用返回的 `run_slug` 查询结果三步。
 
-## 环境准备
+示例中的 `YOUR_WORKER_ID` 是占位符。请替换为要运行的 Worker slug，或把 `owner/name` 路径写成 `owner~name`。`input` 必须按该 Worker 的输入 schema 构造；不同 Worker 的字段不一定相同。
 
-无需外部依赖。使用 Go 内置的 `net/http` 包。
-
-## 完整示例
+默认使用 `is_async: true` 异步提交并轮询结果。如需等待执行完成，把 `is_async` 改为 `false`，并用 `offset` / `limit` 控制同步返回的数据窗口。
 
 ```go
 package main
@@ -22,228 +20,103 @@ import (
     "fmt"
     "io"
     "net/http"
-    "time"
+    "net/url"
+    "os"
 )
 
-// API 配置
-const API_BASE_URL = "https://openapi.coreclaw.com"
-const API_KEY = "YOUR_API_KEY"
-const TIMEOUT = 30
+const apiBaseURL = "https://openapi.coreclaw.com"
 
-// 响应结构
-type ApiResponse struct {
+type envelope struct {
     Code    int             `json:"code"`
     Message string          `json:"message"`
     Data    json.RawMessage `json:"data"`
 }
 
-type RunData struct {
+type runData struct {
     RunSlug string `json:"run_slug"`
 }
 
-type StatusData struct {
-    Status   int `json:"status"`
-    Results  int `json:"results"`
-    Duration int `json:"duration"`
-}
-
-type ResultData struct {
-    Count int                      `json:"count"`
-    List  []map[string]interface{} `json:"list"`
-}
-
 func main() {
-    // 构建请求参数
-    requestParams := map[string]interface{}{
-        "scraper_slug": "YOUR_SCRAPER_SLUG",
-        "version":      "<version>", // 从 /api/scraper 获取
-        "is_async":     true,
-        "input": map[string]interface{}{
-            "parameters": map[string]interface{}{
-                "system": map[string]interface{}{
-                    "cpus":                       0.125,
-                    "memory":                     512,
-                    "execute_limit_time_seconds": 1800,
-                    "max_total_charge":           0,
-                    "max_total_traffic":          0,
-                },
-                "custom": map[string]interface{}{
-                    // 从 /api/scraper 响应构建
-                },
-            },
-        },
+    apiKey := os.Getenv("CORECLAW_API_KEY")
+    if apiKey == "" {
+        panic("Set CORECLAW_API_KEY first.")
+    }
+    workerID := os.Getenv("CORECLAW_WORKER_ID")
+    if workerID == "" {
+        workerID = "YOUR_WORKER_ID"
     }
 
-    // 步骤 1：启动 Worker
-    fmt.Println("正在启动爬虫...")
-    runSlug, err := runScraperAsync(requestParams)
-    if err != nil {
-        fmt.Printf("启动失败: %v\n", err)
-        return
+    account := coreclawRequest(apiKey, "GET", "/api/v2/users/account", nil, nil)
+    fmt.Println("Account:", string(account.Data))
+
+    runPayload := map[string]any{
+        // Replace this object with fields from the Worker's input schema.
+        "input": map[string]any{"keyword": "coffee", "limit": 10},
+        "is_async": true,
+        "version": "latest",
+        "offset": 0,
+        "limit": 20,
+    }
+    run := coreclawRequest(apiKey, "POST", "/api/v2/workers/"+url.PathEscape(workerID)+"/runs", nil, runPayload)
+
+    var runInfo runData
+    if err := json.Unmarshal(run.Data, &runInfo); err != nil {
+        panic(err)
+    }
+    fmt.Println("Run ID:", runInfo.RunSlug)
+
+    results := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runInfo.RunSlug)+"/result", url.Values{
+        "offset": {"0"},
+        "limit":  {"20"},
+    }, nil)
+    fmt.Println("Results:", string(results.Data))
+}
+
+func coreclawRequest(apiKey, method, path string, query url.Values, body any) envelope {
+    endpoint := apiBaseURL + path
+    if len(query) > 0 {
+        endpoint += "?" + query.Encode()
     }
 
-    fmt.Printf("已启动！运行 ID: %s\n", runSlug)
-
-    // 步骤 2：轮询状态
-    fmt.Println("正在轮询状态...")
-    status, statusData, err := pollUntilComplete(runSlug)
-    if err != nil {
-        fmt.Printf("轮询失败: %v\n", err)
-        return
-    }
-
-    // 状态：1=就绪, 2=运行中, 3=成功, 4=失败, 5=中止中
-    if status == 3 {
-        fmt.Printf("完成！结果数: %d，耗时: %d秒\n", statusData.Results, statusData.Duration)
-
-        // 步骤 3：获取结果
-        results, err := getResults(runSlug)
+    var reader io.Reader
+    if body != nil {
+        raw, err := json.Marshal(body)
         if err != nil {
-            fmt.Printf("获取结果失败: %v\n", err)
-            return
+            panic(err)
         }
-
-        fmt.Printf("获取到 %d 条记录\n", results.Count)
-    } else if status == 4 {
-        fmt.Println("运行失败！")
+        reader = bytes.NewReader(raw)
     }
-}
 
-func runScraperAsync(params map[string]interface{}) (string, error) {
-    body, _ := json.Marshal(params)
-
-    client := &http.Client{Timeout: time.Duration(TIMEOUT) * time.Second}
-    req, _ := http.NewRequest("POST", API_BASE_URL+"/api/v1/scraper/run", bytes.NewBuffer(body))
-    req.Header.Set("api-key", API_KEY)
-    req.Header.Set("Content-Type", "application/json")
-
-    resp, err := client.Do(req)
+    req, err := http.NewRequest(method, endpoint, reader)
     if err != nil {
-        return "", err
+        panic(err)
+    }
+    req.Header.Set("Authorization", "Bearer "+apiKey)
+    if body != nil {
+        req.Header.Set("Content-Type", "application/json")
+    }
+
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        panic(err)
     }
     defer resp.Body.Close()
 
-    respBody, _ := io.ReadAll(resp.Body)
-
-    if resp.StatusCode != 200 {
-        return "", fmt.Errorf("HTTP %d", resp.StatusCode)
-    }
-
-    var result ApiResponse
-    json.Unmarshal(respBody, &result)
-
-    if result.Code != 0 {
-        return "", fmt.Errorf("%s (code: %d)", result.Message, result.Code)
-    }
-
-    var runData RunData
-    json.Unmarshal(result.Data, &runData)
-
-    return runData.RunSlug, nil
-}
-
-func getRunStatus(runSlug string) (int, *StatusData, error) {
-    body, _ := json.Marshal(map[string]string{"run_slug": runSlug})
-
-    client := &http.Client{Timeout: time.Duration(TIMEOUT) * time.Second}
-    req, _ := http.NewRequest("POST", API_BASE_URL+"/api/v1/run/detail", bytes.NewBuffer(body))
-    req.Header.Set("api-key", API_KEY)
-    req.Header.Set("Content-Type", "application/json")
-
-    resp, err := client.Do(req)
+    raw, err := io.ReadAll(resp.Body)
     if err != nil {
-        return -1, nil, err
+        panic(err)
     }
-    defer resp.Body.Close()
-
-    respBody, _ := io.ReadAll(resp.Body)
-
-    var result ApiResponse
-    json.Unmarshal(respBody, &result)
-
-    if result.Code != 0 {
-        return -1, nil, fmt.Errorf("%s", result.Message)
+    if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+        panic(fmt.Sprintf("HTTP %d: %s", resp.StatusCode, raw))
     }
 
-    var statusData StatusData
-    json.Unmarshal(result.Data, &statusData)
-
-    return statusData.Status, &statusData, nil
-}
-
-func pollUntilComplete(runSlug string) (int, *StatusData, error) {
-    terminalStates := []int{3, 4, 5}
-    maxWait := 300 * time.Second
-    startTime := time.Now()
-
-    for time.Since(startTime) < maxWait {
-        status, statusData, err := getRunStatus(runSlug)
-        if err != nil {
-            return -1, nil, err
-        }
-
-        for _, terminal := range terminalStates {
-            if status == terminal {
-                return status, statusData, nil
-            }
-        }
-
-        fmt.Printf("状态: %d (运行中...)\n", status)
-        time.Sleep(5 * time.Second)
+    var payload envelope
+    if err := json.Unmarshal(raw, &payload); err != nil {
+        panic(err)
     }
-
-    return -1, nil, fmt.Errorf("超时")
-}
-
-func getResults(runSlug string) (*ResultData, error) {
-    body, _ := json.Marshal(map[string]interface{}{
-        "run_slug":   runSlug,
-        "page_index": 1,
-        "page_size":  20,
-    })
-
-    client := &http.Client{Timeout: time.Duration(TIMEOUT) * time.Second}
-    req, _ := http.NewRequest("POST", API_BASE_URL+"/api/v1/run/result/list", bytes.NewBuffer(body))
-    req.Header.Set("api-key", API_KEY)
-    req.Header.Set("Content-Type", "application/json")
-
-    resp, err := client.Do(req)
-    if err != nil {
-        return nil, err
+    if payload.Code != 0 {
+        panic(string(raw))
     }
-    defer resp.Body.Close()
-
-    respBody, _ := io.ReadAll(resp.Body)
-
-    var result ApiResponse
-    json.Unmarshal(respBody, &result)
-
-    if result.Code != 0 {
-        return nil, fmt.Errorf("%s", result.Message)
-    }
-
-    var resultData ResultData
-    json.Unmarshal(result.Data, &resultData)
-
-    return &resultData, nil
+    return payload
 }
 ```
-
-## 核心函数
-
-| 函数 | 用途 |
-|------|------|
-| `runScraperAsync()` | 启动异步 Worker 运行 |
-| `getRunStatus()` | 获取当前运行状态 |
-| `pollUntilComplete()` | 轮询直到终态（成功/失败） |
-| `getResults()` | 分页获取结果数据 |
-
-## 状态码
-
-| 代码 | 状态 |
-|------|------|
-| 1 | 就绪 |
-| 2 | 运行中 |
-| 3 | 成功 |
-| 4 | 失败 |
-| 5 | 中止中 |

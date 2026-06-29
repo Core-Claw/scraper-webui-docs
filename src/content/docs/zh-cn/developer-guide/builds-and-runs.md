@@ -72,10 +72,10 @@ READY → RUNNING → SUCCEEDED / FAILED / ABORTING
 你可以通过控制台或 API 管理运行：
 
 - **监控** — 实时查看运行进度和日志
-- **中止** — 通过控制台或 [`POST /api/v1/scraper/abort`](/zh-cn/api/worker/abort/) 停止运行中的 Worker
-- **重新运行** — 通过 [`POST /api/v1/rerun`](/zh-cn/api/run/rerun/) 使用相同参数再次执行
-- **查看日志** — 通过 [`POST /api/v1/run/last/log`](/zh-cn/api/run/log/) 获取执行日志
-- **导出结果** — 通过 [`POST /api/v1/run/result/export`](/zh-cn/api/run/export/) 以 JSON 或 CSV 格式下载输出数据
+- **中止** — 通过控制台或 [`POST /api/v2/worker-runs/{runId}/abort`](/zh-cn/api/worker-runs/abort/) 停止运行中的 Worker
+- **重新运行** — 通过 [`POST /api/v2/worker-runs/{runId}/rerun`](/zh-cn/api/worker-runs/rerun/) 使用相同参数再次执行
+- **查看日志** — 通过 [`GET /api/v2/worker-runs/{runId}/log`](/zh-cn/api/worker-runs/log/) 获取执行日志
+- **导出结果** — 通过 [`GET /api/v2/worker-runs/{runId}/result/export`](/zh-cn/api/worker-runs/export/) 以 JSON 或 CSV 格式下载输出数据
 
 ## 运行历史
 
@@ -86,10 +86,10 @@ CoreClaw 会保留你所有的 Worker 运行记录。每次运行都会保存：
 - 时长
 - 状态和状态码
 - 输入参数
-- 输出数据（可通过 [`POST /api/v1/run/result/list`](/zh-cn/api/run/result/) 获取）
+- 输出数据（可通过 [`GET /api/v2/worker-runs/{runId}/result`](/zh-cn/api/worker-runs/result/) 获取）
 - 执行日志
 
-你可以通过 [`POST /api/v1/run/list`](/zh-cn/api/run/history/) 列出所有运行记录，也可以在控制台查看详细信息。
+你可以通过 [`GET /api/v2/worker-runs`](/zh-cn/api/worker-runs/list/) 列出所有运行记录，也可以在控制台查看详细信息。
 
 ## 最佳实践
 

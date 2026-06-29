@@ -1,253 +1,67 @@
 ---
-title: Python 示例
-description: CoreClaw API 集成的完整 Python 示例
+title: "Python 示例"
+description: "CoreClaw API v2 集成代码示例"
 sidebar:
   order: 1
 ---
 
-完整的 Python 示例，展示如何运行 Worker 并获取结果。
+下面示例覆盖认证检查、启动 Worker、用返回的 `run_slug` 查询结果三步。
 
-## 环境准备
+示例中的 `YOUR_WORKER_ID` 是占位符。请替换为要运行的 Worker slug，或把 `owner/name` 路径写成 `owner~name`。`input` 必须按该 Worker 的输入 schema 构造；不同 Worker 的字段不一定相同。
 
-安装 requests 库：
-
-```bash
-pip install requests
-```
-
-## 完整示例
+默认使用 `is_async: true` 异步提交并轮询结果。如需等待执行完成，把 `is_async` 改为 `false`，并用 `offset` / `limit` 控制同步返回的数据窗口。
 
 ```python
-#!/usr/bin/env python3
-"""
-CoreClaw API 示例：运行 Worker 并获取结果
-"""
+import os
 import requests
-import json
-import time
-from typing import Dict, Any
 
-# API 配置
 API_BASE_URL = "https://openapi.coreclaw.com"
-API_KEY = "YOUR_API_KEY"
-TIMEOUT = 30
+API_KEY = os.environ["CORECLAW_API_KEY"]
+WORKER_ID = os.environ.get("CORECLAW_WORKER_ID", "YOUR_WORKER_ID")
 
-def run_scraper_async(params: Dict[str, Any], api_key: str) -> Dict[str, Any]:
-    """启动异步 Worker 运行"""
-    headers = {
-        "api-key": api_key,
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        response = requests.post(
-            f"{API_BASE_URL}/api/v1/scraper/run",
-            headers=headers,
-            json=params,
-            timeout=TIMEOUT
-        )
-        
-        if response.status_code != 200:
-            return {
-                "success": False,
-                "run_slug": None,
-                "error": f"HTTP {response.status_code}: {response.text}"
-            }
-        
-        result = response.json()
-        
-        if result.get("code") != 0:
-            return {
-                "success": False,
-                "run_slug": None,
-                "error": f"{result.get('message')} (code: {result.get('code')})"
-            }
-        
-        return {
-            "success": True,
-            "run_slug": result["data"]["run_slug"],
-            "error": None
-        }
-        
-    except requests.exceptions.Timeout:
-        return {"success": False, "run_slug": None, "error": f"超时（{TIMEOUT}秒）"}
-    except requests.exceptions.RequestException as e:
-        return {"success": False, "run_slug": None, "error": str(e)}
-    except json.JSONDecodeError as e:
-        return {"success": False, "run_slug": None, "error": f"JSON 错误: {e}"}
 
-def get_run_status(run_slug: str, api_key: str) -> Dict[str, Any]:
-    """获取运行状态"""
-    headers = {
-        "api-key": api_key,
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        response = requests.post(
-            f"{API_BASE_URL}/api/v1/run/detail",
-            headers=headers,
-            json={"run_slug": run_slug},
-            timeout=TIMEOUT
-        )
-        
-        if response.status_code != 200:
-            return {"success": False, "status": None, "error": f"HTTP {response.status_code}"}
-        
-        result = response.json()
-        
-        if result.get("code") != 0:
-            return {"success": False, "status": None, "error": result.get("message")}
-        
-        data = result["data"]
-        return {
-            "success": True,
-            "status": data["status"],
-            "results": data.get("results", 0),
-            "duration": data.get("duration", 0),
-            "usage": data.get("usage", "0"),
-            "error": None
-        }
-        
-    except Exception as e:
-        return {"success": False, "status": None, "error": str(e)}
+def coreclaw_request(method, path, *, params=None, json_body=None):
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    if json_body is not None:
+        headers["Content-Type"] = "application/json"
 
-def poll_until_complete(run_slug: str, api_key: str, max_wait: int = 300) -> Dict[str, Any]:
-    """轮询直到完成（成功或失败）"""
-    # 状态：1=就绪, 2=运行中, 3=成功, 4=失败, 5=中止中
-    terminal_states = {3, 4, 5}
-    
-    start_time = time.time()
-    
-    while time.time() - start_time < max_wait:
-        status_result = get_run_status(run_slug, api_key)
-        
-        if not status_result["success"]:
-            return status_result
-        
-        status = status_result["status"]
-        
-        if status in terminal_states:
-            return status_result
-        
-        print(f"状态: {status} (运行中...)")
-        time.sleep(5)
-    
-    return {"success": False, "status": None, "error": f"超时（{max_wait}秒）"}
+    response = requests.request(
+        method,
+        f"{API_BASE_URL}{path}",
+        headers=headers,
+        params=params,
+        json=json_body,
+        timeout=60,
+    )
+    response.raise_for_status()
+    payload = response.json()
+    if payload.get("code") != 0:
+        raise RuntimeError(payload)
+    return payload
 
-def get_results(run_slug: str, api_key: str, page: int = 1, size: int = 20) -> Dict[str, Any]:
-    """获取结果数据"""
-    headers = {
-        "api-key": api_key,
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        response = requests.post(
-            f"{API_BASE_URL}/api/v1/run/result/list",
-            headers=headers,
-            json={"run_slug": run_slug, "page_index": page, "page_size": size},
-            timeout=TIMEOUT
-        )
-        
-        if response.status_code != 200:
-            return {"success": False, "data": None, "error": f"HTTP {response.status_code}"}
-        
-        result = response.json()
-        
-        if result.get("code") != 0:
-            return {"success": False, "data": None, "error": result.get("message")}
-        
-        return {
-            "success": True,
-            "count": result["data"]["count"],
-            "headers": result["data"]["headers"],
-            "list": result["data"]["list"],
-            "error": None
-        }
-        
-    except Exception as e:
-        return {"success": False, "data": None, "error": str(e)}
 
-def main():
-    # 构建请求参数（基于 /api/scraper 返回的 schema）
-    request_params = {
-        "scraper_slug": "YOUR_SCRAPER_SLUG",
-        "version": "<version>",  # 从 /api/scraper 获取
+account = coreclaw_request("GET", "/api/v2/users/account")
+print("Account:", account["data"])
+
+run = coreclaw_request(
+    "POST",
+    f"/api/v2/workers/{WORKER_ID}/runs",
+    json_body={
+        # Replace this object with fields from the Worker's input schema.
+        "input": {"keyword": "coffee", "limit": 10},
         "is_async": True,
-        "input": {
-            "parameters": {
-                "system": {
-                    "cpus": 0.125,
-                    "memory": 512,
-                    "execute_limit_time_seconds": 1800,
-                    "max_total_charge": 0,
-                    "max_total_traffic": 0
-                },
-                "custom": {
-                    # 从 /api/scraper 响应构建
-                }
-            }
-        }
-    }
-    
-    # 步骤 1：启动 Worker
-    print("正在启动爬虫...")
-    run_result = run_scraper_async(request_params, API_KEY)
-    
-    if not run_result["success"]:
-        print(f"启动失败: {run_result['error']}")
-        return
-    
-    run_slug = run_result["run_slug"]
-    print(f"已启动！运行 ID: {run_slug}")
-    
-    # 步骤 2：轮询状态
-    print("正在轮询状态...")
-    final_status = poll_until_complete(run_slug, API_KEY)
-    
-    if not final_status["success"]:
-        print(f"轮询失败: {final_status['error']}")
-        return
-    
-    status = final_status["status"]
-    
-    if status == 3:  # 成功
-        print(f"完成！结果数: {final_status['results']}，耗时: {final_status['duration']}秒")
-        
-        # 步骤 3：获取结果
-        results = get_results(run_slug, API_KEY)
-        
-        if results["success"]:
-            print(f"获取到 {results['count']} 条记录")
-            # 处理结果...
-        else:
-            print(f"获取结果失败: {results['error']}")
-    
-    elif status == 4:  # 失败
-        print("运行失败！")
-    else:
-        print(f"运行中止（状态: {status}）")
+        "version": "latest",
+        "offset": 0,
+        "limit": 20,
+    },
+)
+run_id = run["data"]["run_slug"]
+print("Run ID:", run_id)
 
-if __name__ == "__main__":
-    main()
+results = coreclaw_request(
+    "GET",
+    f"/api/v2/worker-runs/{run_id}/result",
+    params={"offset": 0, "limit": 20},
+)
+print(results["data"])
 ```
-
-## 核心函数
-
-| 函数 | 用途 |
-|------|------|
-| `run_scraper_async()` | 启动异步 Worker 运行 |
-| `get_run_status()` | 获取当前运行状态 |
-| `poll_until_complete()` | 轮询直到终态（成功/失败） |
-| `get_results()` | 分页获取结果数据 |
-
-## 状态码
-
-| 代码 | 状态 |
-|------|------|
-| 1 | 就绪 |
-| 2 | 运行中 |
-| 3 | 成功 |
-| 4 | 失败 |
-| 5 | 中止中 |

@@ -72,10 +72,10 @@ Each run executes in a lightweight, process-isolated environment with:
 You can manage runs from the Console or via the API:
 
 - **Monitor** — Watch run progress and logs in real-time
-- **Abort** — Stop a running Worker via the Console or [`POST /api/v1/scraper/abort`](/api/worker/abort/)
-- **Rerun** — Execute again with the same parameters via [`POST /api/v1/rerun`](/api/run/rerun/)
-- **View Logs** — Access execution logs via [`POST /api/v1/run/last/log`](/api/run/log/)
-- **Export Results** — Download output data in JSON or CSV via [`POST /api/v1/run/result/export`](/api/run/export/)
+- **Abort** — Stop a running Worker via the Console or [`POST /api/v2/worker-runs/{runId}/abort`](/api/worker-runs/abort/)
+- **Rerun** — Execute again with the same parameters via [`POST /api/v2/worker-runs/{runId}/rerun`](/api/worker-runs/rerun/)
+- **View Logs** — Access execution logs via [`GET /api/v2/worker-runs/{runId}/log`](/api/worker-runs/log/)
+- **Export Results** — Download output data in JSON or CSV via [`GET /api/v2/worker-runs/{runId}/result/export`](/api/worker-runs/export/)
 
 ## Run History
 
@@ -86,10 +86,10 @@ CoreClaw retains all your Worker run records. Each run saves:
 - Duration
 - Status and status code
 - Input parameters
-- Output data (accessible via [`POST /api/v1/run/result/list`](/api/run/result/))
+- Output data (accessible via [`GET /api/v2/worker-runs/{runId}/result`](/api/worker-runs/result/))
 - Execution logs
 
-You can list all runs via [`POST /api/v1/run/list`](/api/run/history/) and view detailed records in the Console.
+You can list all runs via [`GET /api/v2/worker-runs`](/api/worker-runs/list/) and view detailed records in the Console.
 
 ## Best Practices
 

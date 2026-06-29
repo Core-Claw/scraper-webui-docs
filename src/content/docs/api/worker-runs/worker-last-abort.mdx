@@ -1,0 +1,97 @@
+---
+title: "Abort Worker Last Run"
+description: "Abort Worker Last Run API reference"
+sidebar:
+  order: 81
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `POST`
+
+**Endpoint:** `/api/v2/workers/{workerId}/runs/last/abort`
+
+**Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v2/workers/{workerId}/runs/last/abort" />
+
+## When to use this endpoint
+
+Use this endpoint to abort an abortable run. Confirm the target before calling it.
+
+## Identifier Notes
+
+- `workerId` / `worker_id` accepts a Worker slug or a path encoded as `owner~name` from `owner/name`.
+
+## Path Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `workerId` | Yes | `string` | Worker slug or path. Encode `owner/name` as `owner~name` for path values. |
+
+## Request Body
+
+Send the request body with `Content-Type: application/json`. Required/Optional describes each field; the Try it Request Body badge shows whether the body itself is required.
+
+| Field | Required | Type | Description |
+| --- | --- | --- | --- |
+| `callback_url` | No | `string` | Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes. |
+| `is_async` | No | `boolean` | `true` submits asynchronously without waiting for results; `false` waits for the run to finish. Defaults to `true`. |
+| `limit` | No | `integer` | Synchronous result window size for runs or reruns. It only controls how many result rows are included in the synchronous response, not the full result set. Constraints: default `20`; range 1-100. |
+| `offset` | No | `integer` | Zero-based offset for the synchronous result window returned by runs or reruns. Constraints: default `0`; minimum 0. |
+
+### JSON Example
+
+```json
+{
+  "callback_url": "https://client.example.com/openapi/callback",
+  "is_async": true,
+  "limit": 20,
+  "offset": 0
+}
+```
+
+## Run Mode
+
+- `is_async: true` submits the run asynchronously and returns without waiting for execution results. The response includes `data.run_slug`; then poll the run detail, log, and result endpoints.
+- `is_async: false` waits for the run to finish, equivalent to run-and-wait behavior. Use `offset` / `limit` to control the result window returned by the synchronous run.
+
+## Request Example
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/last/abort" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"callback_url":"https://client.example.com/openapi/callback","is_async":true,"limit":20,"offset":0}'
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- This is a Worker-scoped latest-run endpoint; `workerId` is required and the operation applies only to that Worker's latest run.
+- `last` means the latest run in the current scope. Use a concrete `runId` endpoint when the target must be explicit.
+- When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

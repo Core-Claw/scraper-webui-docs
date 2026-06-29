@@ -1,337 +1,97 @@
 ---
-title: API Integration
-description: Complete guide to integrate CoreClaw API into your applications
+title: "API Integration"
+description: "Run Workers and retrieve results with CoreClaw API v2"
 sidebar:
   order: -1
 ---
 
-All aspects of the CoreClaw platform can be controlled via a REST API. This guide walks you through the complete integration process from obtaining an API key to making your first API call.
+The recommended CoreClaw API v2 flow is: verify authentication, choose the run entry point, build input from the Worker schema, choose async or sync execution, then use `runId` to read status, logs, results, or an export file.
 
-## Quick Test
+## 1. Quick Authentication Check
 
-Verify your API key is valid with a single command:
-
-```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
-```
-
-Expected response:
-
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": {
-    "balance": "10.00",
-    "traffic": "1000"
-  }
-}
-```
-
-If you receive `code: 20001`, your API key is invalid. Check the key and try again.
-
-## API Key
-
-To access the CoreClaw API, you need to authenticate using your API key. You can find it on the [API & Integrations](https://console.coreclaw.com/settings/integrations) page in CoreClaw Console.
-
-1. Log in to [CoreClaw Console](https://console.coreclaw.com)
-2. Navigate to **Settings** → **API & Integrations**
-3. Click **Create API Key** or copy your existing key
-
-> **Warning**: Do not share your API key with untrusted parties, or use it directly from client-side code (browser JavaScript). API keys should only be used server-side or in secure environments.
-
-## Authentication
-
-CoreClaw API uses the `api-key` header for authentication. Include it in every request that requires authentication.
+Start by verifying that the token works. HTTP status describes the request layer, and application `code` describes the business layer.
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
+curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-Some endpoints do not require authentication: `GET /api/store` (Search Workers) and `GET /api/scraper` (Get Worker detail).
+## 2. Choose the run entry point
 
-## Base URL
+CoreClaw has two common run entry points. Direct Worker run is for callers that send a fresh `input` payload. Saved Worker task run is for reusing a task template already configured in the platform.
 
-All API requests should be sent to `https://openapi.coreclaw.com`.
+| Scenario | Endpoint | When to use |
+| --- | --- | --- |
+| Direct Worker run | `POST /api/v2/workers/{workerId}/runs` | The caller builds `input`; each request can send different input. |
+| Saved Worker task run | `POST /api/v2/worker-tasks/{workerTaskId}/runs` | Input comes from the saved task configuration; the request body controls execution mode, callback, and synchronous result window. |
 
-Download the complete OpenAPI specification at [openapi.json](/openapi.json). You can import this file into [Postman](https://www.postman.com/), [Swagger UI](https://swagger.io/tools/swagger-ui/), or any OpenAPI-compatible tool.
-
-## Quick Start: Your First API Call
-
-Walk through the complete workflow to run a Worker and get results.
-
-### Step 1: Search for a Worker
+### Search or list Workers
 
 ```bash
-curl "https://openapi.coreclaw.com/api/store?search=amazon&limit=5"
+curl "https://openapi.coreclaw.com/api/v2/store?keyword=coffee&offset=0&limit=20"
 ```
 
-```json
-{
-  "code": 0,
-  "data": {
-    "scraper": [
-      {
-        "slug": "01KNXSHE0Y7DZKF1N8B1EMFX35",
-        "title": "Amazon Global Product By URL",
-        "description": "Extract product data from Amazon URLs"
-      }
-    ]
-  }
-}
-```
+### Read the input schema
 
-Save the `slug` (this is the **Worker ID**, also called `scraper_slug`).
-
-### Step 2: Get Worker Details
-
-Before running a Worker, get its live parameter schema:
+Read the Worker input schema before sending `input`. Fields, defaults, and constraints can differ by Worker.
 
 ```bash
-curl "https://openapi.coreclaw.com/api/scraper?slug=01KNXSHE0Y7DZKF1N8B1EMFX35"
+curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 ```
 
-```json
-{
-  "code": 0,
-  "data": {
-    "version": "v1.0.1",
-    "parameters": {
-      "system": { "cpus": 0.125, "memory": 512, "execute_limit_time_seconds": 1800 },
-      "custom": {
-        "properties": [
-          { "name": "urls", "type": "array", "title": "URLs", "required": true }
-        ]
-      }
-    }
-  }
-}
-```
+## 3. Choose the execution mode
 
-Use `data.version` exactly as returned, and build `input.parameters.custom` from `data.parameters.custom.properties`. The `memory` field is in MB and matches what `/api/v1/scraper/run` expects.
+- `is_async: true` submits asynchronously and does not wait for execution results. The response returns `data.run_slug`; Poll by `runId` when the run is asynchronous.
+- `is_async: false` waits for completion, equivalent to run-and-wait behavior. `offset` / `limit` only control the result window included in the synchronous response; they do not change the full result set.
+- `callback_url` can receive status-change or completion notifications, but callbacks do not replace result endpoints. Use `runId` to read or export complete data.
 
-### Step 3: Run the Worker
+### Direct Worker run
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data '{
-    "scraper_slug": "01KNXSHE0Y7DZKF1N8B1EMFX35",
-    "version": "<version>",
-    "is_async": true,
-    "input": {
-      "parameters": {
-        "system": {
-          "cpus": 0.125,
-          "memory": 512,
-          "execute_limit_time_seconds": 1800,
-          "max_total_charge": 0,
-          "max_total_traffic": 0,
-          "proxy_region": "US"
-        },
-        "custom": {
-          "urls": [{"url": "https://www.amazon.com/dp/B0CHHSFMRL"}]
-        }
-      }
-    }
-  }'
+curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"input":{"keyword":"coffee","limit":10},"is_async":true,"version":"latest","callback_url":"https://example.com/coreclaw/callbacks"}'
 ```
 
-```json
-{
-  "code": 0,
-  "data": { "run_slug": "01KSFDS8XWTJME33C08XMCR6B9" }
-}
-```
-
-Save the `run_slug` (**Run Record ID**) to track progress and retrieve results.
-
-### Step 4: Check Run Status
+### Saved Worker task run
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/run/detail" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data '{"run_slug": "01KSFDS8XWTJME33C08XMCR6B9"}'
+curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_ID/runs" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"is_async":true,"callback_url":"https://example.com/coreclaw/callbacks"}'
 ```
 
-Status codes: `1` Ready, `2` Running, `3` Succeeded, `4` Failed, `5` Aborting.
+The response `data.run_slug` is the `runId` used by follow-up endpoints.
 
-### Step 5: Get Results
+## 4. Poll by `runId` when the run is asynchronous
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/list" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data '{
-    "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
-    "page_index": 1,
-    "page_size": 20
-  }'
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/log" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=0&limit=20" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-Or export as a file via `/api/v1/run/result/export` with `format: "json"` (or `csv`).
+`offset` is zero-based. List and result endpoints default `limit` to `20` and cap it at `100`. Poll long-running jobs with backoff to avoid `429` responses.
 
-## Sync vs Async Execution
+## 5. Use export endpoints for downloads
 
-| Mode | Setting | Behavior | When to use |
-|------|---------|----------|-------------|
-| Async (default) | `is_async: true` | Returns immediately with `run_slug`; poll status or use webhook | Long-running tasks |
-| Sync | `is_async: false` | Waits for execution to finish (up to 5 min) and returns results directly | Quick, small tasks |
+Use `/result` endpoints for paginated previews. Use export endpoints for downloads, and use `filter_keys` to limit exported fields.
 
-In async mode, supply `callback_url` and CoreClaw will POST a notification to your endpoint when the run finishes:
-
-```json
-{
-  "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
-  "status": 3,
-  "results": 20,
-  "usage": "0.06"
-}
+```bash
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result/export?format=csv&filter_keys=title%2Caddress" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-Your webhook endpoint should verify the request, process the result, and return `200 OK`.
+## Error Handling Guidance
 
-## Common Errors
-
-| Code | Message | Solution |
-|------|---------|----------|
-| 4000 | Invalid request parameters | Check parameter names and types against `/api/scraper` |
-| 20001 | Invalid API key | Verify your API key is correct |
-| 30001 | Insufficient balance | Add funds to your account |
-| 50001 | Worker does not exist | Check the `scraper_slug` (Worker ID) |
-| 70001 | Run record does not exist | Check the `run_slug` (Run Record ID) |
-
-## Best Practices
-
-1. **Always read Worker schema first.** Never guess parameter names. Always call `/api/scraper` before `/api/v1/scraper/run`.
-2. **Use the exact version.** Copy `version` from `/api/scraper` response. Do not hardcode versions.
-3. **Handle pagination.** For large datasets, use `result/list` with pagination or `result/export` for file download.
-4. **Implement retry logic.** Use exponential backoff for rate-limited requests (code 4290).
-5. **Monitor usage.** Check your balance regularly via `/api/v1/account/info`.
-
-## Troubleshooting
-
-<details>
-<summary><strong>4000 Invalid request parameters</strong> — most common error</summary>
-
-| Cause | Solution |
-|-------|----------|
-| `version` mismatched | Get `version` from `/api/scraper`, don't hardcode |
-| `custom` schema mismatch | Build `custom` from `data.parameters.custom.properties` |
-| Missing `is_async` | Add `"is_async": true` or `"is_async": false` |
-| JSON syntax error | Validate JSON format, especially on Windows |
-
-</details>
-
-<details>
-<summary><strong>Windows PowerShell JSON Escaping</strong></summary>
-
-PowerShell mangles inline JSON strings, causing `4000 Invalid request parameters`. Use `--data-binary @file.json` to read from a file:
-
-```powershell
-@'
-{
-  "scraper_slug": "YOUR_SCRAPER_SLUG",
-  "version": "<version>",
-  "is_async": true,
-  "input": {
-    "parameters": {
-      "system": {"cpus": 0.125, "memory": 512},
-      "custom": {}
-    }
-  }
-}
-'@ | Out-File -Encoding utf8 request.json
-
-curl.exe -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" `
-  -H "api-key: YOUR_API_KEY" `
-  -H "Content-Type: application/json" `
-  --data-binary "@request.json"
-```
-
-</details>
-
-<details>
-<summary><strong>Rate Limiting (429 / code 4290)</strong></summary>
-
-When you exceed rate limits, implement exponential backoff:
-
-```python
-import time
-
-def retry_with_backoff(func, max_retries=5):
-    for attempt in range(max_retries):
-        result = func()
-        if result.get("code") != 4290:
-            return result
-        wait_time = (2 ** attempt) * 1  # 1, 2, 4, 8, 16 seconds
-        time.sleep(wait_time)
-    return result
-```
-
-</details>
-
-<details>
-<summary><strong>Worker-Specific Custom Parameters</strong></summary>
-
-Each Worker has different `custom` parameters. **Never assume field names**.
-
-Wrong (hardcoded):
-
-```json
-{
-  "custom": {
-    "startURLs": [{"url": "https://example.com"}]
-  }
-}
-```
-
-Correct (from `/api/scraper`):
-
-```python
-response = requests.get(f"https://openapi.coreclaw.com/api/scraper?slug={scraper_slug}")
-schema = response.json()["data"]["parameters"]["custom"]["properties"]
-
-custom_params = {}
-for prop in schema:
-    name = prop["name"]
-    if prop.get("required"):
-        custom_params[name] = prop.get("default", [])
-```
-
-</details>
-
-<details>
-<summary><strong>Debug Checklist</strong></summary>
-
-1. **API Key**: Run [Quick Test](#quick-test) to verify
-2. **Version**: Get fresh `version` from `/api/scraper`
-3. **Custom Schema**: Inspect `data.parameters.custom.properties` for the Worker
-4. **JSON Format**: Validate with a JSON linter
-5. **Windows Shell**: Use `--data-binary @file.json` instead of inline JSON
-
-</details>
-
-## Code Examples
-
-Complete examples in multiple programming languages:
-
-| Language | Install | Description |
-|----------|---------|-------------|
-| [Python](/api/examples/python/) | `pip install requests` | Full async workflow with requests library |
-| [Node.js](/api/examples/nodejs/) | `npm install axios` | Full async workflow with axios |
-| [Java](/api/examples/java/) | none (uses `java.net.http`) | Java 11+ |
-| [PHP](/api/examples/php/) | none (uses `curl`) | Using built-in curl extension |
-| [Go](/api/examples/go/) | none (uses `net/http`) | Using net/http package |
-
-## API Reference
-
-For detailed endpoint documentation, see [Base URL & Authentication](/api/), [Search Workers](/api/worker/search/), [Worker Detail](/api/worker/detail/), [Start Worker](/api/worker/run/), [Abort Worker](/api/worker/abort/), [Run History](/api/run/history/), [Run Detail](/api/run/detail/), [Run Result](/api/run/result/), [Export Result](/api/run/export/), [Run Log](/api/run/log/), [Re-run](/api/run/rerun/), [Start Task](/api/task/run/), and [Account Info](/api/account/info/).
+1. Check both HTTP status and application `code`; do not rely on only one layer.
+2. `401` usually means the token is missing or invalid. `422` usually means a field value, pagination range, or request semantic failed validation.
+3. Store `request_id` for troubleshooting failed requests.
+4. Retry `429` responses with backoff instead of replaying immediately at high frequency.

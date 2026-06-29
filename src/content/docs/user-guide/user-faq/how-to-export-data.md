@@ -44,26 +44,18 @@ For automated data retrieval, use the API:
 ### Get Run Results
 
 ```bash
-GET /api/v1/runs/{run_slug}/results
+GET /api/v2/worker-runs/{runId}/result?offset=0&limit=20
 ```
 
 ### Export Run Result
 
 ```bash
-POST /api/v1/runs/{run_slug}/export
-```
-
-**Request Body:**
-```json
-{
-  "format": "csv",
-  "filter_keys": "title,price,url"
-}
+GET /api/v2/worker-runs/{runId}/result/export?format=csv&filter_keys=title%2Cprice%2Curl
 ```
 
 **Supported formats:** `csv`, `json`
 
-See [Export API](/api/run/export/) for full documentation.
+Use the `runId` returned as `data.run_slug` when you start or rerun a Worker. See [Export API](/api/worker-runs/export/) for full documentation.
 
 ## Data Size Considerations
 
@@ -108,4 +100,4 @@ Review the logs for detailed error messages.
 ## Related Topics
 
 - [Input and Output](/user-guide/run-worker/input-output/) - Understand data structure
-- [API Reference](/api/run/export/) - Export API documentation
+- [API Reference](/api/worker-runs/export/) - Export API documentation

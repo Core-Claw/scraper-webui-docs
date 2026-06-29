@@ -1,4 +1,4 @@
-﻿---
+---
 /**
  * ApiPlayground — embeds a try-it-out form for one OpenAPI operation.
  *
@@ -6,8 +6,8 @@
  * resolves `$ref` schemas, and renders:
  *
  *   - A header with method + path + summary
- *   - Optional API-key field (only when `security` requires it)
- *   - Query / path parameter inputs
+ *   - Optional API token field (only when `security` requires it)
+ *   - Query / path parameter inputs with Required / Optional labels
  *   - A body editor area that includes:
  *       • the request body schema description
  *       • a "Required / Optional" badge
@@ -18,7 +18,7 @@
  *
  * Props:
  *   method  — HTTP method, case-insensitive
- *   path    — OpenAPI path, e.g. "/api/v1/scraper/run"
+ *   path    — OpenAPI path, e.g. "/api/v2/workers/{workerId}/runs"
  *   server  — optional override of the spec's first server URL
  */
 import { readFile } from 'node:fs/promises'
@@ -88,6 +88,136 @@ function pickFirstExample(content: any): unknown | null {
     return null
 }
 
+function schemaTypeLabel(schema: any = {}): string {
+    if (Array.isArray(schema.type)) {
+        return schema.type.filter((type: string) => type !== 'null').join(' | ') || 'any'
+    }
+    if (Array.isArray(schema.enum)) return `enum: ${schema.enum.join(', ')}`
+    if (schema.type === 'array') return `${schemaTypeLabel(schema.items || {})}[]`
+    if (schema.type === 'object' || schema.properties) return 'object'
+    return schema.type || schema.format || 'any'
+}
+
+function sentence(text: string): string {
+    const trimmed = text.trim()
+    if (!trimmed) return ''
+    return /[.!?。]$/.test(trimmed) ? trimmed : `${trimmed}.`
+}
+
+function schemaConstraints(schema: any = {}): string[] {
+    const parts: string[] = []
+    if (schema.default !== undefined) parts.push(`default \`${schema.default}\``)
+    if (schema.minimum !== undefined && schema.maximum !== undefined) {
+        parts.push(`range ${schema.minimum}-${schema.maximum}`)
+    } else if (schema.minimum !== undefined) {
+        parts.push(`minimum ${schema.minimum}`)
+    } else if (schema.maximum !== undefined) {
+        parts.push(`maximum ${schema.maximum}`)
+    }
+    if (Array.isArray(schema.enum) && schema.enum.length) {
+        parts.push(`allowed values: ${schema.enum.map((value: unknown) => `\`${value}\``).join(', ')}`)
+    }
+    return parts
+}
+
+function appendSchemaDetails(text: string, schema: any = {}): string {
+    const constraints = schemaConstraints(schema)
+    const base = sentence(text)
+    if (!constraints.length) return base
+    return `${base} Constraints: ${constraints.join('; ')}.`
+}
+
+function describeBodyField(name: string, schema: any = {}): string {
+    if (name === 'callback_url') {
+        return 'Callback URL. When provided, CoreClaw sends a POST request after the run status changes or finishes.'
+    }
+    if (name === 'input') {
+        return 'Worker input payload. Read this Worker\'s input schema first; fields differ by Worker.'
+    }
+    if (name === 'is_async') {
+        return '`true` submits asynchronously and does not wait for execution results; `false` waits for the run to finish. Defaults to `true`.'
+    }
+    if (name === 'limit') {
+        return appendSchemaDetails(schema.description || 'Result limit for synchronous runs or reruns.', schema)
+    }
+    if (name === 'offset') {
+        return appendSchemaDetails(schema.description || 'Result offset for synchronous runs or reruns.', schema)
+    }
+    if (name === 'version') {
+        return appendSchemaDetails('Worker version. Use a concrete available version, or `latest` when supported by the service.', schema)
+    }
+    return appendSchemaDetails(schema.description || '-', schema)
+}
+
+function describeParam(param: any): string {
+    const schema = param.schema || {}
+    const name = param.name
+    if (name === 'workerId') {
+        return 'Worker slug or path. Encode `owner/name` as `owner~name` for path values.'
+    }
+    if (name === 'worker_id') {
+        return 'Worker slug or path. Encode `owner/name` as `owner~name` for query values.'
+    }
+    if (name === 'runId') {
+        return 'Run slug returned as `data.run_slug` from start or rerun responses.'
+    }
+    if (name === 'workerTaskId') {
+        return 'Saved Worker task template slug.'
+    }
+    if (name === 'offset') return appendSchemaDetails('Pagination offset, starting from 0.', schema)
+    if (name === 'limit') return appendSchemaDetails('Page size.', schema)
+    if (name === 'format') return appendSchemaDetails('Export format.', schema)
+    if (name === 'filter_keys') {
+        return 'Comma-separated field keys used to limit exported fields, for example `title,address`.'
+    }
+    if (name === 'status') return appendSchemaDetails('Run status filter.', schema)
+    return appendSchemaDetails(param.description || schema.description || '-', schema)
+}
+
+function parameterMeta(param: any): string {
+    const parts = [param.in]
+    const type = schemaTypeLabel(param.schema || {})
+    if (type) parts.push(type)
+    const constraints = schemaConstraints(param.schema || {})
+    if (constraints.length) parts.push(constraints.join('; '))
+    return parts.join(' · ')
+}
+
+function sampleSchemaValue(name: string, schema: any = {}): unknown {
+    if (schema.example !== undefined) return schema.example
+    if (schema.default !== undefined) return schema.default
+    if (Array.isArray(schema.examples) && schema.examples.length) return schema.examples[0]
+    if (Array.isArray(schema.enum) && schema.enum.length) return schema.enum[0]
+    if (name === 'callback_url') return 'https://client.example.com/openapi/callback'
+    if (name === 'input') return { keyword: 'coffee', limit: 10 }
+    if (name === 'version') return 'latest'
+    if (name === 'is_async') return true
+    if (name === 'limit') return 20
+    if (name === 'offset') return 0
+
+    const type = Array.isArray(schema.type)
+        ? schema.type.find((item: string) => item !== 'null')
+        : schema.type
+
+    if (type === 'object' || schema.properties) {
+        const out: Record<string, unknown> = {}
+        for (const [childName, childSchema] of Object.entries(schema.properties || {})) {
+            out[childName] = sampleSchemaValue(childName, childSchema)
+        }
+        return out
+    }
+    if (type === 'array') return []
+    if (type === 'boolean') return true
+    if (type === 'integer' || type === 'number') return schema.minimum ?? 0
+    if (schema.format === 'uri') return 'https://client.example.com/openapi/callback'
+    return `YOUR_${String(name || 'VALUE').replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase()}`
+}
+
+function exampleFromSchema(schema: any): unknown | null {
+    if (!schema) return null
+    return sampleSchemaValue('', schema)
+}
+
 const bodyContent =
     opResolved?.requestBody?.content?.['application/json'] ?? null
 const bodySchema = bodyContent?.schema ?? null
@@ -97,9 +227,15 @@ const bodyDescription = (
     bodySchema?.description ||
     ''
 ).trim()
-const exampleBody = pickFirstExample(opResolved?.requestBody?.content)
+const exampleBody =
+    pickFirstExample(opResolved?.requestBody?.content) ?? exampleFromSchema(bodySchema)
 const exampleBodyStr =
     exampleBody !== null ? JSON.stringify(exampleBody, null, 2) : ''
+
+// -- Parameters -----------------------------------------------------------
+const parameters: any[] = (opResolved?.parameters || []).filter(
+    (p: any) => p.in === 'query' || p.in === 'path'
+)
 
 // "Trivial body" = the spec says you can send `{}` or nothing.
 // Schema is an empty object with no properties, and any provided example
@@ -118,6 +254,9 @@ const hasProperties =
     Object.keys(bodySchema.properties).length > 0
 const isTrivialBody =
     !!bodyContent && !hasProperties && isEmptyExample(exampleBody)
+const noRequestBodyMessage = parameters.length
+    ? 'No JSON request body. Fill the path or query parameters above.'
+    : 'No JSON request body is defined for this operation.'
 
 // Walk the top-level body schema to expose a flat "fields" table.
 type Field = {
@@ -132,26 +271,28 @@ function flattenTopLevelFields(schema: any): Field[] {
     const required = new Set<string>(schema.required || [])
     return Object.keys(props).map(name => {
         const p = props[name] || {}
-        let type = p.type || 'any'
-        if (type === 'array' && p.items?.type) type = `${p.items.type}[]`
-        if (Array.isArray(p.enum)) type = `enum (${p.enum.length})`
         return {
             name,
-            type,
+            type: schemaTypeLabel(p),
             required: required.has(name),
-            description: (p.description || '').trim(),
+            description: describeBodyField(name, p),
         }
     })
 }
 const bodyFields = flattenTopLevelFields(bodySchema)
 
-// -- Parameters -----------------------------------------------------------
-const parameters: any[] = (opResolved?.parameters || []).filter(
-    (p: any) => p.in === 'query' || p.in === 'path'
-)
+function sampleParamValue(param: any): string {
+    if (param.schema?.default !== undefined) return String(param.schema.default)
+    if (param.example !== undefined) return String(param.example)
+    if (param.in !== 'path') return ''
+    if (param.name === 'workerId') return 'YOUR_WORKER_ID'
+    if (param.name === 'workerTaskId') return 'YOUR_WORKER_TASK_ID'
+    if (param.name === 'runId') return 'YOUR_RUN_ID'
+    return `YOUR_${String(param.name).replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase()}`
+}
 
 // -- Auth -----------------------------------------------------------------
-const needsApiKey =
+const needsToken =
     Array.isArray(opResolved?.security) &&
     opResolved.security.length > 0 &&
     !opResolved.security.every((s: any) => Object.keys(s).length === 0)
@@ -177,7 +318,7 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
         data-method={methodUp}
         data-path={opPath}
         data-server={defaultServer}
-        data-needs-api-key={needsApiKey ? 'true' : 'false'}
+        data-needs-token={needsToken ? 'true' : 'false'}
         data-example-body={exampleBodyStr}>
         <div class="ap-head">
             <span class={`ap-method ap-method--${methodUp.toLowerCase()}`}>{methodUp}</span>
@@ -186,47 +327,48 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
         </div>
 
         <div class="ap-body">
-            {needsApiKey ? (
-                <div class="ap-field">
-                    <div class="ap-label-row">
-                        <label class="ap-label" for={`${id}-key`}>api-key</label>
+            {needsToken ? (
+                <div class="ap-section">
+                    <div class="ap-section-title">
+                        <span>Authentication</span>
                         <span class="ap-pill ap-pill--required">Required</span>
                     </div>
-                    <input
-                        id={`${id}-key`}
-                        type="password"
-                        class="ap-input"
-                        autocomplete="off"
-                        spellcheck="false"
-                        data-role="api-key"
-                        placeholder="Paste your API key"
-                    />
-                    <p class="ap-hint">Stored only in this browser tab. Sent only to <code>{defaultServer}</code>.</p>
+                    <div class="ap-field">
+                        <div class="ap-label-row">
+                            <label class="ap-label" for={`${id}-auth-mode`}>Auth mode</label>
+                        </div>
+                        <select
+                            id={`${id}-auth-mode`}
+                            class="ap-select"
+                            data-role="auth-mode">
+                            <option value="bearer">Authorization: Bearer</option>
+                            <option value="api-key">api-key header</option>
+                            <option value="query-token">Query token</option>
+                        </select>
+                    </div>
+                    <div class="ap-field">
+                        <div class="ap-label-row">
+                            <label class="ap-label" for={`${id}-key`}>API token</label>
+                        </div>
+                        <input
+                            id={`${id}-key`}
+                            type="password"
+                            class="ap-input"
+                            autocomplete="off"
+                            spellcheck="false"
+                            data-role="api-token"
+                            placeholder="Paste your API key"
+                        />
+                        <p class="ap-hint">Stored only in this browser tab. Sent only to <code>{defaultServer}</code>.</p>
+                    </div>
                 </div>
             ) : (
                 <div class="ap-section">
                     <div class="ap-section-title">
-                        <span>api-key</span>
+                        <span>Authorization</span>
                         <span class="ap-pill ap-pill--optional">Not required</span>
                     </div>
-                    <p class="ap-section-desc">This is a public endpoint and does not require an API key.</p>
-                </div>
-            )}
-
-            {!bodyContent && !exampleBodyStr && (
-                <div class="ap-section">
-                    <div class="ap-section-title">
-                        <span>Body</span>
-                        <span class="ap-pill ap-pill--optional">Not required</span>
-                    </div>
-                    <div class="ap-body-empty">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 16v-4"/>
-                            <path d="M12 8h.01"/>
-                        </svg>
-                        <span>This endpoint takes no body parameters.</span>
-                    </div>
+                    <p class="ap-section-desc">This is a public endpoint and does not require an API token.</p>
                 </div>
             )}
 
@@ -237,10 +379,10 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                         <div class="ap-field">
                             <div class="ap-label-row">
                                 <label class="ap-label" for={`${id}-p-${param.name}`}>{param.name}</label>
-                                <span class="ap-pill-meta">
-                                    {param.in}{param.schema?.type ? ` · ${param.schema.type}` : ''}
+                                <span class="ap-pill-meta">{parameterMeta(param)}</span>
+                                <span class={`ap-pill ${param.required ? 'ap-pill--required' : 'ap-pill--optional'}`}>
+                                    {param.required ? 'Required' : 'Optional'}
                                 </span>
-                                {param.required && <span class="ap-pill ap-pill--required">Required</span>}
                             </div>
                             <input
                                 id={`${id}-p-${param.name}`}
@@ -251,11 +393,28 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                                 data-param-name={param.name}
                                 data-param-in={param.in}
                                 placeholder={param.example ?? param.schema?.default ?? param.description ?? ''}
-                                value={param.schema?.default ?? param.example ?? ''}
+                                value={sampleParamValue(param)}
                             />
-                            {param.description && <p class="ap-hint">{param.description}</p>}
+                            <p class="ap-hint">{describeParam(param)}</p>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {!bodyContent && !exampleBodyStr && (
+                <div class="ap-section">
+                    <div class="ap-section-title">
+                        <span>Request Body</span>
+                        <span class="ap-pill ap-pill--na">Not applicable</span>
+                    </div>
+                    <div class="ap-body-empty">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4"/>
+                            <path d="M12 8h.01"/>
+                        </svg>
+                        <span>{noRequestBodyMessage}</span>
+                    </div>
                 </div>
             )}
 
@@ -263,8 +422,10 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                 isTrivialBody ? (
                     <div class="ap-section">
                         <div class="ap-section-title">
-                            <span>Body</span>
-                            <span class="ap-pill ap-pill--optional">Not required</span>
+                            <span>Request Body</span>
+                            <span class={`ap-pill ${bodyRequired ? 'ap-pill--required' : 'ap-pill--na'}`}>
+                                {bodyRequired ? 'Required' : 'Not applicable'}
+                            </span>
                         </div>
                         <div class="ap-body-empty">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -273,7 +434,7 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                                 <path d="M12 8h.01"/>
                             </svg>
                             <span>
-                                This endpoint takes no body parameters.
+                                {bodyRequired ? 'Send an empty JSON object (`{}`).' : noRequestBodyMessage}
                                 {bodyDescription && <em class="ap-body-empty-spec"> Spec: <code>{bodyDescription}</code></em>}
                             </span>
                         </div>
@@ -281,7 +442,7 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                 ) : (
                     <div class="ap-section">
                         <div class="ap-section-title">
-                            <span>Body</span>
+                            <span>Request Body</span>
                             <span class={`ap-pill ${bodyRequired ? 'ap-pill--required' : 'ap-pill--optional'}`}>
                                 {bodyRequired ? 'Required' : 'Optional'}
                             </span>
@@ -303,7 +464,7 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                                         <code class="ap-fields-name">{f.name}</code>
                                         <span class="ap-fields-type">{f.type}</span>
                                         <span class={f.required ? 'ap-fields-req' : 'ap-fields-opt'}>
-                                            {f.required ? 'yes' : '—'}
+                                            {f.required ? 'Required' : 'Optional'}
                                         </span>
                                         <span class="ap-fields-desc">{f.description}</span>
                                     </div>
@@ -354,18 +515,19 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
             const send = this.querySelector<HTMLButtonElement>('[data-role="send"]')
             const resetExample = this.querySelector<HTMLButtonElement>('[data-role="reset-example"]')
             const resetAll = this.querySelector<HTMLButtonElement>('[data-role="reset-all"]')
-            const apiKeyInput = this.querySelector<HTMLInputElement>('[data-role="api-key"]')
+            const tokenInput = this.querySelector<HTMLInputElement>('[data-role="api-token"]')
+            const authMode = this.querySelector<HTMLSelectElement>('[data-role="auth-mode"]')
             const bodyEl = this.querySelector<HTMLTextAreaElement>('[data-role="body"]')
             const exampleBody = this.dataset.exampleBody || ''
 
-            // Persist api-key per-tab so users don't re-paste between operations.
-            if (apiKeyInput) {
-                const stored = sessionStorage.getItem('coreclaw-doc-api-key')
-                if (stored) apiKeyInput.value = stored
-                apiKeyInput.addEventListener('input', () => {
+            // Persist token per-tab so users don't re-paste between operations.
+            if (tokenInput) {
+                const stored = sessionStorage.getItem('coreclaw-doc-api-token')
+                if (stored) tokenInput.value = stored
+                tokenInput.addEventListener('input', () => {
                     sessionStorage.setItem(
-                        'coreclaw-doc-api-key',
-                        apiKeyInput.value
+                        'coreclaw-doc-api-token',
+                        tokenInput.value
                     )
                 })
             }
@@ -383,6 +545,7 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
 
             resetAll?.addEventListener('click', () => {
                 if (bodyEl) bodyEl.value = exampleBody
+                if (authMode) authMode.value = 'bearer'
                 paramEls.forEach((el, i) => (el.value = initialParams[i]))
                 this.hideResponse()
             })
@@ -392,9 +555,10 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
             const method = this.dataset.method!
             const opPath = this.dataset.path!
             const server = this.dataset.server!
-            const needsKey = this.dataset.needsApiKey === 'true'
+            const needsToken = this.dataset.needsToken === 'true'
 
-            const apiKeyInput = this.querySelector<HTMLInputElement>('[data-role="api-key"]')
+            const tokenInput = this.querySelector<HTMLInputElement>('[data-role="api-token"]')
+            const authModeEl = this.querySelector<HTMLSelectElement>('[data-role="auth-mode"]')
             const bodyEl = this.querySelector<HTMLTextAreaElement>('[data-role="body"]')
             const send = this.querySelector<HTMLButtonElement>('[data-role="send"]')
 
@@ -414,14 +578,30 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
                     )
                 }
             })
+            if (/\{[^}]+\}/.test(url)) {
+                this.showResponse(
+                    '400',
+                    'Missing path parameter',
+                    'Fill every required path parameter before sending the request.',
+                    0
+                )
+                return
+            }
+            const token = tokenInput?.value.trim() || ''
+            const authMode = authModeEl?.value || 'bearer'
+            if (needsToken && authMode === 'query-token' && token) {
+                queryPairs.push(`token=${encodeURIComponent(token)}`)
+            }
             if (queryPairs.length) url += `?${queryPairs.join('&')}`
 
             // Headers
             const headers: Record<string, string> = {
                 'content-type': 'application/json',
             }
-            if (needsKey && apiKeyInput?.value.trim()) {
-                headers['api-key'] = apiKeyInput.value.trim()
+            if (needsToken && token && authMode === 'bearer') {
+                headers['Authorization'] = `Bearer ${token}`
+            } else if (needsToken && token && authMode === 'api-key') {
+                headers['api-key'] = token
             }
 
             // Body — only re-stringify if user actually typed something
@@ -621,8 +801,8 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
         font-size: 0.85em !important;
     }
 
-    /* "This endpoint takes no body" notice — replaces the textarea when
-       the spec's body schema is empty or just literally `{}`. */
+    /* Request body notice — replaces the textarea when the operation has no
+       JSON body or the schema is just literally `{}`. */
     .ap-body-empty {
         display: flex;
         align-items: flex-start;
@@ -675,6 +855,14 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
         color: var(--ap-muted);
         border-color: var(--ap-border-strong);
     }
+    .ap-pill--na {
+        background: hsla(199, 70%, 45%, 0.1);
+        color: hsl(199, 70%, 36%);
+        border-color: hsla(199, 70%, 45%, 0.26);
+    }
+    :root[data-theme='dark'] .ap-pill--na {
+        color: hsl(199, 70%, 68%);
+    }
     .ap-pill-meta {
         font-family: var(--ap-mono);
         font-size: 0.7rem;
@@ -699,6 +887,7 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
     }
 
     .ap-input,
+    .ap-select,
     .ap-textarea {
         width: 100%;
         padding: 0.5rem 0.7rem;
@@ -712,14 +901,19 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
         transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     .ap-input:hover,
+    .ap-select:hover,
     .ap-textarea:hover {
         border-color: var(--ap-border-strong);
     }
     .ap-input:focus,
+    .ap-select:focus,
     .ap-textarea:focus {
         outline: 0;
         border-color: hsl(var(--core-primary-hsl));
         box-shadow: 0 0 0 3px hsla(var(--core-primary-hsl), 0.15);
+    }
+    .ap-select {
+        appearance: auto;
     }
     .ap-textarea {
         resize: vertical;

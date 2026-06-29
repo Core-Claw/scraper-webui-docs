@@ -1,130 +1,113 @@
-﻿---
+---
 title: API 调用
 description: 通过 CoreClaw API 编程运行 Worker 与 Task 模板
 sidebar:
   order: 5
 ---
 
-了解如何使用 CoreClaw API 以编程方式启动 Worker、运行 Task 模板，以及查询运行记录。
+了解如何使用 CoreClaw API v2 以编程方式启动 Worker、运行 Task 模板，以及查询运行记录。
 
 ## 快速开始
 
 ### 身份验证
 
-所有 API 请求都必须在请求头中携带 API Key：
+API v2 基础地址是：
+
+```text
+https://openapi.coreclaw.com
+```
+
+需要认证的接口支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成建议优先使用 Bearer token：
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
+curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
 从 [CoreClaw Console](https://console.coreclaw.com/settings/integrations) 获取您的 API Key。
 
 完整端点说明请参考[基础地址与身份验证](/zh-cn/api/)。
 
-## 三种 Slug 的区别
+## 标识符类型
 
-| Slug | 标识对象 | 获取方式 | 典型用途 |
-| ---- | -------- | -------- | -------- |
-| `scraper_slug` | 某个 Worker | 每个 Worker 都有自己的 `scraper_slug`。可以从 Worker 页面获取，或从[运行详情](/zh-cn/api/run/detail/)和[运行历史](/zh-cn/api/run/history/)返回的 `scraper_slug` 获取。同时支持 GitHub 路径格式（如 `coreclaw/google-maps-scraper`）和旧版 ID 格式（如 `01KPD6M5YQADCQKGVKPDZVYC63`）。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
-| `task_slug` | 已保存的 Task 模板 | 用户创建并保存 Task 模板时生成。 | `/api/v1/task/run` |
-| `run_slug` | 某一次具体运行记录 | 启动 Worker 或 Task 后返回，也会出现在运行相关接口里。 | `/api/v1/run/detail`、`/api/v1/run/last/log`、`/api/v1/run/result/list`、`/api/v1/run/result/export`、`/api/v1/rerun`、`/api/v1/scraper/abort` |
+| 标识符 | 标识对象 | 获取方式 | 典型用途 |
+| ------ | -------- | -------- | -------- |
+| `workerId` | 某个 Worker | 使用 Worker slug，或把 `coreclaw/google-maps-scraper` 这样的路径写成 `coreclaw~google-maps-scraper`。可以从商店搜索或我的 Worker 列表中获取。 | `/api/v2/workers/{workerId}`、`/api/v2/workers/{workerId}/runs` |
+| `workerTaskId` | 已保存的 Task 模板 | 用户创建并保存 Task 模板时生成。 | `/api/v2/worker-tasks/{workerTaskId}/runs` |
+| `runId` | 某一次具体运行记录 | 启动或重跑 Worker / Task 后，响应中的 `data.run_slug` 就是后续接口使用的 `runId`。 | `/api/v2/worker-runs/{runId}`、`/api/v2/worker-runs/{runId}/result`、`/api/v2/worker-runs/{runId}/result/export` |
 
-不要混用这些标识符。把 `run_slug` 传到 `task_slug` 或 `scraper_slug` 字段中，会直接触发请求参数校验错误。
+不要混用这些标识符。把 `runId` 传到需要 `workerId` 或 `workerTaskId` 的位置，会触发请求参数校验错误。
 
 ## 启动 Worker 运行
 
 ```bash
-POST /api/v1/scraper/run
+POST /api/v2/workers/{workerId}/runs
 ```
 
 **请求体：**
 
 ```json
 {
-  "scraper_slug": "YOUR_SCRAPER_SLUG",
-  "version": "<version>",  // 可选 — 默认使用最新版本
   "input": {
-    "parameters": {
-      "system": {
-        "proxy_region": "CH",
-        "cpus": 0.125,
-        "memory": 512,
-        "execute_limit_time_seconds": 1800,
-        "max_total_charge": 0,
-        "max_total_traffic": 0
-      },
-      "custom": {
-        "startURLs": [
-          {
-            "url": "https://example.com"
-          }
-        ]
-      }
-    }
+    "keyword": "coffee",
+    "limit": 10
   },
+  "is_async": true,
+  "version": "latest",
+  "callback_url": "https://your-callback.example.com/webhook"
+}
+```
+
+`is_async` 控制是否异步执行：`true` 为异步，`false` 为同步等待结果。如需 Webhook 推送结果，请提供 `callback_url`。
+
+`input` 的结构因 Worker 而异，不是旧版的 `custom_params` JSON 字符串字段。构造请求前请先读取 Worker 输入 schema：
+
+- **API**：调用 [`GET /api/v2/workers/{workerId}/input-schema`](/zh-cn/api/workers/input-schema/)，根据返回的 schema 构造 `input`。
+- **Console**：在 [CoreClaw Console](https://console.coreclaw.com) 中打开该 Worker，进入 **Input** 选项卡，点击右上角的 **API** 按钮，选择 **API clients** 即可查看可直接使用的代码片段。
+
+![Worker Input 选项卡中的 API clients 按钮](@/assets/docs/74.png)
+
+构造 `input` 时：
+
+- 严格遵守该 Worker 的输入 schema。
+- 对于必填字段，必须显式提供。
+- 同步结果分页场景下，`limit` 不要超过 `100`。
+- 如果 `input` 缺失或结构不匹配，接口会返回参数校验错误。
+
+### 如何获取 `version`
+
+`version` 为可选字段。如不填写，平台将自动使用最新版本。如需指定版本，可使用控制台 Worker 页面显示的版本号，或从[运行详情](/zh-cn/api/worker-runs/detail/)返回中的 `version` 获取。
+
+## 运行已保存的 Task 模板
+
+```bash
+POST /api/v2/worker-tasks/{workerTaskId}/runs
+```
+
+**请求体：**
+
+```json
+{
   "is_async": true,
   "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-`is_async` 控制是否异步执行：`true`（默认）为异步，`false` 为同步等待结果。如需 Webhook 推送结果，请提供 `callback_url`。
-
-`custom` 不是随意拼接的字符串，也不是旧版的 `custom_params` JSON 字符串字段。其结构因 Worker 而异，并非固定静态 schema。
-
-要查看具体 Worker 的字段：
-
-- **API**：调用 `GET /api/scraper?slug=<scraper_slug>`，从响应的 `data.parameters.custom` 获取。`properties[]` 中每一项对应 `input.parameters.custom` 的一个字段。
-- **Console**：在 [CoreClaw Console](https://console.coreclaw.com) 中打开该 Worker，进入 **Input** 选项卡，点击右上角的 **API** 按钮，选择 **API clients** 即可查看可直接使用的代码片段。
-
-![Worker Input 选项卡中的 API clients 按钮](@/assets/docs/74.png)
-
-构造 `custom` 时：
-- 使用 `properties[].name` 作为字段名
-- 严格遵守声明的 `type`、嵌套结构与数组形状
-- 对于 `required: true` 的字段，必须显式提供
-- 如果 `custom` 为空，或结构不匹配，接口会返回 `400 Bad Request`
-
-
-`version` 为可选字段。如不填写，平台将自动使用最新版本。如需指定版本，可通过以下方式获取：
-可以从以下位置获得：
-
-- Worker 页面显示的版本号
-- [运行详情](/zh-cn/api/run/detail/)返回中的 `version`
-- [运行历史](/zh-cn/api/run/history/)返回中的 `version`
-
-## 运行已保存的 Task 模板
-
-```bash
-POST /api/v1/task/run
-```
-
-**请求体：**
-
-```json
-{
-  "task_slug": "YOUR_TASK_SLUG",
-  "callback_url": "https://your-callback.example.com/webhook"
-}
-```
-
-`callback_url` 为必填项。缺失时，请求会返回 `400 Bad Request`。
+Task 模板已经包含保存好的输入设置。如需 Webhook 推送结果，请提供 `callback_url`。响应中的 `data.run_slug` 就是后续接口使用的 `runId`。
 
 ## 查询一次运行
 
-拿到返回的 `run_slug` 后，可以继续调用以下接口：
+拿到返回的 `runId` 后，可以继续调用以下接口：
 
-- [运行详情](/zh-cn/api/run/detail/)：查看状态、`scraper_slug` 与 `version`
-- [运行日志](/zh-cn/api/run/log/)：查看执行日志
-- [运行结果列表](/zh-cn/api/run/result/)：分页查看结果
-- [导出运行结果](/zh-cn/api/run/export/)：导出文件
+- [运行详情](/zh-cn/api/worker-runs/detail/)：查看状态、Worker 与版本。
+- [运行日志](/zh-cn/api/worker-runs/log/)：查看执行日志。
+- [运行结果列表](/zh-cn/api/worker-runs/result/)：分页查看结果。
+- [导出运行结果](/zh-cn/api/worker-runs/export/)：导出文件。
 
 ## 常见错误
 
-- 继续使用旧路径 `/api/v1/runs` 或 `/api/v1/tasks/{task_slug}/run`
-- 把 `system_params`、`custom_params` 当成字符串化 JSON 发送
-- 在需要 `scraper_slug` 或 `task_slug` 的地方误传 `run_slug`
-- 调用 `/api/v1/task/run` 时漏掉 `callback_url`
-- 调用 `/api/v1/scraper/run` 时漏掉该 Worker 所需的 `custom` 字段
+- 继续使用旧 v1 路径，而不是 v2 资源化路径。
+- 把 `system_params`、`custom_params` 当成字符串化 JSON 发送。
+- 在需要 `workerId` 或 `workerTaskId` 的地方误传 `runId`。
+- 遗漏该 Worker 必填的 `input` 字段。
+- 明明已有明确 `runId`，却把 `last` 运行接口当成稳定引用。

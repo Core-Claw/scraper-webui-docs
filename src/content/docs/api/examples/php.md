@@ -1,241 +1,82 @@
 ---
-title: PHP Example
-description: Complete PHP example for CoreClaw API integration
+title: "PHP Example"
+description: "CoreClaw API v2 integration code example"
 sidebar:
   order: 4
 ---
 
-Complete PHP example showing how to run a Worker and retrieve results.
+The example below checks authentication, starts a Worker run, then reads results with the returned `run_slug`.
 
-## Prerequisites
+`YOUR_WORKER_ID` is a placeholder. Replace it with a Worker slug, or encode an `owner/name` path as `owner~name`. Build `input` from that Worker's input schema; fields differ by Worker.
 
-No external dependencies required. Uses PHP's built-in `curl` extension.
-
-## Complete Example
+The example uses `is_async: true` for async submit-and-poll behavior. Set `is_async` to `false` when the caller should wait for execution to finish, and use `offset` / `limit` to control the synchronous result window.
 
 ```php
 <?php
-/**
- * CoreClaw API Example: Run a Worker and retrieve results
- */
+$apiBaseUrl = "https://openapi.coreclaw.com";
+$apiKey = getenv("CORECLAW_API_KEY");
+$workerId = getenv("CORECLAW_WORKER_ID") ?: "YOUR_WORKER_ID";
 
-// API Configuration
-const API_BASE_URL = "https://openapi.coreclaw.com";
-const API_KEY = "YOUR_API_KEY";
-const TIMEOUT = 30;
-
-/**
- * Start an async Worker run
- */
-function runScraperAsync(array $params, string $apiKey): array
-{
-    $ch = curl_init();
-
-    curl_setopt_array($ch, [
-        CURLOPT_URL => API_BASE_URL . "/api/v1/scraper/run",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => TIMEOUT,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($params),
-        CURLOPT_HTTPHEADER => [
-            "api-key: " . $apiKey,
-            "Content-Type: application/json"
-        ],
-    ]);
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $error = curl_error($ch);
-    curl_close($ch);
-
-    if ($error) {
-        return ["success" => false, "run_slug" => null, "error" => "cURL error: " . $error];
-    }
-
-    if ($httpCode !== 200) {
-        return ["success" => false, "run_slug" => null, "error" => "HTTP " . $httpCode];
-    }
-
-    $result = json_decode($response, true);
-    if ($result["code"] !== 0) {
-        return ["success" => false, "run_slug" => null, "error" => $result["message"]];
-    }
-
-    return ["success" => true, "run_slug" => $result["data"]["run_slug"], "error" => null];
+if (!$apiKey) {
+    throw new RuntimeException("Set CORECLAW_API_KEY first.");
 }
 
-/**
- * Get run status
- */
-function getRunStatus(string $runSlug, string $apiKey): array
+function coreclaw_request(string $method, string $path, ?array $query = null, ?array $body = null): array
 {
-    $ch = curl_init();
+    global $apiBaseUrl, $apiKey;
 
-    curl_setopt_array($ch, [
-        CURLOPT_URL => API_BASE_URL . "/api/v1/run/detail",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => TIMEOUT,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode(["run_slug" => $runSlug]),
-        CURLOPT_HTTPHEADER => [
-            "api-key: " . $apiKey,
-            "Content-Type: application/json"
-        ],
-    ]);
-
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    $result = json_decode($response, true);
-    if ($result["code"] !== 0) {
-        return ["success" => false, "status" => null, "error" => $result["message"]];
+    $url = $apiBaseUrl . $path;
+    if ($query) {
+        $url .= "?" . http_build_query($query);
     }
 
-    return [
-        "success" => true,
-        "status" => $result["data"]["status"],
-        "results" => $result["data"]["results"] ?? 0,
-        "error" => null
+    $headers = ["Authorization: Bearer " . $apiKey];
+    $options = [
+        CURLOPT_CUSTOMREQUEST => $method,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => $headers,
     ];
-}
 
-/**
- * Poll until complete
- * Status: 1=Ready, 2=Running, 3=Succeeded, 4=Failed, 5=Aborting
- */
-function pollUntilComplete(string $runSlug, string $apiKey, int $maxWait = 300): array
-{
-    $terminalStates = [3, 4, 5];
-    $startTime = time();
-
-    while (time() - $startTime < $maxWait) {
-        $statusResult = getRunStatus($runSlug, $apiKey);
-
-        if (!$statusResult["success"]) {
-            return $statusResult;
-        }
-
-        $status = $statusResult["status"];
-
-        if (in_array($status, $terminalStates)) {
-            return $statusResult;
-        }
-
-        echo "Status: $status (Running...)\n";
-        sleep(5);
+    if ($body !== null) {
+        $headers[] = "Content-Type: application/json";
+        $options[CURLOPT_HTTPHEADER] = $headers;
+        $options[CURLOPT_POSTFIELDS] = json_encode($body, JSON_UNESCAPED_SLASHES);
     }
 
-    return ["success" => false, "status" => null, "error" => "Timeout"];
-}
-
-/**
- * Get result data
- */
-function getResults(string $runSlug, string $apiKey): array
-{
-    $ch = curl_init();
-
-    curl_setopt_array($ch, [
-        CURLOPT_URL => API_BASE_URL . "/api/v1/run/result/list",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => TIMEOUT,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode(["run_slug" => $runSlug, "page_index" => 1, "page_size" => 20]),
-        CURLOPT_HTTPHEADER => [
-            "api-key: " . $apiKey,
-            "Content-Type: application/json"
-        ],
-    ]);
-
-    $response = curl_exec($ch);
+    $ch = curl_init($url);
+    curl_setopt_array($ch, $options);
+    $raw = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     curl_close($ch);
 
-    $result = json_decode($response, true);
-    if ($result["code"] !== 0) {
-        return ["success" => false, "data" => null, "error" => $result["message"]];
+    if ($raw === false || $status < 200 || $status >= 300) {
+        throw new RuntimeException("HTTP " . $status . ": " . $raw);
     }
 
-    return ["success" => true, "count" => $result["data"]["count"], "list" => $result["data"]["list"], "error" => null];
+    $payload = json_decode($raw, true);
+    if (($payload["code"] ?? null) !== 0) {
+        throw new RuntimeException($raw);
+    }
+    return $payload;
 }
 
-// Build request params
-$requestParams = [
-    "scraper_slug" => "YOUR_SCRAPER_SLUG",
-    "version" => "<version>",  // Get from /api/scraper
+$account = coreclaw_request("GET", "/api/v2/users/account");
+print_r($account["data"]);
+
+$run = coreclaw_request("POST", "/api/v2/workers/" . rawurlencode($workerId) . "/runs", null, [
+    // Replace this array with fields from the Worker's input schema.
+    "input" => ["keyword" => "coffee", "limit" => 10],
     "is_async" => true,
-    "input" => [
-        "parameters" => [
-            "system" => [
-                "cpus" => 0.125,
-                "memory" => 512,
-                "execute_limit_time_seconds" => 1800,
-                "max_total_charge" => 0,
-                "max_total_traffic" => 0
-            ],
-            "custom" => [
-                // Build from /api/scraper response
-            ]
-        ]
-    ]
-];
+    "version" => "latest",
+    "offset" => 0,
+    "limit" => 20,
+]);
+$runId = $run["data"]["run_slug"];
+echo "Run ID: " . $runId . PHP_EOL;
 
-// Step 1: Start Worker
-echo "Starting scraper...\n";
-$runResult = runScraperAsync($requestParams, API_KEY);
-
-if (!$runResult["success"]) {
-    echo "Failed to start: " . $runResult["error"] . "\n";
-    exit(1);
-}
-
-$runSlug = $runResult["run_slug"];
-echo "Started! Run ID: $runSlug\n";
-
-// Step 2: Poll status
-echo "Polling status...\n";
-$finalStatus = pollUntilComplete($runSlug, API_KEY);
-
-if (!$finalStatus["success"]) {
-    echo "Polling failed: " . $finalStatus["error"] . "\n";
-    exit(1);
-}
-
-$status = $finalStatus["status"];
-
-if ($status === 3) {  // Succeeded
-    echo "Completed! Results: " . $finalStatus["results"] . "\n";
-
-    // Step 3: Get results
-    $results = getResults($runSlug, API_KEY);
-
-    if ($results["success"]) {
-        echo "Got " . $results["count"] . " records\n";
-    }
-} elseif ($status === 4) {
-    echo "Run failed!\n";
-}
+$results = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId) . "/result", [
+    "offset" => 0,
+    "limit" => 20,
+]);
+print_r($results["data"]);
 ```
-
-## Key Functions
-
-| Function | Purpose |
-|----------|---------|
-| `runScraperAsync()` | Start an async Worker run |
-| `getRunStatus()` | Get current run status |
-| `pollUntilComplete()` | Poll until terminal state (success/failure) |
-| `getResults()` | Retrieve result data with pagination |
-
-## Status Codes
-
-| Code | Status |
-|------|--------|
-| 1 | Ready |
-| 2 | Running |
-| 3 | Succeeded |
-| 4 | Failed |
-| 5 | Aborting |
-
-## Next Steps
-
-- [Back to Integration Guide](/api/integration/)
-- [Go Example](/api/examples/go/)

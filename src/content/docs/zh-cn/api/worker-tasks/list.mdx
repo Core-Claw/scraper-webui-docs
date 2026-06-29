@@ -1,0 +1,82 @@
+---
+title: "查询 Worker 任务"
+description: "查询 Worker 任务 API 参考"
+sidebar:
+  order: 50
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `GET`
+
+**端点:** `/api/v2/worker-tasks`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="GET" path="/api/v2/worker-tasks" />
+
+## 什么时候使用这个接口
+
+用于查询已保存的 Worker 任务模板。
+
+## 标识符说明
+
+- `workerId` / `worker_id` 支持 Worker slug，也支持把路径 `owner/name` 写成 `owner~name`。
+
+## 查询参数
+
+| 参数 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `offset` | 否 | `integer` | 分页偏移量，从 0 开始；用于结果预览、列表翻页或导出前确认数据窗口。 约束：默认 `0`；最小 0。 |
+| `limit` | 否 | `integer` | 每页返回数量；列表和结果接口的 `limit` 上限为 `100`。 约束：默认 `20`；范围 1-100。 |
+| `worker_id` | 否 | `string` | Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。 |
+| `keyword` | 否 | `string` | 按任务标题或 slug 搜索。 |
+
+## 请求示例
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-tasks?offset=0&limit=20&worker_id=YOUR_WORKER_ID&keyword=coffee" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "data": {
+    "count": 1,
+    "list": [
+      {
+        "id": 2001,
+        "slug": "demo-task",
+        "title": "Demo Task",
+        "version": "latest",
+        "worker_slug": "demo-worker"
+      }
+    ],
+    "page_index": 1,
+    "page_size": 20
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 注意事项
+
+- API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+
+## HTTP 响应
+
+| HTTP 状态 | 应用代码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | 请求成功。 |
+| `400` | `11000` | 请求参数不合法。 |
+| `401` | `12001` | 认证缺失或无效。 |
+| `404` | `11004` | 目标资源不存在。 |
+| `422` | `11000` | 请求语义或字段校验未通过。 |
+| `429` | `13000` | 请求过于频繁。 |
+| `500` | `10000` | 服务端内部错误。 |

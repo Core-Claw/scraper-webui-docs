@@ -1,0 +1,90 @@
+---
+title: "List Worker Runs"
+description: "List Worker Runs API reference"
+sidebar:
+  order: 60
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `GET`
+
+**Endpoint:** `/api/v2/worker-runs`
+
+**Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
+
+## Try it
+
+<ApiPlayground method="GET" path="/api/v2/worker-runs" />
+
+## When to use this endpoint
+
+Use this endpoint to list Workers available to the authenticated user.
+
+## Identifier Notes
+
+- `workerId` / `worker_id` accepts a Worker slug or a path encoded as `owner~name` from `owner/name`.
+
+## Query Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `offset` | No | `integer` | Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window. Constraints: default `0`; minimum 0. |
+| `limit` | No | `integer` | Page size. `limit` is capped at `100` on list and result endpoints. Constraints: default `20`; range 1-100. |
+| `worker_id` | No | `string` | Worker slug or path. Encode `owner/name` as `owner~name` for query values. |
+| `status` | No | `enum: ready, running, succeeded, failed, aborting` | Run status filter. Constraints: allowed values: `ready`, `running`, `succeeded`, `failed`, `aborting`. |
+
+## Request Example
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&worker_id=YOUR_WORKER_ID&status=running" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {
+    "count": 1,
+    "list": [
+      {
+        "duration": 10,
+        "err_msg": "",
+        "finished_at": 1782091210,
+        "origin": "openapi",
+        "results": 1,
+        "scraper_slug": "demo-worker",
+        "scraper_title": "Demo Worker",
+        "slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
+        "started_at": 1782091200,
+        "status": "running",
+        "traffic": 0,
+        "usage": "1.00",
+        "version": "latest"
+      }
+    ],
+    "page_index": 1,
+    "page_size": 20
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

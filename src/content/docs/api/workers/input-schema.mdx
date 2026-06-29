@@ -1,0 +1,74 @@
+---
+title: "Get Worker Input Schema"
+description: "Get Worker Input Schema API reference"
+sidebar:
+  order: 42
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `GET`
+
+**Endpoint:** `/api/v2/workers/{workerId}/input-schema`
+
+**Authentication:** No API token required
+
+## Try it
+
+<ApiPlayground method="GET" path="/api/v2/workers/{workerId}/input-schema" />
+
+## When to use this endpoint
+
+Use this endpoint to read a Worker input schema and build the `input` payload.
+
+## Identifier Notes
+
+- `workerId` / `worker_id` accepts a Worker slug or a path encoded as `owner~name` from `owner/name`.
+
+## Path Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `workerId` | Yes | `string` | Worker slug or path. Encode `owner/name` as `owner~name` for path values. |
+
+## Request Example
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {
+    "input_schema": {
+      "properties": {
+        "keyword": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- This endpoint does not require an API token.
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

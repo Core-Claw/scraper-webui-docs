@@ -1,123 +1,83 @@
-﻿---
-title: 基础地址与身份验证
-description: API 基础地址、请求头和全局状态码
+---
+title: "基础 URL 与认证"
+description: "CoreClaw API v2 的基础地址、认证方式和公开接口清单"
 sidebar:
   order: 0
 ---
 
 ## API 基础地址
 
+HTTP API 基础地址为 `https://openapi.coreclaw.com`。所有 v2 接口路径都以 `/api/v2` 开头，例如 `https://openapi.coreclaw.com/api/v2/users/account`。
+
 ```
 https://openapi.coreclaw.com
 ```
 
-> **术语说明：** CoreClaw API 中，`Worker` 和 `Scraper` 指向同一个概念 —— 数据采集脚本。API 路径和字段名使用 `scraper`（如 `scraper_slug`、`/api/v1/scraper/run`），文档中可能称为 Worker。
+## 认证方式
 
-## 请求头参数
-
-| 参数名 | 示例值 | 类型 | 必填 | 说明 |
-| ------ | ------ | ---- | ---- | ---- |
-| api-key | <YOUR_API_KEY> | string | 是 | 您的 API 密钥。可在 [控制台设置 → API 与集成](https://console.coreclaw.com/settings/integrations) 获取 |
-| content-type | application/json | string | 是 | 请求内容类型 |
-| Authorization | Bearer <YOUR_API_KEY> | string | 备选 | 标准 Bearer 认证方式，与 `api-key` 请求头等价。 |
-
-> **说明：** `/api/scraper` 和 `/api/store` 为公开端点，无需 API 密钥即可访问。
-
-## 全局状态码
-
-每个 API 请求可能返回成功码或错误码。您可以使用这些代码调试请求并识别问题。
-
-| CODE  | 说明 |
-| ----- | ---- |
-| 0     | 成功 |
-| 5000  | 服务器内部错误 |
-| 4000  | 请求参数无效 |
-| 4010  | 未授权访问 |
-| 4040  | 资源不存在 |
-| 4290  | 请求频率超限 |
-| 10001 | 用户不存在 |
-| 10002 | 用户已禁用 |
-| 20001 | API 密钥无效 |
-| 20002 | API 密钥已过期 |
-| 30001 | 余额不足 |
-| 30002 | 流量配额不足 |
-| 50001 | Worker 不存在 |
-| 50002 | Worker 执行失败 |
-| 50003 | Worker 版本不可用 |
-| 60001 | 任务不存在 |
-| 70001 | 运行记录不存在 |
-| 70002 | 运行中止失败 |
-
-## 端点速查
-
-| # | 方法 | 端点 | 说明 |
-|---|------|------|------|
-| 1 | `POST` | `/api/v1/scraper/run` | [启动 Worker](/zh-cn/api/worker/run/) |
-| 2 | `POST` | `/api/v1/scraper/abort` | [中止 Worker](/zh-cn/api/worker/abort/) |
-| 3 | `GET` | `/api/scraper` | [Worker 详情](/zh-cn/api/worker/detail/) |
-| 4 | `GET` | `/api/store` | [搜索 Worker](/zh-cn/api/worker/search/) |
-| 5 | `POST` | `/api/v1/run/list` | [运行历史](/zh-cn/api/run/history/) |
-| 6 | `POST` | `/api/v1/run/detail` | [运行详情](/zh-cn/api/run/detail/) |
-| 7 | `POST` | `/api/v1/run/result/list` | [运行结果](/zh-cn/api/run/result/) |
-| 8 | `POST` | `/api/v1/run/last/log` | [运行日志](/zh-cn/api/run/log/) |
-| 9 | `POST` | `/api/v1/run/result/export` | [导出运行结果](/zh-cn/api/run/export/) |
-| 10 | `POST` | `/api/v1/rerun` | [重新运行](/zh-cn/api/run/rerun/) |
-| 11 | `POST` | `/api/v1/task/run` | [运行任务](/zh-cn/api/task/run/) |
-| 12 | `POST` | `/api/v1/account/info` | [账户信息](/zh-cn/api/account/info/) |
-| 13 | `GET` | `/api/proxy/region` | [代理区域列表](/zh-cn/api/proxy/region/) |
-
-## 身份验证
-
-大部分 API 请求需要认证。公开端点 `/api/scraper` 和 `/api/store` 无需 API 密钥。
-
-### 使用 API 密钥
-
-
-推荐通过 `api-key` 请求头传递 API 密钥：
+需要认证的接口支持三种 token 传递方式。推荐优先使用 Bearer token，同时兼容旧版 `api-key` 请求头和 query token：
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
+-H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-也可以使用标准的 `Authorization: Bearer` 请求头。这种方式适合集成了默认使用 Bearer 认证的第三方工具（如 Postman、n8n、Swagger UI）：
+| 方式 | 示例 | 说明 |
+| --- | --- | --- |
+| Bearer token | `Authorization: Bearer YOUR_API_KEY` | 推荐方式，适合新的服务端集成 |
+| 旧版请求头 | `api-key: YOUR_API_KEY` | 兼容 v1 集成 |
+| Query token | `?token=YOUR_API_KEY` | 仅在无法设置请求头时使用，避免把带 token 的 URL 写入日志 |
 
-```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
-```
+公开接口不需要 token，例如代理区域列表和商店 Worker 查询。
 
-两种方式完全等价，请根据实际场景选择。
+## 调用约定
 
+- 发送 `input` 前先读取 Worker 输入 schema；不同 Worker 的输入字段不一定相同。
+- 直接运行 Worker 时使用 `POST /api/v2/workers/{workerId}/runs`；运行已保存任务时使用 `POST /api/v2/worker-tasks/{workerTaskId}/runs`。
+- `is_async: true` 表示提交后立即返回，再用 `runId` 查询详情、日志和结果；`is_async: false` 表示等待执行完成并返回同步结果窗口。
+- 列表和结果接口的 `offset` 从 0 开始；列表和结果接口的 `limit` 上限为 `100`。
+- 需要下载结果文件时使用导出接口，不要在前端逐页拉取全部结果。
 
-## 三种 Slug 的区别
+## 响应结构
 
-CoreClaw API 使用三种标识符（slug）。理解它们的区别对于正确使用 API 至关重要。
+大多数 JSON 响应都会包含 `code`、`message`、`request_id` 和 `data`。HTTP 状态表示请求层结果；业务 `code: 0` 表示业务处理成功。排查失败请求时请记录 HTTP 状态、`code`、`message` 和 `request_id`。
 
-| Slug | 标识对象 | 说明 | 典型用途 |
-| ---- | -------- | ---- | -------- |
-| `scraper_slug` | **Worker ID** | 每个 Worker 的唯一标识符。每个 Worker 都有一个固定的 `scraper_slug`。同时支持 GitHub 路径格式（如 `coreclaw/google-maps-scraper`）和旧版 ID 格式（如 `01KPD6M5YQADCQKGVKPDZVYC63`）。 | `/api/v1/scraper/run`、`/api/v1/run/list` |
-| `task_slug` | **任务 ID** | 创建并保存 Task 模板时生成。Task 是可复用的配置，将 Worker 与预设参数打包在一起。 | `/api/v1/task/run` |
-| `run_slug` | **运行记录 ID** | 每次执行 Worker 或 Task 时生成。每次运行都会产生一个唯一的 `run_slug`，用于追踪该次执行。 | `/api/v1/run/detail`、`/api/v1/run/last/log`、`/api/v1/run/result/list`、`/api/v1/run/result/export`、`/api/v1/rerun`、`/api/v1/scraper/abort` |
+## 标识符类型
 
-### 各 Slug 的位置
+| 标识符 | 含义 | 用法 |
+| --- | --- | --- |
+| `workerId` | Worker 标识 | 支持 Worker slug，也支持把路径 `owner/name` 写成 `owner~name` |
+| `workerTaskId` | 已保存任务模板标识 | 运行任务模板时作为路径参数传入 |
+| `runId` | 运行记录标识 | 启动或重跑后响应中的 `data.run_slug` |
 
-**scraper_slug**（Worker ID）- 位于 Worker 详情页：
+## 公开接口清单
 
-![scraper_slug 位置](@/assets/docs/scraper_slug.png)
-
-**task_slug**（任务 ID）- 位于已保存的 Task 模板中：
-
-![task_slug 位置](@/assets/docs/task_slug.png)
-
-**run_slug**（运行记录 ID）- 位于运行历史中，或启动运行后返回：
-
-![run_slug 位置](@/assets/docs/run_slug.png)
-
-> **重要提示**：请勿混用这些标识符。每种 slug 类型有不同的用途。将 `run_slug` 传入 `task_slug` 或 `scraper_slug` 字段会导致请求参数校验错误。
->
-> 除截图中的 ID 格式外，`scraper_slug` 也支持 GitHub 路径格式，例如 `coreclaw/google-maps-scraper`。两种格式完全兼容——旧版 ID 格式（如 `01KPD6M5YQADCQKGVKPDZVYC63`）仍然可用。
+| # | 方法 | 端点 | 文档 |
+| --- | --- | --- | --- |
+| 1 | `GET` | `/api/v2/proxy/region` | [查询代理区域](/zh-cn/api/proxy/region/) |
+| 2 | `GET` | `/api/v2/store` | [查询商店 Worker](/zh-cn/api/store/list/) |
+| 3 | `GET` | `/api/v2/users/account` | [获取账户信息](/zh-cn/api/account/get/) |
+| 4 | `GET` | `/api/v2/workers` | [查询我的 Worker](/zh-cn/api/workers/list/) |
+| 5 | `GET` | `/api/v2/workers/{workerId}` | [获取 Worker 详情](/zh-cn/api/workers/detail/) |
+| 6 | `GET` | `/api/v2/workers/{workerId}/input-schema` | [获取 Worker 输入 Schema](/zh-cn/api/workers/input-schema/) |
+| 7 | `POST` | `/api/v2/workers/{workerId}/runs` | [运行 Worker](/zh-cn/api/workers/run/) |
+| 8 | `GET` | `/api/v2/worker-tasks` | [查询 Worker 任务](/zh-cn/api/worker-tasks/list/) |
+| 9 | `POST` | `/api/v2/worker-tasks/{workerTaskId}/runs` | [运行 Worker 任务](/zh-cn/api/worker-tasks/run/) |
+| 10 | `GET` | `/api/v2/worker-runs` | [查询 Worker 运行记录](/zh-cn/api/worker-runs/list/) |
+| 11 | `GET` | `/api/v2/worker-runs/last` | [获取最近一次运行](/zh-cn/api/worker-runs/last-detail/) |
+| 12 | `POST` | `/api/v2/worker-runs/last/abort` | [中止最近一次运行](/zh-cn/api/worker-runs/last-abort/) |
+| 13 | `GET` | `/api/v2/worker-runs/last/export` | [导出最近一次运行结果](/zh-cn/api/worker-runs/last-export/) |
+| 14 | `GET` | `/api/v2/worker-runs/last/log` | [获取最近一次运行日志](/zh-cn/api/worker-runs/last-log/) |
+| 15 | `POST` | `/api/v2/worker-runs/last/rerun` | [重跑最近一次运行](/zh-cn/api/worker-runs/last-rerun/) |
+| 16 | `GET` | `/api/v2/worker-runs/last/result` | [查询最近一次运行结果](/zh-cn/api/worker-runs/last-result/) |
+| 17 | `GET` | `/api/v2/worker-runs/{runId}` | [获取运行详情](/zh-cn/api/worker-runs/detail/) |
+| 18 | `POST` | `/api/v2/worker-runs/{runId}/abort` | [中止运行](/zh-cn/api/worker-runs/abort/) |
+| 19 | `GET` | `/api/v2/worker-runs/{runId}/log` | [获取运行日志](/zh-cn/api/worker-runs/log/) |
+| 20 | `POST` | `/api/v2/worker-runs/{runId}/rerun` | [重跑运行](/zh-cn/api/worker-runs/rerun/) |
+| 21 | `GET` | `/api/v2/worker-runs/{runId}/result` | [查询运行结果](/zh-cn/api/worker-runs/result/) |
+| 22 | `GET` | `/api/v2/worker-runs/{runId}/result/export` | [导出运行结果](/zh-cn/api/worker-runs/export/) |
+| 23 | `GET` | `/api/v2/workers/{workerId}/runs/last` | [获取某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-detail/) |
+| 24 | `POST` | `/api/v2/workers/{workerId}/runs/last/abort` | [中止某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-abort/) |
+| 25 | `GET` | `/api/v2/workers/{workerId}/runs/last/export` | [导出某 Worker 最近一次运行结果](/zh-cn/api/worker-runs/worker-last-export/) |
+| 26 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [获取某 Worker 最近一次运行日志](/zh-cn/api/worker-runs/worker-last-log/) |
+| 27 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [重跑某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-rerun/) |
+| 28 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [查询某 Worker 最近一次运行结果](/zh-cn/api/worker-runs/worker-last-result/) |

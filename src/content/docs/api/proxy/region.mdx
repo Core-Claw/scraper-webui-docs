@@ -1,71 +1,69 @@
-﻿---
-title: Proxy Region List
-description: Get available proxy regions for Worker execution.
+---
+title: "List Proxy Regions"
+description: "List Proxy Regions API reference"
 sidebar:
-    order: 5
+  order: 10
 ---
 
 import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
-
 **Method:** `GET`
 
-**Endpoint:** `/api/proxy/region`
+**Endpoint:** `/api/v2/proxy/region`
 
-Returns the available proxy region list for Worker runtime proxy selection.
+**Authentication:** No API token required
 
 ## Try it
 
-<ApiPlayground method="GET" path="/api/proxy/region" />
+<ApiPlayground method="GET" path="/api/v2/proxy/region" />
+
+## When to use this endpoint
+
+Use this endpoint to list proxy regions available for Worker runs.
+
+
+## Query Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `language` | No | `string` | Region language Constraints: default `en`. |
 
 ## Request Example
 
 ```bash
-curl "https://openapi.coreclaw.com/api/proxy/region"
+curl -X GET "https://openapi.coreclaw.com/api/v2/proxy/region?language=en"
 ```
-
-#### Parameters
-
-This endpoint currently accepts no required parameters.
 
 ## Response Example
 
 ```json
 {
-    "code": 0,
-    "message": "success",
-    "data": {
-        "list": [
-            {
-                "code": "US",
-                "name": "United States"
-            },
-            {
-                "code": "DE",
-                "name": "Germany"
-            }
-        ]
-    }
+  "code": 0,
+  "data": {
+    "list": [
+      {
+        "code": "US",
+        "name": "United States"
+      }
+    ]
+  },
+  "message": "success",
+  "request_id": "req-123"
 }
 ```
 
-#### Response Fields
+## Notes
 
-| Parameter | Example | Type    | Description        |
-| --------- | ------- | ------- | ------------------ |
-| code      | 0       | Integer | Global status code |
-| message   | success | String  | Response message   |
-| data      | -       | Object  | Response payload   |
+- This endpoint does not require an API token.
 
-##### `data` Fields
+## HTTP Responses
 
-| Parameter | Example | Type  | Description             |
-| --------- | ------- | ----- | ----------------------- |
-| list      | -       | Array | Available region list   |
-
-##### `list[]` Fields
-
-| Parameter | Example | Type   | Description                  |
-| --------- | ------- | ------ | ---------------------------- |
-| code      | US      | String | Region code                  |
-| name      | United States | String | Region display name      |
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

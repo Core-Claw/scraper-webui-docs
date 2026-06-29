@@ -1,4 +1,4 @@
-﻿---
+---
 title: n8n
 description: Connect CoreClaw to n8n workflows using the CoreClaw community node
 sidebar:
@@ -261,11 +261,12 @@ For operations not covered by the CoreClaw node, use the **HTTP Request** node t
 
 | Field             | Value                                            |
 | ----------------- | ------------------------------------------------ |
-| Method            | `POST` (most endpoints)                          |
-| URL               | `https://openapi.coreclaw.com/api/v1/<endpoint>` |
+| Method            | Use the method from the API reference             |
+| URL               | `https://openapi.coreclaw.com/api/v2/<endpoint>` |
 | Authentication    | **Header Auth**                                  |
-| Header Name       | `api-key`                                        |
-| Header Value      | Your CoreClaw API key                            |
+| Header Name       | `Authorization`                                  |
+| Header Value      | `Bearer YOUR_API_KEY`                            |
+| Legacy Auth       | `api-key` header and query token are also supported |
 | Body Content Type | `JSON`                                           |
 
 
@@ -274,13 +275,13 @@ For operations not covered by the CoreClaw node, use the **HTTP Request** node t
 
 | Action                  | Method | Endpoint                           |
 | ----------------------- | ------ | ---------------------------------- |
-| Get Worker schema       | `GET`  | `/api/scraper?slug=<scraper_slug>` |
-| Start a Worker          | `POST` | `/api/v1/scraper/run`              |
-| Run a Task template     | `POST` | `/api/v1/task/run`                 |
-| Check run status        | `POST` | `/api/v1/run/detail`               |
-| Get results (paginated) | `POST` | `/api/v1/run/result/list`          |
-| Export results (file)   | `POST` | `/api/v1/run/result/export`        |
-| Abort a run             | `POST` | `/api/v1/scraper/abort`            |
+| Get Worker schema       | `GET`  | `/api/v2/workers/{workerId}/input-schema` |
+| Start a Worker          | `POST` | `/api/v2/workers/{workerId}/runs` |
+| Run a Task template     | `POST` | `/api/v2/worker-tasks/{workerTaskId}/runs` |
+| Check run status        | `GET`  | `/api/v2/worker-runs/{runId}` |
+| Get results (paginated) | `GET`  | `/api/v2/worker-runs/{runId}/result` |
+| Export results (file)   | `GET`  | `/api/v2/worker-runs/{runId}/result/export` |
+| Abort a run             | `POST` | `/api/v2/worker-runs/{runId}/abort` |
 
 
 Full API reference: [API Integration](/api/integration/).
@@ -315,10 +316,8 @@ Full API reference: [API Integration](/api/integration/).
 3. Test the key with a curl command:
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
+curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
 A successful response contains `code: 0`.
@@ -337,8 +336,9 @@ Each Worker has different input parameters. To find the correct fields:
 Or call the API:
 
 ```bash
-curl "https://openapi.coreclaw.com/api/scraper?slug=YOUR_SCRAPER_SLUG"
+curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-The response contains `data.parameters.custom.properties` — each entry maps to an input field.
+The response contains the Worker input schema used to build the `input` payload.
 </details>

@@ -1,0 +1,75 @@
+---
+title: "List Store Workers"
+description: "List Store Workers API reference"
+sidebar:
+  order: 20
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `GET`
+
+**Endpoint:** `/api/v2/store`
+
+**Authentication:** No API token required
+
+## Try it
+
+<ApiPlayground method="GET" path="/api/v2/store" />
+
+## When to use this endpoint
+
+Use this endpoint to search public Store Workers and collect the Worker slug or path for follow-up calls.
+
+
+## Query Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `offset` | No | `integer` | Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window. Constraints: default `0`; minimum 0. |
+| `limit` | No | `integer` | Page size. `limit` is capped at `100` on list and result endpoints. Constraints: default `20`; range 1-100. |
+| `keyword` | No | `string` | Keyword for title, slug, or path |
+
+## Request Example
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/store?offset=0&limit=20&keyword=coffee"
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {
+    "scraper": [
+      {
+        "description": "Demo worker description",
+        "name": "demo-worker",
+        "path": "owner~demo-worker",
+        "slug": "demo-worker",
+        "title": "Demo Worker",
+        "username": "owner"
+      }
+    ]
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- This endpoint does not require an API token.
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

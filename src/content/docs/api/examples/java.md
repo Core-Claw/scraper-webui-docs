@@ -1,237 +1,84 @@
 ---
-title: Java Example
-description: Complete Java example for CoreClaw API integration
+title: "Java Example"
+description: "CoreClaw API v2 integration code example"
 sidebar:
   order: 3
 ---
 
-Complete Java example showing how to run a Worker and retrieve results.
+The example below checks authentication, starts a Worker run, then reads results with the returned `run_slug`.
 
-## Prerequisites
+`YOUR_WORKER_ID` is a placeholder. Replace it with a Worker slug, or encode an `owner/name` path as `owner~name`. Build `input` from that Worker's input schema; fields differ by Worker.
 
-No external dependencies required. Uses Java 11+ built-in `java.net.http` module.
-
-## Complete Example
+The example uses `is_async: true` for async submit-and-poll behavior. Set `is_async` to `false` when the caller should wait for execution to finish, and use `offset` / `limit` to control the synchronous result window.
 
 ```java
-import java.io.IOException;
+// Java 11+
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/**
- * CoreClaw API Example: Run a Worker and retrieve results
- */
 public class CoreClawExample {
-    // API Configuration
-    private static final String API_BASE_URL = "https://openapi.coreclaw.com";
-    private static final String API_KEY = "YOUR_API_KEY";
-    private static final int TIMEOUT = 30;
+    static final String API_BASE_URL = "https://openapi.coreclaw.com";
+    static final String API_KEY = System.getenv("CORECLAW_API_KEY");
+    static final String WORKER_ID = System.getenv().getOrDefault("CORECLAW_WORKER_ID", "YOUR_WORKER_ID");
+    static final HttpClient HTTP = HttpClient.newHttpClient();
 
-    private static HttpClient client;
+    public static void main(String[] args) throws Exception {
+        if (API_KEY == null || API_KEY.isBlank()) throw new IllegalStateException("Set CORECLAW_API_KEY first.");
 
-    public static void main(String[] args) {
-        // Initialize HttpClient
-        client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(TIMEOUT))
-            .build();
+        String account = request("GET", "/api/v2/users/account", null, null);
+        System.out.println(account);
 
-        // Build request params
-        String requestBody = buildRequestBody();
+        String runBody = "{"
+            + "\"input\":{\"keyword\":\"coffee\",\"limit\":10},"
+            + "\"is_async\":true,"
+            + "\"version\":\"latest\","
+            + "\"offset\":0,"
+            + "\"limit\":20"
+            + "}";
+        String run = request("POST", "/api/v2/workers/" + encode(WORKER_ID) + "/runs", null, runBody);
+        System.out.println(run);
 
-        // Step 1: Start Worker
-        System.out.println("Starting scraper...");
-        String runSlug = runScraperAsync(requestBody);
-
-        if (runSlug == null) {
-            System.out.println("Failed to start scraper");
-            return;
-        }
-
-        System.out.println("Started! Run ID: " + runSlug);
-
-        // Step 2: Poll status
-        System.out.println("Polling status...");
-        int status = pollUntilComplete(runSlug);
-
-        if (status == -1) {
-            System.out.println("Polling failed");
-            return;
-        }
-
-        // Status: 1=Ready, 2=Running, 3=Succeeded, 4=Failed, 5=Aborting
-        if (status == 3) {
-            System.out.println("Completed successfully!");
-
-            // Step 3: Get results
-            String results = getResults(runSlug);
-            if (results != null) {
-                System.out.println("Results fetched successfully");
-            } else {
-                System.out.println("Failed to fetch results");
-            }
-        } else if (status == 4) {
-            System.out.println("Run failed!");
-        } else {
-            System.out.println("Run aborted (status: " + status + ")");
-        }
+        String runId = extract(run, "\\\"run_slug\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"");
+        String results = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/result", Map.of("offset", "0", "limit", "20"), null);
+        System.out.println(results);
     }
 
-    private static String runScraperAsync(String requestBody) {
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(API_BASE_URL + "/api/v1/scraper/run"))
-            .timeout(Duration.ofSeconds(TIMEOUT))
-            .header("api-key", API_KEY)
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) return null;
-
-            String body = response.body();
-            Integer code = extractInt(body, "\"code\":");
-            if (code == null || code != 0) return null;
-
-            return extractString(body, "\"run_slug\":\"");
-        } catch (IOException | InterruptedException e) {
-            return null;
+    static String request(String method, String path, Map<String, String> query, String body) throws Exception {
+        URI uri = URI.create(API_BASE_URL + path + queryString(query));
+        HttpRequest.Builder builder = HttpRequest.newBuilder(uri)
+            .header("Authorization", "Bearer " + API_KEY)
+            .method(method, body == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body));
+        if (body != null) builder.header("Content-Type", "application/json");
+        HttpResponse<String> response = HTTP.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new RuntimeException("HTTP " + response.statusCode() + ": " + response.body());
         }
+        return response.body();
     }
 
-    private static int getRunStatus(String runSlug) {
-        String requestBody = "{\"run_slug\":\"" + runSlug + "\"}";
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(API_BASE_URL + "/api/v1/run/detail"))
-            .timeout(Duration.ofSeconds(TIMEOUT))
-            .header("api-key", API_KEY)
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) return -1;
-
-            Integer status = extractInt(response.body(), "\"status\":");
-            return status != null ? status : -1;
-        } catch (IOException | InterruptedException e) {
-            return -1;
-        }
+    static String queryString(Map<String, String> query) {
+        if (query == null || query.isEmpty()) return "";
+        return "?" + query.entrySet().stream()
+            .map(e -> encode(e.getKey()) + "=" + encode(e.getValue()))
+            .reduce((a, b) -> a + "&" + b)
+            .orElse("");
     }
 
-    private static int pollUntilComplete(String runSlug) {
-        int[] terminalStates = {3, 4, 5};
-        long startTime = System.currentTimeMillis();
-
-        while (System.currentTimeMillis() - startTime < 300000) {
-            int status = getRunStatus(runSlug);
-            if (status == -1) return -1;
-
-            for (int terminal : terminalStates) {
-                if (status == terminal) return status;
-            }
-
-            System.out.println("Status: " + status + " (Running...)");
-            try {
-                TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-                return -1;
-            }
-        }
-        return -1;
+    static String encode(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
-    private static String getResults(String runSlug) {
-        String requestBody = "{\"run_slug\":\"" + runSlug + "\",\"page_index\":1,\"page_size\":20}";
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(API_BASE_URL + "/api/v1/run/result/list"))
-            .timeout(Duration.ofSeconds(TIMEOUT))
-            .header("api-key", API_KEY)
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) return null;
-
-            Integer code = extractInt(response.body(), "\"code\":");
-            return (code != null && code == 0) ? response.body() : null;
-        } catch (IOException | InterruptedException e) {
-            return null;
-        }
-    }
-
-    private static String buildRequestBody() {
-        return """
-            {
-                "scraper_slug": "YOUR_SCRAPER_SLUG",
-                "version": "<version>",
-                "is_async": true,
-                "input": {
-                    "parameters": {
-                        "system": {
-                            "cpus": 0.125,
-                            "memory": 512,
-                            "execute_limit_time_seconds": 1800,
-                            "max_total_charge": 0,
-                            "max_total_traffic": 0
-                        },
-                        "custom": {
-                            // Build from /api/scraper response
-                        }
-                    }
-                }
-            }
-            """;
-    }
-
-    private static String extractString(String json, String key) {
-        int startIndex = json.indexOf(key);
-        if (startIndex == -1) return null;
-        startIndex += key.length();
-        int endIndex = json.indexOf("\"", startIndex);
-        return endIndex == -1 ? null : json.substring(startIndex, endIndex);
-    }
-
-    private static Integer extractInt(String json, String key) {
-        int startIndex = json.indexOf(key);
-        if (startIndex == -1) return null;
-        startIndex += key.length();
-        int endIndex = startIndex;
-        while (endIndex < json.length() && (Character.isDigit(json.charAt(endIndex)) || json.charAt(endIndex) == '-')) {
-            endIndex++;
-        }
-        return Integer.parseInt(json.substring(startIndex, endIndex));
+    static String extract(String text, String regex) {
+        Matcher matcher = Pattern.compile(regex).matcher(text);
+        if (!matcher.find()) throw new IllegalStateException("run_slug not found in response: " + text);
+        return matcher.group(1);
     }
 }
 ```
-
-## Key Methods
-
-| Method | Purpose |
-|--------|---------|
-| `runScraperAsync()` | Start an async Worker run |
-| `getRunStatus()` | Get current run status |
-| `pollUntilComplete()` | Poll until terminal state (success/failure) |
-| `getResults()` | Retrieve result data |
-
-## Status Codes
-
-| Code | Status |
-|------|--------|
-| 1 | Ready |
-| 2 | Running |
-| 3 | Succeeded |
-| 4 | Failed |
-| 5 | Aborting |
-
-## Next Steps
-
-- [Back to Integration Guide](/api/integration/)
-- [PHP Example](/api/examples/php/)

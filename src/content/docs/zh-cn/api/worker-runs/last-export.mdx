@@ -1,0 +1,69 @@
+---
+title: "导出最近一次运行结果"
+description: "导出最近一次运行结果 API 参考"
+sidebar:
+  order: 63
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `GET`
+
+**端点:** `/api/v2/worker-runs/last/export`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="GET" path="/api/v2/worker-runs/last/export" />
+
+## 什么时候使用这个接口
+
+用于把运行结果导出为文件下载地址。
+
+
+## 查询参数
+
+| 参数 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `format` | 否 | `string` | 导出格式。当前默认 `csv`。 约束：默认 `csv`。 |
+| `filter_keys` | 否 | `string` | 逗号分隔的字段名列表，用于限制导出字段，例如 `title,address`。 |
+
+## 请求示例
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/last/export?format=csv&filter_keys=title%2Caddress" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "data": {
+    "download_url": "https://storage.example.com/runs/01KKDXV2G26BT7NH4ZQR2R4NPZ/results.csv"
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 注意事项
+
+- API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+- 这是账户级最近运行接口，不需要 `workerId` 路径参数；它会作用于当前账户范围内最近一次运行。
+- `last` 表示当前筛选范围内最近一次运行；如需确定目标，请使用具体 `runId` 接口。
+- `filter_keys` 可用于限制导出字段，例如 `title,address`。
+
+## HTTP 响应
+
+| HTTP 状态 | 应用代码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | 请求成功。 |
+| `400` | `11000` | 请求参数不合法。 |
+| `401` | `12001` | 认证缺失或无效。 |
+| `404` | `11004` | 目标资源不存在。 |
+| `422` | `11000` | 请求语义或字段校验未通过。 |
+| `429` | `13000` | 请求过于频繁。 |
+| `500` | `10000` | 服务端内部错误。 |

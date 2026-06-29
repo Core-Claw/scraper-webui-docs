@@ -1,0 +1,54 @@
+---
+title: "回调通知"
+description: "使用 callback_url 接收 Worker 运行状态通知"
+sidebar:
+  order: 1
+---
+
+当运行请求包含 `callback_url` 时，CoreClaw 会在运行状态变化或结束后，向调用方提供的地址发送 `POST` 请求。
+
+回调适合用来减少主动轮询次数。调用方仍应保存启动运行时返回的 `data.run_slug` 和 `request_id`，用于后续查询、排查和幂等处理。
+
+## 触发方式
+
+在支持请求体的运行类接口中传入 `callback_url`，例如直接运行 Worker：
+
+```json
+{
+  "input": {
+    "keyword": "coffee",
+    "limit": 10
+  },
+  "is_async": true,
+  "version": "latest",
+  "callback_url": "https://example.com/coreclaw/callbacks"
+}
+```
+
+## 回调请求
+
+CoreClaw 发送的回调请求使用 `POST` 方法，Body 为 JSON：
+
+```json
+{"run_id":123456,"run_status":"succeeded","error_message":"","execution_start_timestamp":100,"execution_end_timestamp":200,"running_duration":100,"result_count":3,"result_message":"done"}
+```
+
+## 字段说明
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `run_id` | `integer` | 平台运行结果 ID。 |
+| `run_status` | `string` | 运行状态，例如 `succeeded`。 |
+| `error_message` | `string` | 失败时的错误信息；没有错误时为空字符串。 |
+| `execution_start_timestamp` | `number` | 执行开始时间戳。 |
+| `execution_end_timestamp` | `number` | 执行结束时间戳。 |
+| `running_duration` | `number` | 运行耗时。 |
+| `result_count` | `number` | 当前结果数量。 |
+| `result_message` | `string` | 结果摘要或运行消息。 |
+
+## 接收端建议
+
+1. 回调地址应能被 CoreClaw 服务端访问，并返回 2xx HTTP 状态。
+2. 根据运行标识做幂等处理，避免重复通知造成重复写入。
+3. 收到回调后，如需完整结果，请继续调用运行详情、日志、结果或导出接口读取。
+4. 不要把 API key 放进 `callback_url`；如需校验来源，请在自己的回调服务中使用独立签名或随机路径。

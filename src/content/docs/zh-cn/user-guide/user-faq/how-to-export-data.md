@@ -44,26 +44,18 @@ sidebar:
 ### 获取运行结果
 
 ```bash
-GET /api/v1/runs/{run_slug}/results
+GET /api/v2/worker-runs/{runId}/result?offset=0&limit=20
 ```
 
 ### 导出运行结果
 
 ```bash
-POST /api/v1/runs/{run_slug}/export
-```
-
-**请求体：**
-```json
-{
-  "format": "csv",
-  "filter_keys": "title,price,url"
-}
+GET /api/v2/worker-runs/{runId}/result/export?format=csv&filter_keys=title%2Cprice%2Curl
 ```
 
 **支持的格式：** `csv`、`json`
 
-详见[导出 API](/zh-cn/api/run/export/) 完整文档。
+启动或重跑 Worker 后，响应中的 `data.run_slug` 就是这里使用的 `runId`。详见[导出 API](/zh-cn/api/worker-runs/export/) 完整文档。
 
 ## 数据大小注意事项
 
@@ -108,4 +100,4 @@ POST /api/v1/runs/{run_slug}/export
 ## 相关主题
 
 - [输入与输出](/zh-cn/user-guide/run-worker/input-output/) - 了解数据结构
-- [API 参考](/zh-cn/api/run/export/) - 导出 API 文档
+- [API 参考](/zh-cn/api/worker-runs/export/) - 导出 API 文档

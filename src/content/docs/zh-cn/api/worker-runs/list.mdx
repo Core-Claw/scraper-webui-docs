@@ -1,0 +1,90 @@
+---
+title: "查询 Worker 运行记录"
+description: "查询 Worker 运行记录 API 参考"
+sidebar:
+  order: 60
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `GET`
+
+**端点:** `/api/v2/worker-runs`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="GET" path="/api/v2/worker-runs" />
+
+## 什么时候使用这个接口
+
+用于查询当前认证用户可使用的 Worker。
+
+## 标识符说明
+
+- `workerId` / `worker_id` 支持 Worker slug，也支持把路径 `owner/name` 写成 `owner~name`。
+
+## 查询参数
+
+| 参数 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `offset` | 否 | `integer` | 分页偏移量，从 0 开始；用于结果预览、列表翻页或导出前确认数据窗口。 约束：默认 `0`；最小 0。 |
+| `limit` | 否 | `integer` | 每页返回数量；列表和结果接口的 `limit` 上限为 `100`。 约束：默认 `20`；范围 1-100。 |
+| `worker_id` | 否 | `string` | Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。 |
+| `status` | 否 | `enum: ready, running, succeeded, failed, aborting` | 运行状态筛选。 约束：可选值：`ready`、`running`、`succeeded`、`failed`、`aborting`。 |
+
+## 请求示例
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&worker_id=YOUR_WORKER_ID&status=running" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "data": {
+    "count": 1,
+    "list": [
+      {
+        "duration": 10,
+        "err_msg": "",
+        "finished_at": 1782091210,
+        "origin": "openapi",
+        "results": 1,
+        "scraper_slug": "demo-worker",
+        "scraper_title": "Demo Worker",
+        "slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
+        "started_at": 1782091200,
+        "status": "running",
+        "traffic": 0,
+        "usage": "1.00",
+        "version": "latest"
+      }
+    ],
+    "page_index": 1,
+    "page_size": 20
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 注意事项
+
+- API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+
+## HTTP 响应
+
+| HTTP 状态 | 应用代码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | 请求成功。 |
+| `400` | `11000` | 请求参数不合法。 |
+| `401` | `12001` | 认证缺失或无效。 |
+| `404` | `11004` | 目标资源不存在。 |
+| `422` | `11000` | 请求语义或字段校验未通过。 |
+| `429` | `13000` | 请求过于频繁。 |
+| `500` | `10000` | 服务端内部错误。 |

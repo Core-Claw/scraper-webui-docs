@@ -286,6 +286,14 @@ head:
 			<a href="/zh-cn/changelog/" class="updates-panel-link">完整更新日志 →</a>
 		</div>
 		<div class="updates-list">
+			<a href="/zh-cn/api/" class="updates-item">
+				<span class="updates-dot" style="--dot-color: #0f7f7c"></span>
+				<div class="updates-item-content">
+					<div class="updates-item-title">API v2 文档已更新</div>
+					<div class="updates-item-desc">已同步 29 个公开接口、三种鉴权方式、回调通知和错误码说明。</div>
+				</div>
+				<span class="updates-item-date">2026-06-29</span>
+			</a>
 			<a href="/zh-cn/website-events/invitation-event/" class="updates-item">
 				<span class="updates-dot" style="--dot-color: #8b5cf6"></span>
 				<div class="updates-item-content">

@@ -1,130 +1,113 @@
-﻿---
+---
 title: API Calls
 description: Run Workers and Task templates programmatically via the CoreClaw API
 sidebar:
   order: 5
 ---
 
-Learn how to launch Workers, run Task templates, and inspect runs programmatically using the CoreClaw API.
+Learn how to launch Workers, run Task templates, and inspect runs programmatically using CoreClaw API v2.
 
 ## Getting Started
 
 ### Authentication
 
-All API requests must include your API key in the request headers:
+The API v2 base URL is:
+
+```text
+https://openapi.coreclaw.com
+```
+
+Authenticated endpoints support Bearer token, the legacy `api-key` header, and query token. New integrations should prefer Bearer token:
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
+curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
 Get your API key from the [CoreClaw Console](https://console.coreclaw.com/settings/integrations).
 
 For the full endpoint reference, see [Base URL & Authentication](/api/).
 
-## Slug Types
+## Identifier Types
 
-| Slug | What it identifies | How to get it | Used by |
-| ---- | ------------------ | ------------- | ------- |
-| `scraper_slug` | A Worker | Each Worker has its own `scraper_slug`. You can get it from the Worker page, or from `scraper_slug` returned by [Run Detail](/api/run/detail/) or [Run History](/api/run/history/). Supports both GitHub path format (e.g. `coreclaw/google-maps-scraper`) and legacy ID format (e.g. `01KPD6M5YQADCQKGVKPDZVYC63`). | `/api/v1/scraper/run`, `/api/v1/run/list` |
-| `task_slug` | A saved Task template | Generated when a user creates and saves a Task template. | `/api/v1/task/run` |
-| `run_slug` | A specific run record | Returned after starting a Worker or a Task, and exposed by run APIs. | `/api/v1/run/detail`, `/api/v1/run/last/log`, `/api/v1/run/result/list`, `/api/v1/run/result/export`, `/api/v1/rerun`, `/api/v1/scraper/abort` |
+| Identifier | What it identifies | How to get it | Used by |
+| ---------- | ------------------ | ------------- | ------- |
+| `workerId` | A Worker | Use the Worker slug, or encode a path such as `coreclaw/google-maps-scraper` as `coreclaw~google-maps-scraper`. You can get it from Store search or your Worker list. | `/api/v2/workers/{workerId}`, `/api/v2/workers/{workerId}/runs` |
+| `workerTaskId` | A saved Task template | Generated when a user creates and saves a Task template. | `/api/v2/worker-tasks/{workerTaskId}/runs` |
+| `runId` | A specific run record | Returned as `data.run_slug` after starting or rerunning a Worker or Task. | `/api/v2/worker-runs/{runId}`, `/api/v2/worker-runs/{runId}/result`, `/api/v2/worker-runs/{runId}/result/export` |
 
-Do not mix these identifiers. Passing a `run_slug` to a `task_slug` or `scraper_slug` field results in request validation errors.
+Do not mix these identifiers. Passing a `runId` where a `workerId` or `workerTaskId` is expected results in request validation errors.
 
 ## Start a Worker run
 
 ```bash
-POST /api/v1/scraper/run
+POST /api/v2/workers/{workerId}/runs
 ```
 
 **Request body:**
 
 ```json
 {
-  "scraper_slug": "YOUR_SCRAPER_SLUG",
-  "version": "<version>",  // Optional — defaults to latest version
   "input": {
-    "parameters": {
-      "system": {
-        "proxy_region": "CH",
-        "cpus": 0.125,
-        "memory": 512,
-        "execute_limit_time_seconds": 1800,
-        "max_total_charge": 0,
-        "max_total_traffic": 0
-      },
-      "custom": {
-        "startURLs": [
-          {
-            "url": "https://example.com"
-          }
-        ]
-      }
-    }
+    "keyword": "coffee",
+    "limit": 10
   },
+  "is_async": true,
+  "version": "latest",
+  "callback_url": "https://your-callback.example.com/webhook"
+}
+```
+
+`is_async` controls whether the run executes asynchronously: `true` for async, `false` to wait for completion. Provide `callback_url` when you need webhook delivery of results.
+
+`input` varies per Worker. It is not the old `custom_params` JSON string field. Read the Worker schema before constructing the payload:
+
+- **API**: Call [`GET /api/v2/workers/{workerId}/input-schema`](/api/workers/input-schema/) and build `input` from the returned schema.
+- **Console**: Open the Worker in the [CoreClaw Console](https://console.coreclaw.com), go to the **Input** tab, click the **API** button in the top-right corner, and select **API clients** to view ready-to-use code snippets.
+
+![API clients button in Worker Input tab](@/assets/docs/74.png)
+
+When building `input`:
+
+- Follow the Worker input schema exactly.
+- Provide every required field.
+- Keep `limit` at `100` or lower when using synchronous result pagination.
+- If `input` is missing or does not match the Worker schema, the API returns a validation error.
+
+### How to get `version`
+
+`version` is optional. If omitted, the platform uses the latest version automatically. To pin a specific version, use the Worker version shown in the Console or the `version` field returned by [Run Detail](/api/worker-runs/detail/).
+
+## Run a saved Task template
+
+```bash
+POST /api/v2/worker-tasks/{workerTaskId}/runs
+```
+
+**Request body:**
+
+```json
+{
   "is_async": true,
   "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-`is_async` controls whether the run executes asynchronously: `true` (default) for async, `false` to wait for completion. Provide `callback_url` when you need webhook delivery of results.
-
-`custom` is not a free-form string and not the old `custom_params` JSON string field. Its structure varies per Worker — it is not a fixed static schema.
-
-To find the exact fields for a specific Worker:
-
-- **API**: Call `GET /api/scraper?slug=<scraper_slug>` and read `data.parameters.custom` from the response. Each entry in `properties[]` maps to a field in `input.parameters.custom`.
-- **Console**: Open the Worker in the [CoreClaw Console](https://console.coreclaw.com), go to the **Input** tab, click the **API** button in the top-right corner, and select **API clients** to view ready-to-use code snippets.
-
-![API clients button in Worker Input tab](@/assets/docs/74.png)
-
-When building `custom`:
-- Use each `properties[].name` as the key
-- Follow the declared `type`, nested structure, and array shape
-- Provide every field where `required: true`
-- If `custom` is empty or does not match, the API returns `400 Bad Request`
-### How to get `version`
-
-`version` is optional. If omitted, the platform uses the latest version automatically. To pin a specific version, use one of the following sources:
-Use one of the following sources:
-
-- the Worker version shown on the Worker page
-- the `version` field returned by [Run Detail](/api/run/detail/)
-- the `version` field returned by [Run History](/api/run/history/)
-
-## Run a saved Task template
-
-```bash
-POST /api/v1/task/run
-```
-
-**Request body:**
-
-```json
-{
-  "task_slug": "YOUR_TASK_SLUG",
-  "callback_url": "https://your-callback.example.com/webhook"
-}
-```
-
-`callback_url` is required. A request without it returns `400 Bad Request`.
+Task templates already contain their saved input settings. Use `callback_url` when you need webhook delivery, and use the returned `data.run_slug` as the `runId` for follow-up calls.
 
 ## Inspect a run
 
-Use the returned `run_slug` with the run APIs:
+Use the returned `runId` with the run APIs:
 
-- [Run Detail](/api/run/detail/) for status, `scraper_slug`, and `version`
-- [Run Log](/api/run/log/) for execution logs
-- [Run Result List](/api/run/result/) for paginated results
-- [Export Run Result](/api/run/export/) for file export
+- [Run Detail](/api/worker-runs/detail/) for status, Worker, and version.
+- [Run Log](/api/worker-runs/log/) for execution logs.
+- [Run Result List](/api/worker-runs/result/) for paginated results.
+- [Export Run Result](/api/worker-runs/export/) for file export.
 
 ## Common mistakes
 
-- Using the old `/api/v1/runs` or `/api/v1/tasks/{task_slug}/run` paths
-- Sending `system_params` or `custom_params` as stringified JSON
-- Passing a `run_slug` where a `scraper_slug` or `task_slug` is required
-- Omitting `callback_url` from `/api/v1/task/run`
-- Omitting required Worker-specific `custom` fields from `/api/v1/scraper/run`
+- Using old v1 paths instead of the v2 resource paths.
+- Sending `system_params` or `custom_params` as stringified JSON.
+- Passing a `runId` where a `workerId` or `workerTaskId` is required.
+- Omitting required Worker-specific `input` fields.
+- Treating `last` run endpoints as stable references when a concrete `runId` is available.

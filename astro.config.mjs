@@ -474,177 +474,103 @@ export default defineConfig({
                         {
                             label: 'API Integration',
                             slug: 'api/integration',
-                            translations: {
-                                'zh-CN': 'API 集成指南',
-                            },
+                            translations: { 'zh-CN': 'API 集成指南' },
                         },
                         {
                             label: 'Base URL & Authentication',
                             slug: 'api',
-                            translations: {
-                                'zh-CN': '基础 URL 与认证',
-                            },
-                        },
-                        // Account info comes early — users typically hit it
-                        // first to verify their API key and check balance
-                        // before doing anything else.
-                        {
-                            label: 'Account Info',
-                            slug: 'api/account/info',
-                            translations: {
-                                'zh-CN': '账户信息',
-                            },
+                            translations: { 'zh-CN': '基础 URL 与认证' },
                         },
                         {
-                            label: 'Proxy Region List',
-                            slug: 'api/proxy/region',
-                            translations: {
-                                'zh-CN': '代理区域列表',
-                            },
+                            label: 'Callbacks',
+                            slug: 'api/callbacks',
+                            translations: { 'zh-CN': '回调通知' },
                         },
                         {
-                            label: 'Worker',
+                            label: 'Error Codes',
+                            slug: 'api/error-codes',
+                            translations: { 'zh-CN': '错误码' },
+                        },
+                        {
+                            label: 'Account',
                             collapsed: true,
-                            translations: {
-                                'zh-CN': 'Worker',
-                            },
+                            translations: { 'zh-CN': '账户' },
                             items: [
-                                // Highest-frequency action goes first.
-                                {
-                                    label: 'Start Worker',
-                                    slug: 'api/worker/run',
-                                    translations: {
-                                        'zh-CN': '运行 Worker',
-                                    },
-                                },
-                                {
-                                    label: 'Worker Detail',
-                                    slug: 'api/worker/detail',
-                                    translations: {
-                                        'zh-CN': 'Worker 详情',
-                                    },
-                                },
-                                {
-                                    label: 'Search Workers',
-                                    slug: 'api/worker/search',
-                                    translations: {
-                                        'zh-CN': '搜索 Worker',
-                                    },
-                                },
-                                {
-                                    label: 'Abort Worker',
-                                    slug: 'api/worker/abort',
-                                    translations: {
-                                        'zh-CN': '中止 Worker',
-                                    },
-                                },
+                                { label: 'Get User Account', slug: 'api/account/get', translations: { 'zh-CN': '获取账户信息' } },
                             ],
                         },
                         {
-                            label: 'Runs',
+                            label: 'Proxy',
                             collapsed: true,
-                            translations: {
-                                'zh-CN': 'Runs',
-                            },
-                            // Reordered by usage flow: after starting a
-                            // worker you check its detail, fetch results,
-                            // read logs, export, rerun if needed; History
-                            // is the catch-all browse-everything endpoint
-                            // and goes last.
+                            translations: { 'zh-CN': '代理' },
                             items: [
-                                {
-                                    label: 'Run Detail',
-                                    slug: 'api/run/detail',
-                                    translations: {
-                                        'zh-CN': '运行详情',
-                                    },
-                                },
-                                {
-                                    label: 'Run Result',
-                                    slug: 'api/run/result',
-                                    translations: {
-                                        'zh-CN': '运行结果',
-                                    },
-                                },
-                                {
-                                    label: 'Run Log',
-                                    slug: 'api/run/log',
-                                    translations: {
-                                        'zh-CN': '运行日志',
-                                    },
-                                },
-                                {
-                                    label: 'Export Run Result',
-                                    slug: 'api/run/export',
-                                    translations: {
-                                        'zh-CN': '导出运行结果',
-                                    },
-                                },
-                                {
-                                    label: 'Re-run',
-                                    slug: 'api/run/rerun',
-                                    translations: {
-                                        'zh-CN': '重新运行',
-                                    },
-                                },
-                                {
-                                    label: 'Run History',
-                                    slug: 'api/run/history',
-                                    translations: {
-                                        'zh-CN': '运行历史',
-                                    },
-                                },
+                                { label: 'List Proxy Regions', slug: 'api/proxy/region', translations: { 'zh-CN': '查询代理区域' } },
                             ],
                         },
                         {
-                            label: 'Start Task',
-                            slug: 'api/task/run',
-                            translations: {
-                                'zh-CN': '运行任务（模板）',
-                            },
+                            label: 'Store',
+                            collapsed: true,
+                            translations: { 'zh-CN': '商店' },
+                            items: [
+                                { label: 'List Store Workers', slug: 'api/store/list', translations: { 'zh-CN': '查询商店 Worker' } },
+                            ],
+                        },
+                        {
+                            label: 'Workers',
+                            collapsed: true,
+                            translations: { 'zh-CN': 'Workers' },
+                            items: [
+                                { label: 'List Workers', slug: 'api/workers/list', translations: { 'zh-CN': '查询我的 Worker' } },
+                                { label: 'Get Worker Detail', slug: 'api/workers/detail', translations: { 'zh-CN': '获取 Worker 详情' } },
+                                { label: 'Get Worker Input Schema', slug: 'api/workers/input-schema', translations: { 'zh-CN': '获取 Worker 输入 Schema' } },
+                                { label: 'Run Worker', slug: 'api/workers/run', translations: { 'zh-CN': '运行 Worker' } },
+                            ],
+                        },
+                        {
+                            label: 'Worker Tasks',
+                            collapsed: true,
+                            translations: { 'zh-CN': 'Worker 任务' },
+                            items: [
+                                { label: 'List Worker Tasks', slug: 'api/worker-tasks/list', translations: { 'zh-CN': '查询 Worker 任务' } },
+                                { label: 'Run Worker Task', slug: 'api/worker-tasks/run', translations: { 'zh-CN': '运行 Worker 任务' } },
+                            ],
+                        },
+                        {
+                            label: 'Worker Runs',
+                            collapsed: true,
+                            translations: { 'zh-CN': 'Worker 运行' },
+                            items: [
+                                { label: 'List Worker Runs', slug: 'api/worker-runs/list', translations: { 'zh-CN': '查询 Worker 运行记录' } },
+                                { label: 'Get Last Worker Run', slug: 'api/worker-runs/last-detail', translations: { 'zh-CN': '获取最近一次运行' } },
+                                { label: 'Abort Last Worker Run', slug: 'api/worker-runs/last-abort', translations: { 'zh-CN': '中止最近一次运行' } },
+                                { label: 'Export Last Worker Run Results', slug: 'api/worker-runs/last-export', translations: { 'zh-CN': '导出最近一次运行结果' } },
+                                { label: 'Get Last Worker Run Log', slug: 'api/worker-runs/last-log', translations: { 'zh-CN': '获取最近一次运行日志' } },
+                                { label: 'Rerun Last Worker Run', slug: 'api/worker-runs/last-rerun', translations: { 'zh-CN': '重跑最近一次运行' } },
+                                { label: 'List Last Worker Run Results', slug: 'api/worker-runs/last-result', translations: { 'zh-CN': '查询最近一次运行结果' } },
+                                { label: 'Get Worker Run Detail', slug: 'api/worker-runs/detail', translations: { 'zh-CN': '获取运行详情' } },
+                                { label: 'Abort Worker Run', slug: 'api/worker-runs/abort', translations: { 'zh-CN': '中止运行' } },
+                                { label: 'Get Worker Run Log', slug: 'api/worker-runs/log', translations: { 'zh-CN': '获取运行日志' } },
+                                { label: 'Rerun Worker Run', slug: 'api/worker-runs/rerun', translations: { 'zh-CN': '重跑运行' } },
+                                { label: 'List Worker Run Results', slug: 'api/worker-runs/result', translations: { 'zh-CN': '查询运行结果' } },
+                                { label: 'Export Worker Run Results', slug: 'api/worker-runs/export', translations: { 'zh-CN': '导出运行结果' } },
+                                { label: 'Get Worker Last Run', slug: 'api/worker-runs/worker-last-detail', translations: { 'zh-CN': '获取某 Worker 最近一次运行' } },
+                                { label: 'Abort Worker Last Run', slug: 'api/worker-runs/worker-last-abort', translations: { 'zh-CN': '中止某 Worker 最近一次运行' } },
+                                { label: 'Export Worker Last Run Results', slug: 'api/worker-runs/worker-last-export', translations: { 'zh-CN': '导出某 Worker 最近一次运行结果' } },
+                                { label: 'Get Worker Last Run Log', slug: 'api/worker-runs/worker-last-log', translations: { 'zh-CN': '获取某 Worker 最近一次运行日志' } },
+                                { label: 'Rerun Worker Last Run', slug: 'api/worker-runs/worker-last-rerun', translations: { 'zh-CN': '重跑某 Worker 最近一次运行' } },
+                                { label: 'List Worker Last Run Results', slug: 'api/worker-runs/worker-last-result', translations: { 'zh-CN': '查询某 Worker 最近一次运行结果' } },
+                            ],
                         },
                         {
                             label: 'Code Examples',
                             collapsed: true,
-                            translations: {
-                                'zh-CN': '代码示例',
-                            },
+                            translations: { 'zh-CN': '代码示例' },
                             items: [
-                                {
-                                    label: 'Python',
-                                    slug: 'api/examples/python',
-                                    translations: {
-                                        'zh-CN': 'Python',
-                                    },
-                                },
-                                {
-                                    label: 'Node.js',
-                                    slug: 'api/examples/nodejs',
-                                    translations: {
-                                        'zh-CN': 'Node.js',
-                                    },
-                                },
-                                {
-                                    label: 'Java',
-                                    slug: 'api/examples/java',
-                                    translations: {
-                                        'zh-CN': 'Java',
-                                    },
-                                },
-                                {
-                                    label: 'PHP',
-                                    slug: 'api/examples/php',
-                                    translations: {
-                                        'zh-CN': 'PHP',
-                                    },
-                                },
-                                {
-                                    label: 'Go',
-                                    slug: 'api/examples/go',
-                                    translations: {
-                                        'zh-CN': 'Go',
-                                    },
-                                },
+                                { label: 'Python', slug: 'api/examples/python', translations: { 'zh-CN': 'Python' } },
+                                { label: 'Node.js', slug: 'api/examples/nodejs', translations: { 'zh-CN': 'Node.js' } },
+                                { label: 'Java', slug: 'api/examples/java', translations: { 'zh-CN': 'Java' } },
+                                { label: 'PHP', slug: 'api/examples/php', translations: { 'zh-CN': 'PHP' } },
+                                { label: 'Go', slug: 'api/examples/go', translations: { 'zh-CN': 'Go' } },
                             ],
                         },
                     ],

@@ -286,6 +286,14 @@ head:
 			<a href="/changelog/" class="updates-panel-link">Full changelog →</a>
 		</div>
 		<div class="updates-list">
+			<a href="/api/" class="updates-item">
+				<span class="updates-dot" style="--dot-color: #0f7f7c"></span>
+				<div class="updates-item-content">
+					<div class="updates-item-title">API v2 Documentation Updated</div>
+					<div class="updates-item-desc">29 public endpoints, three authentication modes, callback notifications, and error codes are now documented.</div>
+				</div>
+				<span class="updates-item-date">2026-06-29</span>
+			</a>
 			<a href="/website-events/invitation-event/" class="updates-item">
 				<span class="updates-dot" style="--dot-color: #8b5cf6"></span>
 				<div class="updates-item-content">

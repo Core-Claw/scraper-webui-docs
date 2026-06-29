@@ -1,232 +1,84 @@
 ---
-title: Java 示例
-description: CoreClaw API 集成的完整 Java 示例
+title: "Java 示例"
+description: "CoreClaw API v2 集成代码示例"
 sidebar:
   order: 3
 ---
 
-完整的 Java 示例，展示如何运行 Worker 并获取结果。
+下面示例覆盖认证检查、启动 Worker、用返回的 `run_slug` 查询结果三步。
 
-## 环境准备
+示例中的 `YOUR_WORKER_ID` 是占位符。请替换为要运行的 Worker slug，或把 `owner/name` 路径写成 `owner~name`。`input` 必须按该 Worker 的输入 schema 构造；不同 Worker 的字段不一定相同。
 
-无需外部依赖。使用 Java 11+ 内置的 `java.net.http` 模块。
-
-## 完整示例
+默认使用 `is_async: true` 异步提交并轮询结果。如需等待执行完成，把 `is_async` 改为 `false`，并用 `offset` / `limit` 控制同步返回的数据窗口。
 
 ```java
-import java.io.IOException;
+// Java 11+
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/**
- * CoreClaw API 示例：运行 Worker 并获取结果
- */
 public class CoreClawExample {
-    // API 配置
-    private static final String API_BASE_URL = "https://openapi.coreclaw.com";
-    private static final String API_KEY = "YOUR_API_KEY";
-    private static final int TIMEOUT = 30;
+    static final String API_BASE_URL = "https://openapi.coreclaw.com";
+    static final String API_KEY = System.getenv("CORECLAW_API_KEY");
+    static final String WORKER_ID = System.getenv().getOrDefault("CORECLAW_WORKER_ID", "YOUR_WORKER_ID");
+    static final HttpClient HTTP = HttpClient.newHttpClient();
 
-    private static HttpClient client;
+    public static void main(String[] args) throws Exception {
+        if (API_KEY == null || API_KEY.isBlank()) throw new IllegalStateException("Set CORECLAW_API_KEY first.");
 
-    public static void main(String[] args) {
-        // 初始化 HttpClient
-        client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(TIMEOUT))
-            .build();
+        String account = request("GET", "/api/v2/users/account", null, null);
+        System.out.println(account);
 
-        // 构建请求参数
-        String requestBody = buildRequestBody();
+        String runBody = "{"
+            + "\"input\":{\"keyword\":\"coffee\",\"limit\":10},"
+            + "\"is_async\":true,"
+            + "\"version\":\"latest\","
+            + "\"offset\":0,"
+            + "\"limit\":20"
+            + "}";
+        String run = request("POST", "/api/v2/workers/" + encode(WORKER_ID) + "/runs", null, runBody);
+        System.out.println(run);
 
-        // 步骤 1：启动 Worker
-        System.out.println("正在启动爬虫...");
-        String runSlug = runScraperAsync(requestBody);
-
-        if (runSlug == null) {
-            System.out.println("启动爬虫失败");
-            return;
-        }
-
-        System.out.println("已启动！运行 ID: " + runSlug);
-
-        // 步骤 2：轮询状态
-        System.out.println("正在轮询状态...");
-        int status = pollUntilComplete(runSlug);
-
-        if (status == -1) {
-            System.out.println("轮询失败");
-            return;
-        }
-
-        // 状态：1=就绪, 2=运行中, 3=成功, 4=失败, 5=中止中
-        if (status == 3) {
-            System.out.println("成功完成！");
-
-            // 步骤 3：获取结果
-            String results = getResults(runSlug);
-            if (results != null) {
-                System.out.println("结果获取成功");
-            } else {
-                System.out.println("结果获取失败");
-            }
-        } else if (status == 4) {
-            System.out.println("运行失败！");
-        } else {
-            System.out.println("运行中止（状态: " + status + "）");
-        }
+        String runId = extract(run, "\\\"run_slug\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"");
+        String results = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/result", Map.of("offset", "0", "limit", "20"), null);
+        System.out.println(results);
     }
 
-    private static String runScraperAsync(String requestBody) {
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(API_BASE_URL + "/api/v1/scraper/run"))
-            .timeout(Duration.ofSeconds(TIMEOUT))
-            .header("api-key", API_KEY)
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) return null;
-
-            String body = response.body();
-            Integer code = extractInt(body, "\"code\":");
-            if (code == null || code != 0) return null;
-
-            return extractString(body, "\"run_slug\":\"");
-        } catch (IOException | InterruptedException e) {
-            return null;
+    static String request(String method, String path, Map<String, String> query, String body) throws Exception {
+        URI uri = URI.create(API_BASE_URL + path + queryString(query));
+        HttpRequest.Builder builder = HttpRequest.newBuilder(uri)
+            .header("Authorization", "Bearer " + API_KEY)
+            .method(method, body == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body));
+        if (body != null) builder.header("Content-Type", "application/json");
+        HttpResponse<String> response = HTTP.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new RuntimeException("HTTP " + response.statusCode() + ": " + response.body());
         }
+        return response.body();
     }
 
-    private static int getRunStatus(String runSlug) {
-        String requestBody = "{\"run_slug\":\"" + runSlug + "\"}";
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(API_BASE_URL + "/api/v1/run/detail"))
-            .timeout(Duration.ofSeconds(TIMEOUT))
-            .header("api-key", API_KEY)
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) return -1;
-
-            Integer status = extractInt(response.body(), "\"status\":");
-            return status != null ? status : -1;
-        } catch (IOException | InterruptedException e) {
-            return -1;
-        }
+    static String queryString(Map<String, String> query) {
+        if (query == null || query.isEmpty()) return "";
+        return "?" + query.entrySet().stream()
+            .map(e -> encode(e.getKey()) + "=" + encode(e.getValue()))
+            .reduce((a, b) -> a + "&" + b)
+            .orElse("");
     }
 
-    private static int pollUntilComplete(String runSlug) {
-        int[] terminalStates = {3, 4, 5};
-        long startTime = System.currentTimeMillis();
-
-        while (System.currentTimeMillis() - startTime < 300000) {
-            int status = getRunStatus(runSlug);
-            if (status == -1) return -1;
-
-            for (int terminal : terminalStates) {
-                if (status == terminal) return status;
-            }
-
-            System.out.println("状态: " + status + " (运行中...)");
-            try {
-                TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-                return -1;
-            }
-        }
-        return -1;
+    static String encode(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
-    private static String getResults(String runSlug) {
-        String requestBody = "{\"run_slug\":\"" + runSlug + "\",\"page_index\":1,\"page_size\":20}";
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(API_BASE_URL + "/api/v1/run/result/list"))
-            .timeout(Duration.ofSeconds(TIMEOUT))
-            .header("api-key", API_KEY)
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) return null;
-
-            Integer code = extractInt(response.body(), "\"code\":");
-            return (code != null && code == 0) ? response.body() : null;
-        } catch (IOException | InterruptedException e) {
-            return null;
-        }
-    }
-
-    private static String buildRequestBody() {
-        return """
-            {
-                "scraper_slug": "YOUR_SCRAPER_SLUG",
-                "version": "<version>",
-                "is_async": true,
-                "input": {
-                    "parameters": {
-                        "system": {
-                            "cpus": 0.125,
-                            "memory": 512,
-                            "execute_limit_time_seconds": 1800,
-                            "max_total_charge": 0,
-                            "max_total_traffic": 0
-                        },
-                        "custom": {
-                            // 从 /api/scraper 响应构建
-                        }
-                    }
-                }
-            }
-            """;
-    }
-
-    private static String extractString(String json, String key) {
-        int startIndex = json.indexOf(key);
-        if (startIndex == -1) return null;
-        startIndex += key.length();
-        int endIndex = json.indexOf("\"", startIndex);
-        return endIndex == -1 ? null : json.substring(startIndex, endIndex);
-    }
-
-    private static Integer extractInt(String json, String key) {
-        int startIndex = json.indexOf(key);
-        if (startIndex == -1) return null;
-        startIndex += key.length();
-        int endIndex = startIndex;
-        while (endIndex < json.length() && (Character.isDigit(json.charAt(endIndex)) || json.charAt(endIndex) == '-')) {
-            endIndex++;
-        }
-        return Integer.parseInt(json.substring(startIndex, endIndex));
+    static String extract(String text, String regex) {
+        Matcher matcher = Pattern.compile(regex).matcher(text);
+        if (!matcher.find()) throw new IllegalStateException("run_slug not found in response: " + text);
+        return matcher.group(1);
     }
 }
 ```
-
-## 核心方法
-
-| 方法 | 用途 |
-|------|------|
-| `runScraperAsync()` | 启动异步 Worker 运行 |
-| `getRunStatus()` | 获取当前运行状态 |
-| `pollUntilComplete()` | 轮询直到终态（成功/失败） |
-| `getResults()` | 获取结果数据 |
-
-## 状态码
-
-| 代码 | 状态 |
-|------|------|
-| 1 | 就绪 |
-| 2 | 运行中 |
-| 3 | 成功 |
-| 4 | 失败 |
-| 5 | 中止中 |

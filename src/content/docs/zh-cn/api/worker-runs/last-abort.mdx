@@ -1,0 +1,88 @@
+---
+title: "中止最近一次运行"
+description: "中止最近一次运行 API 参考"
+sidebar:
+  order: 62
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `POST`
+
+**端点:** `/api/v2/worker-runs/last/abort`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v2/worker-runs/last/abort" />
+
+## 什么时候使用这个接口
+
+用于中止仍可中止的运行。调用前应确认目标运行。
+
+
+## 请求体
+
+使用 `Content-Type: application/json` 发送请求体。表格中的必填/选填描述字段本身是否必须提供；整个请求体是否必填以在线试用区的 Request Body 标记为准。
+
+| 字段 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `callback_url` | 否 | `string` | 回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。 |
+| `is_async` | 否 | `boolean` | `true` 表示异步提交，不等待执行结果；`false` 表示等待执行结果，直到运行完成。默认 `true`。 |
+| `limit` | 否 | `integer` | 同步运行或重跑时返回的结果窗口大小；仅影响同步响应中附带的结果数量，不影响完整结果集。 约束：默认 `20`；范围 1-100。 |
+| `offset` | 否 | `integer` | 同步运行或重跑时返回结果窗口的起始偏移；从 0 开始。 约束：默认 `0`；最小 0。 |
+
+### JSON 示例
+
+```json
+{
+  "callback_url": "https://client.example.com/openapi/callback",
+  "is_async": true,
+  "limit": 20,
+  "offset": 0
+}
+```
+
+## 运行模式
+
+- `is_async: true` 表示异步提交运行，不等待执行结果。响应会返回 `data.run_slug`，随后用运行详情、日志和结果接口轮询。
+- `is_async: false` 表示等待执行结果，等价于等待运行执行完成的 run-and-wait；可配合 `offset` / `limit` 直接获取同步运行返回的数据窗口。
+
+## 请求示例
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/worker-runs/last/abort" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"callback_url":"https://client.example.com/openapi/callback","is_async":true,"limit":20,"offset":0}'
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 注意事项
+
+- API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+- 这是账户级最近运行接口，不需要 `workerId` 路径参数；它会作用于当前账户范围内最近一次运行。
+- `last` 表示当前筛选范围内最近一次运行；如需确定目标，请使用具体 `runId` 接口。
+- 传入 `callback_url` 后，CoreClaw 会在运行状态变化或结束时发送回调通知。详见[回调通知](/zh-cn/api/callbacks/)。
+
+## HTTP 响应
+
+| HTTP 状态 | 应用代码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | 请求成功。 |
+| `400` | `11000` | 请求参数不合法。 |
+| `401` | `12001` | 认证缺失或无效。 |
+| `404` | `11004` | 目标资源不存在。 |
+| `422` | `11000` | 请求语义或字段校验未通过。 |
+| `429` | `13000` | 请求过于频繁。 |
+| `500` | `10000` | 服务端内部错误。 |

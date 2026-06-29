@@ -1,122 +1,83 @@
-﻿---
-title: Base URL & Authentication
-description: API base URL, request headers, and global status codes
+---
+title: "Base URL & Authentication"
+description: "CoreClaw API v2 base URL, authentication, and public endpoint reference"
 sidebar:
   order: 0
 ---
 
 ## API Base URL
 
+Use `https://openapi.coreclaw.com` as the HTTP API base URL. Every v2 endpoint path starts with `/api/v2`, for example `https://openapi.coreclaw.com/api/v2/users/account`.
+
 ```
 https://openapi.coreclaw.com
 ```
 
-> **Terminology note:** In CoreClaw's API, `Worker` and `Scraper` refer to the same concept — a data extraction script. The API paths and field names use `scraper` (e.g. `scraper_slug`, `/api/v1/scraper/run`), while documentation may refer to them as Workers.
-
-## Header Parameters
-
-| Parameter Name | Example Value    | Type   | Required | Description |
-| -------------- | ---------------- | ------ | -------- | ----------- |
-| api-key        | <YOUR_API_KEY>   | string | Yes      | Your API key. Get it from [Console Settings → API & Integrations](https://console.coreclaw.com/settings/integrations) |
-| content-type   | application/json | string | Yes      | Request content type |
-| Authorization  | Bearer <YOUR_API_KEY> | string | Alternative | Standard Bearer authentication. Equivalent to `api-key` header. |
-
-> **Note:** `/api/scraper` and `/api/store` are public endpoints that do not require an API key.
-
-## Global Status Codes
-
-Each API request may return a success code or an error code. You can use these codes to debug requests and identify issues.
-
-| CODE  | Description                |
-| ----- | -------------------------- |
-| 0     | Success                    |
-| 5000  | Internal server error      |
-| 4000  | Invalid request parameters |
-| 4010  | Unauthorized access        |
-| 4040  | Resource not found         |
-| 4290  | Rate limit exceeded        |
-| 10001 | User does not exist        |
-| 10002 | User is disabled           |
-| 20001 | Invalid API key            |
-| 20002 | API key expired            |
-| 30001 | Insufficient balance       |
-| 30002 | Insufficient traffic quota |
-| 50001 | Worker does not exist      |
-| 50002 | Worker execution failed    |
-| 50003 | Worker version unavailable |
-| 60001 | Task does not exist        |
-| 70001 | Run record does not exist  |
-| 70002 | Run abort failed           |
-
-## Endpoint Quick Reference
-
-| # | Method | Endpoint | Description |
-|---|--------|----------|-------------|
-| 1 | `POST` | `/api/v1/scraper/run` | [Start Worker](/api/worker/run/) |
-| 2 | `POST` | `/api/v1/scraper/abort` | [Abort Worker](/api/worker/abort/) |
-| 3 | `GET` | `/api/scraper` | [Worker Detail](/api/worker/detail/) |
-| 4 | `GET` | `/api/store` | [Search Workers](/api/worker/search/) |
-| 5 | `POST` | `/api/v1/run/list` | [Run History](/api/run/history/) |
-| 6 | `POST` | `/api/v1/run/detail` | [Run Detail](/api/run/detail/) |
-| 7 | `POST` | `/api/v1/run/result/list` | [Run Result](/api/run/result/) |
-| 8 | `POST` | `/api/v1/run/last/log` | [Run Log](/api/run/log/) |
-| 9 | `POST` | `/api/v1/run/result/export` | [Export Run Result](/api/run/export/) |
-| 10 | `POST` | `/api/v1/rerun` | [Re-run](/api/run/rerun/) |
-| 11 | `POST` | `/api/v1/task/run` | [Start Task](/api/task/run/) |
-| 12 | `POST` | `/api/v1/account/info` | [Account Info](/api/account/info/) |
-| 13 | `GET` | `/api/proxy/region` | [Proxy Region List](/api/proxy/region/) |
-
 ## Authentication
 
-Most API requests require authentication using your API key. The public endpoints `/api/scraper` and `/api/store` do not require authentication. Include the key in the request header of every authenticated call.
-
-### Using the API Key
-
-The recommended way is to pass your API key in the `api-key` header:
+Authenticated endpoints support three token transport modes. Prefer Bearer tokens, while keeping compatibility with the legacy `api-key` header and query token:
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
+-H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-Alternatively, you can use the standard `Authorization: Bearer` header. This is useful when integrating with third-party tools that default to Bearer authentication (e.g. Postman, n8n, Swagger UI):
+| Mode | Example | Notes |
+| --- | --- | --- |
+| Bearer token | `Authorization: Bearer YOUR_API_KEY` | Recommended for new server-side integrations |
+| Legacy header | `api-key: YOUR_API_KEY` | Compatible with v1 integrations |
+| Query token | `?token=YOUR_API_KEY` | Use only when headers are unavailable; avoid logging tokenized URLs |
 
-```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
-```
+Public endpoints do not require a token, including proxy region lookup and Store Worker search.
 
-Both methods are equivalent — use whichever fits your workflow.
+## Calling Conventions
 
+- Read the Worker input schema before sending `input`; fields differ by Worker.
+- Use `POST /api/v2/workers/{workerId}/runs` for a direct Worker run, or `POST /api/v2/worker-tasks/{workerTaskId}/runs` for a saved task run.
+- `is_async: true` returns immediately; use `runId` to read details, logs, and results. `is_async: false` waits for completion and returns a synchronous result window.
+- `offset` is zero-based on list and result endpoints; `limit` is capped at `100` on list and result endpoints.
+- Use export endpoints when the caller needs a downloadable result file instead of fetching every page in a browser.
 
-## Slug Types
+## Response Envelope
 
-CoreClaw API uses three types of identifiers (slugs). Understanding the difference is essential for correct API usage.
+Most JSON responses include `code`, `message`, `request_id`, and `data`. HTTP status describes the request layer; application `code: 0` means the business operation succeeded. Keep HTTP status, `code`, `message`, and `request_id` when troubleshooting failed requests.
 
-| Slug | What it identifies | Description | Used by |
-| ---- | ------------------ | ----------- | ------- |
-| `scraper_slug` | **Worker ID** | The unique identifier for each Worker. Every Worker has one permanent `scraper_slug`. Supports both GitHub path format (e.g. `coreclaw/google-maps-scraper`) and legacy ID format (e.g. `01KPD6M5YQADCQKGVKPDZVYC63`). | `/api/v1/scraper/run`, `/api/v1/run/list` |
-| `task_slug` | **Task ID** | Generated when you create and save a Task template. A Task is a reusable configuration that bundles a Worker with preset parameters. | `/api/v1/task/run` |
-| `run_slug` | **Run Record ID** | Generated each time you execute a Worker or Task. Each run produces a unique `run_slug` to track that specific execution. | `/api/v1/run/detail`, `/api/v1/run/last/log`, `/api/v1/run/result/list`, `/api/v1/run/result/export`, `/api/v1/rerun`, `/api/v1/scraper/abort` |
+## Identifier Types
 
-### Where to find each Slug
+| Identifier | Meaning | Usage |
+| --- | --- | --- |
+| `workerId` | Worker identifier | Accepts a Worker slug or a path encoded as `owner~name` from `owner/name` |
+| `workerTaskId` | Saved task template identifier | Passed as a path parameter when running a task template |
+| `runId` | Run record identifier | The `data.run_slug` returned after starting or rerunning a Worker |
 
-**scraper_slug** (Worker ID) - Found on the Worker detail page:
+## Public Endpoint Reference
 
-![scraper_slug location](@/assets/docs/scraper_slug.png)
-
-**task_slug** (Task ID) - Found in your saved Task templates:
-
-![task_slug location](@/assets/docs/task_slug.png)
-
-**run_slug** (Run Record ID) - Found in the run history or returned after starting a run:
-
-![run_slug location](@/assets/docs/run_slug.png)
-
-> **Important**: Do not mix these identifiers. Each slug type serves a different purpose. Passing a `run_slug` to a `task_slug` or `scraper_slug` field will cause request validation errors.
->
-> In addition to the ID format shown above, `scraper_slug` also supports the GitHub path format, for example `coreclaw/google-maps-scraper`. Both formats are fully compatible — the legacy ID format (e.g. `01KPD6M5YQADCQKGVKPDZVYC63`) continues to work.
+| # | Method | Endpoint | Docs |
+| --- | --- | --- | --- |
+| 1 | `GET` | `/api/v2/proxy/region` | [List Proxy Regions](/api/proxy/region/) |
+| 2 | `GET` | `/api/v2/store` | [List Store Workers](/api/store/list/) |
+| 3 | `GET` | `/api/v2/users/account` | [Get User Account](/api/account/get/) |
+| 4 | `GET` | `/api/v2/workers` | [List Workers](/api/workers/list/) |
+| 5 | `GET` | `/api/v2/workers/{workerId}` | [Get Worker Detail](/api/workers/detail/) |
+| 6 | `GET` | `/api/v2/workers/{workerId}/input-schema` | [Get Worker Input Schema](/api/workers/input-schema/) |
+| 7 | `POST` | `/api/v2/workers/{workerId}/runs` | [Run Worker](/api/workers/run/) |
+| 8 | `GET` | `/api/v2/worker-tasks` | [List Worker Tasks](/api/worker-tasks/list/) |
+| 9 | `POST` | `/api/v2/worker-tasks/{workerTaskId}/runs` | [Run Worker Task](/api/worker-tasks/run/) |
+| 10 | `GET` | `/api/v2/worker-runs` | [List Worker Runs](/api/worker-runs/list/) |
+| 11 | `GET` | `/api/v2/worker-runs/last` | [Get Last Worker Run](/api/worker-runs/last-detail/) |
+| 12 | `POST` | `/api/v2/worker-runs/last/abort` | [Abort Last Worker Run](/api/worker-runs/last-abort/) |
+| 13 | `GET` | `/api/v2/worker-runs/last/export` | [Export Last Worker Run Results](/api/worker-runs/last-export/) |
+| 14 | `GET` | `/api/v2/worker-runs/last/log` | [Get Last Worker Run Log](/api/worker-runs/last-log/) |
+| 15 | `POST` | `/api/v2/worker-runs/last/rerun` | [Rerun Last Worker Run](/api/worker-runs/last-rerun/) |
+| 16 | `GET` | `/api/v2/worker-runs/last/result` | [List Last Worker Run Results](/api/worker-runs/last-result/) |
+| 17 | `GET` | `/api/v2/worker-runs/{runId}` | [Get Worker Run Detail](/api/worker-runs/detail/) |
+| 18 | `POST` | `/api/v2/worker-runs/{runId}/abort` | [Abort Worker Run](/api/worker-runs/abort/) |
+| 19 | `GET` | `/api/v2/worker-runs/{runId}/log` | [Get Worker Run Log](/api/worker-runs/log/) |
+| 20 | `POST` | `/api/v2/worker-runs/{runId}/rerun` | [Rerun Worker Run](/api/worker-runs/rerun/) |
+| 21 | `GET` | `/api/v2/worker-runs/{runId}/result` | [List Worker Run Results](/api/worker-runs/result/) |
+| 22 | `GET` | `/api/v2/worker-runs/{runId}/result/export` | [Export Worker Run Results](/api/worker-runs/export/) |
+| 23 | `GET` | `/api/v2/workers/{workerId}/runs/last` | [Get Worker Last Run](/api/worker-runs/worker-last-detail/) |
+| 24 | `POST` | `/api/v2/workers/{workerId}/runs/last/abort` | [Abort Worker Last Run](/api/worker-runs/worker-last-abort/) |
+| 25 | `GET` | `/api/v2/workers/{workerId}/runs/last/export` | [Export Worker Last Run Results](/api/worker-runs/worker-last-export/) |
+| 26 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [Get Worker Last Run Log](/api/worker-runs/worker-last-log/) |
+| 27 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [Rerun Worker Last Run](/api/worker-runs/worker-last-rerun/) |
+| 28 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [List Worker Last Run Results](/api/worker-runs/worker-last-result/) |

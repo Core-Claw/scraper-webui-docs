@@ -1,0 +1,90 @@
+---
+title: "List Worker Run Results"
+description: "List Worker Run Results API reference"
+sidebar:
+  order: 74
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `GET`
+
+**Endpoint:** `/api/v2/worker-runs/{runId}/result`
+
+**Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
+
+## Try it
+
+<ApiPlayground method="GET" path="/api/v2/worker-runs/{runId}/result" />
+
+## When to use this endpoint
+
+Use this endpoint to read paginated result rows for previews or tables.
+
+## Identifier Notes
+
+- `runId` is the run slug. Use `data.run_slug` from start or rerun responses as the `runId`.
+
+## Path Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `runId` | Yes | `string` | Run slug returned as `data.run_slug` from start or rerun responses. |
+
+## Query Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `offset` | No | `integer` | Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window. Constraints: default `0`; minimum 0. |
+| `limit` | No | `integer` | Page size. `limit` is capped at `100` on list and result endpoints. Constraints: default `20`; range 1-100. |
+
+## Request Example
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=0&limit=20" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {
+    "count": 1,
+    "headers": [
+      {
+        "key": "title",
+        "label": "Title"
+      }
+    ],
+    "list": [
+      {
+        "title": "Example result"
+      }
+    ],
+    "page_index": 1,
+    "page_size": 20
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- Result lists use `offset` and `limit` pagination.
+- `offset` is zero-based; `limit` defaults to `20` and cannot exceed `100`.
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

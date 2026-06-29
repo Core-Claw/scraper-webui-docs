@@ -1,0 +1,80 @@
+---
+title: "Get Worker Run Detail"
+description: "Get Worker Run Detail API reference"
+sidebar:
+  order: 70
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `GET`
+
+**Endpoint:** `/api/v2/worker-runs/{runId}`
+
+**Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
+
+## Try it
+
+<ApiPlayground method="GET" path="/api/v2/worker-runs/{runId}" />
+
+## When to use this endpoint
+
+Use this endpoint to read or operate on a specific run by `runId`.
+
+## Identifier Notes
+
+- `runId` is the run slug. Use `data.run_slug` from start or rerun responses as the `runId`.
+
+## Path Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `runId` | Yes | `string` | Run slug returned as `data.run_slug` from start or rerun responses. |
+
+## Request Example
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {
+    "duration": 10,
+    "err_msg": "",
+    "finished_at": 1782091210,
+    "origin": "openapi",
+    "results": 1,
+    "scraper_slug": "demo-worker",
+    "scraper_title": "Demo Worker",
+    "slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
+    "started_at": 1782091200,
+    "status": "running",
+    "traffic": 0,
+    "usage": "1.00",
+    "version": "latest"
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

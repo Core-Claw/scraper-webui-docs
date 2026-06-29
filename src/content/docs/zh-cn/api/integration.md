@@ -1,335 +1,97 @@
 ---
-title: API 集成指南
-description: 将 CoreClaw API 集成到您的应用程序的完整指南
+title: "API 集成指南"
+description: "使用 CoreClaw API v2 运行 Worker 并获取结果"
 sidebar:
   order: -1
 ---
 
-CoreClaw 平台的所有功能都可以通过 REST API 控制。本指南将带您完成从获取 API 密钥到发起第一次 API 调用的完整集成过程。
+CoreClaw API v2 的推荐流程是：确认认证，选择运行入口，按 Worker schema 构造输入，选择异步或同步执行模式，然后用 `runId` 查询状态、日志、结果或导出文件。
 
-## 快速测试
+## 1. 快速认证检查
 
-使用单个命令验证您的 API 密钥是否有效：
-
-```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
-```
-
-预期响应：
-
-```json
-{
-  "code": 0,
-  "message": "success",
-  "data": {
-    "balance": "10.00",
-    "traffic": "1000"
-  }
-}
-```
-
-如果收到 `code: 20001`，说明 API 密钥无效。请检查密钥后重试。
-
-## API 密钥
-
-要访问 CoreClaw API，您需要使用 API 密钥进行身份验证。您可以在 CoreClaw 控制台的 [API 与集成](https://console.coreclaw.com/settings/integrations) 页面找到它。
-
-1. 登录 [CoreClaw 控制台](https://console.coreclaw.com)
-2. 导航到 **设置** → **API 与集成**
-3. 点击 **创建 API 密钥** 或复制现有密钥
-
-> **警告**：请勿与不受信任的一方共享您的 API 密钥，也不要直接从客户端代码（浏览器 JavaScript）中使用它。API 密钥应仅在服务端或安全环境中使用。
-
-## 身份验证
-
-CoreClaw API 使用 `api-key` 请求头进行身份验证。在需要身份验证的每个请求中包含它。
+先用账户接口验证 token 是否可用。响应中的 HTTP 状态表示请求层结果，业务 `code` 表示业务层结果。
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/account/info" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data "{}"
+curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-部分端点不需要身份验证：`GET /api/store`（搜索 Worker）与 `GET /api/scraper`（获取 Worker 详情）。
+## 2. 选择运行入口
 
-## 基础 URL
+CoreClaw 有两类常见运行入口。直接运行 Worker 适合调用方每次传入新的 `input`；运行已保存的 Worker 任务适合复用平台中已经配置好的任务模板。
 
-所有 API 请求应发送到 `https://openapi.coreclaw.com`。
+| 场景 | 接口 | 何时使用 |
+| --- | --- | --- |
+| 直接运行 Worker | `POST /api/v2/workers/{workerId}/runs` | 调用方自己构造 `input`，每次请求可以传入不同输入。 |
+| 运行已保存的 Worker 任务 | `POST /api/v2/worker-tasks/{workerTaskId}/runs` | 输入来自已保存任务配置，请求体只控制执行模式、回调和同步结果窗口。 |
 
-完整的 OpenAPI 规范见 [openapi.json](/openapi.json)，可以导入到 [Postman](https://www.postman.com/)、[Swagger UI](https://swagger.io/tools/swagger-ui/) 或任何兼容 OpenAPI 的工具。
-
-## 快速开始：您的第一次 API 调用
-
-完整的工作流程：运行 Worker 并获取结果。
-
-### 步骤 1：搜索 Worker
+### 搜索或列出 Worker
 
 ```bash
-curl "https://openapi.coreclaw.com/api/store?search=amazon&limit=5"
+curl "https://openapi.coreclaw.com/api/v2/store?keyword=coffee&offset=0&limit=20"
 ```
 
-```json
-{
-  "code": 0,
-  "data": {
-    "scraper": [
-      {
-        "slug": "01KNXSHE0Y7DZKF1N8B1EMFX35",
-        "title": "Amazon Global Product By URL",
-        "description": "Extract product data from Amazon URLs"
-      }
-    ]
-  }
-}
-```
+### 读取输入 schema
 
-保存 `slug`（这是 **Worker ID**，也称为 `scraper_slug`）。
-
-### 步骤 2：获取 Worker 详情
-
-调用 Worker 之前，先获取其实时参数 schema：
+发送 `input` 前应先读取 Worker 输入 schema。不同 Worker 的字段、默认值和约束可能不同。
 
 ```bash
-curl "https://openapi.coreclaw.com/api/scraper?slug=01KNXSHE0Y7DZKF1N8B1EMFX35"
+curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 ```
 
-```json
-{
-  "code": 0,
-  "data": {
-    "version": "v1.0.1",
-    "parameters": {
-      "system": { "cpus": 0.125, "memory": 512, "execute_limit_time_seconds": 1800 },
-      "custom": {
-        "properties": [
-          { "name": "urls", "type": "array", "title": "URLs", "required": true }
-        ]
-      }
-    }
-  }
-}
-```
+## 3. 选择执行模式
 
-`data.version` 必须按返回值原样使用；`input.parameters.custom` 必须按 `data.parameters.custom.properties` 构建。`memory` 单位为 MB，与 `/api/v1/scraper/run` 一致。
+- `is_async: true` 表示异步提交，不等待执行结果。响应会返回 `data.run_slug`，后续异步运行使用 `runId` 轮询详情、日志和结果。
+- `is_async: false` 表示等待执行结果，相当于 run-and-wait，会等待运行完成。`offset` / `limit` 只控制同步响应中附带的结果窗口，不影响完整结果集。
+- `callback_url` 可用于接收状态变化或结束通知，但回调不能替代结果接口。需要完整数据时仍应按 `runId` 查询或导出。
 
-### 步骤 3：运行 Worker
+### 直接运行 Worker
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data '{
-    "scraper_slug": "01KNXSHE0Y7DZKF1N8B1EMFX35",
-    "version": "<version>",
-    "is_async": true,
-    "input": {
-      "parameters": {
-        "system": {
-          "cpus": 0.125,
-          "memory": 512,
-          "execute_limit_time_seconds": 1800,
-          "max_total_charge": 0,
-          "max_total_traffic": 0,
-          "proxy_region": "US"
-        },
-        "custom": {
-          "urls": [{"url": "https://www.amazon.com/dp/B0CHHSFMRL"}]
-        }
-      }
-    }
-  }'
+curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"input":{"keyword":"coffee","limit":10},"is_async":true,"version":"latest","callback_url":"https://example.com/coreclaw/callbacks"}'
 ```
 
-```json
-{
-  "code": 0,
-  "data": { "run_slug": "01KSFDS8XWTJME33C08XMCR6B9" }
-}
-```
-
-保存 `run_slug`（**运行记录 ID**），用于跟踪进度和获取结果。
-
-### 步骤 4：检查运行状态
+### 运行已保存的 Worker 任务
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/run/detail" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data '{"run_slug": "01KSFDS8XWTJME33C08XMCR6B9"}'
+curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_ID/runs" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"is_async":true,"callback_url":"https://example.com/coreclaw/callbacks"}'
 ```
 
-状态码：`1` 就绪，`2` 运行中，`3` 成功，`4` 失败，`5` 正在中止。
+响应中的 `data.run_slug` 就是后续接口使用的 `runId`。
 
-### 步骤 5：获取结果
+## 4. 异步运行使用 `runId` 轮询
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v1/run/result/list" \
-  -H "api-key: YOUR_API_KEY" \
-  -H "content-type: application/json" \
-  --data '{
-    "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
-    "page_index": 1,
-    "page_size": 20
-  }'
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/log" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=0&limit=20" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-或调用 `/api/v1/run/result/export` 导出文件，`format` 支持 `json` 或 `csv`。
+`offset` 从 0 开始；列表和结果接口的 `limit` 默认 `20`，最大 `100`。长时间轮询时应使用退避策略，避免触发 `429`。
 
-## 同步与异步执行
+## 5. 下载文件使用导出接口
 
-| 模式 | 设置 | 行为 | 适用场景 |
-|------|------|------|----------|
-| 异步（默认） | `is_async: true` | 立即返回 `run_slug`，轮询或 webhook 获取结果 | 长时间任务 |
-| 同步 | `is_async: false` | 等待执行完成（最长 5 分钟）直接返回结果 | 快速、小型任务 |
+结果预览使用 `/result` 分页接口。需要下载文件时使用导出接口，并用 `filter_keys` 控制导出字段。
 
-异步模式下提供 `callback_url` 后，CoreClaw 会在运行完成时向您的端点发送 POST：
-
-```json
-{
-  "run_slug": "01KSFDS8XWTJME33C08XMCR6B9",
-  "status": 3,
-  "results": 20,
-  "usage": "0.06"
-}
+```bash
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result/export?format=csv&filter_keys=title%2Caddress" \
+  -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-Webhook 端点应验证请求来源、处理结果并返回 `200 OK`。
+## 错误处理建议
 
-## 常见错误
-
-| 代码 | 消息 | 解决方案 |
-|------|------|----------|
-| 4000 | 请求参数无效 | 根据 `/api/scraper` 检查参数名称和类型 |
-| 20001 | API 密钥无效 | 验证您的 API 密钥是否正确 |
-| 30001 | 余额不足 | 为您的账户充值 |
-| 50001 | Worker 不存在 | 检查 `scraper_slug`（Worker ID） |
-| 70001 | 运行记录不存在 | 检查 `run_slug`（运行记录 ID） |
-
-## 最佳实践
-
-1. **始终先读取 Worker schema**：不要猜测参数名，调用 `/api/v1/scraper/run` 之前先调用 `/api/scraper`。
-2. **使用精确版本**：从 `/api/scraper` 响应中复制 `version`，不要硬编码。
-3. **处理分页**：大数据集请使用 `result/list` 分页或 `result/export` 文件下载。
-4. **实现重试逻辑**：对频率限制（代码 4290）使用指数退避。
-5. **监控用量**：定期通过 `/api/v1/account/info` 检查余额。
-
-## 故障排查
-
-<details>
-<summary><strong>4000 请求参数无效</strong> — 最常见的错误</summary>
-
-| 原因 | 解决方案 |
-|------|----------|
-| `version` 不匹配 | 从 `/api/scraper` 获取 `version`，不要硬编码 |
-| `custom` schema 不匹配 | 根据 `data.parameters.custom.properties` 构建 `custom` |
-| 缺少 `is_async` | 添加 `"is_async": true` 或 `"is_async": false` |
-| JSON 语法错误 | 验证 JSON 格式，特别是在 Windows 上 |
-
-</details>
-
-<details>
-<summary><strong>Windows PowerShell JSON 转义问题</strong></summary>
-
-PowerShell 会破坏内联 JSON 字符串，导致 `4000 请求参数无效`。请用 `--data-binary @file.json` 从文件读取：
-
-```powershell
-@'
-{
-  "scraper_slug": "YOUR_SCRAPER_SLUG",
-  "version": "<version>",
-  "is_async": true,
-  "input": {
-    "parameters": {
-      "system": {"cpus": 0.125, "memory": 512},
-      "custom": {}
-    }
-  }
-}
-'@ | Out-File -Encoding utf8 request.json
-
-curl.exe -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" `
-  -H "api-key: YOUR_API_KEY" `
-  -H "Content-Type: application/json" `
-  --data-binary "@request.json"
-```
-
-</details>
-
-<details>
-<summary><strong>速率限制（429 / 代码 4290）</strong></summary>
-
-超过速率限制时使用指数退避：
-
-```python
-import time
-
-def retry_with_backoff(func, max_retries=5):
-    for attempt in range(max_retries):
-        result = func()
-        if result.get("code") != 4290:
-            return result
-        wait_time = (2 ** attempt) * 1  # 1, 2, 4, 8, 16 秒
-        time.sleep(wait_time)
-    return result
-```
-
-</details>
-
-<details>
-<summary><strong>Worker 特定的 Custom 参数</strong></summary>
-
-每个 Worker 的 `custom` 参数都不同。**永远不要假设字段名**。
-
-错误（硬编码）：
-
-```json
-{
-  "custom": {
-    "startURLs": [{"url": "https://example.com"}]
-  }
-}
-```
-
-正确（从 `/api/scraper` 获取）：
-
-```python
-response = requests.get(f"https://openapi.coreclaw.com/api/scraper?slug={scraper_slug}")
-schema = response.json()["data"]["parameters"]["custom"]["properties"]
-
-custom_params = {}
-for prop in schema:
-    name = prop["name"]
-    if prop.get("required"):
-        custom_params[name] = prop.get("default", [])
-```
-
-</details>
-
-<details>
-<summary><strong>调试检查清单</strong></summary>
-
-1. **API 密钥**：运行 [快速测试](#快速测试) 验证
-2. **版本**：从 `/api/scraper` 获取最新的 `version`
-3. **Custom Schema**：检查 Worker 的 `data.parameters.custom.properties`
-4. **JSON 格式**：使用 JSON 验证器检查
-5. **Windows Shell**：使用 `--data-binary @file.json` 代替内联 JSON
-
-</details>
-
-## 代码示例
-
-| 语言 | 安装 | 描述 |
-|------|------|------|
-| [Python](/zh-cn/api/examples/python/) | `pip install requests` | requests 库的完整异步工作流 |
-| [Node.js](/zh-cn/api/examples/nodejs/) | `npm install axios` | axios 的完整异步工作流 |
-| [Java](/zh-cn/api/examples/java/) | 无外部依赖（`java.net.http`） | Java 11+ |
-| [PHP](/zh-cn/api/examples/php/) | 无外部依赖（`curl`） | 内置 curl 扩展 |
-| [Go](/zh-cn/api/examples/go/) | 无外部依赖（`net/http`） | net/http 包 |
-
-## API 参考
-
-更多端点详情见 [基础 URL 与认证](/zh-cn/api/)、[搜索 Worker](/zh-cn/api/worker/search/)、[Worker 详情](/zh-cn/api/worker/detail/)、[运行爬虫](/zh-cn/api/worker/run/)、[中止爬虫](/zh-cn/api/worker/abort/)、[运行历史](/zh-cn/api/run/history/)、[运行详情](/zh-cn/api/run/detail/)、[运行结果](/zh-cn/api/run/result/)、[导出运行结果](/zh-cn/api/run/export/)、[运行日志](/zh-cn/api/run/log/)、[重新运行](/zh-cn/api/run/rerun/)、[运行任务（模板）](/zh-cn/api/task/run/) 与 [账户信息](/zh-cn/api/account/info/)。
+1. 同时检查 HTTP 状态和业务 `code`；不要只看其中一个。
+2. `401` 通常表示 token 缺失或无效；`422` 通常表示字段值、分页范围或请求语义不符合契约。
+3. 保存 `request_id`，用于排查失败请求。
+4. 对 `429` 做退避重试，不要立即高频重放请求。
