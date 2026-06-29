@@ -55,6 +55,12 @@ READY → RUNNING → SUCCEEDED / FAILED / ABORTING
 | **FAILED** | 4 | Run encountered an error |
 | **ABORTING** | 5 | Run is being stopped |
 
+## Task Splitting
+
+Before a run starts executing user code, CoreClaw uses `input_schema.json` to decide whether the submitted input should become one task or multiple tasks. New Workers should configure task splitting with `concurrency.fields`; legacy Workers can still use the older `b` field when `concurrency.fields` is not present.
+
+For the full rule set, including `remove_fields`, empty-value filtering, and legacy compatibility, see [Input Schema](/developer-guide/worker-definition/input-schema/).
+
 ## Run Environment
 
 Each run executes in a lightweight, process-isolated environment with:

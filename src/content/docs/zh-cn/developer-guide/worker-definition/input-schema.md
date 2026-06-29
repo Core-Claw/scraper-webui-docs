@@ -15,18 +15,21 @@ sidebar:
 
 ## 一、整体结构解析
 
-一个标准的配置文件由以下三部分组成：
+一个标准的配置文件通常包含以下根字段：
 
 1. **description (描述)**：向用户介绍这个脚本的功能和用法。
-2. **b (并发关键字段)**：决定脚本如何拆分任务。
-3. **properties (参数列表)**：具体的功能设置项。
+2. **concurrency (并发配置)**：决定平台如何把一次 Worker 运行拆分成多个 task。新 Worker 建议使用这个字段。
+3. **b (旧版并发关键字段)**：旧版单字段任务拆分键。已有 Worker 可以继续使用，但新 Worker 应优先使用 `concurrency.fields`。
+4. **properties (参数列表)**：具体的功能设置项。
 
 ### 核心代码示例
 
 ```json
 {
     "description": "With our Instagram Reel information scraper tool, after a successful scrape, you can extract the Reel author's username, Reel caption, hashtags used in the post, number of comments on the Reel, Reel publish date, likes count, views count, play count, popular comments, unique post identifier, URL of the Reel's display image or video thumbnail, product type, Reel duration, video URL, post audio link, number of posts on the profile, number of followers on the profile, profile URL, whether the account is a paid partner, and other relevant information.",
-    "b": "startUrl",
+    "concurrency": {
+        "fields": ["startUrl"]
+    },
     "properties": [
         {
             "title": "URL",
@@ -50,31 +53,253 @@ sidebar:
 | 字段名称        | 是否必填 | 功能说明                                                                                                               |
 | --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
 | **description** | 否       | **工具简介**。会显示在页面顶端，支持填写脚本的作用、注意事项等，字数不限。                                             |
-| **b**           | **是**   | **任务拆分键**。必须填入 properties 中某个元素的 name，且该元素的 `type` 必须为 `array`。脚本会根据这个字段的值进行并发处理（例如按 URL 数量拆分任务）。 |
+| **concurrency** | 否       | **任务拆分配置**。新版并发配置，包含 `fields` 和可选的 `remove_fields`。 |
+| **b**           | 否       | **旧版任务拆分键**。仅在 `concurrency.fields` 为空或不存在时生效。必须填入某个 `type: "array"` 的 property `name`。 |
 | **properties**  | **是**   | **参数配置数组**。这里存放所有的输入项，每一个元素代表页面上的一个输入框或选择器。                                     |
 
 ---
 
-## 三、参数项属性详解 (Properties 内部)
+## 三、并发与任务拆分规则
 
-每一个具体的输入项都可以包含以下配置：
+提交运行任务时，CoreClaw 会按以下顺序判断如何拆分 task：
 
-- **title (标题)**: 页面上显示的标签名称（如："搜索关键词"）。
-- **name (唯一标识)**: 程序的内部 ID，**必须唯一**。不可包含中文。
-- **type (数据类型)**:
-    - `string`: 文字
-    - `integer`: 数字
-    - `boolean`: 开关（是/否）
-    - `array`: 列表/多选
-    - `object`: 对象
-- **editor (编辑器类型)**: 决定这个输入项在网页上以何种表单样式输出。（详见下表）
-- **description (详细描述)**: 输入框下方的补充提示文字，指导用户如何填写。
-- **default (默认值)**: 初始显示的文字或选项。
-- **required (是否必填)**: 设为 `true` 则用户不填无法启动脚本。
+1. 如果 `concurrency.fields` 中至少有一个非空字段名，平台使用新版并发规则。
+2. 如果 `concurrency.fields` 为空或不存在，并且 `b` 非空，平台使用旧版 `b` 规则。
+3. 如果两者都不可用，整份提交的输入会作为一个 task 运行。
+
+当 `concurrency.fields` 和 `b` 同时存在时，以 `concurrency.fields` 为准，`b` 会被忽略。
+
+### `concurrency` 字段说明
+
+| 字段 | 类型 | 说明 |
+| ---- | ---- | ---- |
+| `fields` | `string[]` | 候选并发字段列表。每个字段都应匹配一个 `properties[*].name`，且对应 property 的 `type` 应为 `array`。 |
+| `remove_fields` | `string[]` | 可选。用于在优先字段有值时，从 task 输入中剔除某些字段。每个值也应属于 `fields`。 |
+
+平台会先计算：
+
+```text
+preferred = fields - remove_fields
+```
+
+然后选择真正参与拆分的 active fields：
+
+- 如果 `preferred` 中任意字段在提交输入里有非空值，则只使用 `preferred` 参与拆分。
+- 否则使用完整的 `fields`，包括写在 `remove_fields` 里的字段。
+
+### 空值过滤
+
+拆分 task 前，平台会过滤空的并发元素。以下值会被视为空：
+
+- `null`
+- 空字符串或纯空白字符串，例如 `""` 或 `"   "`
+- 空对象，例如 `{}`
+- 所有字段值都为空的对象，例如 `{ "place_id": "" }` 或 `{ "a": null, "b": "" }`
+
+如果某个并发数组过滤后为空，这个字段就会被视为“无值”。
+
+### task 生成规则
+
+每个生成出来的 task 遵循以下规则：
+
+- 当前被拆分的字段会保留，并且只包含当前这一项。
+- 其他 active 并发字段会保留为 `[""]`。
+- 被 `remove_fields` 禁用的字段会从 task 输入中整个删除。
+- 非并发字段会复制到每一个 task。
+
+带关键词回退的示例：
+
+```json
+{
+    "concurrency": {
+        "fields": ["keywords", "google_maps_urls", "place_ids"],
+        "remove_fields": ["keywords"]
+    },
+    "properties": [
+        {
+            "title": "Keywords",
+            "name": "keywords",
+            "type": "array",
+            "editor": "stringList",
+            "description": "Search keywords",
+            "required": false
+        },
+        {
+            "title": "Google Maps URLs",
+            "name": "google_maps_urls",
+            "type": "array",
+            "editor": "requestList",
+            "description": "Google Maps URLs",
+            "required": false
+        },
+        {
+            "title": "Place IDs",
+            "name": "place_ids",
+            "type": "array",
+            "editor": "stringList",
+            "description": "Google Maps place IDs",
+            "required": false
+        }
+    ]
+}
+```
+
+如果用户提交：
+
+```json
+{
+    "keywords": ["pizza", "iphone"],
+    "google_maps_urls": ["urlA", "urlB"],
+    "place_ids": [],
+    "base_location": "New York, USA"
+}
+```
+
+平台会生成两个 task：
+
+```json
+{
+    "google_maps_urls": ["urlA"],
+    "place_ids": [""],
+    "base_location": "New York, USA"
+}
+```
+
+```json
+{
+    "google_maps_urls": ["urlB"],
+    "place_ids": [""],
+    "base_location": "New York, USA"
+}
+```
+
+因为 `google_maps_urls` 有值，并且 `keywords` 在 `remove_fields` 中，所以 `keywords` 会被整个删除。
+
+如果 `google_maps_urls` 和 `place_ids` 都为空，平台会回落到 `keywords` 拆分，并把另外两个并发字段保留为 `[""]`。
+
+### 常见边界场景
+
+| 场景 | 结果 |
+| ---- | ---- |
+| 不写 `remove_fields` | `fields` 中所有非空字段都会参与拆分。task 数量等于这些字段有效元素数量之和。 |
+| `fields` 只有一个字段 | 行为等同旧版 `b`，但推荐继续使用 `concurrency.fields`。 |
+| `remove_fields` 字段被禁用 | 该 key 会从 task 输入中整个删除，不会保留为 `[""]`。 |
+| preferred 字段只有 `""`、`null`、`{}` 或全空对象 | 视为空，不会触发 `remove_fields`。 |
+| URL 中包含 `&` | 平台会按提交值保留 URL。Worker 代码里避免再次用会 HTML 转义 `&` 的方式序列化。 |
+| 并发数组里包含超大整数 | 平台 JSON 解析阶段会保留数值，但如果还要跨语言或跨服务读取，仍建议传字符串。 |
+| 生成 task 数超过限制 | 平台会先计数再拒绝运行，不会先展开全部 task payload。业务侧仍应避免提交超大数组。 |
+
+### 旧版 `b` 兼容
+
+已有 schema 可以继续使用 `b`：
+
+```json
+{
+    "description": "Old schema demo",
+    "b": "startURLs",
+    "properties": [
+        {
+            "title": "Start URLs",
+            "name": "startURLs",
+            "type": "array",
+            "editor": "requestList",
+            "default": [
+                { "url": "https://example.com/a" },
+                { "url": "https://example.com/b" }
+            ],
+            "description": "The URLs to scrape",
+            "required": true
+        }
+    ]
+}
+```
+
+这份 schema 会按 `startURLs` 拆分 task。`b` 字段前后的空格会自动 trim。如果后续又添加了 `concurrency.fields`，新版配置会优先生效。
+
+### 并发数组元素类型
+
+无论使用 `concurrency.fields` 还是旧版 `b`，`custom[fieldName]` 数组中的每个元素都遵循同一套规则：
+
+| 元素类型 | 示例 | 是否支持 | 处理方式 |
+| -------- | ---- | -------- | -------- |
+| 对象 | `{ "url": "https://a.com" }` | 支持 | 合并进 task 输入，不再保留在并发字段名下面；子字段覆盖父级字段。 |
+| 字符串 | `"pizza"` | 支持 | 包装成 `["pizza"]`。纯空白字符串会被过滤为空。 |
+| 数字 | `42`, `3.14` | 支持 | 包装成 `[42]` 或 `[3.14]`。平台解析器会保留超大整数，但跨语言传输时仍建议用字符串。 |
+| 布尔值 | `true` | 支持 | 包装成 `[true]`。 |
+| `null` | `null` | 视为空 | 拆分前过滤。 |
+| 嵌套数组 | 把 `["a", "b"]` 当作一个元素 | 不支持 | 会触发运行时报错。 |
+| 对象和原始值混用 | `[{ "url": "a" }, "x"]` | 不支持 | 会触发运行时报错。同一个字段内应保持元素类型一致。 |
+
+### 运行时报错速查
+
+| 报错信息 | 触发原因 | 修复建议 |
+| -------- | -------- | -------- |
+| `input_schema is not a valid json` | schema 文件不是合法 JSON。 | 上传前先校验 JSON。 |
+| `custom parameters must contain a single JSON object` | 提交输入不是单个顶层 object。 | 提交单个 JSON object。 |
+| `concurrency fields must have at least one field` | `concurrency.fields` 没有有效字段名。 | 至少添加一个字段名。 |
+| `concurrency fields have no non-empty fields` | 所有并发字段过滤后都为空。 | 至少提交一个非空值。 |
+| `missing concurrency field [X]` | 旧版 `b` 指向的字段不存在于提交输入中。 | 补齐该字段。 |
+| `field [X] must be an array` | 并发字段存在，但值不是数组。 | 改成数组值。 |
+| `concurrency field [X] is empty` | 旧版 `b` 模式收到空数组。 | 至少提交一个值。 |
+| `item at index N in [X] must be an object or primitive value` | 并发数组元素是嵌套数组或不支持的类型。 | 使用对象或原始值元素。 |
+| `field [X] must not mix object and primitive items` | 同一个数组里混用了对象和原始值。 | 统一元素类型。 |
+| `concurrency_num (N) exceeds limit (M)` | 生成的 task 数超过平台限制。 | 减少输入数量或调整平台限制。 |
+
+### 并发配置核对清单
+
+- 新 Worker 使用 `concurrency.fields`。
+- 仅旧版 schema 保留 `b`。
+- 每个并发字段都应匹配一个 `properties[*].name`，且对应 `type: "array"`。
+- 如果使用 `remove_fields`，它应是 `fields` 的子集。
+- 不要假设 `remove_fields` 中的字段一定存在于 task 输入里；它可能会被整个删除。
+- 同一个并发数组里不要混用对象元素和原始值元素。
+- 不要使用嵌套数组作为并发元素。
 
 ---
 
-## 四、编辑器类型 (Editor) 选型指南
+## 四、参数项属性详解 (Properties 内部)
+
+每一个具体的输入项都必须是对象。普通 Worker schema 中，每个 property 建议包含以下字段：
+
+| 字段 | 类型 | 是否必填 | 说明 |
+| ---- | ---- | -------- | ---- |
+| `title` | `string` | 是 | 表单展示名称。 |
+| `name` | `string` | 是 | Worker 代码读取的内部字段名。必须唯一，建议匹配 `^[A-Za-z_][A-Za-z0-9_]*$`。 |
+| `type` | `string` | 是 | 数据类型，见下方 type 表。 |
+| `editor` | `string` | 是 | 前端表单控件，见下方 editor 表。 |
+| `description` | `string` | 是 | 输入框下方的补充说明。 |
+| `required` | `boolean` | 是 | 设为 `true` 时，用户不填无法启动 Worker。 |
+| `default` | 与 `type` 一致 | 否 | 表单初始值，类型应与 `type` 匹配。 |
+| `options` | `array` | 否 | `checkbox`、`select`、`radio` 的可选项。 |
+
+### 支持的 `type` 取值
+
+| Type | 含义 | 常见 `default` | 常用 editor |
+| ---- | ---- | -------------- | ----------- |
+| `string` | 字符串 | `"abc"` | `input`、`textarea`、`select` |
+| `integer` | 整数 | `42` | `number`、`input` |
+| `number` | 浮点数 | `3.14` | `number` |
+| `boolean` | 布尔值 | `true` / `false` | `switch` |
+| `array` | 数组 | `[]` / `[...]` | `checkbox`、`stringList`、`requestList` |
+| `object` | 对象 | `{}` | 较少直接使用 |
+
+### 推荐的 editor 与 type 搭配
+
+| Editor | 推荐 type | 用途 |
+| ------ | --------- | ---- |
+| `input` | `string`、`integer`、`number` | 单行文本或简单数字输入 |
+| `textarea` | `string` | 多行文本 |
+| `number` | `integer`、`number` | 数字输入 |
+| `switch` | `boolean` | 开关设置 |
+| `checkbox` | `array` | 多选 |
+| `select` | `string`、`integer` | 单选下拉 |
+| `radio` | `string`、`integer` | 单选按钮 |
+| `stringList` | `array` | 字符串列表 |
+| `requestList` | `array` | URL 或请求对象列表 |
+
+---
+
+## 五、编辑器类型 (Editor) 选型指南
 
 您可以根据需要选择不同的 editor 来优化用户体验：
 
@@ -106,7 +331,7 @@ sidebar:
 
 ---
 
-## 五、常用组件代码示例
+## 六、常用组件代码示例
 
 ### 1. 单行文本框 (input)
 
@@ -366,7 +591,9 @@ sidebar:
 ```json
 {
     "description": "Find usernames across 400+ social networks. Check if a username is available or already taken on various platforms.",
-    "b": "username",
+    "concurrency": {
+        "fields": ["username"]
+    },
     "properties": [
         {
             "title": "Username",
@@ -398,4 +625,5 @@ sidebar:
 1. **清晰的提示**：description 务必清晰准确，这将有利于您的脚本被更多目标用户检索到。
 2. **设置默认值**：合理的 default 可以让用户直接点击运行，极大地降低使用门槛。
 3. **校验必填**：对于没有它脚本就无法运行的参数（如登录 Cookie、主链接），一定要设置 `"required": true`。
-4. **最大结果数命名**：如果 Worker 需要限制最大返回条数，字段名应使用 `max_results`。这是平台及下游集成所识别的标准命名。
+4. **明确配置任务拆分**：需要按数组输入拆分 task 时，使用 `concurrency.fields`。只有当一种输入模式需要禁用另一种输入模式时，才使用 `remove_fields`。
+5. **最大结果数命名**：如果 Worker 需要限制最大返回条数，字段名应使用 `max_results`。这是平台及下游集成所识别的标准命名。
