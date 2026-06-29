@@ -48,15 +48,20 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 ```json
 {
-  "callback_url": "https://client.example.com/openapi/callback",
   "input": {
-    "keyword": "coffee",
-    "limit": 10
+    "parameters": {
+      "custom": {
+        "keywords": [
+          "coffee"
+        ],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
   },
   "is_async": true,
   "limit": 20,
-  "offset": 0,
-  "version": "latest"
+  "offset": 0
 }
 ```
 
@@ -71,7 +76,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"callback_url":"https://client.example.com/openapi/callback","input":{"keyword":"coffee","limit":10},"is_async":true,"limit":20,"offset":0,"version":"latest"}'
+  --data '{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}'
 ```
 
 ## 响应示例

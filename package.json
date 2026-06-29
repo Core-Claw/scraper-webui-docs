@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && node scripts/check-copy-for-llms.mjs",
+    "build": "astro build && node scripts/check-api-playground-worker-id.mjs && node scripts/check-copy-for-llms.mjs",
     "build:no-check": "astro build",
+    "check:api-playground": "node scripts/check-api-playground-worker-id.mjs",
     "check:copy-for-llms": "node scripts/check-copy-for-llms.mjs",
     "preview": "astro preview",
     "astro": "astro"

@@ -132,7 +132,7 @@ function describeBodyField(name: string, schema: any = {}): string {
         return 'Callback URL. When provided, CoreClaw sends a POST request after the run status changes or finishes.'
     }
     if (name === 'input') {
-        return 'Worker input payload. Read this Worker\'s input schema first; fields differ by Worker.'
+        return 'Worker input payload. Put Worker form fields under `input.parameters.custom`. If left empty in the playground, it will try to load schema defaults before sending.'
     }
     if (name === 'is_async') {
         return '`true` submits asynchronously and does not wait for execution results; `false` waits for the run to finish. Defaults to `true`.'
@@ -144,7 +144,7 @@ function describeBodyField(name: string, schema: any = {}): string {
         return appendSchemaDetails(schema.description || 'Result offset for synchronous runs or reruns.', schema)
     }
     if (name === 'version') {
-        return appendSchemaDetails('Worker version. Use a concrete available version, or `latest` when supported by the service.', schema)
+        return appendSchemaDetails('Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest`.', schema)
     }
     return appendSchemaDetails(schema.description || '-', schema)
 }
@@ -153,10 +153,10 @@ function describeParam(param: any): string {
     const schema = param.schema || {}
     const name = param.name
     if (name === 'workerId') {
-        return 'Worker slug or path. Encode `owner/name` as `owner~name` for path values.'
+        return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values.'
     }
     if (name === 'worker_id') {
-        return 'Worker slug or path. Encode `owner/name` as `owner~name` for query values.'
+        return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values.'
     }
     if (name === 'runId') {
         return 'Run slug returned as `data.run_slug` from start or rerun responses.'
@@ -189,8 +189,7 @@ function sampleSchemaValue(name: string, schema: any = {}): unknown {
     if (Array.isArray(schema.examples) && schema.examples.length) return schema.examples[0]
     if (Array.isArray(schema.enum) && schema.enum.length) return schema.enum[0]
     if (name === 'callback_url') return 'https://client.example.com/openapi/callback'
-    if (name === 'input') return { keyword: 'coffee', limit: 10 }
-    if (name === 'version') return 'latest'
+    if (name === 'input') return { parameters: { custom: {} } }
     if (name === 'is_async') return true
     if (name === 'limit') return 20
     if (name === 'offset') return 0
@@ -218,6 +217,24 @@ function exampleFromSchema(schema: any): unknown | null {
     return sampleSchemaValue('', schema)
 }
 
+function sanitizeExampleBodyForOperation(value: unknown): unknown {
+    if (
+        opPath !== '/api/v2/workers/{workerId}/runs' ||
+        value === null ||
+        typeof value !== 'object' ||
+        Array.isArray(value)
+    ) {
+        return value
+    }
+    const out = { ...(value as Record<string, unknown>) }
+    delete out.callback_url
+    delete out.version
+    if (out.input === undefined || (out.input && typeof out.input === 'object' && !Array.isArray(out.input))) {
+        out.input = { parameters: { custom: {} } }
+    }
+    return out
+}
+
 const bodyContent =
     opResolved?.requestBody?.content?.['application/json'] ?? null
 const bodySchema = bodyContent?.schema ?? null
@@ -227,8 +244,9 @@ const bodyDescription = (
     bodySchema?.description ||
     ''
 ).trim()
-const exampleBody =
+const exampleBody = sanitizeExampleBodyForOperation(
     pickFirstExample(opResolved?.requestBody?.content) ?? exampleFromSchema(bodySchema)
+)
 const exampleBodyStr =
     exampleBody !== null ? JSON.stringify(exampleBody, null, 2) : ''
 
@@ -562,14 +580,26 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
             const bodyEl = this.querySelector<HTMLTextAreaElement>('[data-role="body"]')
             const send = this.querySelector<HTMLButtonElement>('[data-role="send"]')
 
+            const normalizeWorkerIdentifier = (name: string, value: string) => {
+                if (name === 'workerId' || name === 'worker_id') {
+                    const decoded = value.includes('%2F') || value.includes('%2f')
+                        ? decodeURIComponent(value)
+                        : value
+                    return decoded.replace(/\//g, '~')
+                }
+                return value
+            }
+
             // Build URL — substitute path params, append query params.
             let url = opPath
+            let workerIdentifierForSchema = ''
             const queryPairs: string[] = []
             this.querySelectorAll<HTMLInputElement>('[data-role="param"]').forEach(el => {
                 const name = el.dataset.paramName!
                 const where = el.dataset.paramIn!
-                const value = el.value.trim()
+                const value = normalizeWorkerIdentifier(name, el.value.trim())
                 if (!value) return
+                if (name === 'workerId') workerIdentifierForSchema = value
                 if (where === 'path') {
                     url = url.replace(`{${name}}`, encodeURIComponent(value))
                 } else {
@@ -605,10 +635,10 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
             }
 
             // Body — only re-stringify if user actually typed something
-            let body: string | undefined
+            let bodyValue: unknown
             if (bodyEl && bodyEl.value.trim()) {
                 try {
-                    body = JSON.stringify(JSON.parse(bodyEl.value))
+                    bodyValue = JSON.parse(bodyEl.value)
                 } catch (err) {
                     this.showResponse(
                         '400',
@@ -623,10 +653,21 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
             send && (send.disabled = true)
             const t0 = performance.now()
             try {
+                let body: string | undefined
+                if (bodyValue !== undefined && method !== 'GET' && method !== 'HEAD') {
+                    bodyValue = await this.hydrateWorkerInputDefaults(
+                        bodyValue,
+                        server,
+                        headers,
+                        workerIdentifierForSchema
+                    )
+                    body = JSON.stringify(bodyValue)
+                    if (bodyEl) bodyEl.value = JSON.stringify(bodyValue, null, 2)
+                }
                 const res = await fetch(server.replace(/\/$/, '') + url, {
                     method,
                     headers,
-                    body: method === 'GET' || method === 'HEAD' ? undefined : body,
+                    body,
                     mode: 'cors',
                 })
                 const ms = Math.round(performance.now() - t0)
@@ -649,6 +690,122 @@ const id = `api-playground-${methodUp.toLowerCase()}-${opPath
             } finally {
                 send && (send.disabled = false)
             }
+        }
+
+        isPlainObject(value: unknown): value is Record<string, unknown> {
+            return value !== null && typeof value === 'object' && !Array.isArray(value)
+        }
+
+        isEmptyPlainObject(value: unknown): boolean {
+            return this.isPlainObject(value) && Object.keys(value).length === 0
+        }
+
+        async hydrateWorkerInputDefaults(
+            bodyValue: unknown,
+            server: string,
+            headers: Record<string, string>,
+            workerIdentifier: string
+        ): Promise<unknown> {
+            if (
+                this.dataset.path !== '/api/v2/workers/{workerId}/runs' ||
+                !workerIdentifier ||
+                !this.isPlainObject(bodyValue) ||
+                !this.isPlainObject(bodyValue.input) ||
+                !this.isPlainObject(bodyValue.input.parameters) ||
+                !this.isEmptyPlainObject(bodyValue.input.parameters.custom)
+            ) {
+                return bodyValue
+            }
+
+            const defaults = await this.loadWorkerInputDefaults(
+                server,
+                headers,
+                workerIdentifier
+            )
+            if (!defaults || !Object.keys(defaults).length) return bodyValue
+
+            return {
+                ...bodyValue,
+                input: {
+                    ...bodyValue.input,
+                    parameters: {
+                        ...bodyValue.input.parameters,
+                        custom: defaults,
+                    },
+                },
+            }
+        }
+
+        async loadWorkerInputDefaults(
+            server: string,
+            headers: Record<string, string>,
+            workerIdentifier: string
+        ): Promise<Record<string, unknown> | null> {
+            try {
+                const res = await fetch(
+                    `${server.replace(/\/$/, '')}/api/v2/workers/${encodeURIComponent(workerIdentifier)}/input-schema`,
+                    { method: 'GET', headers, mode: 'cors' }
+                )
+                if (!res.ok) return null
+                const payload = await res.json()
+                return this.workerInputDefaults(
+                    payload?.data?.input_schema ?? payload?.input_schema ?? payload?.data
+                )
+            } catch {
+                return null
+            }
+        }
+
+        workerInputDefaults(schema: any): Record<string, unknown> {
+            const properties = this.schemaProperties(schema)
+            const defaults: Record<string, unknown> = {}
+            for (const field of properties) {
+                if (!field?.name) continue
+                const value = this.schemaDefaultValue(field)
+                if (value !== undefined && (field.required === true || field.default !== undefined)) {
+                    defaults[field.name] = value
+                }
+            }
+            return defaults
+        }
+
+        schemaProperties(schema: any): any[] {
+            if (!schema?.properties) return []
+            if (Array.isArray(schema.properties)) return schema.properties
+            return Object.entries(schema.properties).map(([name, field]) => ({
+                ...(this.isPlainObject(field) ? field : {}),
+                name,
+            }))
+        }
+
+        schemaDefaultValue(field: any): unknown {
+            if (field.default !== undefined) {
+                return this.normalizeSchemaDefault(field, field.default)
+            }
+            if (field.example !== undefined) return field.example
+            if (Array.isArray(field.examples) && field.examples.length) return field.examples[0]
+            if (this.schemaProperties(field).length) {
+                const nested = this.workerInputDefaults(field)
+                return Object.keys(nested).length ? nested : undefined
+            }
+            return undefined
+        }
+
+        normalizeSchemaDefault(field: any, value: unknown): unknown {
+            if (field.name === 'max_results' && typeof value === 'number') {
+                return Math.min(value, 1)
+            }
+            if (field.editor === 'stringList' && Array.isArray(value)) {
+                return value
+                    .map(item => {
+                        if (typeof item === 'string') return item
+                        if (this.isPlainObject(item) && typeof item.keyword === 'string') return item.keyword
+                        if (this.isPlainObject(item) && typeof item.value === 'string') return item.value
+                        return null
+                    })
+                    .filter((item): item is string => !!item)
+            }
+            return value
         }
 
         showResponse(status: string, statusText: string, body: string, ms: number) {

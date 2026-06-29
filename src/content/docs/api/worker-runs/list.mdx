@@ -31,7 +31,7 @@ Use this endpoint to list Workers available to the authenticated user.
 | --- | --- | --- | --- |
 | `offset` | No | `integer` | Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window. Constraints: default `0`; minimum 0. |
 | `limit` | No | `integer` | Page size. `limit` is capped at `100` on list and result endpoints. Constraints: default `20`; range 1-100. |
-| `worker_id` | No | `string` | Worker slug or path. Encode `owner/name` as `owner~name` for query values. |
+| `worker_id` | No | `string` | Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values. |
 | `status` | No | `enum: ready, running, succeeded, failed, aborting` | Run status filter. Constraints: allowed values: `ready`, `running`, `succeeded`, `failed`, `aborting`. |
 
 ## Request Example

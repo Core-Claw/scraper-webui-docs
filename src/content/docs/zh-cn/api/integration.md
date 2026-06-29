@@ -51,7 +51,7 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"input":{"keyword":"coffee","limit":10},"is_async":true,"version":"latest","callback_url":"https://example.com/coreclaw/callbacks"}'
+  --data '{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}'
 ```
 
 ### 运行已保存的 Worker 任务

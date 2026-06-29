@@ -425,8 +425,8 @@ function paramDescription(param, zh) {
         if (name === 'filter_keys') return 'Comma-separated field keys used to limit exported fields, for example `title,address`.'
         if (name === 'format') return withConstraints('Export format. Defaults to `csv`.', schema, zh)
         if (name === 'status') return withConstraints('Run status filter.', schema, zh)
-        if (name === 'worker_id') return 'Worker slug or path. Encode `owner/name` as `owner~name` for query values.'
-        if (name === 'workerId') return 'Worker slug or path. Encode `owner/name` as `owner~name` for path values.'
+        if (name === 'worker_id') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values.'
+        if (name === 'workerId') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values.'
         if (name === 'runId') return 'Run slug returned as `data.run_slug` from start or rerun responses.'
         if (name === 'workerTaskId') return 'Saved Worker task template slug.'
     }
@@ -486,13 +486,32 @@ function requestExampleFor(op) {
     const json = op.operation.requestBody?.content?.['application/json']
     if (json?.examples) {
         const first = Object.values(json.examples)[0]
-        if (first?.value !== undefined) return first.value
+        if (first?.value !== undefined) return sanitizeRequestExample(op, first.value)
     }
-    if (json?.example !== undefined) return json.example
+    if (json?.example !== undefined) return sanitizeRequestExample(op, json.example)
     const schema = bodySchema(op)
     if (!schema || schema.type !== 'object') return null
     const out = {}
     for (const [name, field] of Object.entries(schema.properties ?? {})) out[name] = sampleValue(name, field)
+    return sanitizeRequestExample(op, out)
+}
+
+function sanitizeRequestExample(op, value) {
+    if (op.path !== '/api/v2/workers/{workerId}/runs' || value === null || typeof value !== 'object' || Array.isArray(value)) {
+        return value
+    }
+    const out = { ...value }
+    delete out.callback_url
+    delete out.version
+    out.input = {
+        parameters: {
+            custom: {
+                keywords: ['coffee'],
+                base_location: 'New York,USA',
+                max_results: 1,
+            },
+        },
+    }
     return out
 }
 
@@ -508,8 +527,7 @@ function responseExampleFor(op) {
 function sampleValue(name, schema = {}) {
     if (schema.default !== undefined) return schema.default
     if (name === 'callback_url') return 'https://client.example.com/openapi/callback'
-    if (name === 'input') return { keyword: 'coffee', limit: 10 }
-    if (name === 'version') return 'latest'
+    if (name === 'input') return { parameters: { custom: {} } }
     if (name === 'is_async') return true
     if (name === 'limit') return 20
     if (name === 'offset') return 0
@@ -879,7 +897,7 @@ function integrationPage(lang) {
         `curl -X POST "${API_BASE_URL}/api/v2/workers/YOUR_WORKER_ID/runs" \\`,
         '  -H "Authorization: Bearer YOUR_API_KEY" \\',
         '  -H "Content-Type: application/json" \\',
-        '  --data \'{"input":{"keyword":"coffee","limit":10},"is_async":true,"version":"latest","callback_url":"https://example.com/coreclaw/callbacks"}\'',
+        '  --data \'{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}\'',
         '```',
         '',
         '### 运行已保存的 Worker 任务',
@@ -971,7 +989,7 @@ function integrationPage(lang) {
         `curl -X POST "${API_BASE_URL}/api/v2/workers/YOUR_WORKER_ID/runs" \\`,
         '  -H "Authorization: Bearer YOUR_API_KEY" \\',
         '  -H "Content-Type: application/json" \\',
-        '  --data \'{"input":{"keyword":"coffee","limit":10},"is_async":true,"version":"latest","callback_url":"https://example.com/coreclaw/callbacks"}\'',
+        '  --data \'{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}\'',
         '```',
         '',
         '### Saved Worker task run',

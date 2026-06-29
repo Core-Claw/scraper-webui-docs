@@ -29,7 +29,7 @@ Use this endpoint to start a Worker with a fresh input payload instead of a save
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `workerId` | Yes | `string` | Worker slug or path. Encode `owner/name` as `owner~name` for path values. |
+| `workerId` | Yes | `string` | Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values. |
 
 ## Request Body
 
@@ -48,15 +48,20 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 
 ```json
 {
-  "callback_url": "https://client.example.com/openapi/callback",
   "input": {
-    "keyword": "coffee",
-    "limit": 10
+    "parameters": {
+      "custom": {
+        "keywords": [
+          "coffee"
+        ],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
   },
   "is_async": true,
   "limit": 20,
-  "offset": 0,
-  "version": "latest"
+  "offset": 0
 }
 ```
 
@@ -71,7 +76,7 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"callback_url":"https://client.example.com/openapi/callback","input":{"keyword":"coffee","limit":10},"is_async":true,"limit":20,"offset":0,"version":"latest"}'
+  --data '{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}'
 ```
 
 ## Response Example
