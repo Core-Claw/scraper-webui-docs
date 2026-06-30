@@ -19,7 +19,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 ## 什么时候使用这个接口
 
-用于验证 token，并读取账户余额和流量额度。
+用于验证 token，并读取账户余额。
 
 
 ## 请求示例
@@ -35,9 +35,8 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
 {
   "code": 0,
   "data": {
-    "balance": "100.00",
-    "traffic": 1048576,
-    "traffic_expiration_at": 1782091200
+    "balance": "2.7129",
+    "balance_expiration_at": 1812418930
   },
   "message": "success",
   "request_id": "req-123"
@@ -46,7 +45,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
 
 ## 注意事项
 
-- API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+- API v2 同时支持 Bearer token、`api-key` 请求头和 query token；建议优先使用 Bearer token。
 
 ## HTTP 响应
 
