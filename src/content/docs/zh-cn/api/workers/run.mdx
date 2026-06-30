@@ -38,11 +38,11 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 | 字段 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
 | `callback_url` | 否 | `string` | 回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。 |
-| `input` | 否 | `any` | Worker 输入参数。应先读取该 Worker 的 input schema，再按 schema 构造；不同 Worker 的字段不一定相同。 |
+| `input` | 否 | `any` | Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。 |
 | `is_async` | 否 | `boolean` | `true` 表示异步提交，不等待执行结果；`false` 表示等待执行结果，直到运行完成。默认 `true`。 |
 | `limit` | 否 | `integer` | 同步运行或重跑时返回的结果窗口大小；仅影响同步响应中附带的结果数量，不影响完整结果集。 约束：默认 `20`；范围 1-100。 |
 | `offset` | 否 | `integer` | 同步运行或重跑时返回结果窗口的起始偏移；从 0 开始。 约束：默认 `0`；最小 0。 |
-| `version` | 否 | `string` | Worker 版本。可以使用该 Worker 可用的具体版本；如服务端支持，也可以使用 `latest`。需要稳定复现时建议固定到具体版本。 |
+| `version` | 否 | `string` | 可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。 |
 
 ### JSON 示例
 
@@ -97,7 +97,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
 - 应先读取 Worker 输入 schema，再构造 `input`；不同 Worker 的输入字段不一定相同。
 - `offset` 和 `limit` 只控制同步返回的结果窗口，不改变 Worker 实际产生的完整结果集。
-- `version` 用于指定 Worker 版本；需要稳定复现时建议固定到具体版本。
+- `version` 是可选字段；除非已经确认具体版本可用，否则建议省略。并非所有 Worker 都接受 `latest` 作为显式版本值。
 - 传入 `callback_url` 后，CoreClaw 会在运行状态变化或结束时发送回调通知。详见[回调通知](/zh-cn/api/callbacks/)。
 
 ## HTTP 响应

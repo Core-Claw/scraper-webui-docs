@@ -47,10 +47,17 @@ run = coreclaw_request(
     "POST",
     f"/api/v2/workers/{WORKER_ID}/runs",
     json_body={
-        # Replace this object with fields from the Worker's input schema.
-        "input": {"keyword": "coffee", "limit": 10},
+        # Replace input.parameters.custom with fields from the Worker's input schema.
+        "input": {
+            "parameters": {
+                "custom": {
+                    "keywords": ["coffee"],
+                    "base_location": "New York,USA",
+                    "max_results": 1,
+                }
+            }
+        },
         "is_async": True,
-        "version": "latest",
         "offset": 0,
         "limit": 20,
     },

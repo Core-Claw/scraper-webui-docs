@@ -393,7 +393,7 @@ for (const { rel, required } of [
         required: [
             'Read the Worker input schema first',
             'Use `offset` and `limit` only to control the synchronous result window',
-            'Use `version` to pin a Worker version',
+            '`version` is optional',
         ],
     },
     {
@@ -401,7 +401,7 @@ for (const { rel, required } of [
         required: [
             '应先读取 Worker 输入 schema',
             '`offset` 和 `limit` 只控制同步返回的结果窗口',
-            '`version` 用于指定 Worker 版本',
+            '`version` 是可选字段',
         ],
     },
     {

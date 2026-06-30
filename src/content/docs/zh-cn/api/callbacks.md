@@ -16,11 +16,19 @@ sidebar:
 ```json
 {
   "input": {
-    "keyword": "coffee",
-    "limit": 10
+    "parameters": {
+      "custom": {
+        "keywords": [
+          "coffee"
+        ],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
   },
   "is_async": true,
-  "version": "latest",
+  "limit": 20,
+  "offset": 0,
   "callback_url": "https://example.com/coreclaw/callbacks"
 }
 ```

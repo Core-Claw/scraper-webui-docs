@@ -5,6 +5,11 @@ const root = process.cwd()
 const sourceSpecPath = process.argv[2]
 const API_BASE_URL = 'https://openapi.coreclaw.com'
 const publicHttpStatusOrder = ['200', '400', '401', '404', '422', '429', '500']
+const sampleDirectWorkerCustomInput = {
+    keywords: ['coffee'],
+    base_location: 'New York,USA',
+    max_results: 1,
+}
 
 if (!sourceSpecPath) {
     console.error('Usage: node scripts/generate-api-v2-docs.mjs <openapi.json>')
@@ -97,6 +102,7 @@ for (const [apiPath, item] of Object.entries(spec.paths ?? {})) {
     }
     if (Object.keys(item).length === 0) delete spec.paths[apiPath]
 }
+sanitizePublicSpecExamples(spec)
 
 const operations = collectOperations(spec)
 const errorCodes = spec['x-error-codes'] ?? []
@@ -323,7 +329,7 @@ function notesFor(op, zh) {
     if (op.path === '/api/v2/workers/{workerId}/runs') {
         notes.push(zh ? '应先读取 Worker 输入 schema，再构造 `input`；不同 Worker 的输入字段不一定相同。' : 'Read the Worker input schema first before building `input`; fields differ by Worker.')
         notes.push(zh ? '`offset` 和 `limit` 只控制同步返回的结果窗口，不改变 Worker 实际产生的完整结果集。' : 'Use `offset` and `limit` only to control the synchronous result window; they do not change the full result set produced by the Worker.')
-        notes.push(zh ? '`version` 用于指定 Worker 版本；需要稳定复现时建议固定到具体版本。' : 'Use `version` to pin a Worker version; pin a concrete version when repeatability matters.')
+        notes.push(zh ? '`version` 是可选字段；除非已经确认具体版本可用，否则建议省略。并非所有 Worker 都接受 `latest` 作为显式版本值。' : '`version` is optional. Omit it unless you have confirmed a concrete available version; not every Worker accepts `latest` as an explicit version value.')
     }
     if (op.path.endsWith('/result')) {
         notes.push(zh ? '`offset` 从 0 开始；`limit` 默认 `20`，最大 `100`。' : '`offset` is zero-based; `limit` defaults to `20` and cannot exceed `100`.')
@@ -391,16 +397,16 @@ function fieldDescription(field, zh) {
     }
     if (zh) {
         if (field.name === 'callback_url') return '回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。'
-        if (field.name === 'input') return 'Worker 输入参数。应先读取该 Worker 的 input schema，再按 schema 构造；不同 Worker 的字段不一定相同。'
+        if (field.name === 'input') return 'Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。'
         if (field.name === 'limit') return withConstraints('同步运行或重跑时返回的结果窗口大小；仅影响同步响应中附带的结果数量，不影响完整结果集。', field.schema, zh)
         if (field.name === 'offset') return withConstraints('同步运行或重跑时返回结果窗口的起始偏移；从 0 开始。', field.schema, zh)
-        if (field.name === 'version') return 'Worker 版本。可以使用该 Worker 可用的具体版本；如服务端支持，也可以使用 `latest`。需要稳定复现时建议固定到具体版本。'
+        if (field.name === 'version') return '可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。'
     }
     if (field.name === 'callback_url') return 'Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes.'
-    if (field.name === 'input') return 'Worker input payload. Read the Worker input schema first and build this object from that schema; fields differ by Worker.'
+    if (field.name === 'input') return 'Worker input payload. Worker form fields usually belong under `input.parameters.custom`; read the Worker input schema first and build this object from that schema.'
     if (field.name === 'limit') return withConstraints('Synchronous result window size for runs or reruns. It only controls how many result rows are included in the synchronous response, not the full result set.', field.schema, zh)
     if (field.name === 'offset') return withConstraints('Zero-based offset for the synchronous result window returned by runs or reruns.', field.schema, zh)
-    if (field.name === 'version') return 'Worker version. Use a concrete version available for that Worker; use `latest` when the service supports it. Pin a concrete version when repeatability matters.'
+    if (field.name === 'version') return 'Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest` as an explicit version value.'
     return withConstraints(field.description || '-', field.schema, zh)
 }
 
@@ -503,16 +509,36 @@ function sanitizeRequestExample(op, value) {
     const out = { ...value }
     delete out.callback_url
     delete out.version
-    out.input = {
+    out.input = directWorkerInput()
+    return out
+}
+
+function sanitizePublicSpecExamples(openapi) {
+    const examples = openapi.paths?.['/api/v2/workers/{workerId}/runs']?.post?.requestBody?.content?.['application/json']?.examples
+    if (!examples) return
+    for (const example of Object.values(examples)) {
+        if (!example?.value || typeof example.value !== 'object' || Array.isArray(example.value)) continue
+        delete example.value.version
+        example.value.input = directWorkerInput()
+    }
+}
+
+function directWorkerInput() {
+    return {
         parameters: {
-            custom: {
-                keywords: ['coffee'],
-                base_location: 'New York,USA',
-                max_results: 1,
-            },
+            custom: { ...sampleDirectWorkerCustomInput },
         },
     }
-    return out
+}
+
+function directWorkerRunExample(extra = {}) {
+    return {
+        input: directWorkerInput(),
+        is_async: true,
+        limit: 20,
+        offset: 0,
+        ...extra,
+    }
 }
 
 function responseExampleFor(op) {
@@ -723,7 +749,7 @@ function callbacksPage(lang) {
         '在支持请求体的运行类接口中传入 `callback_url`，例如直接运行 Worker：',
         '',
         '```json',
-        JSON.stringify({ input: { keyword: 'coffee', limit: 10 }, is_async: true, version: 'latest', callback_url: 'https://example.com/coreclaw/callbacks' }, null, 2),
+        JSON.stringify(directWorkerRunExample({ callback_url: 'https://example.com/coreclaw/callbacks' }), null, 2),
         '```',
         '',
         '## 回调请求',
@@ -764,7 +790,7 @@ function callbacksPage(lang) {
         'Pass `callback_url` in run endpoints that accept a JSON request body, for example when starting a Worker directly:',
         '',
         '```json',
-        JSON.stringify({ input: { keyword: 'coffee', limit: 10 }, is_async: true, version: 'latest', callback_url: 'https://example.com/coreclaw/callbacks' }, null, 2),
+        JSON.stringify(directWorkerRunExample({ callback_url: 'https://example.com/coreclaw/callbacks' }), null, 2),
         '```',
         '',
         '## Callback Request',
@@ -1102,10 +1128,17 @@ run = coreclaw_request(
     "POST",
     f"/api/v2/workers/{WORKER_ID}/runs",
     json_body={
-        # Replace this object with fields from the Worker's input schema.
-        "input": {"keyword": "coffee", "limit": 10},
+        # Replace input.parameters.custom with fields from the Worker's input schema.
+        "input": {
+            "parameters": {
+                "custom": {
+                    "keywords": ["coffee"],
+                    "base_location": "New York,USA",
+                    "max_results": 1,
+                }
+            }
+        },
         "is_async": True,
-        "version": "latest",
         "offset": 0,
         "limit": 20,
     },
@@ -1152,10 +1185,17 @@ console.log("Account:", account.data);
 const run = await coreclawRequest(\`/api/v2/workers/\${WORKER_ID}/runs\`, {
   method: "POST",
   body: {
-    // Replace this object with fields from the Worker's input schema.
-    input: { keyword: "coffee", limit: 10 },
+    // Replace input.parameters.custom with fields from the Worker's input schema.
+    input: {
+      parameters: {
+        custom: {
+          keywords: ["coffee"],
+          base_location: "New York,USA",
+          max_results: 1,
+        },
+      },
+    },
     is_async: true,
-    version: "latest",
     offset: 0,
     limit: 20,
   },
@@ -1221,10 +1261,17 @@ $account = coreclaw_request("GET", "/api/v2/users/account");
 print_r($account["data"]);
 
 $run = coreclaw_request("POST", "/api/v2/workers/" . rawurlencode($workerId) . "/runs", null, [
-    // Replace this array with fields from the Worker's input schema.
-    "input" => ["keyword" => "coffee", "limit" => 10],
+    // Replace input.parameters.custom with fields from the Worker's input schema.
+    "input" => [
+        "parameters" => [
+            "custom" => [
+                "keywords" => ["coffee"],
+                "base_location" => "New York,USA",
+                "max_results" => 1,
+            ],
+        ],
+    ],
     "is_async" => true,
-    "version" => "latest",
     "offset" => 0,
     "limit" => 20,
 ]);
@@ -1274,10 +1321,17 @@ func main() {
     fmt.Println("Account:", string(account.Data))
 
     runPayload := map[string]any{
-        // Replace this object with fields from the Worker's input schema.
-        "input": map[string]any{"keyword": "coffee", "limit": 10},
+        // Replace input.parameters.custom with fields from the Worker's input schema.
+        "input": map[string]any{
+            "parameters": map[string]any{
+                "custom": map[string]any{
+                    "keywords":      []string{"coffee"},
+                    "base_location": "New York,USA",
+                    "max_results":   1,
+                },
+            },
+        },
         "is_async": true,
-        "version": "latest",
         "offset": 0,
         "limit": 20,
     }
@@ -1374,9 +1428,12 @@ function javaExample() {
         '        System.out.println(account);',
         '',
         '        String runBody = "{"',
-        '            + "\\"input\\":{\\"keyword\\":\\"coffee\\",\\"limit\\":10},"',
+        '            + "\\"input\\":{\\"parameters\\":{\\"custom\\":{"',
+        '            + "\\"keywords\\":[\\"coffee\\"],"',
+        '            + "\\"base_location\\":\\"New York,USA\\","',
+        '            + "\\"max_results\\":1"',
+        '            + "}}},"',
         '            + "\\"is_async\\":true,"',
-        '            + "\\"version\\":\\"latest\\","',
         '            + "\\"offset\\":0,"',
         '            + "\\"limit\\":20"',
         '            + "}";',

@@ -4611,26 +4611,38 @@
                   "value": {
                     "callback_url": "https://client.example.com/openapi/callback",
                     "input": {
-                      "keyword": "coffee",
-                      "limit": 10
+                      "parameters": {
+                        "custom": {
+                          "keywords": [
+                            "coffee"
+                          ],
+                          "base_location": "New York,USA",
+                          "max_results": 1
+                        }
+                      }
                     },
                     "is_async": true,
                     "limit": 20,
-                    "offset": 0,
-                    "version": "latest"
+                    "offset": 0
                   }
                 },
                 "sync_run": {
                   "summary": "Synchronous run",
                   "value": {
                     "input": {
-                      "keyword": "coffee",
-                      "limit": 10
+                      "parameters": {
+                        "custom": {
+                          "keywords": [
+                            "coffee"
+                          ],
+                          "base_location": "New York,USA",
+                          "max_results": 1
+                        }
+                      }
                     },
                     "is_async": false,
                     "limit": 20,
-                    "offset": 0,
-                    "version": "latest"
+                    "offset": 0
                   }
                 }
               },

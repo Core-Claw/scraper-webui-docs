@@ -38,11 +38,11 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 | Field | Required | Type | Description |
 | --- | --- | --- | --- |
 | `callback_url` | No | `string` | Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes. |
-| `input` | No | `any` | Worker input payload. Read the Worker input schema first and build this object from that schema; fields differ by Worker. |
+| `input` | No | `any` | Worker input payload. Worker form fields usually belong under `input.parameters.custom`; read the Worker input schema first and build this object from that schema. |
 | `is_async` | No | `boolean` | `true` submits asynchronously without waiting for results; `false` waits for the run to finish. Defaults to `true`. |
 | `limit` | No | `integer` | Synchronous result window size for runs or reruns. It only controls how many result rows are included in the synchronous response, not the full result set. Constraints: default `20`; range 1-100. |
 | `offset` | No | `integer` | Zero-based offset for the synchronous result window returned by runs or reruns. Constraints: default `0`; minimum 0. |
-| `version` | No | `string` | Worker version. Use a concrete version available for that Worker; use `latest` when the service supports it. Pin a concrete version when repeatability matters. |
+| `version` | No | `string` | Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest` as an explicit version value. |
 
 ### JSON Example
 
@@ -97,7 +97,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 - Read the Worker input schema first before building `input`; fields differ by Worker.
 - Use `offset` and `limit` only to control the synchronous result window; they do not change the full result set produced by the Worker.
-- Use `version` to pin a Worker version; pin a concrete version when repeatability matters.
+- `version` is optional. Omit it unless you have confirmed a concrete available version; not every Worker accepts `latest` as an explicit version value.
 - When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).
 
 ## HTTP Responses

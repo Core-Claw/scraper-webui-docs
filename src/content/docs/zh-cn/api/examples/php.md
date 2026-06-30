@@ -64,10 +64,17 @@ $account = coreclaw_request("GET", "/api/v2/users/account");
 print_r($account["data"]);
 
 $run = coreclaw_request("POST", "/api/v2/workers/" . rawurlencode($workerId) . "/runs", null, [
-    // Replace this array with fields from the Worker's input schema.
-    "input" => ["keyword" => "coffee", "limit" => 10],
+    // Replace input.parameters.custom with fields from the Worker's input schema.
+    "input" => [
+        "parameters" => [
+            "custom" => [
+                "keywords" => ["coffee"],
+                "base_location" => "New York,USA",
+                "max_results" => 1,
+            ],
+        ],
+    ],
     "is_async" => true,
-    "version" => "latest",
     "offset" => 0,
     "limit" => 20,
 ]);

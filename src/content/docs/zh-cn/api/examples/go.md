@@ -50,10 +50,17 @@ func main() {
     fmt.Println("Account:", string(account.Data))
 
     runPayload := map[string]any{
-        // Replace this object with fields from the Worker's input schema.
-        "input": map[string]any{"keyword": "coffee", "limit": 10},
+        // Replace input.parameters.custom with fields from the Worker's input schema.
+        "input": map[string]any{
+            "parameters": map[string]any{
+                "custom": map[string]any{
+                    "keywords":      []string{"coffee"},
+                    "base_location": "New York,USA",
+                    "max_results":   1,
+                },
+            },
+        },
         "is_async": true,
-        "version": "latest",
         "offset": 0,
         "limit": 20,
     }

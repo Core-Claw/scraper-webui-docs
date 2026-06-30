@@ -36,9 +36,12 @@ public class CoreClawExample {
         System.out.println(account);
 
         String runBody = "{"
-            + "\"input\":{\"keyword\":\"coffee\",\"limit\":10},"
+            + "\"input\":{\"parameters\":{\"custom\":{"
+            + "\"keywords\":[\"coffee\"],"
+            + "\"base_location\":\"New York,USA\","
+            + "\"max_results\":1"
+            + "}}},"
             + "\"is_async\":true,"
-            + "\"version\":\"latest\","
             + "\"offset\":0,"
             + "\"limit\":20"
             + "}";
