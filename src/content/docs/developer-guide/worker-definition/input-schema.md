@@ -16,7 +16,7 @@ This document explains how developers should configure the **input_schema.json**
 A standard configuration file commonly contains these top-level fields:
 
 1. **description**: Introduces the script's purpose and usage to the user.
-2. **concurrency**: Defines how the platform splits one Worker run into tasks. New Workers should use this field.
+2. **concurrency**: Defines how the platform splits one Worker run into tasks.
 3. **properties**: The list of specific parameter settings.
 
 ### Core Example
@@ -50,7 +50,7 @@ A standard configuration file commonly contains these top-level fields:
 | Field Name      | Required | Description                                                                                                                                                                                      |
 | --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **description** | No       | **Tool summary**. Displayed at the top of the page. You can use it to describe the script's purpose, notes, and more. There is no length limit.                                                  |
-| **concurrency** | No       | **Task splitting configuration**. New format for splitting one run into multiple tasks. It contains `fields` and optional `remove_fields`. |
+| **concurrency** | No       | **Task splitting configuration**. Configuration for splitting one run into multiple tasks. It contains `fields` and optional `remove_fields`. |
 | **properties**  | **Yes**  | **Parameter configuration array**. This contains all input items, and each element represents one input field or selector on the page.                                                           |
 
 ---
@@ -59,7 +59,7 @@ A standard configuration file commonly contains these top-level fields:
 
 CoreClaw decides how to split a submitted run by checking the schema in this order:
 
-1. If `concurrency.fields` contains at least one non-empty field name, the platform uses the new concurrency rules.
+1. If `concurrency.fields` contains at least one non-empty field name, the platform uses the concurrency rules.
 2. If `concurrency.fields` is empty or missing, the whole submitted input becomes one task.
 
 ### `concurrency` Fields
@@ -211,7 +211,7 @@ Every item inside `custom[fieldName]` follows the same rules:
 
 ### Concurrency Checklist
 
-- Use `concurrency.fields` for new Workers.
+- Use `concurrency.fields` for task splitting.
 - Make every concurrency field match a `properties[*].name` with `type: "array"`.
 - If you use `remove_fields`, keep it as a subset of `fields`.
 - Do not rely on `remove_fields` keys being present in task input; they can be removed entirely.

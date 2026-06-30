@@ -18,7 +18,7 @@ sidebar:
 一个标准的配置文件通常包含以下根字段：
 
 1. **description (描述)**：向用户介绍这个脚本的功能和用法。
-2. **concurrency (并发配置)**：决定平台如何把一次 Worker 运行拆分成多个 task。新 Worker 建议使用这个字段。
+2. **concurrency (并发配置)**：决定平台如何把一次 Worker 运行拆分成多个 task。
 3. **properties (参数列表)**：具体的功能设置项。
 
 ### 核心代码示例
@@ -52,7 +52,7 @@ sidebar:
 | 字段名称        | 是否必填 | 功能说明                                                                                                               |
 | --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
 | **description** | 否       | **工具简介**。会显示在页面顶端，支持填写脚本的作用、注意事项等，字数不限。                                             |
-| **concurrency** | 否       | **任务拆分配置**。新版并发配置，包含 `fields` 和可选的 `remove_fields`。 |
+| **concurrency** | 否       | **任务拆分配置**。用于拆分 task，包含 `fields` 和可选的 `remove_fields`。 |
 | **properties**  | **是**   | **参数配置数组**。这里存放所有的输入项，每一个元素代表页面上的一个输入框或选择器。                                     |
 
 ---
@@ -61,7 +61,7 @@ sidebar:
 
 提交运行任务时，CoreClaw 会按以下顺序判断如何拆分 task：
 
-1. 如果 `concurrency.fields` 中至少有一个非空字段名，平台使用新版并发规则。
+1. 如果 `concurrency.fields` 中至少有一个非空字段名，平台使用并发规则。
 2. 如果 `concurrency.fields` 为空或不存在，整份提交的输入会作为一个 task 运行。
 
 ### `concurrency` 字段说明
@@ -213,7 +213,7 @@ preferred = fields - remove_fields
 
 ### 并发配置核对清单
 
-- 新 Worker 使用 `concurrency.fields`。
+- 使用 `concurrency.fields` 配置任务拆分。
 - 每个并发字段都应匹配一个 `properties[*].name`，且对应 `type: "array"`。
 - 如果使用 `remove_fields`，它应是 `fields` 的子集。
 - 不要假设 `remove_fields` 中的字段一定存在于 task 输入里；它可能会被整个删除。
