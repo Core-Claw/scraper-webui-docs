@@ -223,9 +223,9 @@ Browser automation frameworks and browser backends are separate layers:
 | --- | --- | --- |
 | Automation framework | Playwright, Puppeteer, Selenium, DrissionPage | Provides the API used by Worker code |
 | Browser backend | Remote fingerprint browser, Lightpanda | Runs the actual browser process and network environment |
-| Platform runtime | `ChromeWs`, `ChromeHttp`, `LightpandaDomain`, `PROXY_AUTH` | Injects connection endpoints and credentials |
+| Platform runtime | `ChromeWs`, `ChromeHttp`, `CamoufoxDomain`, `LightpandaDomain`, `PROXY_AUTH` | Injects connection endpoints and credentials |
 
-For example, Playwright can connect to either the remote fingerprint browser through `ChromeWs` or the Lightpanda CDP endpoint through `LightpandaDomain`. The scraping logic still uses Playwright APIs; only the remote browser endpoint changes.
+For example, Playwright can connect to the remote fingerprint browser through `ChromeWs`, to Camoufox through `CamoufoxDomain`, or to the Lightpanda CDP endpoint through `LightpandaDomain`. The scraping logic still uses Playwright APIs; only the remote browser endpoint changes.
 
 ## 7. Conclusion
 

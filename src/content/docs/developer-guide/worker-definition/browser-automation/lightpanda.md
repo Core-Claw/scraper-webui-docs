@@ -2,7 +2,7 @@
 title: Lightpanda
 description: Connect to the platform-hosted Lightpanda browser through CDP
 sidebar:
-  order: 2
+  order: 3
 ---
 
 Lightpanda is a lightweight browser backend exposed by CoreClaw through the Chrome DevTools Protocol (CDP). Use it when your Worker needs browser-level navigation, JavaScript execution, or page rendering without packaging or launching a browser locally.

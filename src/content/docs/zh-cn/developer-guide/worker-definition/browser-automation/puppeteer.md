@@ -2,7 +2,7 @@
 title: Puppeteer
 description: 使用 Puppeteer 进行 Node.js 浏览器控制
 sidebar:
-  order: 2
+  order: 4
 ---
 
 Puppeteer 是一个基于 Node.js 的浏览器自动化框架，通过 DevTools Protocol (CDP) 直接控制 Chromium 浏览器。

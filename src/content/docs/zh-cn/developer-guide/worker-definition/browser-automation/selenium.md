@@ -2,7 +2,7 @@
 title: Selenium
 description: 使用 Selenium WebDriver 进行经典浏览器自动化
 sidebar:
-  order: 3
+  order: 5
 ---
 
 Selenium 是一个基于 WebDriver 协议的浏览器自动化框架。通过使用 Remote WebDriver，可以控制远程运行的真实浏览器。

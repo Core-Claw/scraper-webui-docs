@@ -2,7 +2,7 @@
 title: Selenium
 description: Classic browser automation with Selenium WebDriver
 sidebar:
-  order: 3
+  order: 5
 ---
 
 Selenium is a browser automation framework based on the WebDriver protocol. By using Remote WebDriver, it can control real browsers running remotely.

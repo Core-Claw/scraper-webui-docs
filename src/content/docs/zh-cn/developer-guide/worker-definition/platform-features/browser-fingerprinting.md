@@ -22,6 +22,7 @@ sidebar:
 | **认证变量** | `PROXY_AUTH` |
 | **认证格式** | `username:password` |
 | **指纹浏览器端点** | `ChromeWs` |
+| **Camoufox 端点** | `CamoufoxDomain` |
 | **Lightpanda 端点** | `LightpandaDomain` |
 | **定价** | 内置，无额外费用 |
 
@@ -92,3 +93,11 @@ const { chromium } = require('playwright')
 - **始终**使用平台注入的 `PROXY_AUTH` 环境变量
 - 指纹浏览器由平台**自动配置和轮换**
 :::
+
+## 浏览器后端
+
+CoreClaw 会根据 Worker 运行环境和功能配置暴露不同的远程浏览器后端：
+
+- 使用 [`ChromeWs`](/zh-cn/developer-guide/worker-definition/browser-automation/playwright/) 连接标准 Chromium 指纹浏览器。
+- 使用 [`CamoufoxDomain`](/zh-cn/developer-guide/worker-definition/browser-automation/camoufox/) 连接由 Playwright Firefox 驱动的 Camoufox 会话。
+- 使用 [`LightpandaDomain`](/zh-cn/developer-guide/worker-definition/browser-automation/lightpanda/) 连接 Lightpanda CDP 会话。

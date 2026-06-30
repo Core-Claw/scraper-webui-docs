@@ -220,9 +220,9 @@ SDK
 | --- | --- | --- |
 | 自动化框架 | Playwright、Puppeteer、Selenium、DrissionPage | 提供 Worker 代码使用的 API |
 | 浏览器后端 | 远程指纹浏览器、Lightpanda | 运行真实浏览器进程和网络环境 |
-| 平台运行环境 | `ChromeWs`、`ChromeHttp`、`LightpandaDomain`、`PROXY_AUTH` | 注入连接端点和认证信息 |
+| 平台运行环境 | `ChromeWs`、`ChromeHttp`、`CamoufoxDomain`、`LightpandaDomain`、`PROXY_AUTH` | 注入连接端点和认证信息 |
 
-例如，Playwright 既可以通过 `ChromeWs` 连接远程指纹浏览器，也可以通过 `LightpandaDomain` 连接 Lightpanda CDP 端点。采集逻辑仍然使用 Playwright API，变化的只是远程浏览器端点。
+例如，Playwright 可以通过 `ChromeWs` 连接远程指纹浏览器，通过 `CamoufoxDomain` 连接 Camoufox，也可以通过 `LightpandaDomain` 连接 Lightpanda CDP 端点。采集逻辑仍然使用 Playwright API，变化的只是远程浏览器端点。
 
 ## 六、结论
 

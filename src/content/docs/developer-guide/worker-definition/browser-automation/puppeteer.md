@@ -2,7 +2,7 @@
 title: Puppeteer
 description: Node.js browser control with Puppeteer
 sidebar:
-  order: 2
+  order: 4
 ---
 
 Puppeteer is a Node.js-based browser automation framework that directly controls Chromium browsers via the DevTools Protocol (CDP).

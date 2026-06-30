@@ -357,6 +357,13 @@ export default defineConfig({
                                             },
                                         },
                                         {
+                                            label: 'Camoufox',
+                                            slug: 'developer-guide/worker-definition/browser-automation/camoufox',
+                                            translations: {
+                                                'zh-CN': 'Camoufox',
+                                            },
+                                        },
+                                        {
                                             label: 'Lightpanda',
                                             slug: 'developer-guide/worker-definition/browser-automation/lightpanda',
                                             translations: {

@@ -22,6 +22,7 @@ This environment is used for operations that require a real browser context, suc
 | **Authentication Variable** | `PROXY_AUTH` |
 | **Authentication Format** | `username:password` |
 | **Fingerprint Browser Endpoint** | `ChromeWs` |
+| **Camoufox Endpoint** | `CamoufoxDomain` |
 | **Lightpanda Endpoint** | `LightpandaDomain` |
 | **Pricing** | Built-in, no additional cost |
 
@@ -92,3 +93,11 @@ const { chromium } = require('playwright')
 - **Always** use the platform-injected `PROXY_AUTH` environment variable
 - Fingerprint browser is **automatically configured and rotated** by the platform
 :::
+
+## Browser Backends
+
+CoreClaw can expose more than one remote browser backend depending on the Worker runtime and feature configuration:
+
+- Use [`ChromeWs`](/developer-guide/worker-definition/browser-automation/playwright/) for the standard Chromium fingerprint browser.
+- Use [`CamoufoxDomain`](/developer-guide/worker-definition/browser-automation/camoufox/) for Camoufox sessions driven through Playwright Firefox.
+- Use [`LightpandaDomain`](/developer-guide/worker-definition/browser-automation/lightpanda/) for Lightpanda CDP sessions.

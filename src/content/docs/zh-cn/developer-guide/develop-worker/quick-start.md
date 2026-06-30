@@ -76,7 +76,7 @@ git clone https://github.com/Core-Claw/Go-Worker-Demo.git
 CoreClaw 运行环境是**隔离的网络沙箱**，脚本无法直接访问外网，必须通过平台内置代理出去：
 
 - **HTTP 请求类脚本** — 代理配置是**必须的**。通过 `PROXY_AUTH` 环境变量读取代理地址，将 HTTP 客户端配置为使用 SOCKS5 代理。详见 [代理支持](/zh-cn/developer-guide/worker-definition/platform-features/proxy-support/)。
-- **浏览器自动化脚本** — 通过 `ChromeWs` 环境变量连接远程浏览器，或通过 `LightpandaDomain` 连接 Lightpanda（CDP/WebSocket）。代理由浏览器自动处理，无需手动配置代理。详见 [浏览器指纹](/zh-cn/developer-guide/worker-definition/platform-features/browser-fingerprinting/)。
+- **浏览器自动化脚本** — 通过 `ChromeWs` 环境变量连接远程浏览器，通过 `CamoufoxDomain` 连接 Camoufox，或通过 `LightpandaDomain` 连接 Lightpanda（CDP/WebSocket）。代理由浏览器自动处理，无需手动配置代理。详见 [浏览器指纹](/zh-cn/developer-guide/worker-definition/platform-features/browser-fingerprinting/)。
 :::
 
 ```python

@@ -2,7 +2,7 @@
 title: Lightpanda
 description: 通过 CDP 连接平台托管的 Lightpanda 浏览器
 sidebar:
-  order: 2
+  order: 3
 ---
 
 Lightpanda 是 CoreClaw 通过 Chrome DevTools Protocol（CDP）暴露的轻量级浏览器后端。Worker 需要浏览器级导航、JavaScript 执行或页面渲染时，可以使用 Lightpanda，而不需要在项目中打包或启动本地浏览器。

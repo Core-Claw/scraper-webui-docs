@@ -2,7 +2,7 @@
 title: DrissionPage
 description: Python browser automation with DrissionPage
 sidebar:
-  order: 4
+  order: 6
 ---
 
 DrissionPage is a page control and scraping framework based on a real Chromium browser. It operates the browser engine directly via the Chromium DevTools Protocol (CDP).

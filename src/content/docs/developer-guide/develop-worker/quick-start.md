@@ -76,7 +76,7 @@ Edit `main.py` to implement your scraping logic.
 CoreClaw's runtime is an **isolated network sandbox** — your script cannot access the internet directly. You must route outbound traffic through the platform's built-in proxy:
 
 - **HTTP request scripts** — Proxy configuration is **required**. Read the proxy address from the `PROXY_AUTH` environment variable and configure your HTTP client to use the SOCKS5 proxy. See [Proxy Support](/developer-guide/worker-definition/platform-features/proxy-support/) for details.
-- **Browser automation scripts** — Connect to the remote browser via the `ChromeWs` environment variable, or to Lightpanda via `LightpandaDomain` (CDP/WebSocket). Proxy is handled automatically by the browser — no manual proxy configuration needed. See [Browser Fingerprinting](/developer-guide/worker-definition/platform-features/browser-fingerprinting/) for details.
+- **Browser automation scripts** — Connect to the remote browser via the `ChromeWs` environment variable, to Camoufox via `CamoufoxDomain`, or to Lightpanda via `LightpandaDomain` (CDP/WebSocket). Proxy is handled automatically by the browser — no manual proxy configuration needed. See [Browser Fingerprinting](/developer-guide/worker-definition/platform-features/browser-fingerprinting/) for details.
 :::
 
 ```python

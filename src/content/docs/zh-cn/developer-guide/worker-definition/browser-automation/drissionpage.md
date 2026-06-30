@@ -2,7 +2,7 @@
 title: DrissionPage
 description: 使用 DrissionPage 进行 Python 浏览器自动化
 sidebar:
-  order: 4
+  order: 6
 ---
 
 DrissionPage 是一个基于真实 Chromium 浏览器的页面控制和采集框架。它通过 Chromium DevTools Protocol (CDP) 直接操作浏览器引擎。

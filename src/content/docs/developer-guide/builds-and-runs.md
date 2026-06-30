@@ -22,7 +22,7 @@ Your Code (ZIP) → Auto Dependency Install → Script Runtime → Remote Browse
 CoreClaw eliminates the Build step through **platform-level hosting**:
 
 - **Runtime is pre-provisioned** — Python/Node.js runtimes and base dependencies are already installed in the shared environment. You don't need to build or configure a runtime image.
-- **Browser is remotely hosted** — No need to package a browser into your project. Connect to the remote fingerprint browser pool via the `ChromeWs` environment variable, or to Lightpanda via `LightpandaDomain` (CDP/WebSocket). See [Browser Fingerprinting](/developer-guide/worker-definition/platform-features/browser-fingerprinting/) for details.
+- **Browser is remotely hosted** — No need to package a browser into your project. Connect to the remote fingerprint browser pool via the `ChromeWs` environment variable, to Camoufox via `CamoufoxDomain`, or to Lightpanda via `LightpandaDomain` (CDP/WebSocket). See [Browser Fingerprinting](/developer-guide/worker-definition/platform-features/browser-fingerprinting/) for details.
 - **Dependencies install automatically** — The platform reads your `requirements.txt` or `package.json` and installs dependencies before execution. No manual image building required.
 - **Network is sandboxed** — The runtime is an isolated network sandbox. HTTP request scripts must use the built-in SOCKS5 proxy (via `PROXY_AUTH` environment variable). See [Proxy Support](/developer-guide/worker-definition/platform-features/proxy-support/) for details.
 
@@ -70,6 +70,7 @@ Each run executes in a lightweight, process-isolated environment with:
 - **Environment variables**:
   - `PROXY_AUTH` — SOCKS5 proxy credentials (username:password) for HTTP requests
   - `ChromeWs` — WebSocket address for connecting to the remote fingerprint browser
+  - `CamoufoxDomain` — HTTP domain or base URL for creating Camoufox browser sessions
   - `LightpandaDomain` — CDP domain or endpoint for connecting to Lightpanda
 - **SDK communication** — gRPC channel to the CoreClaw platform (127.0.0.1:20086)
 
