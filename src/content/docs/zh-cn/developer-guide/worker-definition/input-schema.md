@@ -19,8 +19,7 @@ sidebar:
 
 1. **description (描述)**：向用户介绍这个脚本的功能和用法。
 2. **concurrency (并发配置)**：决定平台如何把一次 Worker 运行拆分成多个 task。新 Worker 建议使用这个字段。
-3. **b (旧版并发关键字段)**：旧版单字段任务拆分键。已有 Worker 可以继续使用，但新 Worker 应优先使用 `concurrency.fields`。
-4. **properties (参数列表)**：具体的功能设置项。
+3. **properties (参数列表)**：具体的功能设置项。
 
 ### 核心代码示例
 
@@ -54,7 +53,6 @@ sidebar:
 | --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
 | **description** | 否       | **工具简介**。会显示在页面顶端，支持填写脚本的作用、注意事项等，字数不限。                                             |
 | **concurrency** | 否       | **任务拆分配置**。新版并发配置，包含 `fields` 和可选的 `remove_fields`。 |
-| **b**           | 否       | **旧版任务拆分键**。仅在 `concurrency.fields` 为空或不存在时生效。必须填入某个 `type: "array"` 的 property `name`。 |
 | **properties**  | **是**   | **参数配置数组**。这里存放所有的输入项，每一个元素代表页面上的一个输入框或选择器。                                     |
 
 ---
@@ -64,10 +62,7 @@ sidebar:
 提交运行任务时，CoreClaw 会按以下顺序判断如何拆分 task：
 
 1. 如果 `concurrency.fields` 中至少有一个非空字段名，平台使用新版并发规则。
-2. 如果 `concurrency.fields` 为空或不存在，并且 `b` 非空，平台使用旧版 `b` 规则。
-3. 如果两者都不可用，整份提交的输入会作为一个 task 运行。
-
-当 `concurrency.fields` 和 `b` 同时存在时，以 `concurrency.fields` 为准，`b` 会被忽略。
+2. 如果 `concurrency.fields` 为空或不存在，整份提交的输入会作为一个 task 运行。
 
 ### `concurrency` 字段说明
 
@@ -94,7 +89,7 @@ preferred = fields - remove_fields
 - `null`
 - 空字符串或纯空白字符串，例如 `""` 或 `"   "`
 - 空对象，例如 `{}`
-- 所有字段值都为空的对象，例如 `{ "place_id": "" }` 或 `{ "a": null, "b": "" }`
+- 所有字段值都为空的对象，例如 `{ "place_id": "" }` 或 `{ "foo": null, "bar": "" }`
 
 如果某个并发数组过滤后为空，这个字段就会被视为“无值”。
 
@@ -182,43 +177,16 @@ preferred = fields - remove_fields
 | 场景 | 结果 |
 | ---- | ---- |
 | 不写 `remove_fields` | `fields` 中所有非空字段都会参与拆分。task 数量等于这些字段有效元素数量之和。 |
-| `fields` 只有一个字段 | 行为等同旧版 `b`，但推荐继续使用 `concurrency.fields`。 |
+| `fields` 只有一个字段 | 运行会按这一个数组字段拆分。 |
 | `remove_fields` 字段被禁用 | 该 key 会从 task 输入中整个删除，不会保留为 `[""]`。 |
 | preferred 字段只有 `""`、`null`、`{}` 或全空对象 | 视为空，不会触发 `remove_fields`。 |
 | URL 中包含 `&` | 平台会按提交值保留 URL。Worker 代码里避免再次用会 HTML 转义 `&` 的方式序列化。 |
 | 并发数组里包含超大整数 | 平台 JSON 解析阶段会保留数值，但如果还要跨语言或跨服务读取，仍建议传字符串。 |
 | 生成 task 数超过限制 | 平台会先计数再拒绝运行，不会先展开全部 task payload。业务侧仍应避免提交超大数组。 |
 
-### 旧版 `b` 兼容
-
-已有 schema 可以继续使用 `b`：
-
-```json
-{
-    "description": "Old schema demo",
-    "b": "startURLs",
-    "properties": [
-        {
-            "title": "Start URLs",
-            "name": "startURLs",
-            "type": "array",
-            "editor": "requestList",
-            "default": [
-                { "url": "https://example.com/a" },
-                { "url": "https://example.com/b" }
-            ],
-            "description": "The URLs to scrape",
-            "required": true
-        }
-    ]
-}
-```
-
-这份 schema 会按 `startURLs` 拆分 task。`b` 字段前后的空格会自动 trim。如果后续又添加了 `concurrency.fields`，新版配置会优先生效。
-
 ### 并发数组元素类型
 
-无论使用 `concurrency.fields` 还是旧版 `b`，`custom[fieldName]` 数组中的每个元素都遵循同一套规则：
+`custom[fieldName]` 数组中的每个元素都遵循同一套规则：
 
 | 元素类型 | 示例 | 是否支持 | 处理方式 |
 | -------- | ---- | -------- | -------- |
@@ -227,7 +195,7 @@ preferred = fields - remove_fields
 | 数字 | `42`, `3.14` | 支持 | 包装成 `[42]` 或 `[3.14]`。平台解析器会保留超大整数，但跨语言传输时仍建议用字符串。 |
 | 布尔值 | `true` | 支持 | 包装成 `[true]`。 |
 | `null` | `null` | 视为空 | 拆分前过滤。 |
-| 嵌套数组 | 把 `["a", "b"]` 当作一个元素 | 不支持 | 会触发运行时报错。 |
+| 嵌套数组 | 把 `["first", "second"]` 当作一个元素 | 不支持 | 会触发运行时报错。 |
 | 对象和原始值混用 | `[{ "url": "a" }, "x"]` | 不支持 | 会触发运行时报错。同一个字段内应保持元素类型一致。 |
 
 ### 运行时报错速查
@@ -238,9 +206,7 @@ preferred = fields - remove_fields
 | `custom parameters must contain a single JSON object` | 提交输入不是单个顶层 object。 | 提交单个 JSON object。 |
 | `concurrency fields must have at least one field` | `concurrency.fields` 没有有效字段名。 | 至少添加一个字段名。 |
 | `concurrency fields have no non-empty fields` | 所有并发字段过滤后都为空。 | 至少提交一个非空值。 |
-| `missing concurrency field [X]` | 旧版 `b` 指向的字段不存在于提交输入中。 | 补齐该字段。 |
 | `field [X] must be an array` | 并发字段存在，但值不是数组。 | 改成数组值。 |
-| `concurrency field [X] is empty` | 旧版 `b` 模式收到空数组。 | 至少提交一个值。 |
 | `item at index N in [X] must be an object or primitive value` | 并发数组元素是嵌套数组或不支持的类型。 | 使用对象或原始值元素。 |
 | `field [X] must not mix object and primitive items` | 同一个数组里混用了对象和原始值。 | 统一元素类型。 |
 | `concurrency_num (N) exceeds limit (M)` | 生成的 task 数超过平台限制。 | 减少输入数量或调整平台限制。 |
@@ -248,7 +214,6 @@ preferred = fields - remove_fields
 ### 并发配置核对清单
 
 - 新 Worker 使用 `concurrency.fields`。
-- 仅旧版 schema 保留 `b`。
 - 每个并发字段都应匹配一个 `properties[*].name`，且对应 `type: "array"`。
 - 如果使用 `remove_fields`，它应是 `fields` 的子集。
 - 不要假设 `remove_fields` 中的字段一定存在于 task 输入里；它可能会被整个删除。

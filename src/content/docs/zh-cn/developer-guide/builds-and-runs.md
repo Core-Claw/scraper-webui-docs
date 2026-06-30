@@ -57,9 +57,9 @@ READY → RUNNING → SUCCEEDED / FAILED / ABORTING
 
 ## 任务拆分
 
-在运行开始执行用户代码之前，CoreClaw 会根据 `input_schema.json` 判断本次提交的输入应该作为一个 task 执行，还是拆分成多个 task。新 Worker 应使用 `concurrency.fields` 配置任务拆分；旧 Worker 在没有 `concurrency.fields` 时仍可继续使用旧版 `b` 字段。
+在运行开始执行用户代码之前，CoreClaw 会根据 `input_schema.json` 判断本次提交的输入应该作为一个 task 执行，还是拆分成多个 task。请使用 `concurrency.fields` 配置任务拆分。
 
-完整规则，包括 `remove_fields`、空值过滤和旧版兼容，请参阅 [输入配置](/zh-cn/developer-guide/worker-definition/input-schema/)。
+完整规则，包括 `remove_fields` 和空值过滤，请参阅 [输入配置](/zh-cn/developer-guide/worker-definition/input-schema/)。
 
 ## 运行环境
 

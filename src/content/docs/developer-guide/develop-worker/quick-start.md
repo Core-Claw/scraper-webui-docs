@@ -132,7 +132,9 @@ Define the input form in `input_schema.json`:
 ```json
 {
     "description": "My first Worker",
-    "b": "url",
+    "concurrency": {
+        "fields": ["url"]
+    },
     "properties": [
         {
             "title": "URL",

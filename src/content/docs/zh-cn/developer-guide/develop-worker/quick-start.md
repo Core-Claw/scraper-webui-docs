@@ -132,7 +132,9 @@ if __name__ == "__main__":
 ```json
 {
     "description": "我的第一个 Worker",
-    "b": "url",
+    "concurrency": {
+        "fields": ["url"]
+    },
     "properties": [
         {
             "title": "URL",

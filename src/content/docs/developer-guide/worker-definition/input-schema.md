@@ -17,8 +17,7 @@ A standard configuration file commonly contains these top-level fields:
 
 1. **description**: Introduces the script's purpose and usage to the user.
 2. **concurrency**: Defines how the platform splits one Worker run into tasks. New Workers should use this field.
-3. **b**: Legacy single-field task splitting key. Existing Workers can keep using it, but new Workers should prefer `concurrency.fields`.
-4. **properties**: The list of specific parameter settings.
+3. **properties**: The list of specific parameter settings.
 
 ### Core Example
 
@@ -52,7 +51,6 @@ A standard configuration file commonly contains these top-level fields:
 | --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **description** | No       | **Tool summary**. Displayed at the top of the page. You can use it to describe the script's purpose, notes, and more. There is no length limit.                                                  |
 | **concurrency** | No       | **Task splitting configuration**. New format for splitting one run into multiple tasks. It contains `fields` and optional `remove_fields`. |
-| **b**           | No       | **Legacy task splitting key**. Used only when `concurrency.fields` is empty or missing. It must match the `name` of an array property. |
 | **properties**  | **Yes**  | **Parameter configuration array**. This contains all input items, and each element represents one input field or selector on the page.                                                           |
 
 ---
@@ -62,10 +60,7 @@ A standard configuration file commonly contains these top-level fields:
 CoreClaw decides how to split a submitted run by checking the schema in this order:
 
 1. If `concurrency.fields` contains at least one non-empty field name, the platform uses the new concurrency rules.
-2. If `concurrency.fields` is empty or missing and `b` is non-empty, the platform uses the legacy `b` rule.
-3. If neither configuration is available, the whole submitted input becomes one task.
-
-When `concurrency.fields` and `b` both exist, `concurrency.fields` takes priority and `b` is ignored.
+2. If `concurrency.fields` is empty or missing, the whole submitted input becomes one task.
 
 ### `concurrency` Fields
 
@@ -92,7 +87,7 @@ Before splitting tasks, the platform filters empty concurrency items. The follow
 - `null`
 - Empty or whitespace-only strings, such as `""` or `"   "`
 - Empty objects, such as `{}`
-- Objects where every value is empty, such as `{ "place_id": "" }` or `{ "a": null, "b": "" }`
+- Objects where every value is empty, such as `{ "place_id": "" }` or `{ "foo": null, "bar": "" }`
 
 If a concurrency array becomes empty after filtering, that field is treated as having no value.
 
@@ -180,43 +175,16 @@ If `google_maps_urls` and `place_ids` are both empty, the platform falls back to
 | Case | Result |
 | ---- | ------ |
 | `remove_fields` is omitted | Every non-empty field in `fields` participates in splitting. Task count is the sum of valid items across those fields. |
-| `fields` contains one field | Behavior is equivalent to legacy `b`, but `concurrency.fields` is the recommended format. |
+| `fields` contains one field | The run splits by that single array field. |
 | A `remove_fields` field is disabled | The key is removed from task input entirely. It is not kept as `[""]`. |
 | A preferred field contains only `""`, `null`, `{}`, or objects with only empty values | It is treated as empty and does not trigger `remove_fields`. |
 | A URL contains `&` | The platform keeps the URL value as submitted. Avoid re-serializing it in Worker code in a way that HTML-escapes `&`. |
 | A concurrency array contains very large integers | The platform preserves them during JSON parsing, but strings are still safer if another language or service will read the value. |
 | The generated task count exceeds the limit | The platform counts tasks first and rejects the run before expanding all task payloads. Avoid submitting very large arrays. |
 
-### Legacy `b` Compatibility
-
-Existing schemas can keep using `b`:
-
-```json
-{
-    "description": "Old schema demo",
-    "b": "startURLs",
-    "properties": [
-        {
-            "title": "Start URLs",
-            "name": "startURLs",
-            "type": "array",
-            "editor": "requestList",
-            "default": [
-                { "url": "https://example.com/a" },
-                { "url": "https://example.com/b" }
-            ],
-            "description": "The URLs to scrape",
-            "required": true
-        }
-    ]
-}
-```
-
-This schema splits tasks by `startURLs`. Whitespace around `b` is trimmed. If you add `concurrency.fields` later, that new configuration takes priority.
-
 ### Supported Concurrency Item Types
 
-Whether you use `concurrency.fields` or legacy `b`, every item inside `custom[fieldName]` follows the same rules:
+Every item inside `custom[fieldName]` follows the same rules:
 
 | Item type | Example | Supported | Behavior |
 | --------- | ------- | --------- | -------- |
@@ -225,7 +193,7 @@ Whether you use `concurrency.fields` or legacy `b`, every item inside `custom[fi
 | Number | `42`, `3.14` | Yes | Wrapped as `[42]` or `[3.14]`. Very large integers are preserved by the platform parser, but strings are still safer across languages. |
 | Boolean | `true` | Yes | Wrapped as `[true]`. |
 | `null` | `null` | Treated as empty | Filtered before splitting. |
-| Nested array | `["a", "b"]` as one item | No | Causes a runtime error. |
+| Nested array | `["first", "second"]` as one item | No | Causes a runtime error. |
 | Mixed object and primitive items | `[{ "url": "a" }, "x"]` | No | Causes a runtime error. Use one item shape per field. |
 
 ### Runtime Error Quick Reference
@@ -236,9 +204,7 @@ Whether you use `concurrency.fields` or legacy `b`, every item inside `custom[fi
 | `custom parameters must contain a single JSON object` | Submitted input is not one top-level object. | Send a single JSON object as input. |
 | `concurrency fields must have at least one field` | `concurrency.fields` contains no valid field names. | Add at least one field name. |
 | `concurrency fields have no non-empty fields` | All configured concurrency fields are empty after filtering. | Submit at least one non-empty value. |
-| `missing concurrency field [X]` | Legacy `b` points to a field missing from submitted input. | Include that field in input. |
 | `field [X] must be an array` | A concurrency field exists but is not an array. | Send an array value. |
-| `concurrency field [X] is empty` | Legacy `b` mode received an empty array. | Submit at least one value. |
 | `item at index N in [X] must be an object or primitive value` | A concurrency item is a nested array or unsupported type. | Use object or primitive items. |
 | `field [X] must not mix object and primitive items` | One array mixes object items and primitive items. | Use a consistent item type. |
 | `concurrency_num (N) exceeds limit (M)` | Generated task count exceeds the platform limit. | Reduce input size or adjust platform limits. |
@@ -246,7 +212,6 @@ Whether you use `concurrency.fields` or legacy `b`, every item inside `custom[fi
 ### Concurrency Checklist
 
 - Use `concurrency.fields` for new Workers.
-- Keep `b` only for legacy schemas.
 - Make every concurrency field match a `properties[*].name` with `type: "array"`.
 - If you use `remove_fields`, keep it as a subset of `fields`.
 - Do not rely on `remove_fields` keys being present in task input; they can be removed entirely.
