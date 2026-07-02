@@ -244,7 +244,7 @@ Each input item must be an object. In normal Worker schemas, each property shoul
 | `number` | Floating-point number | `3.14` | `number` |
 | `boolean` | Boolean | `true` / `false` | `switch` |
 | `array` | List | `[]` / `[...]` | `checkbox`, `stringList`, `requestList` |
-| `object` | Object | `{}` | Rarely used directly |
+| `object` | Object | `{}` | `json` (structured JSON editing) |
 
 ### Recommended Editor and Type Pairings
 
@@ -259,6 +259,7 @@ Each input item must be an object. In normal Worker schemas, each property shoul
 | `radio` | `string`, `integer` | Single-choice radio group |
 | `stringList` | `array` | List of strings |
 | `requestList` | `array` | List of URL or request objects |
+| `json` | `object` | Structured JSON input edited in a code-style editor (e.g. custom GeoJSON areas, nested config blocks) |
 
 ---
 
@@ -291,6 +292,7 @@ You can choose different `editor` types based on your needs to improve the user 
 | **requestList**       | URL list           | Batch input for page links to scrape, with Excel-style import support |
 | **requestListSource** | URL request source | Allows additional custom parameters                                   |
 | **stringList**        | String list        | Batch input for multiple keywords                                     |
+| **json**              | JSON code editor   | Structured JSON input such as custom GeoJSON search areas or nested configuration objects |
 
 ---
 
@@ -536,6 +538,25 @@ OR plain string array:
     ]
 }
 ```
+
+### 12. JSON Editor (`json`)
+
+Use `editor: "json"` with `type: "object"` when you need users to paste or edit structured JSON directly — for example a custom GeoJSON search boundary. The form renders a code-style JSON editor, and the submitted value is a parsed JSON object.
+
+```json
+{
+    "name": "custom_geojson",
+    "type": "object",
+    "title": "🛸 Custom search area (coordinate order: [↕ longitude, ↔ latitude])",
+    "editor": "json",
+    "default": {},
+    "description": "Optional. Manually define your search boundary using coordinate pairs when other location parameters don't meet your needs. Supports both polygon and circle shapes.\r\n\r\nPaste a GeoJSON Polygon, MultiPolygon, FeatureCollection, Circle, or Point with radiusKm. Coordinates must use GeoJSON order: [longitude, latitude]. \r\n\r\nWhen provided, this custom area has priority over Location and structured location fields.\r\n\r\n"
+}
+```
+
+- Pair `editor: "json"` with `type: "object"`. Use `{}` as the `default` so the field starts empty but valid.
+- The submitted value is a parsed JSON object, so Worker code can read nested keys directly.
+- Keep `description` explicit about the accepted shapes (e.g. GeoJSON `Polygon`, `MultiPolygon`, `FeatureCollection`, `Circle`, or `Point` with `radiusKm`) and the required coordinate order.
 
 
 ---

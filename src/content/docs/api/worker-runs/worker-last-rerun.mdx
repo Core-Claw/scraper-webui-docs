@@ -38,7 +38,7 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 | Field | Required | Type | Description |
 | --- | --- | --- | --- |
 | `callback_url` | No | `string` | Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes. |
-| `is_async` | No | `boolean` | `true` submits asynchronously without waiting for results; `false` waits for the run to finish. Defaults to `true`. |
+| `is_async` | No | `boolean` | `true` submits asynchronously without waiting for results; `false` waits for the run to finish. Defaults to `true`. **Sync mode waits at most 5 minutes; if the run has not finished by then, the request returns and you must poll status via the run query endpoint.** |
 | `limit` | No | `integer` | Synchronous result window size for runs or reruns. It only controls how many result rows are included in the synchronous response, not the full result set. Constraints: default `20`; range 1-100. |
 | `offset` | No | `integer` | Zero-based offset for the synchronous result window returned by runs or reruns. Constraints: default `0`; minimum 0. |
 
@@ -57,6 +57,8 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 
 - `is_async: true` submits the run asynchronously and returns without waiting for execution results. The response includes `data.run_slug`; then poll the run detail, log, and result endpoints.
 - `is_async: false` waits for the run to finish, equivalent to run-and-wait behavior. Use `offset` / `limit` to control the result window returned by the synchronous run.
+
+> **⚠️ Sync wait limit: 5 minutes.** When `is_async: false`, the platform waits for the run for **up to 5 minutes at most**. If the run has not finished within 5 minutes, the request returns anyway and the run keeps executing in the background — you must then use the run **query endpoint** to poll status, logs, and results by `runId`. For runs that may exceed 5 minutes, prefer `is_async: true`.
 
 ## Request Example
 

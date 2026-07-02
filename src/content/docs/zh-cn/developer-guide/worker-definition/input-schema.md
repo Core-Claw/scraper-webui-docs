@@ -246,7 +246,7 @@ preferred = fields - remove_fields
 | `number` | 浮点数 | `3.14` | `number` |
 | `boolean` | 布尔值 | `true` / `false` | `switch` |
 | `array` | 数组 | `[]` / `[...]` | `checkbox`、`stringList`、`requestList` |
-| `object` | 对象 | `{}` | 较少直接使用 |
+| `object` | 对象 | `{}` | `json`（结构化 JSON 编辑） |
 
 ### 推荐的 editor 与 type 搭配
 
@@ -261,6 +261,7 @@ preferred = fields - remove_fields
 | `radio` | `string`、`integer` | 单选按钮 |
 | `stringList` | `array` | 字符串列表 |
 | `requestList` | `array` | URL 或请求对象列表 |
+| `json` | `object` | 在代码风格编辑器中输入结构化 JSON（如自定义 GeoJSON 区域、嵌套配置块） |
 
 ---
 
@@ -293,6 +294,7 @@ preferred = fields - remove_fields
 | **requestList**       | URL 地址列表  | 批量输入需要采集的网页链接（支持 Excel 导入样式）。 |
 | **requestListSource** | URL请求列表源 | 可自定义配置其他参数。                              |
 | **stringList**        | 字符串列表    | 批量输入多个关键词。                                |
+| **json**              | JSON 代码编辑器 | 输入结构化 JSON，例如自定义 GeoJSON 搜索区域或嵌套配置对象。 |
 
 ---
 
@@ -538,6 +540,25 @@ preferred = fields - remove_fields
     ]
 }
 ```
+
+### 12. JSON 编辑器 (`json`)
+
+当需要让用户直接粘贴或编辑结构化 JSON（例如自定义 GeoJSON 搜索区域）时，使用 `editor: "json"` 配合 `type: "object"`。表单会渲染一个代码风格的 JSON 编辑器，提交值为解析后的 JSON 对象。
+
+```json
+{
+    "name": "custom_geojson",
+    "type": "object",
+    "title": "🛸 Custom search area (coordinate order: [↕ longitude, ↔ latitude])",
+    "editor": "json",
+    "default": {},
+    "description": "Optional. Manually define your search boundary using coordinate pairs when other location parameters don't meet your needs. Supports both polygon and circle shapes.\r\n\r\nPaste a GeoJSON Polygon, MultiPolygon, FeatureCollection, Circle, or Point with radiusKm. Coordinates must use GeoJSON order: [longitude, latitude]. \r\n\r\nWhen provided, this custom area has priority over Location and structured location fields.\r\n\r\n"
+}
+```
+
+- `editor: "json"` 应与 `type: "object"` 搭配。`default` 建议设为 `{}`，让字段初始为空且合法。
+- 提交值是解析后的 JSON 对象，Worker 代码可直接读取其中的嵌套字段。
+- `description` 应明确说明支持的 JSON 结构（如 GeoJSON 的 `Polygon`、`MultiPolygon`、`FeatureCollection`、`Circle`，或带 `radiusKm` 的 `Point`）以及坐标顺序要求。
 
 
 ---
