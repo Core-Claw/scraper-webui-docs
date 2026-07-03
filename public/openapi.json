@@ -104,10 +104,9 @@
             "description": "Result message",
             "type": "string"
           },
-          "run_id": {
-            "description": "Platform run result ID",
-            "format": "int64",
-            "type": "integer"
+          "run_slug": {
+            "description": "Platform run slug",
+            "type": "string"
           },
           "run_status": {
             "description": "Run status, such as running, succeeded, failed, or aborted",
@@ -120,7 +119,7 @@
           }
         },
         "required": [
-          "run_id",
+          "run_slug",
           "run_status"
         ],
         "type": "object"

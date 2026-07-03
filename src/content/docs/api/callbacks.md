@@ -38,14 +38,14 @@ Pass `callback_url` in run endpoints that accept a JSON request body, for exampl
 CoreClaw sends the callback as a `POST` request with a JSON body:
 
 ```json
-{"run_id":123456,"run_status":"succeeded","error_message":"","execution_start_timestamp":100,"execution_end_timestamp":200,"running_duration":100,"result_count":3,"result_message":"done"}
+{"run_slug":"run_slug","run_status":"succeeded","error_message":"","execution_start_timestamp":100,"execution_end_timestamp":200,"running_duration":100,"result_count":3,"result_message":"done"}
 ```
 
 ## Fields
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `run_id` | `integer` | Platform run result ID. |
+| `run_slug` | `string` | Platform run slug. |
 | `run_status` | `string` | Run status, for example `succeeded`. |
 | `error_message` | `string` | Error message when the run fails; empty when there is no error. |
 | `execution_start_timestamp` | `number` | Execution start timestamp. |

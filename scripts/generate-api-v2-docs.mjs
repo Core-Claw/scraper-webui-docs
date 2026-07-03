@@ -728,7 +728,7 @@ function indexPage(lang) {
 function callbacksPage(lang) {
     const zh = lang === 'zh'
     const example = {
-        run_id: 123456,
+        run_slug: 'run_slug',
         run_status: 'succeeded',
         error_message: '',
         execution_start_timestamp: 100,
@@ -764,7 +764,7 @@ function callbacksPage(lang) {
         '',
         '| 字段 | 类型 | 说明 |',
         '| --- | --- | --- |',
-        '| `run_id` | `integer` | 平台运行结果 ID。 |',
+        '| `run_slug` | `string` | 平台运行标识。 |',
         '| `run_status` | `string` | 运行状态，例如 `succeeded`。 |',
         '| `error_message` | `string` | 失败时的错误信息；没有错误时为空字符串。 |',
         '| `execution_start_timestamp` | `number` | 执行开始时间戳。 |',
@@ -805,7 +805,7 @@ function callbacksPage(lang) {
         '',
         '| Field | Type | Description |',
         '| --- | --- | --- |',
-        '| `run_id` | `integer` | Platform run result ID. |',
+        '| `run_slug` | `string` | Platform run slug. |',
         '| `run_status` | `string` | Run status, for example `succeeded`. |',
         '| `error_message` | `string` | Error message when the run fails; empty when there is no error. |',
         '| `execution_start_timestamp` | `number` | Execution start timestamp. |',

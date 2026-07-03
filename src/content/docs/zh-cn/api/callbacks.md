@@ -38,14 +38,14 @@ sidebar:
 CoreClaw 发送的回调请求使用 `POST` 方法，Body 为 JSON：
 
 ```json
-{"run_id":123456,"run_status":"succeeded","error_message":"","execution_start_timestamp":100,"execution_end_timestamp":200,"running_duration":100,"result_count":3,"result_message":"done"}
+{"run_slug":"run_slug","run_status":"succeeded","error_message":"","execution_start_timestamp":100,"execution_end_timestamp":200,"running_duration":100,"result_count":3,"result_message":"done"}
 ```
 
 ## 字段说明
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `run_id` | `integer` | 平台运行结果 ID。 |
+| `run_slug` | `string` | 平台运行标识。 |
 | `run_status` | `string` | 运行状态，例如 `succeeded`。 |
 | `error_message` | `string` | 失败时的错误信息；没有错误时为空字符串。 |
 | `execution_start_timestamp` | `number` | 执行开始时间戳。 |
