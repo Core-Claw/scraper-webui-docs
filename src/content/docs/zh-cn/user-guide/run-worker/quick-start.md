@@ -19,7 +19,7 @@ sidebar:
 
 - 从 [CoreClaw 官网首页](https://coreclaw.com)，点击导航栏中的 **商店**。
 
-![官网首页入口](@/assets/docs/55.png)
+![官网首页入口](@/assets/docs/1.png)
 
 - 从 [CoreClaw 控制台](https://console.coreclaw.com/)，点击侧边栏中的 **CoreClaw 商店**。
 

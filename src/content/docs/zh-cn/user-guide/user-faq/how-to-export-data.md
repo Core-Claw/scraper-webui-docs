@@ -39,7 +39,7 @@ sidebar:
 
 ## 通过 API 导出
 
-对于自动化数据检索，使用 API：
+对于自动化数据检索，可以使用 API。导出接口一次只处理一个 Worker Run，因此如果要批量导出很多次运行结果，需要自己编写脚本串起来完成。
 
 ### 获取运行结果
 
@@ -56,6 +56,27 @@ GET /api/v2/worker-runs/{runId}/result/export?format=csv&filter_keys=title%2Cpri
 **支持的格式：** `csv`、`json`
 
 启动或重跑 Worker 后，响应中的 `data.run_slug` 就是这里使用的 `runId`。详见[导出 API](/zh-cn/api/worker-runs/export/) 完整文档。
+
+### 批量导出多次运行
+
+如果每次 Task 执行都会生成一个独立 Run，目前没有一个接口可以一次性把所有 Run 合并导出。推荐写一个小脚本：先列出运行记录，再逐个导出、下载文件，最后在本地合并。
+
+推荐流程：
+
+1. 调用 `GET /api/v2/worker-runs?offset=0&limit=100` 分页获取 Run 列表。`limit` 最大为 `100`，如果有 12,000 个 Run，大约需要请求 120 页。
+2. 从列表响应中收集每个 Run ID。列表接口返回项里的 `slug` 字段就是后续导出接口要用的 `runId`。
+3. 对每个 `runId` 调用 `GET /api/v2/worker-runs/{runId}/result/export?format=csv` 或 `format=json`。
+4. 读取导出响应里的 `data.download_url`，再下载对应文件。
+5. 在本地合并下载后的文件。建议把 `runId` 放进文件名，或合并时加一列 `runId`，方便追溯每条数据来自哪次运行。
+
+大批量导出时，总耗时取决于接口响应时间和文件下载大小。以 12,000 个 Run 为例，顺序执行需要对每个 Run 做一次导出请求和一次文件下载，通常要预留 1-2 小时。使用 5-10 路并发可以明显缩短总耗时，但需要处理 `429 Too Many Requests` 限流：遇到限流时降低并发，并在短暂等待后重试。
+
+:::tip[批量导出检查清单]
+- 先用前 5 个 Run 做小批量验证，确认文件能正常下载，合并后的字段和编码也符合预期。
+- 每成功下载一个文件就记录进度。脚本中断后重新运行时，跳过已经下载过的文件。
+- 如果只需要部分字段，可以用 `filter_keys` 限制导出字段，例如 `filter_keys=title%2Cprice%2Curl`。
+- 最终要用电子表格打开时优先导出 CSV；后续由程序继续处理时优先导出 JSON。
+:::
 
 ## 数据大小注意事项
 

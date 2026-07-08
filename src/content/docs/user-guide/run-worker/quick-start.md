@@ -19,7 +19,7 @@ After signing in, you can access the Worker Store from two entry points:
 
 - From the [CoreClaw Official Website](https://coreclaw.com), click **Store** in the navigation bar.
 
-![Official Website Store entry](@/assets/docs/49.png)
+![Official Website Store entry](@/assets/docs/1.png)
 
 - From the [CoreClaw Console](https://console.coreclaw.com/), click **Store** in the sidebar.
 
