@@ -1,0 +1,109 @@
+---
+title: "Create Worker Task"
+description: "Create Worker Task API reference"
+sidebar:
+  order: 52
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `POST`
+
+**Endpoint:** `/api/v2/worker-tasks`
+
+**Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v2/worker-tasks" />
+
+## When to use this endpoint
+
+Use this endpoint to list saved Worker task templates.
+
+
+## Request Body
+
+Send the request body with `Content-Type: application/json`. Required/Optional describes each field; the Try it Request Body badge shows whether the body itself is required.
+
+| Field | Required | Type | Description |
+| --- | --- | --- | --- |
+| `description` | No | `string` | Task template description. Optional. |
+| `input` | Yes | `any` | Worker input payload. Worker form fields usually belong under `input.parameters.custom`; read the Worker input schema first and build this object from that schema. |
+| `schedule_day` | No | `integer` | Day of month for monthly schedules (1-31). |
+| `schedule_enabled` | No | `integer` | Schedule switch: 1 enabled, 0 disabled. |
+| `schedule_once_date` | No | `string` | Date for one-time schedules, `YYYY-MM-DD`. |
+| `schedule_time` | No | `string` | Schedule time of day, `HH:mm`. |
+| `schedule_type` | No | `integer` | Schedule type: 1=daily, 2=weekly, 3=monthly. |
+| `schedule_weekday` | No | `integer` | Day of week for weekly schedules (0-6, 0 = Sunday). |
+| `title` | Yes | `string` | Task template title, used for display and search. |
+| `version` | No | `string` | Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest` as an explicit version value. |
+| `worker_id` | Yes | `string` | Worker identifier. Accepts a Worker slug, or an `owner/name` path encoded as `owner~name`. |
+
+### JSON Example
+
+```json
+{
+  "description": "Scrape Google Maps business records on a schedule.",
+  "input": {
+    "parameters": {
+      "custom": {
+        "keywords": [
+          "coffee"
+        ],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
+  },
+  "schedule_day": 1,
+  "schedule_enabled": 0,
+  "schedule_once_date": "2026-08-01",
+  "schedule_time": "09:00",
+  "schedule_type": 1,
+  "schedule_weekday": 1,
+  "title": "Google Maps Scraper (Task)",
+  "worker_id": "coreclaw~google-maps-scraper"
+}
+```
+
+## Request Example
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"description":"Scrape Google Maps business records on a schedule.","input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"schedule_day":1,"schedule_enabled":0,"schedule_once_date":"2026-08-01","schedule_time":"09:00","schedule_type":1,"schedule_weekday":1,"title":"Google Maps Scraper (Task)","worker_id":"coreclaw~google-maps-scraper"}'
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {
+    "slug": "demo-task"
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- `worker_id` accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.
+- Read the Worker input schema before building `input`; form fields belong under `input.parameters.custom`. Use `GET /api/v2/workers/{workerId}/input-schema` to read the schema.
+- Schedule fields: `schedule_enabled` 1 enabled / 0 disabled; `schedule_type` 1=daily, 2=weekly, 3=monthly; `schedule_time` is `HH:mm`; `schedule_once_date` is `YYYY-MM-DD`. Omit all schedule fields when scheduling is not needed.
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

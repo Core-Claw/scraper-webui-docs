@@ -29,7 +29,7 @@ Use this endpoint to run a saved Worker task template.
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `workerTaskId` | Yes | `string` | Saved Worker task template slug. |
+| `workerTaskId` | Yes | `string` | Saved Worker task template slug. Get it from the `data.list[].slug` field of `GET /api/v2/worker-tasks`. |
 
 ## Request Body
 
@@ -86,6 +86,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 - When running a saved task, the request body controls execution mode, callback, and synchronous result window; the task input comes from the saved Worker task configuration.
+- Use `limit` and `offset` only to control the synchronous result window; they do not change the full result set produced by the task.
 - When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).
 
 ## HTTP Responses

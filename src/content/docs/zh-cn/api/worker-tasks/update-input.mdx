@@ -1,0 +1,96 @@
+---
+title: "更新 Worker 任务输入"
+description: "更新 Worker 任务输入 API 参考"
+sidebar:
+  order: 57
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `PUT`
+
+**端点:** `/api/v2/worker-tasks/{workerTaskId}/input`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="PUT" path="/api/v2/worker-tasks/{workerTaskId}/input" />
+
+## 什么时候使用这个接口
+
+用于更新任务模板的输入参数，可同时切换 Worker 版本。
+
+## 标识符说明
+
+- `workerTaskId` 是已保存任务模板的 slug。
+
+## 路径参数
+
+| 参数 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `workerTaskId` | 是 | `string` | 已保存 Worker 任务模板的 slug，可从 `GET /api/v2/worker-tasks` 响应的 `data.list[].slug` 获取。 |
+
+## 请求体
+
+使用 `Content-Type: application/json` 发送请求体。表格中的必填/选填描述字段本身是否必须提供；整个请求体是否必填以在线试用区的 Request Body 标记为准。
+
+| 字段 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `input` | 是 | `any` | Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。 |
+| `version` | 否 | `string` | 可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。 |
+
+### JSON 示例
+
+```json
+{
+  "input": {
+    "parameters": {
+      "custom": {
+        "keywords": [
+          "coffee"
+        ],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
+  }
+}
+```
+
+## 请求示例
+
+```bash
+curl -X PUT "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_ID/input" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}}}'
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 注意事项
+
+- API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+- `input` 应按目标 Worker 的输入 schema 构造，表单字段放在 `input.parameters.custom` 下。
+- `version` 可选，省略时保持当前版本；如需切换版本请传入具体可用版本号。
+
+## HTTP 响应
+
+| HTTP 状态 | 应用代码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | 请求成功。 |
+| `400` | `11000` | 请求参数不合法。 |
+| `401` | `12001` | 认证缺失或无效。 |
+| `404` | `11004` | 目标资源不存在。 |
+| `422` | `11000` | 请求语义或字段校验未通过。 |
+| `429` | `13000` | 请求过于频繁。 |
+| `500` | `10000` | 服务端内部错误。 |

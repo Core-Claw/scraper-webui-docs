@@ -1,6 +1,64 @@
 {
   "components": {
     "schemas": {
+      "CreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "description": "Task description",
+            "type": "string"
+          },
+          "input": {
+            "description": "Task input parameters"
+          },
+          "schedule_day": {
+            "description": "Day of month for monthly schedule",
+            "format": "int64",
+            "type": "integer"
+          },
+          "schedule_enabled": {
+            "description": "Schedule switch: 0 disabled, 1 enabled",
+            "format": "int64",
+            "type": "integer"
+          },
+          "schedule_once_date": {
+            "description": "Once schedule date in YYYY-MM-DD",
+            "type": "string"
+          },
+          "schedule_time": {
+            "description": "Schedule time in HH:mm",
+            "type": "string"
+          },
+          "schedule_type": {
+            "description": "Schedule type: 1 daily, 2 weekly, 3 monthly, 4 once",
+            "format": "int64",
+            "type": "integer"
+          },
+          "schedule_weekday": {
+            "description": "Weekday for weekly schedule: 1 Monday, 7 Sunday",
+            "format": "int64",
+            "type": "integer"
+          },
+          "title": {
+            "description": "Task title",
+            "type": "string"
+          },
+          "version": {
+            "description": "Worker version. Defaults to current worker version.",
+            "type": "string"
+          },
+          "worker_id": {
+            "description": "Worker slug or path. Use owner~name for path values.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "worker_id",
+          "title",
+          "input"
+        ],
+        "type": "object"
+      },
       "Envelope": {
         "additionalProperties": false,
         "properties": {
@@ -75,52 +133,6 @@
         "required": [
           "code",
           "message"
-        ],
-        "type": "object"
-      },
-      "PlatformCallbackRequest": {
-        "additionalProperties": false,
-        "properties": {
-          "error_message": {
-            "description": "Run error message",
-            "type": "string"
-          },
-          "execution_end_timestamp": {
-            "description": "Execution end timestamp",
-            "format": "int64",
-            "type": "integer"
-          },
-          "execution_start_timestamp": {
-            "description": "Execution start timestamp",
-            "format": "int64",
-            "type": "integer"
-          },
-          "result_count": {
-            "description": "Result count",
-            "format": "int64",
-            "type": "integer"
-          },
-          "result_message": {
-            "description": "Result message",
-            "type": "string"
-          },
-          "run_slug": {
-            "description": "Platform run slug",
-            "type": "string"
-          },
-          "run_status": {
-            "description": "Run status, such as running, succeeded, failed, or aborted",
-            "type": "string"
-          },
-          "running_duration": {
-            "description": "Running duration in seconds",
-            "format": "int64",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "run_slug",
-          "run_status"
         ],
         "type": "object"
       },
@@ -213,6 +225,64 @@
           },
           "version": {
             "description": "Script version",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "input": {
+            "description": "Task input parameters"
+          },
+          "version": {
+            "description": "Worker version. Omit to keep current version.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "type": "object"
+      },
+      "UpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "description": "Task description. Omit to keep current description.",
+            "type": "string"
+          },
+          "schedule_day": {
+            "description": "Day of month for monthly schedule",
+            "format": "int64",
+            "type": "integer"
+          },
+          "schedule_enabled": {
+            "description": "Schedule switch: 0 disabled, 1 enabled. Omit to keep current schedule.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "schedule_once_date": {
+            "description": "Once schedule date in YYYY-MM-DD",
+            "type": "string"
+          },
+          "schedule_time": {
+            "description": "Schedule time in HH:mm",
+            "type": "string"
+          },
+          "schedule_type": {
+            "description": "Schedule type: 1 daily, 2 weekly, 3 monthly, 4 once",
+            "format": "int64",
+            "type": "integer"
+          },
+          "schedule_weekday": {
+            "description": "Weekday for weekly schedule: 1 Monday, 7 Sunday",
+            "format": "int64",
+            "type": "integer"
+          },
+          "title": {
+            "description": "Task title. Omit to keep current title.",
             "type": "string"
           }
         },
@@ -637,8 +707,7 @@
                       "code": 0,
                       "data": {
                         "balance": "100.00",
-                        "traffic": 1048576,
-                        "traffic_expiration_at": 1782091200
+                        "balance_expiration_at": 1782091200
                       },
                       "message": "success",
                       "request_id": "req-123"
@@ -1170,16 +1239,6 @@
     "/api/v2/worker-runs/last/abort": {
       "post": {
         "operationId": "abortLastWorkerRun",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RerunRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "content": {
@@ -1260,26 +1319,6 @@
               }
             },
             "description": "Not Found"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "examples": {
-                  "error": {
-                    "summary": "Bad Request",
-                    "value": {
-                      "code": 11000,
-                      "message": "invalid argument",
-                      "request_id": "req-123"
-                    }
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorEnvelope"
-                }
-              }
-            },
-            "description": "Unprocessable Entity"
           },
           "429": {
             "content": {
@@ -1732,7 +1771,7 @@
                             "type": "string"
                           },
                           "run_status": {
-                            "description": "Run status",
+                            "description": "Run status matching worker run detail",
                             "type": "string"
                           },
                           "running_duration": {
@@ -2758,7 +2797,7 @@
                             "type": "string"
                           },
                           "run_status": {
-                            "description": "Run status",
+                            "description": "Run status matching worker run detail",
                             "type": "string"
                           },
                           "running_duration": {
@@ -3627,6 +3666,1081 @@
         "tags": [
           "worker-tasks"
         ]
+      },
+      "post": {
+        "operationId": "createWorkerTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "slug": "demo-task"
+                      },
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Create worker task",
+        "tags": [
+          "worker-tasks"
+        ]
+      }
+    },
+    "/api/v2/worker-tasks/{workerTaskId}": {
+      "delete": {
+        "operationId": "deleteWorkerTask",
+        "parameters": [
+          {
+            "description": "Worker task slug",
+            "in": "path",
+            "name": "workerTaskId",
+            "required": true,
+            "schema": {
+              "description": "Worker task slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Delete worker task",
+        "tags": [
+          "worker-tasks"
+        ]
+      },
+      "get": {
+        "operationId": "getWorkerTask",
+        "parameters": [
+          {
+            "description": "Worker task slug",
+            "in": "path",
+            "name": "workerTaskId",
+            "required": true,
+            "schema": {
+              "description": "Worker task slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "description": "Daily demo task",
+                        "id": 2001,
+                        "schedule_enabled": 1,
+                        "schedule_time": "09:30",
+                        "schedule_type": 1,
+                        "slug": "demo-task",
+                        "title": "Demo Task",
+                        "version": "latest",
+                        "worker_path": "owner~demo-worker",
+                        "worker_slug": "demo-worker"
+                      },
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get worker task",
+        "tags": [
+          "worker-tasks"
+        ]
+      },
+      "put": {
+        "operationId": "updateWorkerTask",
+        "parameters": [
+          {
+            "description": "Worker task slug",
+            "in": "path",
+            "name": "workerTaskId",
+            "required": true,
+            "schema": {
+              "description": "Worker task slug",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Update worker task",
+        "tags": [
+          "worker-tasks"
+        ]
+      }
+    },
+    "/api/v2/worker-tasks/{workerTaskId}/input": {
+      "get": {
+        "operationId": "getWorkerTaskInput",
+        "parameters": [
+          {
+            "description": "Worker task slug",
+            "in": "path",
+            "name": "workerTaskId",
+            "required": true,
+            "schema": {
+              "description": "Worker task slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "input": {
+                          "keyword": "coffee"
+                        },
+                        "version": "latest"
+                      },
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get worker task input",
+        "tags": [
+          "worker-tasks"
+        ]
+      },
+      "put": {
+        "operationId": "updateWorkerTaskInput",
+        "parameters": [
+          {
+            "description": "Worker task slug",
+            "in": "path",
+            "name": "workerTaskId",
+            "required": true,
+            "schema": {
+              "description": "Worker task slug",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Update worker task input",
+        "tags": [
+          "worker-tasks"
+        ]
       }
     },
     "/api/v2/worker-tasks/{workerTaskId}/runs": {
@@ -3684,7 +4798,7 @@
                             "type": "string"
                           },
                           "run_status": {
-                            "description": "Run status",
+                            "description": "Run status matching worker run detail",
                             "type": "string"
                           },
                           "running_duration": {
@@ -4553,7 +5667,7 @@
                             "type": "string"
                           },
                           "run_status": {
-                            "description": "Run status",
+                            "description": "Run status matching worker run detail",
                             "type": "string"
                           },
                           "running_duration": {
@@ -5018,16 +6132,6 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RerunRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "content": {
@@ -5622,7 +6726,7 @@
                             "type": "string"
                           },
                           "run_status": {
-                            "description": "Run status",
+                            "description": "Run status matching worker run detail",
                             "type": "string"
                           },
                           "running_duration": {

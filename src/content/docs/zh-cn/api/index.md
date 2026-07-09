@@ -23,8 +23,8 @@ https://openapi.coreclaw.com
 
 | 方式 | 示例 | 说明 |
 | --- | --- | --- |
-| Bearer token | `Authorization: Bearer YOUR_API_KEY` | 推荐方式，适合新的服务端集成 |
-| 旧版请求头 | `api-key: YOUR_API_KEY` | 兼容 v1 集成 |
+| Bearer token | `Authorization: Bearer YOUR_API_KEY` | 推荐方式，适合新的服务端集成，也适用于浏览器 playground |
+| 旧版请求头 | `api-key: YOUR_API_KEY` | 兼容 v1 集成；**仅供服务端使用，浏览器 playground 因 CORS 预检限制无法使用，请改用 Bearer 或 query token** |
 | Query token | `?token=YOUR_API_KEY` | 仅在无法设置请求头时使用，避免把带 token 的 URL 写入日志 |
 
 公开接口不需要 token，例如代理区域列表和商店 Worker 查询。
@@ -62,22 +62,28 @@ https://openapi.coreclaw.com
 | 7 | `POST` | `/api/v2/workers/{workerId}/runs` | [运行 Worker](/zh-cn/api/workers/run/) |
 | 8 | `GET` | `/api/v2/worker-tasks` | [查询 Worker 任务](/zh-cn/api/worker-tasks/list/) |
 | 9 | `POST` | `/api/v2/worker-tasks/{workerTaskId}/runs` | [运行 Worker 任务](/zh-cn/api/worker-tasks/run/) |
-| 10 | `GET` | `/api/v2/worker-runs` | [查询 Worker 运行记录](/zh-cn/api/worker-runs/list/) |
-| 11 | `GET` | `/api/v2/worker-runs/last` | [获取最近一次运行](/zh-cn/api/worker-runs/last-detail/) |
-| 12 | `POST` | `/api/v2/worker-runs/last/abort` | [中止最近一次运行](/zh-cn/api/worker-runs/last-abort/) |
-| 13 | `GET` | `/api/v2/worker-runs/last/export` | [导出最近一次运行结果](/zh-cn/api/worker-runs/last-export/) |
-| 14 | `GET` | `/api/v2/worker-runs/last/log` | [获取最近一次运行日志](/zh-cn/api/worker-runs/last-log/) |
-| 15 | `POST` | `/api/v2/worker-runs/last/rerun` | [重跑最近一次运行](/zh-cn/api/worker-runs/last-rerun/) |
-| 16 | `GET` | `/api/v2/worker-runs/last/result` | [查询最近一次运行结果](/zh-cn/api/worker-runs/last-result/) |
-| 17 | `GET` | `/api/v2/worker-runs/{runId}` | [获取运行详情](/zh-cn/api/worker-runs/detail/) |
-| 18 | `POST` | `/api/v2/worker-runs/{runId}/abort` | [中止运行](/zh-cn/api/worker-runs/abort/) |
-| 19 | `GET` | `/api/v2/worker-runs/{runId}/log` | [获取运行日志](/zh-cn/api/worker-runs/log/) |
-| 20 | `POST` | `/api/v2/worker-runs/{runId}/rerun` | [重跑运行](/zh-cn/api/worker-runs/rerun/) |
-| 21 | `GET` | `/api/v2/worker-runs/{runId}/result` | [查询运行结果](/zh-cn/api/worker-runs/result/) |
-| 22 | `GET` | `/api/v2/worker-runs/{runId}/result/export` | [导出运行结果](/zh-cn/api/worker-runs/export/) |
-| 23 | `GET` | `/api/v2/workers/{workerId}/runs/last` | [获取某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-detail/) |
-| 24 | `POST` | `/api/v2/workers/{workerId}/runs/last/abort` | [中止某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-abort/) |
-| 25 | `GET` | `/api/v2/workers/{workerId}/runs/last/export` | [导出某 Worker 最近一次运行结果](/zh-cn/api/worker-runs/worker-last-export/) |
-| 26 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [获取某 Worker 最近一次运行日志](/zh-cn/api/worker-runs/worker-last-log/) |
-| 27 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [重跑某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-rerun/) |
-| 28 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [查询某 Worker 最近一次运行结果](/zh-cn/api/worker-runs/worker-last-result/) |
+| 10 | `POST` | `/api/v2/worker-tasks` | [创建 Worker 任务](/zh-cn/api/worker-tasks/create/) |
+| 11 | `GET` | `/api/v2/worker-tasks/{workerTaskId}` | [获取 Worker 任务](/zh-cn/api/worker-tasks/get/) |
+| 12 | `PUT` | `/api/v2/worker-tasks/{workerTaskId}` | [更新 Worker 任务](/zh-cn/api/worker-tasks/update/) |
+| 13 | `DELETE` | `/api/v2/worker-tasks/{workerTaskId}` | [删除 Worker 任务](/zh-cn/api/worker-tasks/delete/) |
+| 14 | `GET` | `/api/v2/worker-tasks/{workerTaskId}/input` | [获取 Worker 任务输入](/zh-cn/api/worker-tasks/get-input/) |
+| 15 | `PUT` | `/api/v2/worker-tasks/{workerTaskId}/input` | [更新 Worker 任务输入](/zh-cn/api/worker-tasks/update-input/) |
+| 16 | `GET` | `/api/v2/worker-runs` | [查询 Worker 运行记录](/zh-cn/api/worker-runs/list/) |
+| 17 | `GET` | `/api/v2/worker-runs/last` | [获取最近一次运行](/zh-cn/api/worker-runs/last-detail/) |
+| 18 | `POST` | `/api/v2/worker-runs/last/abort` | [中止最近一次运行](/zh-cn/api/worker-runs/last-abort/) |
+| 19 | `GET` | `/api/v2/worker-runs/last/export` | [导出最近一次运行结果](/zh-cn/api/worker-runs/last-export/) |
+| 20 | `GET` | `/api/v2/worker-runs/last/log` | [获取最近一次运行日志](/zh-cn/api/worker-runs/last-log/) |
+| 21 | `POST` | `/api/v2/worker-runs/last/rerun` | [重跑最近一次运行](/zh-cn/api/worker-runs/last-rerun/) |
+| 22 | `GET` | `/api/v2/worker-runs/last/result` | [查询最近一次运行结果](/zh-cn/api/worker-runs/last-result/) |
+| 23 | `GET` | `/api/v2/worker-runs/{runId}` | [获取运行详情](/zh-cn/api/worker-runs/detail/) |
+| 24 | `POST` | `/api/v2/worker-runs/{runId}/abort` | [中止运行](/zh-cn/api/worker-runs/abort/) |
+| 25 | `GET` | `/api/v2/worker-runs/{runId}/log` | [获取运行日志](/zh-cn/api/worker-runs/log/) |
+| 26 | `POST` | `/api/v2/worker-runs/{runId}/rerun` | [重跑运行](/zh-cn/api/worker-runs/rerun/) |
+| 27 | `GET` | `/api/v2/worker-runs/{runId}/result` | [查询运行结果](/zh-cn/api/worker-runs/result/) |
+| 28 | `GET` | `/api/v2/worker-runs/{runId}/result/export` | [导出运行结果](/zh-cn/api/worker-runs/export/) |
+| 29 | `GET` | `/api/v2/workers/{workerId}/runs/last` | [获取某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-detail/) |
+| 30 | `POST` | `/api/v2/workers/{workerId}/runs/last/abort` | [中止某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-abort/) |
+| 31 | `GET` | `/api/v2/workers/{workerId}/runs/last/export` | [导出某 Worker 最近一次运行结果](/zh-cn/api/worker-runs/worker-last-export/) |
+| 32 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [获取某 Worker 最近一次运行日志](/zh-cn/api/worker-runs/worker-last-log/) |
+| 33 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [重跑某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-rerun/) |
+| 34 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [查询某 Worker 最近一次运行结果](/zh-cn/api/worker-runs/worker-last-result/) |

@@ -42,10 +42,8 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 ## 3. 选择执行模式
 
 - `is_async: true` 表示异步提交，不等待执行结果。响应会返回 `data.run_slug`，后续异步运行使用 `runId` 轮询详情、日志和结果。
-- `is_async: false` 表示等待执行结果，相当于 run-and-wait，会等待运行完成。`offset` / `limit` 只控制同步响应中附带的结果窗口，不影响完整结果集。**同步模式最多等待 5 分钟；超过 5 分钟仍未完成时，请求会先返回，需要改用运行查询接口轮询状态。**
+- `is_async: false` 表示等待执行结果，相当于 run-and-wait，会等待运行完成。`offset` / `limit` 只控制同步响应中附带的结果窗口，不影响完整结果集。
 - `callback_url` 可用于接收状态变化或结束通知，但回调不能替代结果接口。需要完整数据时仍应按 `runId` 查询或导出。
-
-> **⚠️ 同步等待上限：5 分钟。** 当 `is_async: false` 时，平台**最多等待 5 分钟**。若运行在 5 分钟内未完成，请求仍会返回，运行会在后台继续执行——此时必须改用运行**查询接口**按 `runId` 轮询状态、日志和结果。预计运行可能超过 5 分钟时，建议使用 `is_async: true`。
 
 ### 直接运行 Worker
 
@@ -66,6 +64,17 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_
 ```
 
 响应中的 `data.run_slug` 就是后续接口使用的 `runId`。
+
+### 管理已保存的任务模板
+
+除了在平台上手动创建任务，也可以用 API 管理任务模板：用 `POST /api/v2/worker-tasks` 创建，`GET /api/v2/worker-tasks/{workerTaskId}` 读取，`PUT` 更新标题/描述/调度，`PUT .../input` 更新输入参数，`DELETE` 删除。这样可以在服务端复用同一套输入和调度配置，而不必每次重发 `input`。
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"worker_id":"coreclaw~google-maps-scraper","title":"Google Maps Scraper (Task)","input":{"parameters":{"custom":{"keywords":[{"keyword":"HVAC Contractors"}],"base_location":"New York,USA","max_results":1}}}}'
+```
 
 ## 4. 异步运行使用 `runId` 轮询
 

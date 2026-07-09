@@ -42,10 +42,8 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 ## 3. Choose the execution mode
 
 - `is_async: true` submits asynchronously and does not wait for execution results. The response returns `data.run_slug`; Poll by `runId` when the run is asynchronous.
-- `is_async: false` waits for completion, equivalent to run-and-wait behavior. `offset` / `limit` only control the result window included in the synchronous response; they do not change the full result set. **Sync mode waits at most 5 minutes; if the run has not finished by then, the request returns and you must poll status via the run query endpoint.**
+- `is_async: false` waits for completion, equivalent to run-and-wait behavior. `offset` / `limit` only control the result window included in the synchronous response; they do not change the full result set.
 - `callback_url` can receive status-change or completion notifications, but callbacks do not replace result endpoints. Use `runId` to read or export complete data.
-
-> **⚠️ Sync wait limit: 5 minutes.** When `is_async: false`, the platform waits for the run for **up to 5 minutes at most**. If the run has not finished within 5 minutes, the request returns anyway and the run keeps executing in the background — you must then use the run **query endpoint** to poll status, logs, and results by `runId`. For runs that may exceed 5 minutes, prefer `is_async: true`.
 
 ### Direct Worker run
 
@@ -66,6 +64,17 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_
 ```
 
 The response `data.run_slug` is the `runId` used by follow-up endpoints.
+
+### Manage saved task templates
+
+Besides creating tasks manually on the platform, you can manage task templates through the API: create with `POST /api/v2/worker-tasks`, read with `GET /api/v2/worker-tasks/{workerTaskId}`, update title/description/schedule with `PUT`, update input parameters with `PUT .../input`, and delete with `DELETE`. This lets you reuse the same input and schedule configuration from the server side instead of resending `input` every time.
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"worker_id":"coreclaw~google-maps-scraper","title":"Google Maps Scraper (Task)","input":{"parameters":{"custom":{"keywords":[{"keyword":"HVAC Contractors"}],"base_location":"New York,USA","max_results":1}}}}'
+```
 
 ## 4. Poll by `runId` when the run is asynchronous
 

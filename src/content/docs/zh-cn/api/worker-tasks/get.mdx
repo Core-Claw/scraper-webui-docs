@@ -1,40 +1,40 @@
 ---
-title: "中止某 Worker 最近一次运行"
-description: "中止某 Worker 最近一次运行 API 参考"
+title: "获取 Worker 任务"
+description: "获取 Worker 任务 API 参考"
 sidebar:
-  order: 81
+  order: 53
 ---
 
 import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
-**方法:** `POST`
+**方法:** `GET`
 
-**端点:** `/api/v2/workers/{workerId}/runs/last/abort`
+**端点:** `/api/v2/worker-tasks/{workerTaskId}`
 
 **认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
 
 ## 在线试用
 
-<ApiPlayground method="POST" path="/api/v2/workers/{workerId}/runs/last/abort" />
+<ApiPlayground method="GET" path="/api/v2/worker-tasks/{workerTaskId}" />
 
 ## 什么时候使用这个接口
 
-用于中止仍可中止的运行。调用前应确认目标运行。
+用于读取某个已保存任务模板的详情。
 
 ## 标识符说明
 
-- `workerId` / `worker_id` 支持 Worker slug，也支持把路径 `owner/name` 写成 `owner~name`。
+- `workerTaskId` 是已保存任务模板的 slug。
 
 ## 路径参数
 
 | 参数 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `workerId` | 是 | `string` | Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。 |
+| `workerTaskId` | 是 | `string` | 已保存 Worker 任务模板的 slug，可从 `GET /api/v2/worker-tasks` 响应的 `data.list[].slug` 获取。 |
 
 ## 请求示例
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/last/abort" \
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_ID" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -43,6 +43,18 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/la
 ```json
 {
   "code": 0,
+  "data": {
+    "description": "Daily demo task",
+    "id": 2001,
+    "schedule_enabled": 1,
+    "schedule_time": "09:30",
+    "schedule_type": 1,
+    "slug": "demo-task",
+    "title": "Demo Task",
+    "version": "latest",
+    "worker_path": "owner~demo-worker",
+    "worker_slug": "demo-worker"
+  },
   "message": "success",
   "request_id": "req-123"
 }
@@ -51,8 +63,6 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/la
 ## 注意事项
 
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
-- 这是 Worker 级最近运行接口，`workerId` 是必填路径参数；它只会作用于该 Worker 范围内最近一次运行。
-- `last` 表示当前筛选范围内最近一次运行；如需确定目标，请使用具体 `runId` 接口。
 
 ## HTTP 响应
 

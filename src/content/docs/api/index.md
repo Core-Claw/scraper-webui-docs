@@ -23,8 +23,8 @@ Authenticated endpoints support three token transport modes. Prefer Bearer token
 
 | Mode | Example | Notes |
 | --- | --- | --- |
-| Bearer token | `Authorization: Bearer YOUR_API_KEY` | Recommended for new server-side integrations |
-| Legacy header | `api-key: YOUR_API_KEY` | Compatible with v1 integrations |
+| Bearer token | `Authorization: Bearer YOUR_API_KEY` | Recommended for new server-side integrations; also works in the browser playground |
+| Legacy header | `api-key: YOUR_API_KEY` | Compatible with v1 integrations; **server-side only — the browser playground cannot use it due to a CORS preflight restriction; use Bearer or query token instead** |
 | Query token | `?token=YOUR_API_KEY` | Use only when headers are unavailable; avoid logging tokenized URLs |
 
 Public endpoints do not require a token, including proxy region lookup and Store Worker search.
@@ -62,22 +62,28 @@ Most JSON responses include `code`, `message`, `request_id`, and `data`. HTTP st
 | 7 | `POST` | `/api/v2/workers/{workerId}/runs` | [Run Worker](/api/workers/run/) |
 | 8 | `GET` | `/api/v2/worker-tasks` | [List Worker Tasks](/api/worker-tasks/list/) |
 | 9 | `POST` | `/api/v2/worker-tasks/{workerTaskId}/runs` | [Run Worker Task](/api/worker-tasks/run/) |
-| 10 | `GET` | `/api/v2/worker-runs` | [List Worker Runs](/api/worker-runs/list/) |
-| 11 | `GET` | `/api/v2/worker-runs/last` | [Get Last Worker Run](/api/worker-runs/last-detail/) |
-| 12 | `POST` | `/api/v2/worker-runs/last/abort` | [Abort Last Worker Run](/api/worker-runs/last-abort/) |
-| 13 | `GET` | `/api/v2/worker-runs/last/export` | [Export Last Worker Run Results](/api/worker-runs/last-export/) |
-| 14 | `GET` | `/api/v2/worker-runs/last/log` | [Get Last Worker Run Log](/api/worker-runs/last-log/) |
-| 15 | `POST` | `/api/v2/worker-runs/last/rerun` | [Rerun Last Worker Run](/api/worker-runs/last-rerun/) |
-| 16 | `GET` | `/api/v2/worker-runs/last/result` | [List Last Worker Run Results](/api/worker-runs/last-result/) |
-| 17 | `GET` | `/api/v2/worker-runs/{runId}` | [Get Worker Run Detail](/api/worker-runs/detail/) |
-| 18 | `POST` | `/api/v2/worker-runs/{runId}/abort` | [Abort Worker Run](/api/worker-runs/abort/) |
-| 19 | `GET` | `/api/v2/worker-runs/{runId}/log` | [Get Worker Run Log](/api/worker-runs/log/) |
-| 20 | `POST` | `/api/v2/worker-runs/{runId}/rerun` | [Rerun Worker Run](/api/worker-runs/rerun/) |
-| 21 | `GET` | `/api/v2/worker-runs/{runId}/result` | [List Worker Run Results](/api/worker-runs/result/) |
-| 22 | `GET` | `/api/v2/worker-runs/{runId}/result/export` | [Export Worker Run Results](/api/worker-runs/export/) |
-| 23 | `GET` | `/api/v2/workers/{workerId}/runs/last` | [Get Worker Last Run](/api/worker-runs/worker-last-detail/) |
-| 24 | `POST` | `/api/v2/workers/{workerId}/runs/last/abort` | [Abort Worker Last Run](/api/worker-runs/worker-last-abort/) |
-| 25 | `GET` | `/api/v2/workers/{workerId}/runs/last/export` | [Export Worker Last Run Results](/api/worker-runs/worker-last-export/) |
-| 26 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [Get Worker Last Run Log](/api/worker-runs/worker-last-log/) |
-| 27 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [Rerun Worker Last Run](/api/worker-runs/worker-last-rerun/) |
-| 28 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [List Worker Last Run Results](/api/worker-runs/worker-last-result/) |
+| 10 | `POST` | `/api/v2/worker-tasks` | [Create Worker Task](/api/worker-tasks/create/) |
+| 11 | `GET` | `/api/v2/worker-tasks/{workerTaskId}` | [Get Worker Task](/api/worker-tasks/get/) |
+| 12 | `PUT` | `/api/v2/worker-tasks/{workerTaskId}` | [Update Worker Task](/api/worker-tasks/update/) |
+| 13 | `DELETE` | `/api/v2/worker-tasks/{workerTaskId}` | [Delete Worker Task](/api/worker-tasks/delete/) |
+| 14 | `GET` | `/api/v2/worker-tasks/{workerTaskId}/input` | [Get Worker Task Input](/api/worker-tasks/get-input/) |
+| 15 | `PUT` | `/api/v2/worker-tasks/{workerTaskId}/input` | [Update Worker Task Input](/api/worker-tasks/update-input/) |
+| 16 | `GET` | `/api/v2/worker-runs` | [List Worker Runs](/api/worker-runs/list/) |
+| 17 | `GET` | `/api/v2/worker-runs/last` | [Get Last Worker Run](/api/worker-runs/last-detail/) |
+| 18 | `POST` | `/api/v2/worker-runs/last/abort` | [Abort Last Worker Run](/api/worker-runs/last-abort/) |
+| 19 | `GET` | `/api/v2/worker-runs/last/export` | [Export Last Worker Run Results](/api/worker-runs/last-export/) |
+| 20 | `GET` | `/api/v2/worker-runs/last/log` | [Get Last Worker Run Log](/api/worker-runs/last-log/) |
+| 21 | `POST` | `/api/v2/worker-runs/last/rerun` | [Rerun Last Worker Run](/api/worker-runs/last-rerun/) |
+| 22 | `GET` | `/api/v2/worker-runs/last/result` | [List Last Worker Run Results](/api/worker-runs/last-result/) |
+| 23 | `GET` | `/api/v2/worker-runs/{runId}` | [Get Worker Run Detail](/api/worker-runs/detail/) |
+| 24 | `POST` | `/api/v2/worker-runs/{runId}/abort` | [Abort Worker Run](/api/worker-runs/abort/) |
+| 25 | `GET` | `/api/v2/worker-runs/{runId}/log` | [Get Worker Run Log](/api/worker-runs/log/) |
+| 26 | `POST` | `/api/v2/worker-runs/{runId}/rerun` | [Rerun Worker Run](/api/worker-runs/rerun/) |
+| 27 | `GET` | `/api/v2/worker-runs/{runId}/result` | [List Worker Run Results](/api/worker-runs/result/) |
+| 28 | `GET` | `/api/v2/worker-runs/{runId}/result/export` | [Export Worker Run Results](/api/worker-runs/export/) |
+| 29 | `GET` | `/api/v2/workers/{workerId}/runs/last` | [Get Worker Last Run](/api/worker-runs/worker-last-detail/) |
+| 30 | `POST` | `/api/v2/workers/{workerId}/runs/last/abort` | [Abort Worker Last Run](/api/worker-runs/worker-last-abort/) |
+| 31 | `GET` | `/api/v2/workers/{workerId}/runs/last/export` | [Export Worker Last Run Results](/api/worker-runs/worker-last-export/) |
+| 32 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [Get Worker Last Run Log](/api/worker-runs/worker-last-log/) |
+| 33 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [Rerun Worker Last Run](/api/worker-runs/worker-last-rerun/) |
+| 34 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [List Worker Last Run Results](/api/worker-runs/worker-last-result/) |

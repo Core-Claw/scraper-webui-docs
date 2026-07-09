@@ -1,0 +1,109 @@
+---
+title: "创建 Worker 任务"
+description: "创建 Worker 任务 API 参考"
+sidebar:
+  order: 52
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `POST`
+
+**端点:** `/api/v2/worker-tasks`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v2/worker-tasks" />
+
+## 什么时候使用这个接口
+
+用于查询已保存的 Worker 任务模板。
+
+
+## 请求体
+
+使用 `Content-Type: application/json` 发送请求体。表格中的必填/选填描述字段本身是否必须提供；整个请求体是否必填以在线试用区的 Request Body 标记为准。
+
+| 字段 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `description` | 否 | `string` | 任务模板描述，可选。 |
+| `input` | 是 | `any` | Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。 |
+| `schedule_day` | 否 | `integer` | 每月调度时的日期（1-31）。 |
+| `schedule_enabled` | 否 | `integer` | 调度开关：1 启用，0 关闭。 |
+| `schedule_once_date` | 否 | `string` | 单次调度的日期，格式 `YYYY-MM-DD`。 |
+| `schedule_time` | 否 | `string` | 调度执行时间，格式 `HH:mm`。 |
+| `schedule_type` | 否 | `integer` | 调度类型：1=每天，2=每周，3=每月。 |
+| `schedule_weekday` | 否 | `integer` | 每周调度时的星期几（0-6，0 为周日）。 |
+| `title` | 是 | `string` | 任务模板标题，用于展示和搜索。 |
+| `version` | 否 | `string` | 可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。 |
+| `worker_id` | 是 | `string` | Worker 标识。接受 Worker slug，也支持把 `owner/name` 写成 `owner~name`。 |
+
+### JSON 示例
+
+```json
+{
+  "description": "Scrape Google Maps business records on a schedule.",
+  "input": {
+    "parameters": {
+      "custom": {
+        "keywords": [
+          "coffee"
+        ],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
+  },
+  "schedule_day": 1,
+  "schedule_enabled": 0,
+  "schedule_once_date": "2026-08-01",
+  "schedule_time": "09:00",
+  "schedule_type": 1,
+  "schedule_weekday": 1,
+  "title": "Google Maps Scraper (Task)",
+  "worker_id": "coreclaw~google-maps-scraper"
+}
+```
+
+## 请求示例
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"description":"Scrape Google Maps business records on a schedule.","input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"schedule_day":1,"schedule_enabled":0,"schedule_once_date":"2026-08-01","schedule_time":"09:00","schedule_type":1,"schedule_weekday":1,"title":"Google Maps Scraper (Task)","worker_id":"coreclaw~google-maps-scraper"}'
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "data": {
+    "slug": "demo-task"
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 注意事项
+
+- API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+- `worker_id` 接受 Worker slug，也支持把 `owner/name` 写成 `owner~name`。
+- 应先读取 Worker 输入 schema 再构造 `input`，表单字段放在 `input.parameters.custom` 下；可用 `GET /api/v2/workers/{workerId}/input-schema` 读取 schema。
+- 调度字段：`schedule_enabled` 1 启用 0 关闭；`schedule_type` 1=每天、2=每周、3=每月；`schedule_time` 为 `HH:mm`；`schedule_once_date` 为 `YYYY-MM-DD`。不启用调度时可省略全部 schedule 字段。
+
+## HTTP 响应
+
+| HTTP 状态 | 应用代码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | 请求成功。 |
+| `400` | `11000` | 请求参数不合法。 |
+| `401` | `12001` | 认证缺失或无效。 |
+| `404` | `11004` | 目标资源不存在。 |
+| `422` | `11000` | 请求语义或字段校验未通过。 |
+| `429` | `13000` | 请求过于频繁。 |
+| `500` | `10000` | 服务端内部错误。 |

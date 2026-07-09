@@ -539,6 +539,12 @@ export default defineConfig({
                             translations: { 'zh-CN': 'Worker 任务' },
                             items: [
                                 { label: 'List Worker Tasks', slug: 'api/worker-tasks/list', translations: { 'zh-CN': '查询 Worker 任务' } },
+                                { label: 'Create Worker Task', slug: 'api/worker-tasks/create', translations: { 'zh-CN': '创建 Worker 任务' } },
+                                { label: 'Get Worker Task', slug: 'api/worker-tasks/get', translations: { 'zh-CN': '获取 Worker 任务' } },
+                                { label: 'Update Worker Task', slug: 'api/worker-tasks/update', translations: { 'zh-CN': '更新 Worker 任务' } },
+                                { label: 'Delete Worker Task', slug: 'api/worker-tasks/delete', translations: { 'zh-CN': '删除 Worker 任务' } },
+                                { label: 'Get Worker Task Input', slug: 'api/worker-tasks/get-input', translations: { 'zh-CN': '获取 Worker 任务输入' } },
+                                { label: 'Update Worker Task Input', slug: 'api/worker-tasks/update-input', translations: { 'zh-CN': '更新 Worker 任务输入' } },
                                 { label: 'Run Worker Task', slug: 'api/worker-tasks/run', translations: { 'zh-CN': '运行 Worker 任务' } },
                             ],
                         },

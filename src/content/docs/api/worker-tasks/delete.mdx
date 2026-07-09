@@ -1,31 +1,40 @@
 ---
-title: "Abort Last Worker Run"
-description: "Abort Last Worker Run API reference"
+title: "Delete Worker Task"
+description: "Delete Worker Task API reference"
 sidebar:
-  order: 62
+  order: 55
 ---
 
 import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
-**Method:** `POST`
+**Method:** `DELETE`
 
-**Endpoint:** `/api/v2/worker-runs/last/abort`
+**Endpoint:** `/api/v2/worker-tasks/{workerTaskId}`
 
 **Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
 
 ## Try it
 
-<ApiPlayground method="POST" path="/api/v2/worker-runs/last/abort" />
+<ApiPlayground method="DELETE" path="/api/v2/worker-tasks/{workerTaskId}" />
 
 ## When to use this endpoint
 
-Use this endpoint to abort an abortable run. Confirm the target before calling it.
+Use this endpoint to delete a saved task template.
 
+## Identifier Notes
+
+- `workerTaskId` is the saved task template slug.
+
+## Path Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `workerTaskId` | Yes | `string` | Saved Worker task template slug. Get it from the `data.list[].slug` field of `GET /api/v2/worker-tasks`. |
 
 ## Request Example
 
 ```bash
-curl -X POST "https://openapi.coreclaw.com/api/v2/worker-runs/last/abort" \
+curl -X DELETE "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_ID" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -42,8 +51,6 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-runs/last/abort" \
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
-- This is an account-level latest-run endpoint and does not take a `workerId` path parameter; it operates on the latest run in the current account scope.
-- `last` means the latest run in the current scope. Use a concrete `runId` endpoint when the target must be explicit.
 
 ## HTTP Responses
 
@@ -53,5 +60,6 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-runs/last/abort" \
 | `400` | `11000` | Bad Request |
 | `401` | `12001` | Unauthorized |
 | `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
 | `429` | `13000` | Too Many Requests |
 | `500` | `10000` | Internal Server Error |

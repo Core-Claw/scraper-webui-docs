@@ -19,7 +19,7 @@ import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
 ## When to use this endpoint
 
-Use this endpoint to verify the token and read account balance.
+Use this endpoint to verify the token and read account balance and traffic quota.
 
 
 ## Request Example
@@ -35,8 +35,8 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
 {
   "code": 0,
   "data": {
-    "balance": "2.7129",
-    "balance_expiration_at": 1812418930
+    "balance": "100.00",
+    "balance_expiration_at": 1782091200
   },
   "message": "success",
   "request_id": "req-123"
@@ -45,7 +45,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
 
 ## Notes
 
-- API v2 supports Bearer token, the `api-key` header, and query token. Prefer Bearer token.
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 
 ## HTTP Responses
 

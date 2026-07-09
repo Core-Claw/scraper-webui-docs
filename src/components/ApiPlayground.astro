@@ -153,16 +153,16 @@ function describeParam(param: any): string {
     const schema = param.schema || {}
     const name = param.name
     if (name === 'workerId') {
-        return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values.'
+        return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values. The playground prefills an official Worker (`coreclaw/google-maps-scraper`); replace it with your own.'
     }
     if (name === 'worker_id') {
-        return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values.'
+        return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values. The playground prefills an official Worker (`coreclaw/google-maps-scraper`); replace it with your own.'
     }
     if (name === 'runId') {
         return 'Run slug returned as `data.run_slug` from start or rerun responses.'
     }
     if (name === 'workerTaskId') {
-        return 'Saved Worker task template slug.'
+        return 'Saved Worker task template slug. Get it from the `data.list[].slug` field of `GET /api/v2/worker-tasks`. The playground prefills a sample slug; replace it with your own.'
     }
     if (name === 'offset') return appendSchemaDetails('Pagination offset, starting from 0.', schema)
     if (name === 'limit') return appendSchemaDetails('Page size.', schema)
@@ -193,6 +193,16 @@ function sampleSchemaValue(name: string, schema: any = {}): unknown {
     if (name === 'is_async') return true
     if (name === 'limit') return 20
     if (name === 'offset') return 0
+    if (name === 'worker_id') return 'coreclaw~google-maps-scraper'
+    if (name === 'title') return 'Google Maps Scraper (Task)'
+    if (name === 'description') return 'Scrape Google Maps business records on a schedule.'
+    if (name === 'schedule_enabled') return 0
+    if (name === 'schedule_type') return 1
+    if (name === 'schedule_time') return '09:00'
+    if (name === 'schedule_weekday') return 1
+    if (name === 'schedule_day') return 1
+    if (name === 'schedule_once_date') return '2026-08-01'
+    if (name === 'version') return undefined
 
     const type = Array.isArray(schema.type)
         ? schema.type.find((item: string) => item !== 'null')
@@ -219,7 +229,6 @@ function exampleFromSchema(schema: any): unknown | null {
 
 function sanitizeExampleBodyForOperation(value: unknown): unknown {
     if (
-        opPath !== '/api/v2/workers/{workerId}/runs' ||
         value === null ||
         typeof value !== 'object' ||
         Array.isArray(value)
@@ -227,10 +236,34 @@ function sanitizeExampleBodyForOperation(value: unknown): unknown {
         return value
     }
     const out = { ...(value as Record<string, unknown>) }
-    delete out.callback_url
-    delete out.version
-    if (out.input === undefined || (out.input && typeof out.input === 'object' && !Array.isArray(out.input))) {
-        out.input = { parameters: { custom: {} } }
+    if (opPath === '/api/v2/workers/{workerId}/runs') {
+        delete out.callback_url
+        delete out.version
+        if (out.input === undefined || (out.input && typeof out.input === 'object' && !Array.isArray(out.input))) {
+            out.input = { parameters: { custom: {} } }
+        }
+        return out
+    }
+    // Pre-fill a runnable input.custom for create-task and update-task-input
+    // so the playground can run one-click after pasting a token. Matches the
+    // google-maps-scraper sample used elsewhere in the docs.
+    if (opPath === '/api/v2/worker-tasks' || opPath === '/api/v2/worker-tasks/{workerTaskId}/input') {
+        const input = out.input as Record<string, unknown> | undefined
+        const custom =
+            input && typeof input === 'object' && !Array.isArray(input)
+                ? (input.parameters as Record<string, unknown> | undefined)?.custom
+                : undefined
+        if (!custom || (typeof custom === 'object' && !Array.isArray(custom) && Object.keys(custom).length === 0)) {
+            out.input = {
+                parameters: {
+                    custom: {
+                        keywords: [{ keyword: 'HVAC Contractors' }],
+                        base_location: 'New York,USA',
+                        max_results: 1,
+                    },
+                },
+            }
+        }
     }
     return out
 }
@@ -302,9 +335,9 @@ const bodyFields = flattenTopLevelFields(bodySchema)
 function sampleParamValue(param: any): string {
     if (param.schema?.default !== undefined) return String(param.schema.default)
     if (param.example !== undefined) return String(param.example)
+    if (param.name === 'workerId' || param.name === 'worker_id') return 'coreclaw~google-maps-scraper'
+    if (param.name === 'workerTaskId') return '01KWA10VGEZF0VRE21NVAZR0NA'
     if (param.in !== 'path') return ''
-    if (param.name === 'workerId') return 'YOUR_WORKER_ID'
-    if (param.name === 'workerTaskId') return 'YOUR_WORKER_TASK_ID'
     if (param.name === 'runId') return 'YOUR_RUN_ID'
     return `YOUR_${String(param.name).replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase()}`
 }

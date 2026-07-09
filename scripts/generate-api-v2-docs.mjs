@@ -31,6 +31,12 @@ const pageMeta = {
     'GET /api/v2/workers/{workerId}/input-schema': ['workers/input-schema', 42, 'Get Worker Input Schema', '获取 Worker 输入 Schema'],
     'POST /api/v2/workers/{workerId}/runs': ['workers/run', 44, 'Run Worker', '运行 Worker'],
     'GET /api/v2/worker-tasks': ['worker-tasks/list', 50, 'List Worker Tasks', '查询 Worker 任务'],
+    'POST /api/v2/worker-tasks': ['worker-tasks/create', 52, 'Create Worker Task', '创建 Worker 任务'],
+    'GET /api/v2/worker-tasks/{workerTaskId}': ['worker-tasks/get', 53, 'Get Worker Task', '获取 Worker 任务'],
+    'PUT /api/v2/worker-tasks/{workerTaskId}': ['worker-tasks/update', 54, 'Update Worker Task', '更新 Worker 任务'],
+    'DELETE /api/v2/worker-tasks/{workerTaskId}': ['worker-tasks/delete', 55, 'Delete Worker Task', '删除 Worker 任务'],
+    'GET /api/v2/worker-tasks/{workerTaskId}/input': ['worker-tasks/get-input', 56, 'Get Worker Task Input', '获取 Worker 任务输入'],
+    'PUT /api/v2/worker-tasks/{workerTaskId}/input': ['worker-tasks/update-input', 57, 'Update Worker Task Input', '更新 Worker 任务输入'],
     'POST /api/v2/worker-tasks/{workerTaskId}/runs': ['worker-tasks/run', 51, 'Run Worker Task', '运行 Worker 任务'],
     'GET /api/v2/worker-runs': ['worker-runs/list', 60, 'List Worker Runs', '查询 Worker 运行记录'],
     'GET /api/v2/worker-runs/last': ['worker-runs/last-detail', 61, 'Get Last Worker Run', '获取最近一次运行'],
@@ -287,7 +293,13 @@ function useText(op, zh) {
     if (pathText.includes('/log')) return zh ? '用于读取运行日志，排查运行状态和错误。' : 'Use this endpoint to read run logs for monitoring and troubleshooting.'
     if (pathText.includes('/abort')) return zh ? '用于中止仍可中止的运行。调用前应确认目标运行。' : 'Use this endpoint to abort an abortable run. Confirm the target before calling it.'
     if (pathText.includes('/rerun')) return zh ? '用于基于已有运行创建新的运行，响应会返回新的 `run_slug`。' : 'Use this endpoint to create a new run from an existing run. The response returns a new `run_slug`.'
-    if (pathText.includes('/worker-tasks') && op.method === 'GET') return zh ? '用于查询已保存的 Worker 任务模板。' : 'Use this endpoint to list saved Worker task templates.'
+    if (pathText === '/api/v2/worker-tasks') return zh ? '用于查询已保存的 Worker 任务模板。' : 'Use this endpoint to list saved Worker task templates.'
+    if (pathText === '/api/v2/worker-tasks' && op.method === 'POST') return zh ? '用于创建一个新的 Worker 任务模板，保存 Worker 标识、输入参数和可选的调度配置。' : 'Use this endpoint to create a new Worker task template that stores the Worker identifier, input parameters, and an optional schedule.'
+    if (pathText === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'GET') return zh ? '用于读取某个已保存任务模板的详情。' : 'Use this endpoint to read the details of a saved task template.'
+    if (pathText === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'PUT') return zh ? '用于更新任务模板的标题、描述或调度配置；省略的字段保持原值。' : 'Use this endpoint to update the title, description, or schedule of a task template. Omitted fields keep their current values.'
+    if (pathText === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'DELETE') return zh ? '用于删除一个已保存的任务模板。' : 'Use this endpoint to delete a saved task template.'
+    if (pathText === '/api/v2/worker-tasks/{workerTaskId}/input' && op.method === 'GET') return zh ? '用于读取任务模板保存的输入参数。' : 'Use this endpoint to read the input parameters stored on a task template.'
+    if (pathText === '/api/v2/worker-tasks/{workerTaskId}/input' && op.method === 'PUT') return zh ? '用于更新任务模板的输入参数，可同时切换 Worker 版本。' : 'Use this endpoint to update the input parameters of a task template, optionally switching the Worker version.'
     if (pathText.includes('/worker-tasks') && op.method === 'POST') return zh ? '用于运行已保存的 Worker 任务模板。' : 'Use this endpoint to run a saved Worker task template.'
     if (pathText === '/api/v2/workers/{workerId}/input-schema') return zh ? '用于读取某个 Worker 的输入 schema，并据此构造 `input`。' : 'Use this endpoint to read a Worker input schema and build the `input` payload.'
     if (pathText.includes('/workers/{workerId}/runs/last')) return zh ? '用于在指定 Worker 范围内读取或操作最近一次运行。' : 'Use this endpoint to read or operate on the latest run scoped to one Worker.'
@@ -334,8 +346,22 @@ function notesFor(op, zh) {
     if (op.path.endsWith('/result')) {
         notes.push(zh ? '`offset` 从 0 开始；`limit` 默认 `20`，最大 `100`。' : '`offset` is zero-based; `limit` defaults to `20` and cannot exceed `100`.')
     }
-    if (op.path.includes('/worker-tasks') && op.method === 'POST') {
+    if (op.path === '/api/v2/worker-tasks' && op.method === 'POST') {
+        notes.push(zh ? '`worker_id` 接受 Worker slug，也支持把 `owner/name` 写成 `owner~name`。' : '`worker_id` accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.')
+        notes.push(zh ? '应先读取 Worker 输入 schema 再构造 `input`，表单字段放在 `input.parameters.custom` 下；可用 `GET /api/v2/workers/{workerId}/input-schema` 读取 schema。' : 'Read the Worker input schema before building `input`; form fields belong under `input.parameters.custom`. Use `GET /api/v2/workers/{workerId}/input-schema` to read the schema.')
+        notes.push(zh ? '调度字段：`schedule_enabled` 1 启用 0 关闭；`schedule_type` 1=每天、2=每周、3=每月；`schedule_time` 为 `HH:mm`；`schedule_once_date` 为 `YYYY-MM-DD`。不启用调度时可省略全部 schedule 字段。' : 'Schedule fields: `schedule_enabled` 1 enabled / 0 disabled; `schedule_type` 1=daily, 2=weekly, 3=monthly; `schedule_time` is `HH:mm`; `schedule_once_date` is `YYYY-MM-DD`. Omit all schedule fields when scheduling is not needed.')
+    }
+    if (op.path === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'PUT') {
+        notes.push(zh ? 'PUT 为部分更新语义：省略的字段保持原值，无需重传整个任务对象。' : 'PUT is a partial update: omitted fields keep their current values; you do not need to resend the whole task object.')
+        notes.push(zh ? '如需更新任务输入参数本身（而非标题或调度），请使用 `PUT /api/v2/worker-tasks/{workerTaskId}/input`。' : 'To update the task input parameters themselves (not the title or schedule), use `PUT /api/v2/worker-tasks/{workerTaskId}/input`.')
+    }
+    if (op.path === '/api/v2/worker-tasks/{workerTaskId}/input' && op.method === 'PUT') {
+        notes.push(zh ? '`input` 应按目标 Worker 的输入 schema 构造，表单字段放在 `input.parameters.custom` 下。' : 'Build `input` from the target Worker input schema; form fields belong under `input.parameters.custom`.')
+        notes.push(zh ? '`version` 可选，省略时保持当前版本；如需切换版本请传入具体可用版本号。' : '`version` is optional and keeps the current version when omitted; pass a concrete available version to switch.')
+    }
+    if (op.path === '/api/v2/worker-tasks/{workerTaskId}/runs') {
         notes.push(zh ? '运行已保存任务时，请求体只控制执行模式、回调和同步结果窗口；任务本身的输入来自已保存的 Worker 任务配置。' : 'When running a saved task, the request body controls execution mode, callback, and synchronous result window; the task input comes from the saved Worker task configuration.')
+        notes.push(zh ? '`limit` 和 `offset` 只控制同步返回的结果窗口，不改变任务实际产生的完整结果集。' : 'Use `limit` and `offset` only to control the synchronous result window; they do not change the full result set produced by the task.')
     }
     if (fieldsForSchema(bodySchema(op)).some(field => field.name === 'callback_url')) {
         notes.push(zh ? '传入 `callback_url` 后，CoreClaw 会在运行状态变化或结束时发送回调通知。详见[回调通知](/zh-cn/api/callbacks/)。' : 'When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).')
@@ -350,11 +376,15 @@ function runModeSection(zh) {
         '- `is_async: true` 表示异步提交运行，不等待执行结果。响应会返回 `data.run_slug`，随后用运行详情、日志和结果接口轮询。',
         '- `is_async: false` 表示等待执行结果，等价于等待运行执行完成的 run-and-wait；可配合 `offset` / `limit` 直接获取同步运行返回的数据窗口。',
         '',
+        '> **⚠️ 同步等待上限：5 分钟。** 当 `is_async: false` 时，平台**最多等待 5 分钟**。若运行在 5 分钟内未完成，请求仍会返回，运行会在后台继续执行——此时必须改用运行**查询接口**按 `runId` 轮询状态、日志和结果。预计运行可能超过 5 分钟时，建议使用 `is_async: true`。',
+        '',
     ].join('\n') : [
         '## Run Mode',
         '',
         '- `is_async: true` submits the run asynchronously and returns without waiting for execution results. The response includes `data.run_slug`; then poll the run detail, log, and result endpoints.',
         '- `is_async: false` waits for the run to finish, equivalent to run-and-wait behavior. Use `offset` / `limit` to control the result window returned by the synchronous run.',
+        '',
+        '> **⚠️ Sync wait limit: 5 minutes.** When `is_async: false`, the platform waits for the run for **up to 5 minutes at most**. If the run has not finished within 5 minutes, the request returns anyway and the run keeps executing in the background — you must then use the run **query endpoint** to poll status, logs, and results by `runId`. For runs that may exceed 5 minutes, prefer `is_async: true`.',
         '',
     ].join('\n')
 }
@@ -393,15 +423,33 @@ function bodyTable(fields, example, zh) {
 
 function fieldDescription(field, zh) {
     if (field.name === 'is_async') {
-        return zh ? '`true` 表示异步提交，不等待执行结果；`false` 表示等待执行结果，直到运行完成。默认 `true`。' : '`true` submits asynchronously without waiting for results; `false` waits for the run to finish. Defaults to `true`.'
+        return zh ? '`true` 表示异步提交，不等待执行结果；`false` 表示等待执行结果，直到运行完成。默认 `true`。**同步模式最多等待 5 分钟；超过 5 分钟仍未完成时，请求会先返回，需要改用运行查询接口轮询状态。**' : '`true` submits asynchronously without waiting for results; `false` waits for the run to finish. Defaults to `true`. **Sync mode waits at most 5 minutes; if the run has not finished by then, the request returns and you must poll status via the run query endpoint.**'
     }
     if (zh) {
+        if (field.name === 'worker_id') return 'Worker 标识。接受 Worker slug，也支持把 `owner/name` 写成 `owner~name`。'
+        if (field.name === 'title') return '任务模板标题，用于展示和搜索。'
+        if (field.name === 'description') return '任务模板描述，可选。'
+        if (field.name === 'schedule_enabled') return '调度开关：1 启用，0 关闭。'
+        if (field.name === 'schedule_type') return '调度类型：1=每天，2=每周，3=每月。'
+        if (field.name === 'schedule_time') return '调度执行时间，格式 `HH:mm`。'
+        if (field.name === 'schedule_weekday') return '每周调度时的星期几（0-6，0 为周日）。'
+        if (field.name === 'schedule_day') return '每月调度时的日期（1-31）。'
+        if (field.name === 'schedule_once_date') return '单次调度的日期，格式 `YYYY-MM-DD`。'
         if (field.name === 'callback_url') return '回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。'
         if (field.name === 'input') return 'Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。'
         if (field.name === 'limit') return withConstraints('同步运行或重跑时返回的结果窗口大小；仅影响同步响应中附带的结果数量，不影响完整结果集。', field.schema, zh)
         if (field.name === 'offset') return withConstraints('同步运行或重跑时返回结果窗口的起始偏移；从 0 开始。', field.schema, zh)
         if (field.name === 'version') return '可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。'
     }
+    if (field.name === 'worker_id') return 'Worker identifier. Accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.'
+    if (field.name === 'title') return 'Task template title, used for display and search.'
+    if (field.name === 'description') return 'Task template description. Optional.'
+    if (field.name === 'schedule_enabled') return 'Schedule switch: 1 enabled, 0 disabled.'
+    if (field.name === 'schedule_type') return 'Schedule type: 1=daily, 2=weekly, 3=monthly.'
+    if (field.name === 'schedule_time') return 'Schedule time of day, `HH:mm`.'
+    if (field.name === 'schedule_weekday') return 'Day of week for weekly schedules (0-6, 0 = Sunday).'
+    if (field.name === 'schedule_day') return 'Day of month for monthly schedules (1-31).'
+    if (field.name === 'schedule_once_date') return 'Date for one-time schedules, `YYYY-MM-DD`.'
     if (field.name === 'callback_url') return 'Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes.'
     if (field.name === 'input') return 'Worker input payload. Worker form fields usually belong under `input.parameters.custom`; read the Worker input schema first and build this object from that schema.'
     if (field.name === 'limit') return withConstraints('Synchronous result window size for runs or reruns. It only controls how many result rows are included in the synchronous response, not the full result set.', field.schema, zh)
@@ -423,7 +471,7 @@ function paramDescription(param, zh) {
         if (name === 'worker_id') return 'Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。'
         if (name === 'workerId') return 'Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。'
         if (name === 'runId') return '运行记录 slug，即启动或重跑响应中的 `data.run_slug`。'
-        if (name === 'workerTaskId') return '已保存 Worker 任务模板的 slug。'
+        if (name === 'workerTaskId') return '已保存 Worker 任务模板的 slug，可从 `GET /api/v2/worker-tasks` 响应的 `data.list[].slug` 获取。'
         if (name === 'language') return withConstraints('代理区域名称语言。', schema, zh)
     } else {
         if (name === 'offset') return withConstraints('Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window.', schema, zh)
@@ -434,7 +482,7 @@ function paramDescription(param, zh) {
         if (name === 'worker_id') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values.'
         if (name === 'workerId') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values.'
         if (name === 'runId') return 'Run slug returned as `data.run_slug` from start or rerun responses.'
-        if (name === 'workerTaskId') return 'Saved Worker task template slug.'
+        if (name === 'workerTaskId') return 'Saved Worker task template slug. Get it from the `data.list[].slug` field of `GET /api/v2/worker-tasks`.'
     }
     return withConstraints(param.description || schema.description || '-', schema, zh)
 }
@@ -553,10 +601,20 @@ function responseExampleFor(op) {
 function sampleValue(name, schema = {}) {
     if (schema.default !== undefined) return schema.default
     if (name === 'callback_url') return 'https://client.example.com/openapi/callback'
-    if (name === 'input') return { parameters: { custom: {} } }
+    if (name === 'input') return { parameters: { custom: { ...sampleDirectWorkerCustomInput } } }
     if (name === 'is_async') return true
     if (name === 'limit') return 20
     if (name === 'offset') return 0
+    if (name === 'worker_id') return 'coreclaw~google-maps-scraper'
+    if (name === 'title') return 'Google Maps Scraper (Task)'
+    if (name === 'description') return 'Scrape Google Maps business records on a schedule.'
+    if (name === 'schedule_enabled') return 0
+    if (name === 'schedule_type') return 1
+    if (name === 'schedule_time') return '09:00'
+    if (name === 'schedule_weekday') return 1
+    if (name === 'schedule_day') return 1
+    if (name === 'schedule_once_date') return '2026-08-01'
+    if (name === 'version') return undefined
     if (schema.type === 'boolean') return true
     if (schema.type === 'integer' || schema.type === 'number') return 0
     if (schema.type === 'array') return []
@@ -638,8 +696,8 @@ function indexPage(lang) {
         '',
         '| 方式 | 示例 | 说明 |',
         '| --- | --- | --- |',
-        '| Bearer token | `Authorization: Bearer YOUR_API_KEY` | 推荐方式，适合新的服务端集成 |',
-        '| 旧版请求头 | `api-key: YOUR_API_KEY` | 兼容 v1 集成 |',
+        '| Bearer token | `Authorization: Bearer YOUR_API_KEY` | 推荐方式，适合新的服务端集成，也适用于浏览器 playground |',
+        '| 旧版请求头 | `api-key: YOUR_API_KEY` | 兼容 v1 集成；**仅供服务端使用，浏览器 playground 因 CORS 预检限制无法使用，请改用 Bearer 或 query token** |',
         '| Query token | `?token=YOUR_API_KEY` | 仅在无法设置请求头时使用，避免把带 token 的 URL 写入日志 |',
         '',
         '公开接口不需要 token，例如代理区域列表和商店 Worker 查询。',
@@ -689,8 +747,8 @@ function indexPage(lang) {
         '',
         '| Mode | Example | Notes |',
         '| --- | --- | --- |',
-        '| Bearer token | `Authorization: Bearer YOUR_API_KEY` | Recommended for new server-side integrations |',
-        '| Legacy header | `api-key: YOUR_API_KEY` | Compatible with v1 integrations |',
+        '| Bearer token | `Authorization: Bearer YOUR_API_KEY` | Recommended for new server-side integrations; also works in the browser playground |',
+        '| Legacy header | `api-key: YOUR_API_KEY` | Compatible with v1 integrations; **server-side only — the browser playground cannot use it due to a CORS preflight restriction; use Bearer or query token instead** |',
         '| Query token | `?token=YOUR_API_KEY` | Use only when headers are unavailable; avoid logging tokenized URLs |',
         '',
         'Public endpoints do not require a token, including proxy region lookup and Store Worker search.',
@@ -937,6 +995,17 @@ function integrationPage(lang) {
         '',
         '响应中的 `data.run_slug` 就是后续接口使用的 `runId`。',
         '',
+        '### 管理已保存的任务模板',
+        '',
+        '除了在平台上手动创建任务，也可以用 API 管理任务模板：用 `POST /api/v2/worker-tasks` 创建，`GET /api/v2/worker-tasks/{workerTaskId}` 读取，`PUT` 更新标题/描述/调度，`PUT .../input` 更新输入参数，`DELETE` 删除。这样可以在服务端复用同一套输入和调度配置，而不必每次重发 `input`。',
+        '',
+        '```bash',
+        `curl -X POST "${API_BASE_URL}/api/v2/worker-tasks" \\`,
+        '  -H "Authorization: Bearer YOUR_API_KEY" \\',
+        '  -H "Content-Type: application/json" \\',
+        '  --data \'{"worker_id":"coreclaw~google-maps-scraper","title":"Google Maps Scraper (Task)","input":{"parameters":{"custom":{"keywords":[{"keyword":"HVAC Contractors"}],"base_location":"New York,USA","max_results":1}}}}\'',
+        '```',
+        '',
         '## 4. 异步运行使用 `runId` 轮询',
         '',
         '```bash',
@@ -1028,6 +1097,17 @@ function integrationPage(lang) {
         '```',
         '',
         'The response `data.run_slug` is the `runId` used by follow-up endpoints.',
+        '',
+        '### Manage saved task templates',
+        '',
+        'Besides creating tasks manually on the platform, you can manage task templates through the API: create with `POST /api/v2/worker-tasks`, read with `GET /api/v2/worker-tasks/{workerTaskId}`, update title/description/schedule with `PUT`, update input parameters with `PUT .../input`, and delete with `DELETE`. This lets you reuse the same input and schedule configuration from the server side instead of resending `input` every time.',
+        '',
+        '```bash',
+        `curl -X POST "${API_BASE_URL}/api/v2/worker-tasks" \\`,
+        '  -H "Authorization: Bearer YOUR_API_KEY" \\',
+        '  -H "Content-Type: application/json" \\',
+        '  --data \'{"worker_id":"coreclaw~google-maps-scraper","title":"Google Maps Scraper (Task)","input":{"parameters":{"custom":{"keywords":[{"keyword":"HVAC Contractors"}],"base_location":"New York,USA","max_results":1}}}}\'',
+        '```',
         '',
         '## 4. Poll by `runId` when the run is asynchronous',
         '',
