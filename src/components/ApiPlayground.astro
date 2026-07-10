@@ -166,7 +166,7 @@ function describeParam(param: any): string {
     }
     if (name === 'offset') return appendSchemaDetails('Pagination offset, starting from 0.', schema)
     if (name === 'limit') return appendSchemaDetails('Page size.', schema)
-    if (name === 'format') return appendSchemaDetails('Export format.', schema)
+    if (name === 'format') return appendSchemaDetails('Export format. Supports csv, json, xlsx, xml, html (case-insensitive).', schema)
     if (name === 'filter_keys') {
         return 'Comma-separated field keys used to limit exported fields, for example `title,address`.'
     }

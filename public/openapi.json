@@ -1389,8 +1389,15 @@
             "name": "format",
             "schema": {
               "default": "csv",
-              "description": "Export format",
-              "type": "string"
+              "description": "Export format. Supports csv, json, xlsx, xml, html (case-insensitive). Defaults to csv.",
+              "type": "string",
+              "enum": [
+                "csv",
+                "json",
+                "xlsx",
+                "xml",
+                "html"
+              ]
             }
           },
           {
@@ -3266,8 +3273,15 @@
             "name": "format",
             "schema": {
               "default": "csv",
-              "description": "Export format",
-              "type": "string"
+              "description": "Export format. Supports csv, json, xlsx, xml, html (case-insensitive). Defaults to csv.",
+              "type": "string",
+              "enum": [
+                "csv",
+                "json",
+                "xlsx",
+                "xml",
+                "html"
+              ]
             }
           },
           {
@@ -6312,8 +6326,15 @@
             "name": "format",
             "schema": {
               "default": "csv",
-              "description": "Export format",
-              "type": "string"
+              "description": "Export format. Supports csv, json, xlsx, xml, html (case-insensitive). Defaults to csv.",
+              "type": "string",
+              "enum": [
+                "csv",
+                "json",
+                "xlsx",
+                "xml",
+                "html"
+              ]
             }
           },
           {

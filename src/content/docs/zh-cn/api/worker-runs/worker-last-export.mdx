@@ -35,7 +35,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 参数 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `format` | 否 | `string` | 导出格式。当前默认 `csv`。 约束：默认 `csv`。 |
+| `format` | 否 | `enum: csv, json, xlsx, xml, html` | 导出格式，支持 `csv`、`json`、`xlsx`、`xml`、`html`（大小写不敏感）。默认 `csv`。 约束：默认 `csv`；可选值：`csv`、`json`、`xlsx`、`xml`、`html`。 |
 | `filter_keys` | 否 | `string` | 逗号分隔的字段名列表，用于限制导出字段，例如 `title,address`。 |
 
 ## 请求示例

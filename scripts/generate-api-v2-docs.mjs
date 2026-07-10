@@ -465,7 +465,7 @@ function paramDescription(param, zh) {
         if (name === 'offset') return withConstraints('分页偏移量，从 0 开始；用于结果预览、列表翻页或导出前确认数据窗口。', schema, zh)
         if (name === 'limit') return withConstraints('每页返回数量；列表和结果接口的 `limit` 上限为 `100`。', schema, zh)
         if (name === 'filter_keys') return '逗号分隔的字段名列表，用于限制导出字段，例如 `title,address`。'
-        if (name === 'format') return withConstraints('导出格式。当前默认 `csv`。', schema, zh)
+        if (name === 'format') return withConstraints('导出格式，支持 `csv`、`json`、`xlsx`、`xml`、`html`（大小写不敏感）。默认 `csv`。', schema, zh)
         if (name === 'status') return withConstraints('运行状态筛选。', schema, zh)
         if (name === 'keyword') return param.description === 'Keyword for task title or slug' ? '按任务标题或 slug 搜索。' : '按标题、slug 或 path 搜索。'
         if (name === 'worker_id') return 'Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。'
@@ -477,7 +477,7 @@ function paramDescription(param, zh) {
         if (name === 'offset') return withConstraints('Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window.', schema, zh)
         if (name === 'limit') return withConstraints('Page size. `limit` is capped at `100` on list and result endpoints.', schema, zh)
         if (name === 'filter_keys') return 'Comma-separated field keys used to limit exported fields, for example `title,address`.'
-        if (name === 'format') return withConstraints('Export format. Defaults to `csv`.', schema, zh)
+        if (name === 'format') return withConstraints('Export format. Supports `csv`, `json`, `xlsx`, `xml`, `html` (case-insensitive). Defaults to `csv`.', schema, zh)
         if (name === 'status') return withConstraints('Run status filter.', schema, zh)
         if (name === 'worker_id') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values.'
         if (name === 'workerId') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values.'
