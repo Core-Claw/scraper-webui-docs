@@ -12,14 +12,20 @@
             "description": "Task input parameters"
           },
           "schedule_day": {
-            "description": "Day of month for monthly schedule",
+            "description": "Day of month for monthly schedule (1-31).",
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
           },
           "schedule_enabled": {
-            "description": "Schedule switch: 0 disabled, 1 enabled",
+            "description": "Schedule switch. 0=disabled, 1=enabled.",
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
           },
           "schedule_once_date": {
             "description": "Once schedule date in YYYY-MM-DD",
@@ -30,14 +36,31 @@
             "type": "string"
           },
           "schedule_type": {
-            "description": "Schedule type: 1 daily, 2 weekly, 3 monthly, 4 once",
+            "description": "Schedule type. 1=daily, 2=weekly, 3=monthly, 4=once.",
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ]
           },
           "schedule_weekday": {
-            "description": "Weekday for weekly schedule: 1 Monday, 7 Sunday",
+            "description": "Weekday for weekly schedule. 1=Monday ... 7=Sunday.",
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "minimum": 1,
+            "maximum": 7
           },
           "title": {
             "description": "Task title",
@@ -254,14 +277,20 @@
             "type": "string"
           },
           "schedule_day": {
-            "description": "Day of month for monthly schedule",
+            "description": "Day of month for monthly schedule (1-31).",
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
           },
           "schedule_enabled": {
-            "description": "Schedule switch: 0 disabled, 1 enabled. Omit to keep current schedule.",
+            "description": "Schedule switch. 0=disabled, 1=enabled.",
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ]
           },
           "schedule_once_date": {
             "description": "Once schedule date in YYYY-MM-DD",
@@ -272,14 +301,31 @@
             "type": "string"
           },
           "schedule_type": {
-            "description": "Schedule type: 1 daily, 2 weekly, 3 monthly, 4 once",
+            "description": "Schedule type. 1=daily, 2=weekly, 3=monthly, 4=once.",
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3,
+              4
+            ]
           },
           "schedule_weekday": {
-            "description": "Weekday for weekly schedule: 1 Monday, 7 Sunday",
+            "description": "Weekday for weekly schedule. 1=Monday ... 7=Sunday.",
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "minimum": 1,
+            "maximum": 7
           },
           "title": {
             "description": "Task title. Omit to keep current title.",
@@ -328,7 +374,7 @@
             "name": "language",
             "schema": {
               "default": "en",
-              "description": "Region language",
+              "description": "Region name language preference. Common values: en, zh, ja, ko, fr, de, es. Passed through (not validated).",
               "type": "string"
             }
           }
@@ -1389,14 +1435,17 @@
             "name": "format",
             "schema": {
               "default": "csv",
-              "description": "Export format. Supports csv, json, xlsx, xml, html (case-insensitive). Defaults to csv.",
+              "description": "Export format. Supports csv, json, jsonl, xlsx, xls, xml, html, rss (case-insensitive). Defaults to csv.",
               "type": "string",
               "enum": [
                 "csv",
                 "json",
+                "jsonl",
                 "xlsx",
+                "xls",
                 "xml",
-                "html"
+                "html",
+                "rss"
               ]
             }
           },
@@ -3273,14 +3322,17 @@
             "name": "format",
             "schema": {
               "default": "csv",
-              "description": "Export format. Supports csv, json, xlsx, xml, html (case-insensitive). Defaults to csv.",
+              "description": "Export format. Supports csv, json, jsonl, xlsx, xls, xml, html, rss (case-insensitive). Defaults to csv.",
               "type": "string",
               "enum": [
                 "csv",
                 "json",
+                "jsonl",
                 "xlsx",
+                "xls",
                 "xml",
-                "html"
+                "html",
+                "rss"
               ]
             }
           },
@@ -6326,14 +6378,17 @@
             "name": "format",
             "schema": {
               "default": "csv",
-              "description": "Export format. Supports csv, json, xlsx, xml, html (case-insensitive). Defaults to csv.",
+              "description": "Export format. Supports csv, json, jsonl, xlsx, xls, xml, html, rss (case-insensitive). Defaults to csv.",
               "type": "string",
               "enum": [
                 "csv",
                 "json",
+                "jsonl",
                 "xlsx",
+                "xls",
                 "xml",
-                "html"
+                "html",
+                "rss"
               ]
             }
           },

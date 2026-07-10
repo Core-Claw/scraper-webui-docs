@@ -26,7 +26,7 @@ Use this endpoint to export run results as a downloadable file.
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `format` | No | `enum: csv, json, xlsx, xml, html` | Export format. Supports `csv`, `json`, `xlsx`, `xml`, `html` (case-insensitive). Defaults to `csv`. Constraints: default `csv`; allowed values: `csv`, `json`, `xlsx`, `xml`, `html`. |
+| `format` | No | `enum: csv, json, jsonl, xlsx, xls, xml, html, rss` | Export format. Supports `csv`, `json`, `jsonl`, `xlsx`, `xls`, `xml`, `html`, `rss` (case-insensitive). Defaults to `csv`. Constraints: default `csv`; allowed values: `csv`, `json`, `jsonl`, `xlsx`, `xls`, `xml`, `html`, `rss`. |
 | `filter_keys` | No | `string` | Comma-separated field keys used to limit exported fields, for example `title,address`. |
 
 ## Request Example

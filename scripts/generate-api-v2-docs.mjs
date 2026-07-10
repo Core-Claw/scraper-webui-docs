@@ -349,7 +349,7 @@ function notesFor(op, zh) {
     if (op.path === '/api/v2/worker-tasks' && op.method === 'POST') {
         notes.push(zh ? '`worker_id` 接受 Worker slug，也支持把 `owner/name` 写成 `owner~name`。' : '`worker_id` accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.')
         notes.push(zh ? '应先读取 Worker 输入 schema 再构造 `input`，表单字段放在 `input.parameters.custom` 下；可用 `GET /api/v2/workers/{workerId}/input-schema` 读取 schema。' : 'Read the Worker input schema before building `input`; form fields belong under `input.parameters.custom`. Use `GET /api/v2/workers/{workerId}/input-schema` to read the schema.')
-        notes.push(zh ? '调度字段：`schedule_enabled` 1 启用 0 关闭；`schedule_type` 1=每天、2=每周、3=每月；`schedule_time` 为 `HH:mm`；`schedule_once_date` 为 `YYYY-MM-DD`。不启用调度时可省略全部 schedule 字段。' : 'Schedule fields: `schedule_enabled` 1 enabled / 0 disabled; `schedule_type` 1=daily, 2=weekly, 3=monthly; `schedule_time` is `HH:mm`; `schedule_once_date` is `YYYY-MM-DD`. Omit all schedule fields when scheduling is not needed.')
+        notes.push(zh ? '调度字段：`schedule_enabled` 1 启用 0 关闭；`schedule_type` 1=每天、2=每周、3=每月、4=单次；`schedule_time` 为 `HH:mm`；`schedule_once_date` 为 `YYYY-MM-DD`。不启用调度时可省略全部 schedule 字段。' : 'Schedule fields: `schedule_enabled` 1 enabled / 0 disabled; `schedule_type` 1=daily, 2=weekly, 3=monthly, 4=once; `schedule_time` is `HH:mm`; `schedule_once_date` is `YYYY-MM-DD`. Omit all schedule fields when scheduling is not needed.')
     }
     if (op.path === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'PUT') {
         notes.push(zh ? 'PUT 为部分更新语义：省略的字段保持原值，无需重传整个任务对象。' : 'PUT is a partial update: omitted fields keep their current values; you do not need to resend the whole task object.')
@@ -430,9 +430,9 @@ function fieldDescription(field, zh) {
         if (field.name === 'title') return '任务模板标题，用于展示和搜索。'
         if (field.name === 'description') return '任务模板描述，可选。'
         if (field.name === 'schedule_enabled') return '调度开关：1 启用，0 关闭。'
-        if (field.name === 'schedule_type') return '调度类型：1=每天，2=每周，3=每月。'
+        if (field.name === 'schedule_type') return '调度类型：1=每天，2=每周，3=每月，4=单次。'
         if (field.name === 'schedule_time') return '调度执行时间，格式 `HH:mm`。'
-        if (field.name === 'schedule_weekday') return '每周调度时的星期几（0-6，0 为周日）。'
+        if (field.name === 'schedule_weekday') return '每周调度时的星期几（1=周一 … 7=周日）。'
         if (field.name === 'schedule_day') return '每月调度时的日期（1-31）。'
         if (field.name === 'schedule_once_date') return '单次调度的日期，格式 `YYYY-MM-DD`。'
         if (field.name === 'callback_url') return '回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。'
@@ -445,9 +445,9 @@ function fieldDescription(field, zh) {
     if (field.name === 'title') return 'Task template title, used for display and search.'
     if (field.name === 'description') return 'Task template description. Optional.'
     if (field.name === 'schedule_enabled') return 'Schedule switch: 1 enabled, 0 disabled.'
-    if (field.name === 'schedule_type') return 'Schedule type: 1=daily, 2=weekly, 3=monthly.'
+    if (field.name === 'schedule_type') return 'Schedule type: 1=daily, 2=weekly, 3=monthly, 4=once.'
     if (field.name === 'schedule_time') return 'Schedule time of day, `HH:mm`.'
-    if (field.name === 'schedule_weekday') return 'Day of week for weekly schedules (0-6, 0 = Sunday).'
+    if (field.name === 'schedule_weekday') return 'Day of week for weekly schedules (1=Monday … 7=Sunday).'
     if (field.name === 'schedule_day') return 'Day of month for monthly schedules (1-31).'
     if (field.name === 'schedule_once_date') return 'Date for one-time schedules, `YYYY-MM-DD`.'
     if (field.name === 'callback_url') return 'Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes.'
@@ -465,7 +465,7 @@ function paramDescription(param, zh) {
         if (name === 'offset') return withConstraints('分页偏移量，从 0 开始；用于结果预览、列表翻页或导出前确认数据窗口。', schema, zh)
         if (name === 'limit') return withConstraints('每页返回数量；列表和结果接口的 `limit` 上限为 `100`。', schema, zh)
         if (name === 'filter_keys') return '逗号分隔的字段名列表，用于限制导出字段，例如 `title,address`。'
-        if (name === 'format') return withConstraints('导出格式，支持 `csv`、`json`、`xlsx`、`xml`、`html`（大小写不敏感）。默认 `csv`。', schema, zh)
+        if (name === 'format') return withConstraints('导出格式，支持 `csv`、`json`、`jsonl`、`xlsx`、`xls`、`xml`、`html`、`rss`（大小写不敏感）。默认 `csv`。', schema, zh)
         if (name === 'status') return withConstraints('运行状态筛选。', schema, zh)
         if (name === 'keyword') return param.description === 'Keyword for task title or slug' ? '按任务标题或 slug 搜索。' : '按标题、slug 或 path 搜索。'
         if (name === 'worker_id') return 'Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。'
@@ -477,7 +477,7 @@ function paramDescription(param, zh) {
         if (name === 'offset') return withConstraints('Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window.', schema, zh)
         if (name === 'limit') return withConstraints('Page size. `limit` is capped at `100` on list and result endpoints.', schema, zh)
         if (name === 'filter_keys') return 'Comma-separated field keys used to limit exported fields, for example `title,address`.'
-        if (name === 'format') return withConstraints('Export format. Supports `csv`, `json`, `xlsx`, `xml`, `html` (case-insensitive). Defaults to `csv`.', schema, zh)
+        if (name === 'format') return withConstraints('Export format. Supports `csv`, `json`, `jsonl`, `xlsx`, `xls`, `xml`, `html`, `rss` (case-insensitive). Defaults to `csv`.', schema, zh)
         if (name === 'status') return withConstraints('Run status filter.', schema, zh)
         if (name === 'worker_id') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values.'
         if (name === 'workerId') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values.'

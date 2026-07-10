@@ -31,11 +31,11 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 | `description` | No | `string` | Task template description. Optional. |
 | `input` | Yes | `any` | Worker input payload. Worker form fields usually belong under `input.parameters.custom`; read the Worker input schema first and build this object from that schema. |
 | `schedule_day` | No | `integer` | Day of month for monthly schedules (1-31). |
-| `schedule_enabled` | No | `integer` | Schedule switch: 1 enabled, 0 disabled. |
+| `schedule_enabled` | No | `enum: 0, 1` | Schedule switch: 1 enabled, 0 disabled. |
 | `schedule_once_date` | No | `string` | Date for one-time schedules, `YYYY-MM-DD`. |
 | `schedule_time` | No | `string` | Schedule time of day, `HH:mm`. |
-| `schedule_type` | No | `integer` | Schedule type: 1=daily, 2=weekly, 3=monthly. |
-| `schedule_weekday` | No | `integer` | Day of week for weekly schedules (0-6, 0 = Sunday). |
+| `schedule_type` | No | `enum: 1, 2, 3, 4` | Schedule type: 1=daily, 2=weekly, 3=monthly, 4=once. |
+| `schedule_weekday` | No | `enum: 1, 2, 3, 4, 5, 6, 7` | Day of week for weekly schedules (1=Monday … 7=Sunday). |
 | `title` | Yes | `string` | Task template title, used for display and search. |
 | `version` | No | `string` | Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest` as an explicit version value. |
 | `worker_id` | Yes | `string` | Worker identifier. Accepts a Worker slug, or an `owner/name` path encoded as `owner~name`. |
@@ -94,7 +94,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks" \
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 - `worker_id` accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.
 - Read the Worker input schema before building `input`; form fields belong under `input.parameters.custom`. Use `GET /api/v2/workers/{workerId}/input-schema` to read the schema.
-- Schedule fields: `schedule_enabled` 1 enabled / 0 disabled; `schedule_type` 1=daily, 2=weekly, 3=monthly; `schedule_time` is `HH:mm`; `schedule_once_date` is `YYYY-MM-DD`. Omit all schedule fields when scheduling is not needed.
+- Schedule fields: `schedule_enabled` 1 enabled / 0 disabled; `schedule_type` 1=daily, 2=weekly, 3=monthly, 4=once; `schedule_time` is `HH:mm`; `schedule_once_date` is `YYYY-MM-DD`. Omit all schedule fields when scheduling is not needed.
 
 ## HTTP Responses
 

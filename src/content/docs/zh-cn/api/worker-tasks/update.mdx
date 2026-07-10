@@ -39,11 +39,11 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 | --- | --- | --- | --- |
 | `description` | 否 | `string` | 任务模板描述，可选。 |
 | `schedule_day` | 否 | `integer` | 每月调度时的日期（1-31）。 |
-| `schedule_enabled` | 否 | `integer` | 调度开关：1 启用，0 关闭。 |
+| `schedule_enabled` | 否 | `enum: 0, 1` | 调度开关：1 启用，0 关闭。 |
 | `schedule_once_date` | 否 | `string` | 单次调度的日期，格式 `YYYY-MM-DD`。 |
 | `schedule_time` | 否 | `string` | 调度执行时间，格式 `HH:mm`。 |
-| `schedule_type` | 否 | `integer` | 调度类型：1=每天，2=每周，3=每月。 |
-| `schedule_weekday` | 否 | `integer` | 每周调度时的星期几（0-6，0 为周日）。 |
+| `schedule_type` | 否 | `enum: 1, 2, 3, 4` | 调度类型：1=每天，2=每周，3=每月，4=单次。 |
+| `schedule_weekday` | 否 | `enum: 1, 2, 3, 4, 5, 6, 7` | 每周调度时的星期几（1=周一 … 7=周日）。 |
 | `title` | 否 | `string` | 任务模板标题，用于展示和搜索。 |
 
 ### JSON 示例
