@@ -61,7 +61,7 @@ The MCP server forwards authentication to CoreClaw OpenAPI v2 as `Authorization:
 
 ## Available Tools
 
-CoreClaw MCP Server exposes **28 public OpenAPI v2 tools**. Internal worker-version create/update APIs and internal worker detail APIs are intentionally not exposed.
+CoreClaw MCP Server exposes **37 tools** — 34 OpenAPI v2 operations (1:1) plus three orchestration helpers. Internal worker-version create/update APIs and internal worker detail APIs are intentionally not exposed.
 
 ### Discovery and Preflight
 
@@ -72,8 +72,31 @@ CoreClaw MCP Server exposes **28 public OpenAPI v2 tools**. Internal worker-vers
 | `list_workers` | List workers owned by the authenticated user | `GET /api/v2/workers` |
 | `get_worker` | Get worker metadata, version, README, and parameters | `GET /api/v2/workers/{workerId}` |
 | `get_worker_input_schema` | Get the public input schema for a worker | `GET /api/v2/workers/{workerId}/input-schema` |
-| `list_worker_tasks` | List saved worker tasks for the authenticated user | `GET /api/v2/worker-tasks` |
 | `get_account_info` | Check account balance, traffic quota, and expiration | `GET /api/v2/users/account` |
+
+### Worker Tasks (saved task templates)
+
+| Tool | Description | CoreClaw API |
+|------|-------------|--------------|
+| `list_worker_tasks` | List saved worker tasks for the authenticated user | `GET /api/v2/worker-tasks` |
+| `get_worker_task` | Get a saved task's details | `GET /api/v2/worker-tasks/{workerTaskId}` |
+| `get_worker_task_input` | Get a saved task's input payload | `GET /api/v2/worker-tasks/{workerTaskId}/input` |
+| `create_worker_task` | Create a saved task (optional schedule) | `POST /api/v2/worker-tasks` |
+| `update_worker_task` | Update a task's metadata/schedule | `PUT /api/v2/worker-tasks/{workerTaskId}` |
+| `update_worker_task_input` | Update only a task's input payload | `PUT /api/v2/worker-tasks/{workerTaskId}/input` |
+| `delete_worker_task` | Delete a saved task | `DELETE /api/v2/worker-tasks/{workerTaskId}` |
+
+### Orchestration helpers
+
+Three convenience tools that wrap multiple API calls into a single tool invocation.
+
+| Tool | Description | Underlying calls |
+|------|-------------|------------------|
+| `poll_run` | Poll a run until it reaches a terminal state (or times out) | repeats `GET /api/v2/worker-runs/{runId}` |
+| `verify_run` | Return a structured verdict (`PASS` / `NO_DATA` / `FAILED` / `ERROR_RECORD` / `RUNNING` / `SUBMIT_FAIL`) by checking run status, then sniffing the first result row for real data vs. a diagnostic-only record | `get_worker_run` + `list_worker_run_results` |
+| `run_workers_batch` | Run up to 50 workers with one call; returns a per-item summary with verdicts. Concurrency 1–10, optional `verify` per item | per item: `POST /api/v2/workers/{workerId}/runs` + `poll_run` (+ optional `verify_run`) |
+
+`poll_run` accepts `timeout_seconds` (1–900, default 300) and `poll_interval_seconds` (1–60, default 5), and can prefetch a small result preview (`limit`) on success. Use it for workers that run longer than a single MCP call window. `verify_run` is how you tell a real pass from a CAPTCHA/403 row that filled the list but has no payload — it flags those as `ERROR_RECORD`. `get_worker_run_log` additionally supports in-process `grep` (pipe-separated, case-insensitive) with `context_lines` and `max_matches`.
 
 ### Execution
 

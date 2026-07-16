@@ -9,14 +9,18 @@ Use [n8n](https://n8n.io/) to build automated workflows that trigger CoreClaw Wo
 
 ## How it works
 
-The CoreClaw n8n integration provides a dedicated community node (`n8n-nodes-coreclaw`) with four resources and built-in actions for common operations:
+The CoreClaw n8n integration provides a dedicated community node (`n8n-nodes-coreclaw`, v0.4.1+) that maps the CoreClaw API v2 onto six resources with **37 operations** in total:
 
-- **Scraper** — Search the marketplace, get scraper details, and run a scraper
-- **Run** — Get status, get results, export results, get logs, abort, or rerun an execution
-- **Task** — Run a pre-configured saved task
+- **Store Worker** — Search the public marketplace
+- **Worker** — List, get details, get input schema, run, and run-and-get-results, plus last-run lookup (abort / export / log / rerun / list results)
+- **Worker Run** — List and look up runs by ID or "last"; abort, log, rerun (and rerun-and-get-results), list results, and export
+- **Worker Task** — Full CRUD on saved task templates (list / create / get / update / delete / get input / update input), run, and run-and-get-results
+- **Proxy** — List proxy regions
 - **Account** — Get account info (balance, traffic, plan)
 
-You can also use the **HTTP Request** node to call the CoreClaw REST API directly for advanced use cases.
+Three operations are **composite** — `Run and Get Results`, `Rerun and Get Results`, and the task variant of `Run and Get Results`. A composite op starts the run, polls until it reaches a terminal state (up to ~4 minutes), then fetches the results in a single node — no Wait/poll loop to build by hand. On a failed/aborted run, the node's error includes the run log.
+
+For webhook-driven flows (no polling), pair a run's `Callback URL` field with the separate **CoreClaw Trigger** node, which receives `callback_url` POSTs locally. You can also use the **HTTP Request** node to call the CoreClaw REST API directly for advanced cases.
 
 ## Prerequisites
 
@@ -87,152 +91,92 @@ Follow the same steps as [Create credentials](#create-credentials) above to set 
 
 ## CoreClaw node actions
 
-The CoreClaw node is organized by **resource** (Scraper, Run, Task, Account). Select a resource, then choose the operation you want to perform.
-
-### Scraper resource
-
-#### Search
-
-Search the CoreClaw marketplace for ready-to-run scrapers by keyword.
-
-
-| Field     | Description                                                |
-| --------- | ---------------------------------------------------------- |
-| **Query** | Keyword matched against scraper title / description / tags |
-| **Limit** | Max number of results to return (1–100, default: 50)       |
-
-
-#### Get Details
-
-Fetch the full spec of a scraper: current version, system defaults, custom input schema, and README.
-
-
-| Field       | Description                                              |
-| ----------- | -------------------------------------------------------- |
-| **Scraper** | Pick from the marketplace list, or paste a slug directly |
-
-
-#### Run
-
-Start an asynchronous scraper run with custom parameters.
-
-
-| Field                 | Description                                                              |
-| --------------------- | ------------------------------------------------------------------------ |
-| **Scraper**           | Pick from the marketplace list, or paste a slug directly                 |
-| **Version**           | Scraper version string (optional — defaults to latest). Obtain from **Get Details** → version |
-| **Custom Parameters** | Scraper-specific input parameters as JSON (schema from Get Details)      |
-| **System Parameters** | Optional JSON overrides for cpus, memory, timeout, max charge, traffic   |
-| **Callback URL**      | Optional webhook URL for async notifications                             |
-
-
-:::caution
-**Version is optional.** If left empty, the platform uses the latest version automatically. To pin a specific version, obtain the version string from **Get Details** first.
-:::
-
-Get the `scraper_slug` (Worker Slug) from the Worker page in the [CoreClaw Console](https://console.coreclaw.com/store) or from the API (`GET /api/scraper?slug=<scraper_slug>`).
-
-### Run resource
-
-#### Get
-
-Get the current execution status of a run (status, started_at, duration, cost).
-
-
-| Field        | Description                                                 |
-| ------------ | ----------------------------------------------------------- |
-| **Run Slug** | The run identifier returned when starting a scraper or task |
-
-
-Status codes: `1` Ready, `2` Running, `3` Succeeded, `4` Failed, `5` Aborting.
-
-#### Get Many
-
-List the user's historical scraper runs with pagination and filters.
-
-
-| Field          | Description                                          |
-| -------------- | ---------------------------------------------------- |
-| **Return All** | Whether to return all results or only up to a limit  |
-| **Limit**      | Max number of results to return (1–200, default: 50) |
-| **Filters**    | Filter by status and/or scraper slug                 |
-
-
-#### Get Results
-
-Get paginated result records from a completed run.
-
-
-| Field          | Description                                          |
-| -------------- | ---------------------------------------------------- |
-| **Run Slug**   | The run identifier                                   |
-| **Return All** | Whether to return all results or only up to a limit  |
-| **Limit**      | Max number of results to return (1–500, default: 50) |
-
-
-#### Export Results
-
-Export a run's full result set as a downloadable CSV or JSON file.
-
-
-| Field           | Description                                                          |
-| --------------- | -------------------------------------------------------------------- |
-| **Run Slug**    | The run identifier                                                   |
-| **Format**      | `csv` (human-readable, opens in Excel) or `json` (preserves nesting) |
-| **Filter Keys** | Comma-separated field keys to include. Leave empty for all fields.   |
-
-
-#### Get Logs
-
-Fetch execution logs from a run for debugging or understanding failures.
-
-
-| Field        | Description        |
-| ------------ | ------------------ |
-| **Run Slug** | The run identifier |
-
-
-#### Abort
-
-Cancel an in-progress scraper run.
-
-
-| Field        | Description                 |
-| ------------ | --------------------------- |
-| **Run Slug** | The run identifier to abort |
-
-
-#### Rerun
-
-Re-run a previous run with the exact same parameters.
-
-
-| Field            | Description                                  |
-| ---------------- | -------------------------------------------- |
-| **Run Slug**     | The run identifier to rerun                  |
-| **Callback URL** | Optional webhook URL for async notifications |
-
-
-### Task resource
-
-#### Run
-
-Run a pre-configured saved task from the CoreClaw console. Task parameters are stored with the task itself, so no custom input is needed.
-
-
-| Field            | Description                                                  |
-| ---------------- | ------------------------------------------------------------ |
-| **Task Slug**    | Saved task identifier from the CoreClaw Console → Tasks page |
-| **Callback URL** | Optional webhook URL for async notifications                 |
-
-
-### Account resource
-
-#### Get Info
-
-Get account info: balance, traffic usage, and plan expiry.
-
-No parameters required.
+The CoreClaw node is organized by **resource**. Select a resource, then choose the operation. Operations marked **composite** start a run, poll to completion (up to ~4 minutes), and return results in a single node.
+
+Common run fields (on `Run`, `Rerun`, and task `Run` operations): **Version** (optional, defaults to latest), **Custom Parameters** / **Input JSON** (the worker's input, wrapped as `input.parameters.custom`), **Callback URL** (optional webhook), **Return All** (up to 10,000 rows), **Limit** (per-page cap, max 100).
+
+### Store Worker
+
+| Operation | Maps to | Notes |
+| --- | --- | --- |
+| **List** | `GET /api/v2/store` | Search public marketplace. `keyword`, `limit` 1–100 (default 50), Return All up to 10,000 |
+
+### Worker
+
+| Operation | Maps to | Notes |
+| --- | --- | --- |
+| **List** | `GET /api/v2/workers` | Your workers; `keyword`, Return All |
+| **Get** | `GET /api/v2/workers/{workerId}` | Pick from Store / My Workers / paste a slug |
+| **Get Input Schema** | `GET /api/v2/workers/{workerId}/input-schema` | No auth required (public schema) |
+| **Run** | `POST /api/v2/workers/{workerId}/runs` | Async by default; `callback_url` optional |
+| **Run and Get Results** *(composite)* | `POST` + poll + `GET .../result` | Starts run, polls ~4 min, returns rows (10,000 cap with Return All, else 100/page) |
+| **Get Last Run** | `GET /api/v2/workers/{workerId}/runs/last` | |
+| **Abort Last Run** | `POST /api/v2/workers/{workerId}/runs/last/abort` | No request body |
+| **Export Last Run Results** | `GET /api/v2/workers/{workerId}/runs/last/export` | `format` (8 formats, default `csv`), `filter_keys` |
+| **Get Last Run Log** | `GET /api/v2/workers/{workerId}/runs/last/log` | |
+| **Rerun Last Run** | `POST /api/v2/workers/{workerId}/runs/last/rerun` | |
+| **List Last Run Results** | `GET /api/v2/workers/{workerId}/runs/last/result` | Return All up to 10,000 |
+
+### Worker Run
+
+| Operation | Maps to | Notes |
+| --- | --- | --- |
+| **List** | `GET /api/v2/worker-runs` | Filter by `worker_id`, `status`; Return All |
+| **Get Last** | `GET /api/v2/worker-runs/last` | Account-wide latest run |
+| **Abort Last** | `POST /api/v2/worker-runs/last/abort` | No request body |
+| **Export Last Results** | `GET /api/v2/worker-runs/last/export` | `format`, `filter_keys` |
+| **Get Last Log** | `GET /api/v2/worker-runs/last/log` | |
+| **Rerun Last** | `POST /api/v2/worker-runs/last/rerun` | |
+| **List Last Results** | `GET /api/v2/worker-runs/last/result` | Return All up to 10,000 |
+| **Get** | `GET /api/v2/worker-runs/{runId}` | Pick from List / paste a run slug |
+| **Abort** | `POST /api/v2/worker-runs/{runId}/abort` | No request body |
+| **Get Log** | `GET /api/v2/worker-runs/{runId}/log` | |
+| **Rerun** | `POST /api/v2/worker-runs/{runId}/rerun` | |
+| **Rerun and Get Results** *(composite)* | `POST` + poll + `GET .../result` | Reruns then polls/returns; same caps as above |
+| **List Results** | `GET /api/v2/worker-runs/{runId}/result` | Return All up to 10,000 |
+| **Export Results** | `GET /api/v2/worker-runs/{runId}/result/export` | `format`, `filter_keys` |
+
+### Worker Task
+
+| Operation | Maps to | Notes |
+| --- | --- | --- |
+| **List** | `GET /api/v2/worker-tasks` | Filter by `worker_id`, `keyword`; Return All |
+| **Create** | `POST /api/v2/worker-tasks` | Requires `worker_id`, `title`, `input_json`; optional schedule (`schedule_type` 1=daily/2=weekly/3=monthly/4=once, with `schedule_time`/`schedule_weekday` 1–7/`schedule_day`/`schedule_once_date`/`schedule_enabled`) |
+| **Get** | `GET /api/v2/worker-tasks/{workerTaskId}` | Pick from List / paste an ID |
+| **Update** | `PUT /api/v2/worker-tasks/{workerTaskId}` | `title`, `description`, schedule fields. To change the input, use **Update Input** |
+| **Delete** | `DELETE /api/v2/worker-tasks/{workerTaskId}` | |
+| **Get Input** | `GET /api/v2/worker-tasks/{workerTaskId}/input` | The task's stored input payload |
+| **Update Input** | `PUT /api/v2/worker-tasks/{workerTaskId}/input` | `input_json` (wrapped as `input.parameters.custom`), `version` |
+| **Run** | `POST /api/v2/worker-tasks/{workerTaskId}/runs` | Async; `callback_url` optional |
+| **Run and Get Results** *(composite)* | `POST` + poll + `GET .../result` | Starts the task run, polls, returns rows |
+
+### Proxy
+
+| Operation | Maps to | Notes |
+| --- | --- | --- |
+| **List Regions** | `GET /api/v2/proxy/region` | No auth required; `language` `en`/`zh` |
+
+### Account
+
+| Operation | Maps to | Notes |
+| --- | --- | --- |
+| **Get Info** | `GET /api/v2/users/account` | Balance, traffic, plan expiry. No parameters |
+
+---
+
+## CoreClaw Trigger node
+
+A separate **CoreClaw Trigger** node receives `callback_url` notifications locally, so you can build webhook-driven workflows without polling. CoreClaw has no public webhook-registration API — instead, you paste the trigger's webhook URL into the **Callback URL** field of a run/rerun operation.
+
+The trigger exposes `POST <your-n8n-webhook-base>/webhook/callback`. Three fields:
+
+| Field | Default | Description |
+| --- | --- | --- |
+| **Event Filter** | `any` | `any` / `succeeded` / `failed` / `running` / `aborted`. Non-matching payloads produce no output |
+| **Validate Payload** | on | Require both `run_id` and `run_status` in the body, else error |
+| **Include Headers** | off | Copy request headers into `_headers` on the output item |
+
+The callback body carries `run_id`, `run_status`, `error_message`, `execution_start_timestamp`, `execution_end_timestamp`, `running_duration`, `result_count`, and `result_message`.
 
 ---
 
@@ -241,14 +185,10 @@ No parameters required.
 Here's a typical n8n workflow using CoreClaw:
 
 1. **Trigger** — Schedule Trigger (e.g., every day at 9 AM) or Webhook
-2. **CoreClaw: Scraper → Run** — Run a web scraper with target URLs
-3. **Wait** — Wait 30 seconds for the run to progress
-4. **CoreClaw: Run → Get** — Poll until status is `3` (Succeeded)
-5. **IF** — Check if status equals `3`
-  - **True** → Continue to get results
-  - **False** → Loop back to Wait
-6. **CoreClaw: Run → Get Results** — Retrieve the scraped data
-7. **Downstream nodes** — Send to Google Sheets, Slack, database, etc.
+2. **CoreClaw: Worker → Run and Get Results** — Start the worker and wait for results in one node (polls up to ~4 minutes)
+3. **Downstream nodes** — Send to Google Sheets, Slack, database, etc.
+
+For webhook-driven flows (no polling), replace step 2 with **Worker → Run** (set a **Callback URL**) and add a **CoreClaw Trigger** node to receive the completion event. The manual poll loop — `Worker → Run`, then `Wait`, then `Worker Run → Get` until `status` is `succeeded`, then `Worker Run → List Results` — still works if you need finer control over timing or retries.
 
 ### Ready-made workflow templates
 
@@ -303,7 +243,7 @@ Full API reference: [API Integration](/api/integration/).
 - **Store the API key as an n8n credential** — Never hardcode it in nodes.
 - **Use expressions** — Pass data between nodes with `{{ $json.run_slug }}` instead of manual copy-paste.
 - **Handle errors** — Check the `code` field in responses. Non-zero means an error occurred.
-- **Rate limits** — If you receive `code: 4290`, add a Wait node before retrying.
+- **Rate limits** — If you receive a rate-limit error (`code: 13000`), add a Wait node before retrying.
 - **Webhook callbacks** — Set `callback_url` when starting a Worker to receive notifications instead of polling.
 
 ---
