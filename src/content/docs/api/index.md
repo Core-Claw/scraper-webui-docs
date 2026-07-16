@@ -5,6 +5,16 @@ sidebar:
   order: 0
 ---
 
+## Overview
+
+CoreClaw's API is a RESTful surface over three objects:
+
+- **Worker** — a runnable script in the Store or your private workspace.
+- **Worker Task** — a saved, optionally scheduled run configuration (input + settings).
+- **Run** — a single execution of a Worker or Task, producing logs and results.
+
+The typical flow: find a Worker → read its input schema → start a run (async) → poll or receive a callback → read results or export a file. This page covers base URL, auth, conventions, and the full endpoint catalog; individual endpoints have their own pages.
+
 ## API Base URL
 
 Use `https://openapi.coreclaw.com` as the HTTP API base URL. Every v2 endpoint path starts with `/api/v2`, for example `https://openapi.coreclaw.com/api/v2/users/account`.
@@ -34,12 +44,20 @@ Public endpoints do not require a token, including proxy region lookup and Store
 - Read the Worker input schema before sending `input`; fields differ by Worker.
 - Use `POST /api/v2/workers/{workerId}/runs` for a direct Worker run, or `POST /api/v2/worker-tasks/{workerTaskId}/runs` for a saved task run.
 - `is_async: true` returns immediately; use `runId` to read details, logs, and results. `is_async: false` waits for completion and returns a synchronous result window.
-- `offset` is zero-based on list and result endpoints; `limit` is capped at `100` on list and result endpoints.
+- `offset` is **1-based** on list and result endpoints — `offset=1` returns the first page (think of it as `page_index = offset`, with `limit` as the page size). `limit` is capped at `100`.
 - Use export endpoints when the caller needs a downloadable result file instead of fetching every page in a browser.
 
 ## Response Envelope
 
 Most JSON responses include `code`, `message`, `request_id`, and `data`. HTTP status describes the request layer; application `code: 0` means the business operation succeeded. Keep HTTP status, `code`, `message`, and `request_id` when troubleshooting failed requests.
+
+### Errors
+
+When `code` is non-zero, the business operation failed even though the request reached the service. Common ones: `12001`/`12002` (auth), `13000` (rate-limited), `30001` (insufficient balance), `50001`/`60001`/`70001` (Worker/task/run not found). See the full [Error Codes](/api/error-codes/) page for the table and handling guidance.
+
+### Callbacks
+
+For async runs, pass `callback_url` in the request body and CoreClaw will `POST` to it when the run finishes — no need to poll. Callers should still store `data.run_slug` and `request_id` for follow-up reads. See [Callback Notifications](/api/callbacks/).
 
 ## Identifier Types
 
@@ -49,7 +67,7 @@ Most JSON responses include `code`, `message`, `request_id`, and `data`. HTTP st
 | `workerTaskId` | Saved task template identifier | Passed as a path parameter when running a task template |
 | `runId` | Run record identifier | The `data.run_slug` returned after starting or rerunning a Worker |
 
-## Public Endpoint Reference
+## Endpoint Reference
 
 | # | Method | Endpoint | Docs |
 | --- | --- | --- | --- |
@@ -87,3 +105,10 @@ Most JSON responses include `code`, `message`, `request_id`, and `data`. HTTP st
 | 32 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [Get Worker Last Run Log](/api/worker-runs/worker-last-log/) |
 | 33 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [Rerun Worker Last Run](/api/worker-runs/worker-last-rerun/) |
 | 34 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [List Worker Last Run Results](/api/worker-runs/worker-last-result/) |
+
+## Next steps
+
+- [Run a Worker](/api/workers/run/) — start your first run
+- [Error Codes](/api/error-codes/) — interpret non-zero `code` values
+- [Callback Notifications](/api/callbacks/) — receive run-status webhooks
+- [Examples](/api/examples/python/) — runnable snippets in Python, Node.js, Go, PHP, and Java
