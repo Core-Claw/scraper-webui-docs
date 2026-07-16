@@ -250,6 +250,16 @@ Here's a typical n8n workflow using CoreClaw:
 6. **CoreClaw: Run → Get Results** — Retrieve the scraped data
 7. **Downstream nodes** — Send to Google Sheets, Slack, database, etc.
 
+### Ready-made workflow templates
+
+Instead of building from scratch, start from the production templates in the [coreclaw-n8n-workflows](https://github.com/Core-Claw/coreclaw-n8n-workflows) repository. They wire the CoreClaw Google Maps scraper into a business loop — scrape → score → write to Google Sheets → email an Excel-attached summary — and are verified on n8n 2.30.4:
+
+- `gmaps-leads-to-sheets.json` — run, wait for results, then write to Google Sheets
+- `gmaps-leads-sheets-email-summary.json` — same, plus export XLSX + Gmail an HTML Top-10 summary with the file attached
+- `gmaps-leads-callback-export.json` — callback-webhook driven (no polling; needs a publicly reachable n8n)
+
+Each template needs three credentials: CoreClaw API, Google Sheets OAuth2, and Gmail OAuth2. The repo's `docs/` folder covers credential binding, field mapping, and Google OAuth setup.
+
 ---
 
 ## Using HTTP Request node (advanced)

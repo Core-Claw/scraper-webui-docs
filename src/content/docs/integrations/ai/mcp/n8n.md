@@ -76,3 +76,5 @@ The AI Agent should:
 
 - [Back to MCP overview](/integrations/ai/mcp/)
 - [CoreClaw API documentation](/api/)
+- [n8n community node](/integrations/workflows-and-notifications/n8n/) — a dedicated CoreClaw node for n8n (no AI agent required)
+- [coreclaw-n8n-workflows](https://github.com/Core-Claw/coreclaw-n8n-workflows) — production-ready n8n workflow templates

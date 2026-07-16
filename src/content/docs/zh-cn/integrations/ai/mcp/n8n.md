@@ -76,3 +76,5 @@ AI Agent 应该按以下顺序执行：
 
 - [返回 MCP 概览](/zh-cn/integrations/ai/mcp/)
 - [CoreClaw API 文档](/zh-cn/api/)
+- [n8n 社区节点](/zh-cn/integrations/workflows-and-notifications/n8n/) —— n8n 专用 CoreClaw 节点（无需 AI Agent）
+- [coreclaw-n8n-workflows](https://github.com/Core-Claw/coreclaw-n8n-workflows) —— 生产级 n8n 工作流模板
