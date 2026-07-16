@@ -1,6 +1,6 @@
 ---
 title: How to export data?
-description: Download your scraped data in JSON or CSV format
+description: Download your scraped data — 8 formats in the Console (CSV/JSON/JSONL/XLS/XLSX/HTML/XML/RSS), CSV and JSON via the API
 sidebar:
   order: 3
 ---
@@ -54,6 +54,8 @@ GET /api/v2/worker-runs/{runId}/result/export?format=csv&filter_keys=title%2Cpri
 ```
 
 **Supported formats:** `csv`, `json`
+
+The export API supports `csv` and `json` only. For **JSONL, XLS, XLSX, HTML, XML, and RSS**, export from the Console results page instead.
 
 Use the `runId` returned as `data.run_slug` when you start or rerun a Worker. See [Export API](/api/worker-runs/export/) for full documentation.
 

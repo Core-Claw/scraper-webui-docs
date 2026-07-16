@@ -41,12 +41,22 @@ Worker output is structured data stored via `push_data`. The structure depends o
 
 ### Export Formats
 
-You can export output data in the following formats:
+In the Console you can export output data in eight formats:
 
-| Format   | Best For                          |
-| -------- | --------------------------------- |
-| **JSON** | Developers, API integration       |
-| **CSV**  | Spreadsheets, data analysis       |
+| Format    | Best For                                   |
+| --------- | ------------------------------------------ |
+| **CSV**   | Spreadsheets and data analysis             |
+| **JSON**  | Developers and API integration             |
+| **JSONL** | Line-delimited, stream-friendly pipelines  |
+| **XLS**   | Legacy Excel workbooks                     |
+| **XLSX**  | Modern Excel workbooks                     |
+| **HTML**  | Viewable in any browser                    |
+| **XML**   | Legacy and enterprise pipelines            |
+| **RSS**   | Feed readers and monitor-style integrations|
+
+:::note[API exports]
+The export API (`?format=`) supports `csv` and `json` only. For the other formats, use the Console. See [How to export data](/user-guide/user-faq/how-to-export-data/).
+:::
 
 ### Data Size Limits
 
