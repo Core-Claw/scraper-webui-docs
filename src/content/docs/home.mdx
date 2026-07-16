@@ -1,83 +1,259 @@
 ---
 title: Home
-description: CoreClaw is a powerful web scraping platform that enables you to extract data from any website efficiently and reliably.
+description: CoreClaw is a cloud-based web data collection platform for running ready-made Workers or building your own.
 sidebar:
-  order: 0
+    order: 0
 ---
 
-## CoreClaw documentation
+CoreClaw is a cloud-based web data collection platform. Two paths run through it — **run** a ready-made Worker without writing code, or **build** your own and publish it to the Store.
 
-CoreClaw is a powerful cloud-based web data collection platform that helps you extract structured data from any website efficiently and reliably.
+:::note[Just looking around?]
+If you only have a minute, jump to [Run a Worker](/user-guide/run-worker/quick-start/) and try one from the Store. No code, no setup.
+:::
 
-## Get started
+## Choose your path
 
-Learn how to run any Worker in CoreClaw Store or create your own.
-
-<div class="hero-cards">
-    <a href="/user-guide/run-worker/quick-start/" class="hero-card">
-        <div class="hero-card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M21 15.998v-6c0-2.828 0-4.242-.879-5.121C19.353 4.109 18.175 4.012 16 4H8c-2.175.012-3.353.109-4.121.877C3 5.756 3 7.17 3 9.998v6c0 2.829 0 4.243.879 5.122c.878.878 2.293.878 5.121.878h6c2.828 0 4.243 0 5.121-.878c.879-.88.879-2.293.879-5.122" opacity="0.5"/>
-                <path d="M8 3.5A1.5 1.5 0 0 1 9.5 2h5A1.5 1.5 0 0 1 16 3.5v1A1.5 1.5 0 0 1 14.5 6h-5A1.5 1.5 0 0 1 8 4.5z"/>
-                <path fill="currentColor" fill-rule="evenodd" d="M15.548 10.488a.75.75 0 0 1-.036 1.06l-4.286 4a.75.75 0 0 1-1.024 0l-1.714-1.6a.75.75 0 1 1 1.024-1.096l1.202 1.122l3.774-3.522a.75.75 0 0 1 1.06.036" clip-rule="evenodd"/>
-            </svg>
+<div class="nav-grid">
+    <a href="/user-guide/run-worker/quick-start/" class="nav-card">
+        <div class="nav-card-header">
+            <div class="nav-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M5 3l14 9-14 9V3z"/></svg>
+            </div>
+            <span class="nav-card-tag" style="--tag-color:#0891b2">No code</span>
         </div>
-        <h3>Run a Worker</h3>
-        <p>Search and run ready-made Workers from CoreClaw Store to extract data without writing code.</p>
+        <div class="nav-card-title">Run a Worker <span class="nav-card-arrow">→</span></div>
+        <p class="nav-card-desc">Search the Store, run a ready-made Worker, and export structured data — without writing a single line of code.</p>
     </a>
-    <a href="/developer-guide/develop-worker/quick-start/" class="hero-card">
-        <div class="hero-card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 14h2v-2H3zm0 4h2v-2H3zm0-8h2V8H3zm4 4h14v-2H7zm0 4h14v-2H7zM7 8v2h14V8z" opacity="0.5"/>
-                <path fill-rule="evenodd" d="M1 6a3 3 0 0 1 3-3h16a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3zm3-1h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1" clip-rule="evenodd"/>
-            </svg>
+    <a href="/developer-guide/develop-worker/quick-start/" class="nav-card">
+        <div class="nav-card-header">
+            <div class="nav-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/></svg>
+            </div>
+            <span class="nav-card-tag" style="--tag-color:#6366f1">Developer</span>
         </div>
-        <h3>Build your own Worker</h3>
-        <p>Create custom Workers using Python, Node.js, or Go, and publish to CoreClaw Store or keep private.</p>
+        <div class="nav-card-title">Build a Worker <span class="nav-card-arrow">→</span></div>
+        <p class="nav-card-desc">Create custom Workers in Python, Node.js, or Go — wire up proxies, fingerprints, and CAPTCHA handling, then publish or keep private.</p>
     </a>
 </div>
 
-## Contents
+## Run path
 
-<div class="hero-cards">
-    <a href="/user-guide/run-worker/quick-start/" class="hero-card">
-        <div class="hero-card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M2 16.144V4.998c0-1.098.886-1.99 1.982-1.923c.977.06 2.131.179 3.018.413c1.05.276 2.296.866 3.282 1.388A3.478 3.478 0 0 0 12 5.275v15.2a3.46 3.46 0 0 1-1.628-.406c-1-.532-2.29-1.15-3.372-1.435c-.877-.232-2.016-.35-2.985-.411C2.906 18.153 2 17.255 2 16.143" opacity="0.5"/>
-                <path d="M22 16.144V4.934c0-1.073-.846-1.953-1.918-1.916c-1.129.04-2.535.156-3.582.47c-.908.271-1.965.816-2.826 1.315A3.529 3.529 0 0 1 12 5.275v15.2c.56 0 1.121-.136 1.628-.406c1-.532 2.29-1.15 3.372-1.435c.877-.232 2.016-.35 2.985-.411c1.109-.07 2.015-.968 2.015-2.08"/>
-            </svg>
+Find, run, and manage ready-made Workers.
+
+<div class="quick-links">
+    <a href="/user-guide/run-worker/quick-start/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Quick start</span>
+            <span class="quick-link-desc">Run your first Worker in minutes</span>
         </div>
-        <h3>User Guide</h3>
-        <p>Learn how to find and run Workers, manage tasks, export data, and find answers to common questions.</p>
+        <span class="quick-link-arrow">→</span>
     </a>
-    <a href="/developer-guide/develop-worker/quick-start/" class="hero-card">
-        <div class="hero-card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 14h2v-2H3zm0 4h2v-2H3zm0-8h2V8H3zm4 4h14v-2H7zm0 4h14v-2H7zM7 8v2h14V8z" opacity="0.5"/>
-                <path fill-rule="evenodd" d="M1 6a3 3 0 0 1 3-3h16a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3zm3-1h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1" clip-rule="evenodd"/>
-            </svg>
+    <a href="/user-guide/run-worker/worker-tasks/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Tasks & schedules</span>
+            <span class="quick-link-desc">Save, schedule, and rerun jobs</span>
         </div>
-        <h3>Developer Guide</h3>
-        <p>Worker development, project structure, platform features, SDK modules, browser automation, deployment, and publishing.</p>
+        <span class="quick-link-arrow">→</span>
     </a>
-    <a href="/api/" class="hero-card">
-        <div class="hero-card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M216 40H40a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16M40 56h176v40H40Zm176 144H40v-88h176v88Z" opacity="0.5"/>
-                <path fill-rule="evenodd" d="M8 8h8v8H8zm12 0h8v8h-8zM8 20h8v8H8zm12 0h8v8h-8z" clip-rule="evenodd"/>
-            </svg>
+    <a href="/user-guide/run-worker/input-output/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Input & output</span>
+            <span class="quick-link-desc">Pass parameters, read results</span>
         </div>
-        <h3>API Reference</h3>
-        <p>Complete RESTful API endpoint documentation, including Worker execution, task management, result export, and account info.</p>
+        <span class="quick-link-arrow">→</span>
     </a>
-    <a href="/website-events/invitation-event/" class="hero-card">
-        <div class="hero-card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" opacity="0.5"/>
-                <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20" fill="none" stroke="currentColor" stroke-width="1.5"/>
-            </svg>
+    <a href="/user-guide/user-faq/how-to-export-data/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Export data</span>
+            <span class="quick-link-desc">Download CSV, JSON, Excel</span>
         </div>
-        <h3>Events</h3>
-        <p>Invite friends to register and earn rewards, participate in platform events for more benefits.</p>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/user-guide/run-worker/pricing-rules/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Pricing & quota</span>
+            <span class="quick-link-desc">How runs are billed</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/user-guide/user-faq/worker-failed/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Troubleshooting</span>
+            <span class="quick-link-desc">When a run fails</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/api/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Run via API</span>
+            <span class="quick-link-desc">Trigger runs programmatically</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/integrations/ai/mcp/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Use with AI</span>
+            <span class="quick-link-desc">MCP for Claude, Cursor, Codex</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+</div>
+
+## Build path
+
+Develop, test, and publish your own Workers.
+
+<div class="quick-links">
+    <a href="/developer-guide/develop-worker/quick-start/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Quick start</span>
+            <span class="quick-link-desc">Scaffold and run locally</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/developer-guide/worker-definition/project-structure/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Project structure</span>
+            <span class="quick-link-desc">Files, entry, config</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/developer-guide/worker-definition/input-schema/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Input & output schema</span>
+            <span class="quick-link-desc">Define typed contracts</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/developer-guide/worker-definition/platform-features/proxy-support/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Platform features</span>
+            <span class="quick-link-desc">Proxy, fingerprint, CAPTCHA</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/developer-guide/worker-definition/browser-automation/overview/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Browser automation</span>
+            <span class="quick-link-desc">Playwright, Puppeteer, Selenium</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/developer-guide/test-your-worker/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Test your Worker</span>
+            <span class="quick-link-desc">Validate before publish</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/developer-guide/worker-definition/sdk-modules/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">SDK modules</span>
+            <span class="quick-link-desc">Logging, input, output helpers</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/developer-guide/publishing-and-monetization/publish-your-worker/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Publish & monetize</span>
+            <span class="quick-link-desc">Ship to the Store</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+</div>
+
+## API reference
+
+A RESTful API for triggering runs, managing tasks, and exporting results — with callback webhooks and full error-code coverage.
+
+<div class="quick-links">
+    <a href="/api/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Overview</span>
+            <span class="quick-link-desc">Base URL, auth, versioning</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/api/workers/run/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Run a Worker</span>
+            <span class="quick-link-desc">POST /v2/workers/run</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/api/worker-tasks/list/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Manage tasks</span>
+            <span class="quick-link-desc">Create, update, schedule</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/api/worker-runs/export/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Export results</span>
+            <span class="quick-link-desc">CSV, JSON, Excel</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/api/callbacks/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Callbacks</span>
+            <span class="quick-link-desc">Webhook notifications</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/api/error-codes/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Error codes</span>
+            <span class="quick-link-desc">Status & troubleshooting</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/api/examples/python/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Examples</span>
+            <span class="quick-link-desc">Python, Node, Go, PHP, Java</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+    <a href="/api/account/get/" class="quick-link">
+        <div class="quick-link-content">
+            <span class="quick-link-title">Account</span>
+            <span class="quick-link-desc">Balance & quota</span>
+        </div>
+        <span class="quick-link-arrow">→</span>
+    </a>
+</div>
+
+## Keep up & get help
+
+<div class="help-grid">
+    <a href="/website-events/invitation-event/" class="help-card" style="--help-bg: hsla(199, 89%, 38%, 0.08)">
+        <div class="help-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="hsl(199, 89%, 38%)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20 12v9H4v-9"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+        </div>
+        <div class="help-card-title">Events</div>
+        <div class="help-card-desc">Invite friends, earn rewards</div>
+    </a>
+    <a href="/changelog/" class="help-card" style="--help-bg: hsla(224, 76%, 48%, 0.08)">
+        <div class="help-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="hsl(224, 76%, 48%)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="help-card-title">Changelog</div>
+        <div class="help-card-desc">Recent platform updates</div>
+    </a>
+    <a href="https://coreclaw.com/blog" class="help-card" style="--help-bg: hsla(262, 83%, 58%, 0.08)">
+        <div class="help-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="hsl(262, 83%, 58%)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M4 4h16v16H4z"/><path d="M4 9h16"/><path d="M9 4v16"/></svg>
+        </div>
+        <div class="help-card-title">Blog</div>
+        <div class="help-card-desc">Guides & deep dives</div>
+    </a>
+    <a href="https://github.com/Core-Claw" class="help-card" style="--help-bg: hsla(142, 71%, 45%, 0.08)">
+        <div class="help-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 71%, 45%)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        </div>
+        <div class="help-card-title">GitHub</div>
+        <div class="help-card-desc">Code, issues, examples</div>
     </a>
 </div>

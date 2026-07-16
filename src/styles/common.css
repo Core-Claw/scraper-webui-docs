@@ -836,70 +836,20 @@ aside.caution::before {
 }
 
 /* ========================================
-   Aside / Callout polish — icon + bold label per type
+   Aside / Callout polish
+   Starlight already renders an SVG icon inside .starlight-aside__title,
+   so we do NOT paint a second ::after icon here — a previous version did,
+   but its mask selectors (aside.note, aside.tip, …) never matched
+   Starlight's real .starlight-aside--{type} classes, so the ::after
+   showed up as a bare 20px colour block in the top-left corner of every
+   callout. We just bold the title and let Starlight's own icon do its job.
    ======================================== */
-.sl-markdown-content aside {
-    /* Reserve space on the left for the inline icon */
-    padding-inline-start: 3rem;
-    position: relative;
-}
-
-.sl-markdown-content aside .sl-aside-content {
-    /* Starlight's inner wrapper — make sure it stays under our absolute icon */
-    position: relative;
-}
-
-.sl-markdown-content aside::after {
-    content: '';
-    position: absolute;
-    top: 1.05rem;
-    inset-inline-start: 1.05rem;
-    width: 1.25rem;
-    height: 1.25rem;
-    background-color: currentColor;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    opacity: 0.85;
-}
-
-/* ℹ Note */
-.sl-markdown-content aside.note::after {
-    color: hsl(var(--core-primary-hsl));
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/></svg>");
-}
-
-/* ✓ Tip */
-.sl-markdown-content aside.tip::after {
-    color: hsl(142, 71%, 45%);
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>");
-}
-
-/* ⚠ Caution / Warning */
-.sl-markdown-content aside.caution::after,
-.sl-markdown-content aside.warning::after {
-    color: hsl(38, 92%, 50%);
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'/></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'/></svg>");
-}
-
-/* ✕ Danger */
-.sl-markdown-content aside.danger::after {
-    color: hsl(0, 72%, 51%);
-    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z'/></svg>");
-    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z'/></svg>");
-}
-
-/* Bold the aside title when Starlight emits one */
+.sl-markdown-content aside .starlight-aside__title,
 .sl-markdown-content aside .sl-aside-title {
     font-weight: 700;
     margin-bottom: 0.35rem;
 }
+
 
 /* ========================================
    Badges and Labels
