@@ -1,6 +1,6 @@
 ---
 title: 如何导出数据？
-description: 下载采集数据——控制台支持 8 种格式（CSV/JSON/JSONL/XLS/XLSX/HTML/XML/RSS），API 支持 CSV 与 JSON
+description: 下载采集数据——控制台与导出 API 均支持 8 种格式（CSV/JSON/JSONL/XLS/XLSX/HTML/XML/RSS）
 sidebar:
   order: 3
 ---
@@ -44,7 +44,7 @@ sidebar:
 点击格式按钮下载您的数据。
 
 :::note[API 导出]
-导出 API（`?format=`）仅支持 `csv` 与 `json`。如需 **JSONL、XLS、XLSX、HTML、XML、RSS**，请在控制台结果页导出。详见下文[通过 API 导出](#通过-api-导出)。
+导出 API（`?format=`）同样支持这 8 种格式（大小写不敏感，默认 `csv`）。详见下文[通过 API 导出](#通过-api-导出)。
 :::
 
 ## 通过 API 导出
@@ -63,9 +63,7 @@ GET /api/v2/worker-runs/{runId}/result?offset=0&limit=20
 GET /api/v2/worker-runs/{runId}/result/export?format=csv&filter_keys=title%2Cprice%2Curl
 ```
 
-**支持的格式：** `csv`、`json`
-
-导出 API 仅支持 `csv` 与 `json`。如需 **JSONL、XLS、XLSX、HTML、XML、RSS**，请在控制台结果页导出。
+**支持的格式：** `csv`、`json`、`jsonl`、`xlsx`、`xls`、`xml`、`html`、`rss`（大小写不敏感，默认 `csv`）。
 
 启动或重跑 Worker 后，响应中的 `data.run_slug` 就是这里使用的 `runId`。详见[导出 API](/zh-cn/api/worker-runs/export/) 完整文档。
 

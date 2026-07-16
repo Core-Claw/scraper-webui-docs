@@ -55,7 +55,7 @@ In the Console you can export output data in eight formats:
 | **RSS**   | Feed readers and monitor-style integrations|
 
 :::note[API exports]
-The export API (`?format=`) supports `csv` and `json` only. For the other formats, use the Console. See [How to export data](/user-guide/user-faq/how-to-export-data/).
+The export API (`?format=`) supports the same eight formats — `csv`, `json`, `jsonl`, `xlsx`, `xls`, `xml`, `html`, `rss` (case-insensitive, default `csv`). See [How to export data](/user-guide/user-faq/how-to-export-data/).
 :::
 
 ### Data Size Limits

@@ -55,7 +55,7 @@ Worker 的输出是通过 `push_data` 存储的结构化数据。数据结构取
 | **RSS** | 阅读器与监控式集成 |
 
 :::note[API 导出]
-导出 API（`?format=`）仅支持 `csv` 与 `json`。其他格式请在控制台导出。详见[如何导出数据](/zh-cn/user-guide/user-faq/how-to-export-data/)。
+导出 API（`?format=`）同样支持这 8 种格式——`csv`、`json`、`jsonl`、`xlsx`、`xls`、`xml`、`html`、`rss`（大小写不敏感，默认 `csv`）。详见[如何导出数据](/zh-cn/user-guide/user-faq/how-to-export-data/)。
 :::
 
 ### 数据大小限制

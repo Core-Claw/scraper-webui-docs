@@ -1,6 +1,6 @@
 ---
 title: How to export data?
-description: Download your scraped data — 8 formats in the Console (CSV/JSON/JSONL/XLS/XLSX/HTML/XML/RSS), CSV and JSON via the API
+description: Download your scraped data in 8 formats (CSV/JSON/JSONL/XLS/XLSX/HTML/XML/RSS) from the Console or the export API
 sidebar:
   order: 3
 ---
@@ -26,12 +26,18 @@ On the run details page, you can see:
 
 ### Step 3: Select Export Format
 
-Choose your preferred format:
+Choose your preferred format (eight available):
 
-| Format   | Extension | Best For                    |
-| -------- | --------- | --------------------------- |
-| **JSON** | `.json`   | Developers, API integration |
-| **CSV**  | `.csv`    | Spreadsheets, analysis      |
+| Format    | Extension | Best For                          |
+| --------- | --------- | --------------------------------- |
+| **CSV**   | `.csv`    | Spreadsheets, data analysis       |
+| **JSON**  | `.json`   | Developers, API integration       |
+| **JSONL** | `.jsonl`  | Line-delimited, stream-friendly   |
+| **XLS**   | `.xls`    | Legacy Excel workbooks            |
+| **XLSX**  | `.xlsx`   | Modern Excel workbooks            |
+| **HTML**  | `.html`   | Viewable in any browser           |
+| **XML**   | `.xml`    | Legacy and enterprise pipelines   |
+| **RSS**   | `.rss`    | Feed readers and monitor-style    |
 
 ### Step 4: Download
 
@@ -53,9 +59,7 @@ GET /api/v2/worker-runs/{runId}/result?offset=0&limit=20
 GET /api/v2/worker-runs/{runId}/result/export?format=csv&filter_keys=title%2Cprice%2Curl
 ```
 
-**Supported formats:** `csv`, `json`
-
-The export API supports `csv` and `json` only. For **JSONL, XLS, XLSX, HTML, XML, and RSS**, export from the Console results page instead.
+**Supported formats:** `csv`, `json`, `jsonl`, `xlsx`, `xls`, `xml`, `html`, `rss` (case-insensitive, default `csv`).
 
 Use the `runId` returned as `data.run_slug` when you start or rerun a Worker. See [Export API](/api/worker-runs/export/) for full documentation.
 
