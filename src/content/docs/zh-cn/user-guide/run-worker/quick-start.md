@@ -5,11 +5,13 @@ sidebar:
   order: 1
 ---
 
-5 分钟内运行您的第一个 Worker！
+5 分钟内运行您的第一个 Worker——无需写代码，全程在浏览器中完成：从商店挑选 Worker → 填写输入 → 点击启动 → 导出结果。
 
 ## 前提条件
 
-- 一个 CoreClaw 账户（[点击注册](https://console.coreclaw.com/sign-up)）
+- 一个 CoreClaw 账户（[免费注册](https://console.coreclaw.com/sign-up)）
+- 充足的账户余额（查看您的[钱包](https://console.coreclaw.com/wallet)）
+- 准备好目标网站链接或要采集的参数
 
 ## 操作步骤
 
@@ -65,9 +67,24 @@ sidebar:
 - **日志**：详细的执行日志，便于调试和监控。
 - **输出结果**：采集到的数据以结构化表格展示，各字段清晰标注。
 
-在结果页面右侧，您可以选择以不同格式导出数据：
+在结果页面右侧，您可以将数据导出为以下 8 种格式：
 
-- **JSON** - 适用于开发者和 API 集成
-- **CSV** - 适用于电子表格和数据分析
+- **CSV** —— 电子表格与数据分析
+- **JSON** —— 开发者与 API 集成
+- **JSONL** —— 按行分隔，便于流式处理
+- **XLS / XLSX** —— Excel 工作簿
+- **HTML** —— 任意浏览器可查看
+- **XML** —— 传统与企业级流水线
+- **RSS** —— 阅读器与监控式集成
 
 ![查看结果与导出](@/assets/docs/59.png)
+
+:::tip[先小规模试跑]
+大规模运行前，先小规模测试以核对输出与费用。运行如何计费见[计费与配额](/zh-cn/user-guide/run-worker/pricing-rules/)。
+:::
+
+## 后续步骤
+
+- [输入与输出](/zh-cn/user-guide/run-worker/input-output/) —— 了解参数与结果结构
+- [Worker 任务](/zh-cn/user-guide/run-worker/worker-tasks/) —— 将一次运行保存为可复用、可定时的任务
+- [API 调用](/zh-cn/user-guide/run-worker/api-calls/) —— 编程式触发同一运行

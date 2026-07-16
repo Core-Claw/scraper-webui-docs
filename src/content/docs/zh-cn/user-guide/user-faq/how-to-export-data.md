@@ -1,6 +1,6 @@
 ---
 title: 如何导出数据？
-description: 以 JSON 或 CSV 格式下载采集的数据
+description: 下载采集数据——控制台与导出 API 均支持 8 种格式（CSV/JSON/JSONL/XLS/XLSX/HTML/XML/RSS）
 sidebar:
   order: 3
 ---
@@ -26,16 +26,26 @@ sidebar:
 
 ### 步骤 3：选择导出格式
 
-选择您偏好的格式：
+在控制台选择您偏好的格式（共 8 种）：
 
 | 格式 | 扩展名 | 适用场景 |
 | ---- | ------ | -------- |
+| **CSV** | `.csv` | 电子表格、数据分析 |
 | **JSON** | `.json` | 开发者、API 集成 |
-| **CSV** | `.csv` | 电子表格、分析 |
+| **JSONL** | `.jsonl` | 按行分隔，便于流式处理 |
+| **XLS** | `.xls` | 传统 Excel 工作簿 |
+| **XLSX** | `.xlsx` | 现代 Excel 工作簿 |
+| **HTML** | `.html` | 任意浏览器可查看 |
+| **XML** | `.xml` | 传统与企业级流水线 |
+| **RSS** | `.rss` | 阅读器与监控式集成 |
 
 ### 步骤 4：下载
 
 点击格式按钮下载您的数据。
+
+:::note[API 导出]
+导出 API（`?format=`）同样支持这 8 种格式（大小写不敏感，默认 `csv`）。详见下文[通过 API 导出](#通过-api-导出)。
+:::
 
 ## 通过 API 导出
 
@@ -53,7 +63,7 @@ GET /api/v2/worker-runs/{runId}/result?offset=0&limit=20
 GET /api/v2/worker-runs/{runId}/result/export?format=csv&filter_keys=title%2Cprice%2Curl
 ```
 
-**支持的格式：** `csv`、`json`
+**支持的格式：** `csv`、`json`、`jsonl`、`xlsx`、`xls`、`xml`、`html`、`rss`（大小写不敏感，默认 `csv`）。
 
 启动或重跑 Worker 后，响应中的 `data.run_slug` 就是这里使用的 `runId`。详见[导出 API](/zh-cn/api/worker-runs/export/) 完整文档。
 

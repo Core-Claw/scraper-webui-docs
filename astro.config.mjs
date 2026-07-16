@@ -695,6 +695,13 @@ export default defineConfig({
                                         },
                                     ],
                                 },
+                                {
+                                    label: 'Skill',
+                                    slug: 'integrations/ai/skill',
+                                    translations: {
+                                        'zh-CN': 'Skill',
+                                    },
+                                },
                             ],
                         },
                         {

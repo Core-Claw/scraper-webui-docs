@@ -24,3 +24,8 @@ pnpm-debug.log*
 openapi.swagger.json
 
 .vscode/
+# brainstorming companion mockups
+.superpowers/
+
+# Local Claude Code launch config
+.claude/

@@ -5,11 +5,13 @@ sidebar:
   order: 1
 ---
 
-Get your first Worker running in just 5 minutes!
+Get your first Worker running in just 5 minutes — no code required. The whole flow lives in your browser: pick a Worker from the Store → fill in the inputs → hit Start → export the results.
 
 ## Prerequisites
 
-- A CoreClaw account ([Sign up here](https://console.coreclaw.com/sign-up))
+- A CoreClaw account ([Sign up free](https://console.coreclaw.com/sign-up))
+- Sufficient account balance (check your [wallet](https://console.coreclaw.com/wallet))
+- The target website URL or parameters you want to scrape
 
 ## Step-by-Step Guide
 
@@ -65,9 +67,24 @@ After the run completes, you can view:
 - **Logs**: Detailed execution logs for debugging and monitoring.
 - **Output Results**: The extracted data displayed in a structured table with each field clearly labeled.
 
-On the right side of the results page, you can choose to export the data in different formats:
+On the right side of the results page, you can export the data in eight formats:
 
-- **JSON** - For developers and API integration
-- **CSV** - For spreadsheets and data analysis
+- **CSV** — spreadsheets and data analysis
+- **JSON** — developers and API integration
+- **JSONL** — line-delimited, stream-friendly
+- **XLS / XLSX** — Excel workbooks
+- **HTML** — viewable in any browser
+- **XML** — legacy and enterprise pipelines
+- **RSS** — feed readers and monitor-style integrations
 
 ![View results and export](@/assets/docs/53.png)
+
+:::tip[Start small]
+Run a small test first to verify the output and cost before scaling up. See [Pricing & quota](/user-guide/run-worker/pricing-rules/) for how runs are billed.
+:::
+
+## Next steps
+
+- [Input and output](/user-guide/run-worker/input-output/) — understand parameters and result structure
+- [Worker Tasks](/user-guide/run-worker/worker-tasks/) — save a run as a reusable, scheduled task
+- [API Calls](/user-guide/run-worker/api-calls/) — trigger the same run programmatically
