@@ -990,8 +990,8 @@ aside.caution::before {
    Sidebar Navigation - Enhanced
    ======================================== */
 
-/* Sidebar container */
-.sl-sidebar {
+/* Sidebar container — Starlight 0.38 renders <nav class="sidebar"> */
+nav.sidebar {
     background: linear-gradient(
         180deg,
         hsla(var(--core-primary-hsl), 0.02) 0%,
@@ -1000,7 +1000,7 @@ aside.caution::before {
     border-right: 1px solid hsla(var(--core-primary-hsl), 0.08);
 }
 
-:root[data-theme='dark'] .sl-sidebar {
+:root[data-theme='dark'] nav.sidebar {
     background: linear-gradient(
         180deg,
         hsla(var(--core-primary-hsl), 0.04) 0%,
@@ -1009,12 +1009,8 @@ aside.caution::before {
     border-right-color: hsla(var(--core-primary-hsl), 0.12);
 }
 
-/* Sidebar items */
-.sl-sidebar-item {
-    margin: 2px 0;
-}
-
-.sl-sidebar-item a {
+/* Sidebar links — Starlight emits a.large for top-level, plain a for nested */
+nav.sidebar a {
     border-radius: 6px;
     padding: 0.5rem 0.75rem;
     margin: 0 0.5rem;
@@ -1022,7 +1018,7 @@ aside.caution::before {
     position: relative;
 }
 
-.sl-sidebar-item a::before {
+nav.sidebar a::before {
     content: '';
     position: absolute;
     left: 0;
@@ -1035,27 +1031,24 @@ aside.caution::before {
     transition: height 0.2s ease;
 }
 
-.sl-sidebar-item a:hover {
+nav.sidebar a:hover {
     background-color: hsla(var(--core-primary-hsl), 0.08);
     padding-left: 1rem;
 }
 
-.sl-sidebar-item a:hover::before {
+nav.sidebar a:hover::before {
     height: 50%;
 }
 
-.sl-sidebar-item[data-current-page='true'] {
-    background-color: transparent;
-}
-
-.sl-sidebar-item[data-current-page='true'] a {
+/* Current page — Starlight 0.38 marks it with aria-current="page" */
+nav.sidebar a[aria-current='page'] {
     background-color: hsla(var(--core-primary-hsl), 0.12);
     color: hsl(var(--core-primary-hsl));
     font-weight: 600;
     padding-left: 1rem;
 }
 
-.sl-sidebar-item[data-current-page='true'] a::before {
+nav.sidebar a[aria-current='page']::before {
     height: 70%;
     background: linear-gradient(
         180deg,
@@ -1064,8 +1057,8 @@ aside.caution::before {
     );
 }
 
-/* Sidebar group headers */
-.sl-sidebar-group-title {
+/* Sidebar group labels — Starlight emits <span class="group-label"> */
+.group-label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -1080,13 +1073,14 @@ aside.caution::before {
 }
 
 /* First group - no top border */
-.sl-sidebar-group:first-child .sl-sidebar-group-title {
+nav.sidebar details:first-of-type .group-label,
+nav.sidebar > .group-label:first-child {
     border-top: none;
     margin-top: 0;
 }
 
 /* Collapsible groups */
-.sl-sidebar-group details summary {
+nav.sidebar details summary {
     padding: 0.5rem 0.75rem;
     margin: 0 0.5rem;
     border-radius: 6px;
@@ -1094,11 +1088,11 @@ aside.caution::before {
     transition: background-color 0.2s ease;
 }
 
-.sl-sidebar-group details summary:hover {
+nav.sidebar details summary:hover {
     background-color: hsla(var(--core-primary-hsl), 0.06);
 }
 
-.sl-sidebar-group details summary::marker {
+nav.sidebar details summary::marker {
     color: hsl(var(--core-primary-hsl));
 }
 
@@ -1223,22 +1217,22 @@ header,
 }
 
 /* ========================================
-   Breadcrumb Navigation - Ensure links work
+   Breadcrumb Navigation — Starlight 0.38 renders <nav class="breadcrumb">
    ======================================== */
-.sl-breadcrumb {
+nav.breadcrumb {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     flex-wrap: wrap;
 }
 
-.sl-breadcrumb a {
+nav.breadcrumb a {
     color: hsl(var(--core-primary-hsl));
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
-.sl-breadcrumb a:hover {
+nav.breadcrumb a:hover {
     color: hsl(var(--core-secondary-hsl));
     text-decoration: underline;
 }
