@@ -1,8 +1,16 @@
 # CoreClaw Documentation
 
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="CoreClaw Documentation: source for docs.coreclaw.com, built with Astro and Starlight in English and Simplified Chinese.">
+</p>
+
 Source content and configuration for [docs.coreclaw.com](https://docs.coreclaw.com/), built with [Astro](https://astro.build/) and [Starlight](https://starlight.astro.build/).
 
 Chinese version: [`README.zh-CN.md`](./README.zh-CN.md)
+
+<p align="center">
+  <img src="./assets/readme/section-arch.svg" width="100%" alt="01 Documentation organized by audience: user guide, developer guide, API reference, website events, changelog.">
+</p>
 
 ## Documentation Architecture
 
@@ -125,3 +133,9 @@ Run `pnpm run build` before committing to verify:
 - [Astro Docs](https://docs.astro.build/)
 - [Starlight Docs](https://starlight.astro.build/)
 - [CoreClaw Docs (live)](https://docs.coreclaw.com/)
+
+---
+
+<p align="center">
+  <img src="./assets/readme/signature.svg" width="100%" alt="README made with beautify-github-readme">
+</p>
