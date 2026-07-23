@@ -113,6 +113,15 @@ Use the returned `runId` with the run APIs:
 - [Run Result List](/api/worker-runs/result/) for paginated results.
 - [Export Run Result](/api/worker-runs/export/) for file export.
 
+## Concurrency limits when calling the API
+
+Each plan limits how many runs can execute **at the same time**. When you start runs programmatically — especially in batches or loops — respect this limit to avoid rejections:
+
+- The limit counts only runs in the `running` state; `succeeded`, `failed`, and cancelled runs do not count. See [Concurrency Limits](/user-guide/run-worker/concurrency-limits/) for the per-plan numbers.
+- If a start-run request is rejected because you are at the limit, the response carries a descriptive message and **no run is created** — no Run ID, no balance deducted, no run quota consumed.
+- Handle this case explicitly: back off (wait for an active run to finish, or poll run status until a slot frees up) and retry the start request. Do not hammer the endpoint in a tight loop, or you risk `429` rate-limiting on top of the concurrency rejection.
+- For batch workloads, either queue runs client-side and keep at most `N` in-flight (where `N` is your plan's concurrency), or use `is_async: true` and a bounded worker pool.
+
 ## Common mistakes
 
 - Using old v1 paths instead of the v2 resource paths.

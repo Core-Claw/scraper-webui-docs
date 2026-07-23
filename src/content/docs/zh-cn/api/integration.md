@@ -106,3 +106,4 @@ curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result/export?
 2. `401` 通常表示 token 缺失或无效；`422` 通常表示字段值、分页范围或请求语义不符合契约。
 3. 保存 `request_id`，用于排查失败请求。
 4. 对 `429` 做退避重试，不要立即高频重放请求。
+5. 每个套餐还限制**同时**执行的运行数量；超过上限的启动请求会被拒绝，且不创建运行、不扣余额。详见[并发运行限制](/zh-cn/user-guide/run-worker/concurrency-limits/)；批量任务请在客户端自行排队。

@@ -106,3 +106,4 @@ curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result/export?
 2. `401` usually means the token is missing or invalid. `422` usually means a field value, pagination range, or request semantic failed validation.
 3. Store `request_id` for troubleshooting failed requests.
 4. Retry `429` responses with backoff instead of replaying immediately at high frequency.
+5. Each plan also caps how many runs can execute **at once**; a start request beyond that cap is rejected with no run created and no balance charged. See [Concurrency Limits](/user-guide/run-worker/concurrency-limits/) and queue runs client-side for batch workloads.
