@@ -165,6 +165,13 @@ export default defineConfig({
                                     },
                                 },
                                 {
+                                    label: 'Concurrency Limits',
+                                    slug: 'user-guide/run-worker/concurrency-limits',
+                                    translations: {
+                                        'zh-CN': '并发运行限制',
+                                    },
+                                },
+                                {
                                     label: 'API Calls',
                                     slug: 'user-guide/run-worker/api-calls',
                                     translations: {
@@ -482,6 +489,11 @@ export default defineConfig({
                             label: 'API Integration',
                             slug: 'api/integration',
                             translations: { 'zh-CN': 'API 集成指南' },
+                        },
+                        {
+                            label: 'Run Lifecycle & Status',
+                            slug: 'api/run-lifecycle',
+                            translations: { 'zh-CN': '运行生命周期与状态' },
                         },
                         {
                             label: 'Base URL & Authentication',

@@ -43,6 +43,13 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
 }
 ```
 
+## 响应字段
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `data.balance` | `string` | 账户余额（字符串数值）。 |
+| `data.balance_expiration_at` | `integer` | 余额到期时间，Unix 秒。余额可能到期；具体到期策略请以 Console 或支持为准。 |
+
 ## 注意事项
 
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。

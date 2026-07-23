@@ -54,11 +54,34 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/last" \
 }
 ```
 
+## 响应字段
+
+`data` 包含以下运行字段：
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `slug` | `string` | 运行标识；作为后续详情、日志、结果和导出接口的 `runId`。 |
+| `scraper_slug` | `string` | 实际运行的 Worker 标识。 |
+| `scraper_title` | `string` | Worker 展示名称。 |
+| `version` | `string` | 实际运行的 Worker 版本，例如 `v1.2.8`。 |
+| `status` | `string` | 运行状态，唯一的主要结果判断字段。取值见[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。 |
+| `results` | `integer` | 当前或最终结果行数。`0` 不代表失败。 |
+| `usage` | `string` | 平台记录的资源用量（字符串数值），用于观测与计费诊断。 |
+| `traffic` | `integer` | 平台记录的流量诊断值。 |
+| `origin` | `string` | 运行来源，例如 `api_v2`。 |
+| `started_at` | `integer` | 执行开始时间，Unix 秒。 |
+| `finished_at` | `integer` | 执行结束时间，Unix 秒。 |
+| `duration` | `integer` | 执行耗时，秒。 |
+| `err_msg` | `string` | 可选诊断信息。可能缺失（例如成功运行时通常不返回该字段）；仅作辅助排障，不要单独用它判断成败。 |
+
+> 时间戳为 Unix 秒（UTC）。取消、排队或状态同步时，时间字段可能出现不完整或不直观的组合；请始终以 `status` 为准。
+
 ## 注意事项
 
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
 - 这是账户级最近运行接口，不需要 `workerId` 路径参数；它会作用于当前账户范围内最近一次运行。
 - `last` 表示当前筛选范围内最近一次运行；如需确定目标，请使用具体 `runId` 接口。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应
 

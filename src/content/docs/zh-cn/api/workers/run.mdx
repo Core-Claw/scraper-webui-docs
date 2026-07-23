@@ -100,6 +100,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
 - 应先读取 Worker 输入 schema，再构造 `input`；不同 Worker 的输入字段不一定相同。
 - `offset` 和 `limit` 只控制同步返回的结果窗口，不改变 Worker 实际产生的完整结果集。
 - `version` 是可选字段；除非已经确认具体版本可用，否则建议省略。并非所有 Worker 都接受 `latest` 作为显式版本值。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 - 传入 `callback_url` 后，CoreClaw 会在运行状态变化或结束时发送回调通知。详见[回调通知](/zh-cn/api/callbacks/)。
 
 ## HTTP 响应

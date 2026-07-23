@@ -59,3 +59,7 @@ CoreClaw 会保留您所有的 Worker 运行记录。每次运行都会保存：
 - 日志
 
 您可以在控制台处查看运行记录。
+
+## 可以同时运行多少个？
+
+可同时执行的运行数量取决于你的套餐。详见[并发运行限制](/zh-cn/user-guide/run-worker/concurrency-limits/)。

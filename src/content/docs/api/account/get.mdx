@@ -43,6 +43,13 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/users/account" \
 }
 ```
 
+## Response Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `data.balance` | `string` | Account balance as a numeric string. |
+| `data.balance_expiration_at` | `integer` | Balance expiration time, Unix seconds. Balance may expire; refer to the Console or support for the exact policy. |
+
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.

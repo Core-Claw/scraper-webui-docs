@@ -112,6 +112,13 @@ sanitizePublicSpecExamples(spec)
 
 const operations = collectOperations(spec)
 const errorCodes = spec['x-error-codes'] ?? []
+const runStatusValues = (
+    spec.paths?.['/api/v2/worker-runs']?.get?.parameters ?? []
+).find(parameter => parameter.in === 'query' && parameter.name === 'status')?.schema?.enum ?? []
+
+if (!Array.isArray(runStatusValues) || runStatusValues.length === 0) {
+    throw new Error('GET /api/v2/worker-runs must define the status enum.')
+}
 
 if (!Array.isArray(errorCodes) || errorCodes.length === 0) {
     throw new Error('Missing x-error-codes in source OpenAPI document.')
@@ -124,6 +131,8 @@ await writeFileEnsured(path.join(root, 'src/content/docs/api/index.md'), indexPa
 await writeFileEnsured(path.join(root, 'src/content/docs/zh-cn/api/index.md'), indexPage('zh'))
 await writeFileEnsured(path.join(root, 'src/content/docs/api/integration.md'), integrationPage('en'))
 await writeFileEnsured(path.join(root, 'src/content/docs/zh-cn/api/integration.md'), integrationPage('zh'))
+await writeFileEnsured(path.join(root, 'src/content/docs/api/run-lifecycle.md'), runLifecyclePage('en'))
+await writeFileEnsured(path.join(root, 'src/content/docs/zh-cn/api/run-lifecycle.md'), runLifecyclePage('zh'))
 await writeFileEnsured(path.join(root, 'src/content/docs/api/callbacks.md'), callbacksPage('en'))
 await writeFileEnsured(path.join(root, 'src/content/docs/zh-cn/api/callbacks.md'), callbacksPage('zh'))
 await writeFileEnsured(path.join(root, 'src/content/docs/api/error-codes.md'), errorCodesPage('en'))
@@ -230,6 +239,12 @@ function operationPage(op, lang) {
         JSON.stringify(responseExample, null, 2),
         '```',
         '',
+    )
+
+    const responseFields = responseFieldsSection(op, zh)
+    if (responseFields) lines.push(responseFields)
+
+    lines.push(
         `## ${zh ? '注意事项' : 'Notes'}`,
         '',
         notesFor(op, zh).map(note => `- ${note}`).join('\n'),
@@ -293,8 +308,9 @@ function useText(op, zh) {
     if (pathText.includes('/log')) return zh ? '用于读取运行日志，排查运行状态和错误。' : 'Use this endpoint to read run logs for monitoring and troubleshooting.'
     if (pathText.includes('/abort')) return zh ? '用于中止仍可中止的运行。调用前应确认目标运行。' : 'Use this endpoint to abort an abortable run. Confirm the target before calling it.'
     if (pathText.includes('/rerun')) return zh ? '用于基于已有运行创建新的运行，响应会返回新的 `run_slug`。' : 'Use this endpoint to create a new run from an existing run. The response returns a new `run_slug`.'
-    if (pathText === '/api/v2/worker-tasks') return zh ? '用于查询已保存的 Worker 任务模板。' : 'Use this endpoint to list saved Worker task templates.'
+    if (pathText === '/api/v2/worker-runs') return zh ? '用于按账户范围查询运行历史，可按 Worker 和状态筛选；它不返回 Worker 清单。' : 'Use this endpoint to list run history in the account scope, optionally filtered by Worker and status; it does not list Workers.'
     if (pathText === '/api/v2/worker-tasks' && op.method === 'POST') return zh ? '用于创建一个新的 Worker 任务模板，保存 Worker 标识、输入参数和可选的调度配置。' : 'Use this endpoint to create a new Worker task template that stores the Worker identifier, input parameters, and an optional schedule.'
+    if (pathText === '/api/v2/worker-tasks') return zh ? '用于查询已保存的 Worker 任务模板。' : 'Use this endpoint to list saved Worker task templates.'
     if (pathText === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'GET') return zh ? '用于读取某个已保存任务模板的详情。' : 'Use this endpoint to read the details of a saved task template.'
     if (pathText === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'PUT') return zh ? '用于更新任务模板的标题、描述或调度配置；省略的字段保持原值。' : 'Use this endpoint to update the title, description, or schedule of a task template. Omitted fields keep their current values.'
     if (pathText === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'DELETE') return zh ? '用于删除一个已保存的任务模板。' : 'Use this endpoint to delete a saved task template.'
@@ -326,6 +342,124 @@ function identifierText(op, zh) {
     return [`## ${zh ? '标识符说明' : 'Identifier Notes'}`, '', bullets.map(x => `- ${x}`).join('\n'), ''].join('\n')
 }
 
+function responseFieldsSection(op, zh) {
+    const heading = zh ? '响应字段' : 'Response Fields'
+    const isRunDetail = op.method === 'GET' && (
+        op.path === '/api/v2/worker-runs/{runId}' ||
+        op.path === '/api/v2/worker-runs/last' ||
+        op.path === '/api/v2/workers/{workerId}/runs/last'
+    )
+    const isRunList = op.method === 'GET' && op.path === '/api/v2/worker-runs'
+    const isResult = op.method === 'GET' && /\/result$/.test(op.path)
+    const isLog = op.method === 'GET' && /\/log$/.test(op.path)
+    const isAccount = op.method === 'GET' && op.path === '/api/v2/users/account'
+
+    if (isRunDetail || isRunList) {
+        const scope = isRunList
+            ? (zh ? '`data.list[]` 中的每一条运行记录都包含以下字段（`data.count` 为总记录数）：' : 'Each run record in `data.list[]` contains these fields (`data.count` is the total record count):')
+            : (zh ? '`data` 包含以下运行字段：' : '`data` contains these run fields:')
+        const rows = zh ? [
+            '| 字段 | 类型 | 说明 |',
+            '| --- | --- | --- |',
+            '| `slug` | `string` | 运行标识；作为后续详情、日志、结果和导出接口的 `runId`。 |',
+            '| `scraper_slug` | `string` | 实际运行的 Worker 标识。 |',
+            '| `scraper_title` | `string` | Worker 展示名称。 |',
+            '| `version` | `string` | 实际运行的 Worker 版本，例如 `v1.2.8`。 |',
+            '| `status` | `string` | 运行状态，唯一的主要结果判断字段。取值见[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。 |',
+            '| `results` | `integer` | 当前或最终结果行数。`0` 不代表失败。 |',
+            '| `usage` | `string` | 平台记录的资源用量（字符串数值），用于观测与计费诊断。 |',
+            '| `traffic` | `integer` | 平台记录的流量诊断值。 |',
+            '| `origin` | `string` | 运行来源，例如 `api_v2`。 |',
+            '| `started_at` | `integer` | 执行开始时间，Unix 秒。 |',
+            '| `finished_at` | `integer` | 执行结束时间，Unix 秒。 |',
+            '| `duration` | `integer` | 执行耗时，秒。 |',
+            '| `err_msg` | `string` | 可选诊断信息。可能缺失（例如成功运行时通常不返回该字段）；仅作辅助排障，不要单独用它判断成败。 |',
+        ] : [
+            '| Field | Type | Description |',
+            '| --- | --- | --- |',
+            '| `slug` | `string` | Run identifier; pass it as `runId` to detail, log, result, and export endpoints. |',
+            '| `scraper_slug` | `string` | Identifier of the Worker that ran. |',
+            '| `scraper_title` | `string` | Worker display name. |',
+            '| `version` | `string` | Worker version that actually ran, for example `v1.2.8`. |',
+            '| `status` | `string` | Run status and the primary outcome field. See [Run Lifecycle & Status](/api/run-lifecycle/) for values. |',
+            '| `results` | `integer` | Current or final number of result rows. `0` does not mean failure. |',
+            '| `usage` | `string` | Platform-recorded resource usage (numeric string) for observability and billing diagnostics. |',
+            '| `traffic` | `integer` | Platform-recorded traffic diagnostic value. |',
+            '| `origin` | `string` | Run origin, for example `api_v2`. |',
+            '| `started_at` | `integer` | Execution start time, Unix seconds. |',
+            '| `finished_at` | `integer` | Execution end time, Unix seconds. |',
+            '| `duration` | `integer` | Execution duration in seconds. |',
+            '| `err_msg` | `string` | Optional diagnostic text. It may be absent (successful runs usually omit it); use it only as supporting evidence, never as the sole success/failure signal. |',
+        ]
+        const note = zh
+            ? '> 时间戳为 Unix 秒（UTC）。取消、排队或状态同步时，时间字段可能出现不完整或不直观的组合；请始终以 `status` 为准。'
+            : '> Timestamps are Unix seconds (UTC). Cancellation, queueing, or state synchronization can produce incomplete or non-intuitive timing combinations; always treat `status` as authoritative.'
+        return [`## ${heading}`, '', scope, '', ...rows, '', note, ''].join('\n')
+    }
+
+    if (isResult) {
+        const rows = zh ? [
+            '| 字段 | 类型 | 说明 |',
+            '| --- | --- | --- |',
+            '| `data.count` | `integer` | 当前运行的结果总行数。 |',
+            '| `data.headers[]` | `array` | 列定义，每项包含 `key`（字段名）和 `label`（展示名）。 |',
+            '| `data.list[]` | `array` | 结果数据行；每行的键对应 `headers[].key`。 |',
+        ] : [
+            '| Field | Type | Description |',
+            '| --- | --- | --- |',
+            '| `data.count` | `integer` | Total number of result rows for the run. |',
+            '| `data.headers[]` | `array` | Column definitions; each item has `key` (field name) and `label` (display name). |',
+            '| `data.list[]` | `array` | Result rows; each row keys align with `headers[].key`. |',
+        ]
+        const note = zh
+            ? '> 结果行可能包含未在 Worker 输出 schema 中声明的内部字段（例如 `__coreclaw_data_id__`），请按需忽略。嵌套或空值的序列化方式取决于导出格式；`filter_keys` 必须匹配 `headers[].key`。分页请求使用从 0 开始的 `offset` 与 `limit`（最大 `100`）。'
+            : '> Result rows may include internal fields not declared in the Worker output schema (for example `__coreclaw_data_id__`); ignore them as needed. Serialization of nested or empty values depends on the export format; `filter_keys` must match `headers[].key`. Page requests with zero-based `offset` and `limit` (max `100`).'
+        return [`## ${heading}`, '', ...rows, '', note, ''].join('\n')
+    }
+
+    if (isLog) {
+        const rows = zh ? [
+            '| 字段 | 类型 | 说明 |',
+            '| --- | --- | --- |',
+            '| `data.all_logs_url` | `string` | 完整日志的下载地址。该地址可能是临时的，请及时下载；保留策略请咨询支持。 |',
+            '| `data.list[]` | `array` | 日志条目数组，字段由平台定义。 |',
+            '| `data.list[].type` | `integer` | 平台定义的日志类型标记。 |',
+            '| `data.list[].group` | `string` | 子任务或分组标识。 |',
+            '| `data.list[].content` | `string` | 日志文本内容。 |',
+            '| `data.list[].timestamp` | `integer` | 日志时间戳（毫秒）。 |',
+            '| `data.result_count` | `integer` | 当前结果数量。 |',
+        ] : [
+            '| Field | Type | Description |',
+            '| --- | --- | --- |',
+            '| `data.all_logs_url` | `string` | Download URL for the full log. This URL may be temporary — download promptly; contact support for retention policy. |',
+            '| `data.list[]` | `array` | Log entries; fields are platform-defined. |',
+            '| `data.list[].type` | `integer` | Platform-defined log type marker. |',
+            '| `data.list[].group` | `string` | Subtask or group identifier. |',
+            '| `data.list[].content` | `string` | Log text content. |',
+            '| `data.list[].timestamp` | `integer` | Log timestamp in milliseconds. |',
+            '| `data.result_count` | `integer` | Current result count. |',
+        ]
+        return [`## ${heading}`, '', ...rows, ''].join('\n')
+    }
+
+    if (isAccount) {
+        const rows = zh ? [
+            '| 字段 | 类型 | 说明 |',
+            '| --- | --- | --- |',
+            '| `data.balance` | `string` | 账户余额（字符串数值）。 |',
+            '| `data.balance_expiration_at` | `integer` | 余额到期时间，Unix 秒。余额可能到期；具体到期策略请以 Console 或支持为准。 |',
+        ] : [
+            '| Field | Type | Description |',
+            '| --- | --- | --- |',
+            '| `data.balance` | `string` | Account balance as a numeric string. |',
+            '| `data.balance_expiration_at` | `integer` | Balance expiration time, Unix seconds. Balance may expire; refer to the Console or support for the exact policy. |',
+        ]
+        return [`## ${heading}`, '', ...rows, ''].join('\n')
+    }
+
+    return ''
+}
+
 function notesFor(op, zh) {
     const notes = []
     if (!requiresAuth(op)) notes.push(zh ? '此接口不需要 API token。' : 'This endpoint does not require an API token.')
@@ -350,6 +484,7 @@ function notesFor(op, zh) {
         notes.push(zh ? '`worker_id` 接受 Worker slug，也支持把 `owner/name` 写成 `owner~name`。' : '`worker_id` accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.')
         notes.push(zh ? '应先读取 Worker 输入 schema 再构造 `input`，表单字段放在 `input.parameters.custom` 下；可用 `GET /api/v2/workers/{workerId}/input-schema` 读取 schema。' : 'Read the Worker input schema before building `input`; form fields belong under `input.parameters.custom`. Use `GET /api/v2/workers/{workerId}/input-schema` to read the schema.')
         notes.push(zh ? '调度字段：`schedule_enabled` 1 启用 0 关闭；`schedule_type` 1=每天、2=每周、3=每月、4=单次；`schedule_time` 为 `HH:mm`；`schedule_once_date` 为 `YYYY-MM-DD`。不启用调度时可省略全部 schedule 字段。' : 'Schedule fields: `schedule_enabled` 1 enabled / 0 disabled; `schedule_type` 1=daily, 2=weekly, 3=monthly, 4=once; `schedule_time` is `HH:mm`; `schedule_once_date` is `YYYY-MM-DD`. Omit all schedule fields when scheduling is not needed.')
+        notes.push(zh ? '调度的时区、夏令时、月末边界、错过执行与重叠运行等具体行为由平台管理，不属于公开 API 契约；如需依赖精确调度语义，请先咨询 Console 或支持。' : 'Timezone, DST, month-end edges, missed-run, and overlapping-run behavior for schedules are platform-managed and not part of the public API contract; consult the Console or support before relying on exact schedule semantics.')
     }
     if (op.path === '/api/v2/worker-tasks/{workerTaskId}' && op.method === 'PUT') {
         notes.push(zh ? 'PUT 为部分更新语义：省略的字段保持原值，无需重传整个任务对象。' : 'PUT is a partial update: omitted fields keep their current values; you do not need to resend the whole task object.')
@@ -362,6 +497,12 @@ function notesFor(op, zh) {
     if (op.path === '/api/v2/worker-tasks/{workerTaskId}/runs') {
         notes.push(zh ? '运行已保存任务时，请求体只控制执行模式、回调和同步结果窗口；任务本身的输入来自已保存的 Worker 任务配置。' : 'When running a saved task, the request body controls execution mode, callback, and synchronous result window; the task input comes from the saved Worker task configuration.')
         notes.push(zh ? '`limit` 和 `offset` 只控制同步返回的结果窗口，不改变任务实际产生的完整结果集。' : 'Use `limit` and `offset` only to control the synchronous result window; they do not change the full result set produced by the task.')
+    }
+    if (op.path.includes('/worker-runs') || op.path.includes('/runs')) {
+        notes.push(zh ? '运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。' : 'See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.')
+    }
+    if (op.path.includes('/abort')) {
+        notes.push(zh ? '取消请求成功只表示服务端已接受取消操作；随后应针对同一具体 `runId` 读取详情。不要等待或自行构造未在契约中定义的 `aborted` 状态。' : 'A successful abort request only means the service accepted the cancellation operation; then read detail for the same concrete `runId`. Do not wait for or invent an undocumented `aborted` state.')
     }
     if (fieldsForSchema(bodySchema(op)).some(field => field.name === 'callback_url')) {
         notes.push(zh ? '传入 `callback_url` 后，CoreClaw 会在运行状态变化或结束时发送回调通知。详见[回调通知](/zh-cn/api/callbacks/)。' : 'When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).')
@@ -831,6 +972,8 @@ function callbacksPage(lang) {
         '| `result_count` | `number` | 当前结果数量。 |',
         '| `result_message` | `string` | 结果摘要或运行消息。 |',
         '',
+        '收到回调时应先按 `run_slug` 做幂等处理，再读取[运行详情](/zh-cn/api/worker-runs/detail/)确认实际 `status`；回调或 `finished_at` 都不能替代状态判断。运行状态处理详见[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。',
+        '',
         '## 接收端建议',
         '',
         '1. 回调地址应能被 CoreClaw 服务端访问，并返回 2xx HTTP 状态。',
@@ -871,6 +1014,8 @@ function callbacksPage(lang) {
         '| `running_duration` | `number` | Running duration. |',
         '| `result_count` | `number` | Current result count. |',
         '| `result_message` | `string` | Result summary or run message. |',
+        '',
+        'Handle a callback idempotently by `run_slug`, then re-read [run detail](/api/worker-runs/detail/) to confirm the actual `status`; neither a callback nor `finished_at` replaces the status decision. See [Run Lifecycle & Status](/api/run-lifecycle/) for state handling.',
         '',
         '## Receiver Guidance',
         '',
@@ -935,7 +1080,7 @@ function integrationPage(lang) {
     const title = zh ? 'API 集成指南' : 'API Integration'
     const desc = zh ? '使用 CoreClaw API v2 运行 Worker 并获取结果' : 'Run Workers and retrieve results with CoreClaw API v2'
     const lines = zh ? [
-        'CoreClaw API v2 的推荐流程是：确认认证，选择运行入口，按 Worker schema 构造输入，选择异步或同步执行模式，然后用 `runId` 查询状态、日志、结果或导出文件。',
+        'CoreClaw API v2 的推荐流程是：确认认证，选择运行入口，按 Worker schema 构造输入，选择异步或同步执行模式，保存 `data.run_slug` 和 `request_id`，然后用 `runId` 查询状态、日志、结果或导出文件。运行状态处理、退避轮询和取消语义见[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。',
         '',
         '## 1. 快速认证检查',
         '',
@@ -1038,7 +1183,7 @@ function integrationPage(lang) {
         '4. 对 `429` 做退避重试，不要立即高频重放请求。',
         '',
     ] : [
-        'The recommended CoreClaw API v2 flow is: verify authentication, choose the run entry point, build input from the Worker schema, choose async or sync execution, then use `runId` to read status, logs, results, or an export file.',
+        'The recommended CoreClaw API v2 flow is: verify authentication, choose the run entry point, build input from the Worker schema, choose async or sync execution, save `data.run_slug` and `request_id`, then use `runId` to read status, logs, results, or an export file. See [Run Lifecycle & Status](/api/run-lifecycle/) for state handling, backoff polling, and cancellation semantics.',
         '',
         '## 1. Quick Authentication Check',
         '',
@@ -1144,6 +1289,101 @@ function integrationPage(lang) {
     return frontmatter(title, desc, -1) + lines.join('\n')
 }
 
+function runLifecyclePage(lang) {
+    const zh = lang === 'zh'
+    const statusValues = runStatusValues.map(value => `\`${value}\``).join(zh ? '、' : ', ')
+    const title = zh ? '运行生命周期与状态' : 'Run Lifecycle & Status'
+    const desc = zh
+        ? 'CoreClaw API v2 Worker 运行状态、轮询与故障处理指南'
+        : 'CoreClaw API v2 Worker run states, polling, and failure handling'
+    const lines = zh ? [
+        '本页说明如何安全地判断一次 Worker 运行的结果。先保存启动或重跑响应中的 `data.run_slug`（后续接口使用的 `runId`）和 `request_id`，再用具体 `runId` 查询运行详情。不要把账户级或 Worker 级的 `last` 接口当作稳定引用。',
+        '',
+        '## 契约中的状态值',
+        '',
+        `目前 ` + '`GET /api/v2/worker-runs` 的 `status` 筛选参数允许：' + statusValues + '。这些是公开 API 契约支持的值。',
+        '',
+        '| 状态 | 客户端处理方式 |',
+        '| --- | --- |',
+        '| `ready` | 已创建但尚未开始执行。使用有上限的退避轮询详情接口。 |',
+        '| `running` | 正在执行。继续以退避方式轮询；需要进度或诊断时可读取日志。 |',
+        '| `succeeded` | 运行成功。随后读取 `/result` 预览数据，或使用导出接口获取下载地址。结果数为 `0` 仍然可能是成功运行。 |',
+        '| `failed` | 运行失败。保存 `request_id`，读取详情和日志；只有 `err_msg` 存在时才向用户展示它。不要仅根据结果数判断。 |',
+        '| `aborting` | 已请求取消。继续针对**同一 `runId`**进行有上限的详情/日志查询，避免无限等待。 |',
+        '',
+        '> `aborted` 不是当前公开 `status` 筛选契约中的值。客户端不能自行把 `aborting` 改写成 `aborted`，也不能把 `finished_at` 单独当作成功或最终状态的证据。',
+        '',
+        '## 运行详情字段',
+        '',
+        '| 字段 | 用途与注意事项 |',
+        '| --- | --- |',
+        '| `slug` | 运行标识；作为后续详情、日志、结果和导出接口的 `runId`。 |',
+        '| `scraper_slug`、`scraper_title`、`version` | 标识实际运行的 Worker 和版本。 |',
+        '| `status` | 唯一的主要结果判断字段；始终优先于 `results`、时间戳或诊断字段。 |',
+        '| `results` | 当前或最终的结果数量；`0` 不等于失败，非零也不保证成功。 |',
+        '| `err_msg` | 可选诊断信息。可能缺失，也可能在非失败记录中出现；仅作辅助排障信息。 |',
+        '| `started_at`、`finished_at`、`duration` | 执行时间信息。取消、排队或服务端状态同步时它们可能出现不完整或不直观的组合。 |',
+        '| `origin`、`usage`、`traffic` | 来源、计费/使用量和流量诊断字段；将它们用于观测，而不是运行成败判断。 |',
+        '',
+        '## 推荐轮询流程',
+        '',
+        '1. 提交运行后保存 `data.run_slug` 与 `request_id`。',
+        '2. 调用 [`GET /api/v2/worker-runs/{runId}`](/zh-cn/api/worker-runs/detail/) 读取 `data.status`。先等待约 2 秒，然后逐步退避到 5、10、15 秒；为调用设置总超时。',
+        '3. 当状态为 `ready` 或 `running` 时继续轮询；需要排查时读取[运行日志](/zh-cn/api/worker-runs/log/)。',
+        '4. 当状态为 `succeeded` 时读取[运行结果](/zh-cn/api/worker-runs/result/)或[导出结果](/zh-cn/api/worker-runs/export/)。',
+        '5. 当状态为 `failed` 时记录 `request_id`、读取详情与日志，并根据 Worker 输入或日志采取下一步。只有在明确需要时才调用重跑接口。',
+        '6. 调用取消接口后，只查询刚才提交的具体 `runId`；若仍为 `aborting`，继续有限次数的退避查询并向用户提示取消正在处理。',
+        '',
+        '## 与回调一起使用',
+        '',
+        '`callback_url` 能减少轮询次数，但回调接收端应按 `run_slug` 做幂等，并在处理通知前重新读取[运行详情](/zh-cn/api/worker-runs/detail/)。回调或 `finished_at` 都不能替代 `status` 的判断。详见[回调通知](/zh-cn/api/callbacks/)。',
+        '',
+    ] : [
+        'This page explains how to determine the outcome of a Worker run safely. Save the `data.run_slug` returned by a start or rerun request (the `runId` used by follow-up endpoints) together with `request_id`, then read run detail by the specific `runId`. Do not treat account- or Worker-scoped `last` endpoints as stable references.',
+        '',
+        '## Contract status values',
+        '',
+        '`GET /api/v2/worker-runs` currently accepts these `status` filter values: ' + statusValues + '. These are the values supported by the public API contract.',
+        '',
+        '| Status | Client handling |',
+        '| --- | --- |',
+        '| `ready` | The run exists but has not started. Poll run detail with bounded backoff. |',
+        '| `running` | The run is executing. Continue backoff polling; read logs when progress or diagnostics are needed. |',
+        '| `succeeded` | The run succeeded. Read `/result` for a preview or use an export endpoint for a download URL. A result count of `0` can still be successful. |',
+        '| `failed` | The run failed. Preserve `request_id`, read detail and logs, and show `err_msg` only when present. Do not infer failure from result count alone. |',
+        '| `aborting` | Cancellation was requested. Perform bounded detail/log reads for the **same `runId`** instead of waiting indefinitely. |',
+        '',
+        '> `aborted` is not a value in the current public `status` filter contract. Clients must not rewrite `aborting` to `aborted`, and must not use `finished_at` alone as proof of success or a final state.',
+        '',
+        '## Run detail fields',
+        '',
+        '| Field | Use and caveats |',
+        '| --- | --- |',
+        '| `slug` | Run identifier; pass it as `runId` to detail, log, result, and export endpoints. |',
+        '| `scraper_slug`, `scraper_title`, `version` | Identify the Worker and version that actually ran. |',
+        '| `status` | The primary outcome field. Always prioritize it over result count, timestamps, or diagnostics. |',
+        '| `results` | Current or final number of rows. `0` does not mean failure, and a non-zero count does not guarantee success. |',
+        '| `err_msg` | Optional diagnostic text. It can be absent and may appear on non-failed records; use it only as supporting diagnostic evidence. |',
+        '| `started_at`, `finished_at`, `duration` | Execution timing. Cancellation, queueing, or server-side state synchronization can produce incomplete or non-intuitive combinations. |',
+        '| `origin`, `usage`, `traffic` | Source, billing/usage, and traffic diagnostics. Use them for observability, not as success criteria. |',
+        '',
+        '## Recommended polling flow',
+        '',
+        '1. After submission, save `data.run_slug` and `request_id`.',
+        '2. Call [`GET /api/v2/worker-runs/{runId}`](/api/worker-runs/detail/) and read `data.status`. Wait about 2 seconds first, then back off progressively to 5, 10, and 15 seconds; enforce a total timeout.',
+        '3. Continue polling for `ready` or `running`; read the [run log](/api/worker-runs/log/) when diagnosing progress.',
+        '4. On `succeeded`, read [run results](/api/worker-runs/result/) or [export results](/api/worker-runs/export/).',
+        '5. On `failed`, retain `request_id`, read detail and logs, and act on Worker input or log evidence. Call a rerun endpoint only when repeating the work is intentional.',
+        '6. After an abort request, read only the concrete `runId` that you just submitted. If it remains `aborting`, make a bounded number of backoff reads and tell the user that cancellation is being processed.',
+        '',
+        '## Use with callbacks',
+        '',
+        '`callback_url` can reduce polling, but receivers should be idempotent by `run_slug` and re-read [run detail](/api/worker-runs/detail/) before acting on a notification. Neither a callback nor `finished_at` replaces the `status` decision. See [Callback Notifications](/api/callbacks/).',
+        '',
+    ]
+    return frontmatter(title, desc, -2) + lines.join('\n')
+}
+
 function examplePage(name, order, lang) {
     const zh = lang === 'zh'
     const titles = {
@@ -1174,6 +1414,8 @@ function exampleBody(name, zh) {
         ].join('\n')
     const snippets = {
         python: ['python', `import os
+import time
+
 import requests
 
 API_BASE_URL = "${API_BASE_URL}"
@@ -1201,6 +1443,30 @@ def coreclaw_request(method, path, *, params=None, json_body=None):
     return payload
 
 
+def wait_for_run(run_id, timeout_seconds=300):
+    deadline = time.monotonic() + timeout_seconds
+    delay_seconds = 2
+    while time.monotonic() < deadline:
+        detail = coreclaw_request("GET", f"/api/v2/worker-runs/{run_id}")
+        run_data = detail["data"]
+        status = run_data.get("status")
+        if status == "succeeded":
+            return run_data
+        if status in {"failed", "aborting"}:
+            logs = coreclaw_request("GET", f"/api/v2/worker-runs/{run_id}/log")
+            raise RuntimeError({
+                "status": status,
+                "err_msg": run_data.get("err_msg"),
+                "request_id": detail.get("request_id"),
+                "logs": logs.get("data"),
+            })
+        if status not in {"ready", "running"}:
+            raise RuntimeError({"unexpected_status": status, "run": run_data})
+        time.sleep(delay_seconds)
+        delay_seconds = min(delay_seconds * 2, 15)
+    raise TimeoutError(f"Timed out waiting for run {run_id}")
+
+
 account = coreclaw_request("GET", "/api/v2/users/account")
 print("Account:", account["data"])
 
@@ -1226,12 +1492,13 @@ run = coreclaw_request(
 run_id = run["data"]["run_slug"]
 print("Run ID:", run_id)
 
+completed_run = wait_for_run(run_id)
 results = coreclaw_request(
     "GET",
     f"/api/v2/worker-runs/{run_id}/result",
     params={"offset": 0, "limit": 20},
 )
-print(results["data"])`],
+print({"status": completed_run["status"], "results": results["data"]})`],
         nodejs: ['js', `const API_BASE_URL = "${API_BASE_URL}";
 const API_KEY = process.env.CORECLAW_API_KEY;
 const WORKER_ID = process.env.CORECLAW_WORKER_ID ?? "YOUR_WORKER_ID";
@@ -1259,6 +1526,31 @@ async function coreclawRequest(path, { method = "GET", query, body } = {}) {
   return payload;
 }
 
+async function waitForRun(runId, timeoutMs = 300_000) {
+  const deadline = Date.now() + timeoutMs;
+  let delayMs = 2_000;
+  while (Date.now() < deadline) {
+    const detail = await coreclawRequest(\`/api/v2/worker-runs/\${runId}\`);
+    const runData = detail.data;
+    if (runData.status === "succeeded") return runData;
+    if (["failed", "aborting"].includes(runData.status)) {
+      const logs = await coreclawRequest(\`/api/v2/worker-runs/\${runId}/log\`);
+      throw new Error(JSON.stringify({
+        status: runData.status,
+        err_msg: runData.err_msg,
+        request_id: detail.request_id,
+        logs: logs.data,
+      }));
+    }
+    if (!["ready", "running"].includes(runData.status)) {
+      throw new Error(\`Unexpected run status: \${runData.status}\`);
+    }
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+    delayMs = Math.min(delayMs * 2, 15_000);
+  }
+  throw new Error(\`Timed out waiting for run \${runId}\`);
+}
+
 const account = await coreclawRequest("/api/v2/users/account");
 console.log("Account:", account.data);
 
@@ -1284,10 +1576,12 @@ const run = await coreclawRequest(\`/api/v2/workers/\${WORKER_ID}/runs\`, {
 const runId = run.data.run_slug;
 console.log("Run ID:", runId);
 
+const completedRun = await waitForRun(runId);
+
 const results = await coreclawRequest(\`/api/v2/worker-runs/\${runId}/result\`, {
   query: { offset: 0, limit: 20 },
 });
-console.log(results.data);`],
+console.log({ status: completedRun.status, results: results.data });`],
         java: ['java', javaExample()],
         php: ['php', `<?php
 $apiBaseUrl = "${API_BASE_URL}";
@@ -1337,6 +1631,35 @@ function coreclaw_request(string $method, string $path, ?array $query = null, ?a
     return $payload;
 }
 
+function wait_for_run(string $runId, int $timeoutSeconds = 300): array
+{
+    $deadline = microtime(true) + $timeoutSeconds;
+    $delaySeconds = 2;
+    while (microtime(true) < $deadline) {
+        $detail = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId));
+        $runData = $detail["data"];
+        $status = $runData["status"] ?? null;
+        if ($status === "succeeded") {
+            return $runData;
+        }
+        if (in_array($status, ["failed", "aborting"], true)) {
+            $logs = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId) . "/log");
+            throw new RuntimeException(json_encode([
+                "status" => $status,
+                "err_msg" => $runData["err_msg"] ?? null,
+                "request_id" => $detail["request_id"] ?? null,
+                "logs" => $logs["data"] ?? null,
+            ]));
+        }
+        if (!in_array($status, ["ready", "running"], true)) {
+            throw new RuntimeException("Unexpected run status: " . $status);
+        }
+        sleep($delaySeconds);
+        $delaySeconds = min($delaySeconds * 2, 15);
+    }
+    throw new RuntimeException("Timed out waiting for run " . $runId);
+}
+
 $account = coreclaw_request("GET", "/api/v2/users/account");
 print_r($account["data"]);
 
@@ -1358,11 +1681,13 @@ $run = coreclaw_request("POST", "/api/v2/workers/" . rawurlencode($workerId) . "
 $runId = $run["data"]["run_slug"];
 echo "Run ID: " . $runId . PHP_EOL;
 
+$completedRun = wait_for_run($runId);
+
 $results = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId) . "/result", [
     "offset" => 0,
     "limit" => 20,
 ]);
-print_r($results["data"]);`],
+print_r(["status" => $completedRun["status"], "results" => $results["data"]]);`],
         go: ['go', `package main
 
 import (
@@ -1373,6 +1698,7 @@ import (
     "net/http"
     "net/url"
     "os"
+    "time"
 )
 
 const apiBaseURL = "${API_BASE_URL}"
@@ -1385,6 +1711,11 @@ type envelope struct {
 
 type runData struct {
     RunSlug string \`json:"run_slug"\`
+}
+
+type runDetail struct {
+    Status string \`json:"status"\`
+    ErrMsg string \`json:"err_msg"\`
 }
 
 func main() {
@@ -1423,11 +1754,39 @@ func main() {
     }
     fmt.Println("Run ID:", runInfo.RunSlug)
 
+    completedRun := waitForRun(apiKey, runInfo.RunSlug, 300*time.Second)
     results := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runInfo.RunSlug)+"/result", url.Values{
         "offset": {"0"},
         "limit":  {"20"},
     }, nil)
-    fmt.Println("Results:", string(results.Data))
+    fmt.Println("Status:", completedRun.Status, "Results:", string(results.Data))
+}
+
+func waitForRun(apiKey, runID string, timeout time.Duration) runDetail {
+    deadline := time.Now().Add(timeout)
+    delay := 2 * time.Second
+    for time.Now().Before(deadline) {
+        detail := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runID), nil, nil)
+        var run runDetail
+        if err := json.Unmarshal(detail.Data, &run); err != nil {
+            panic(err)
+        }
+        if run.Status == "succeeded" {
+            return run
+        }
+        if run.Status == "failed" || run.Status == "aborting" {
+            logs := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runID)+"/log", nil, nil)
+            panic(fmt.Sprintf("run status=%s err_msg=%s request_id=%s logs=%s", run.Status, run.ErrMsg, detail.Message, logs.Data))
+        }
+        if run.Status != "ready" && run.Status != "running" {
+            panic("Unexpected run status: " + run.Status)
+        }
+        time.Sleep(delay)
+        if delay < 15*time.Second {
+            delay *= 2
+        }
+    }
+    panic("Timed out waiting for run " + runID)
 }
 
 func coreclawRequest(apiKey, method, path string, query url.Values, body any) envelope {
@@ -1492,6 +1851,7 @@ function javaExample() {
         'import java.net.http.HttpResponse;',
         'import java.nio.charset.StandardCharsets;',
         'import java.util.Map;',
+        'import java.util.Set;',
         'import java.util.regex.Matcher;',
         'import java.util.regex.Pattern;',
         '',
@@ -1521,8 +1881,29 @@ function javaExample() {
         '        System.out.println(run);',
         '',
         '        String runId = extract(run, "\\\\\\"run_slug\\\\\\"\\\\s*:\\\\s*\\\\\\"([^\\\\\\"]+)\\\\\\"");',
+        '        String completedRun = waitForRun(runId, 300_000);',
         '        String results = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/result", Map.of("offset", "0", "limit", "20"), null);',
-        '        System.out.println(results);',
+        '        System.out.println("status=" + extract(completedRun, "\\\"status\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"") + " results=" + results);',
+        '    }',
+        '',
+        '    static String waitForRun(String runId, long timeoutMs) throws Exception {',
+        '        long deadline = System.currentTimeMillis() + timeoutMs;',
+        '        long delayMs = 2_000;',
+        '        while (System.currentTimeMillis() < deadline) {',
+        '            String detail = request("GET", "/api/v2/worker-runs/" + encode(runId), null, null);',
+        '            String status = extract(detail, "\\\"status\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"");',
+        '            if (status.equals("succeeded")) return detail;',
+        '            if (Set.of("failed", "aborting").contains(status)) {',
+        '                String logs = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/log", null, null);',
+        '                throw new IllegalStateException("run status=" + status + " logs=" + logs);',
+        '            }',
+        '            if (!Set.of("ready", "running").contains(status)) {',
+        '                throw new IllegalStateException("Unexpected run status: " + status);',
+        '            }',
+        '            Thread.sleep(delayMs);',
+        '            delayMs = Math.min(delayMs * 2, 15_000);',
+        '        }',
+        '        throw new IllegalStateException("Timed out waiting for run " + runId);',
         '    }',
         '',
         '    static String request(String method, String path, Map<String, String> query, String body) throws Exception {',

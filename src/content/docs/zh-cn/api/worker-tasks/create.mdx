@@ -19,7 +19,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 ## 什么时候使用这个接口
 
-用于查询已保存的 Worker 任务模板。
+用于创建一个新的 Worker 任务模板，保存 Worker 标识、输入参数和可选的调度配置。
 
 
 ## 请求体
@@ -95,6 +95,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks" \
 - `worker_id` 接受 Worker slug，也支持把 `owner/name` 写成 `owner~name`。
 - 应先读取 Worker 输入 schema 再构造 `input`，表单字段放在 `input.parameters.custom` 下；可用 `GET /api/v2/workers/{workerId}/input-schema` 读取 schema。
 - 调度字段：`schedule_enabled` 1 启用 0 关闭；`schedule_type` 1=每天、2=每周、3=每月、4=单次；`schedule_time` 为 `HH:mm`；`schedule_once_date` 为 `YYYY-MM-DD`。不启用调度时可省略全部 schedule 字段。
+- 调度的时区、夏令时、月末边界、错过执行与重叠运行等具体行为由平台管理，不属于公开 API 契约；如需依赖精确调度语义，请先咨询 Console 或支持。
 
 ## HTTP 响应
 

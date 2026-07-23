@@ -32,20 +32,20 @@ CoreClaw 文档按受众划分为以下内容区域：
 CoreClaw 平台对同一概念使用两个术语：
 
 - **Worker** — 文档和界面中使用的名称，指数据采集脚本
-- **Scraper** — API 路径和字段名中使用的名称，保持向后兼容（如 `scraper_slug`、`/api/v1/scraper/run`）
+- **Scraper** — 部分 API 字段名中保留的名称，用于向后兼容（如 `scraper_slug`、`scraper_title`）
 
 ### API 文档
 
-API 参考按端点组组织：
+对外 API 为 **v2**，基地址 `https://openapi.coreclaw.com`，路径位于 `/api/v2` 下，按资源组织：
 
-- **Worker** — `/api/v1/scraper/*` 端点，用于启动、中止和查看 Worker 运行
-- **Runs** — `/api/v1/run/*` 端点，用于历史记录、结果、日志和导出
-- **Tasks** — `/api/v1/task/*` 端点，用于已保存的 Task 模板
-- **Account** — `/api/v1/account/*` 端点，用于账户信息
+- **Workers** — `/api/v2/workers/*`，用于列出 Worker、读取输入 schema、启动运行
+- **Worker Tasks** — `/api/v2/worker-tasks/*`，用于已保存的任务模板（创建、读取、更新、删除、运行）
+- **Worker Runs** — `/api/v2/worker-runs/*`，用于运行历史、详情、结果、日志、导出、重跑与中止
+- **Account / Store / Proxy** — `/api/v2/users/account`、`/api/v2/store`、`/api/v2/proxy/region`
 
 每个端点页面记录了 HTTP 方法、路径、请求参数、响应 schema 和错误码。[API 索引页](https://docs.coreclaw.com/zh-cn/api/) 提供了完整的端点速查表。
 
-OpenAPI 规范文件位于 `public/openapi.json`，通过 `/openapi.json` 对外提供。`openapi.swagger.json` 文件仅供本地参考，不纳入版本控制（见 `.gitignore`）。
+API 参考页面、`public/openapi.json` 与各语言示例均由 `scripts/generate-api-v2-docs.mjs` 依据源 OpenAPI 契约**生成** —— 请修改生成器后重新生成，不要手工编辑生成页面。规范通过 `/openapi.json` 对外提供。
 
 ### 侧边栏配置
 
@@ -84,7 +84,13 @@ OpenAPI 规范文件位于 `public/openapi.json`，通过 `/openapi.json` 对外
 │   ├── pages/                      # 动态路由（Copy-for-LLMs .md 导出）
 │   └── styles/common.css           # 全局样式覆盖
 ├── scripts/
-│   └── check-copy-for-llms.mjs    # 构建后冒烟测试（.md 导出完整性）
+│   ├── generate-api-v2-docs.mjs        # 依据源契约生成 API 参考 + openapi.json
+│   ├── validate-api-v2-docs.mjs        # API 契约/文档一致性静态检查
+│   ├── check-api-runnable-examples.mjs # 防止示例请求体回退
+│   ├── check-api-playground-worker-id.mjs # 校验 API Playground 的 worker-id 处理
+│   ├── verify-api-examples.mjs         # 语法检查各语言 API 示例
+│   ├── check-copy-for-llms.mjs         # 构建后冒烟测试（.md 导出完整性）
+│   └── live-api-v2-*.mjs               # 需显式开启的鉴权实时检查（不在构建中运行）
 ├── astro.config.mjs                # Astro + Starlight 配置
 ├── package.json
 └── tsconfig.json
@@ -115,6 +121,8 @@ pnpm run preview      # 预览构建结果
 提交前执行 `pnpm run build`，确认：
 
 - 无内容渲染错误
+- API v2 契约/文档一致性（`validate-api-v2-docs.mjs`）
+- 可运行 API 示例回退防护（`check-api-runnable-examples.mjs`）
 - 中英文侧边栏顺序一致
 - 中英文页面结构对齐
 - 无断链或缺失资源引用

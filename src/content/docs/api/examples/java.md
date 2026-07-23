@@ -20,6 +20,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,8 +50,29 @@ public class CoreClawExample {
         System.out.println(run);
 
         String runId = extract(run, "\\\"run_slug\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"");
+        String completedRun = waitForRun(runId, 300_000);
         String results = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/result", Map.of("offset", "0", "limit", "20"), null);
-        System.out.println(results);
+        System.out.println("status=" + extract(completedRun, "\"status\"\s*:\s*\"([^\"]+)\"") + " results=" + results);
+    }
+
+    static String waitForRun(String runId, long timeoutMs) throws Exception {
+        long deadline = System.currentTimeMillis() + timeoutMs;
+        long delayMs = 2_000;
+        while (System.currentTimeMillis() < deadline) {
+            String detail = request("GET", "/api/v2/worker-runs/" + encode(runId), null, null);
+            String status = extract(detail, "\"status\"\s*:\s*\"([^\"]+)\"");
+            if (status.equals("succeeded")) return detail;
+            if (Set.of("failed", "aborting").contains(status)) {
+                String logs = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/log", null, null);
+                throw new IllegalStateException("run status=" + status + " logs=" + logs);
+            }
+            if (!Set.of("ready", "running").contains(status)) {
+                throw new IllegalStateException("Unexpected run status: " + status);
+            }
+            Thread.sleep(delayMs);
+            delayMs = Math.min(delayMs * 2, 15_000);
+        }
+        throw new IllegalStateException("Timed out waiting for run " + runId);
     }
 
     static String request(String method, String path, Map<String, String> query, String body) throws Exception {

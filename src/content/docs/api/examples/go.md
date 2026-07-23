@@ -22,6 +22,7 @@ import (
     "net/http"
     "net/url"
     "os"
+    "time"
 )
 
 const apiBaseURL = "https://openapi.coreclaw.com"
@@ -34,6 +35,11 @@ type envelope struct {
 
 type runData struct {
     RunSlug string `json:"run_slug"`
+}
+
+type runDetail struct {
+    Status string `json:"status"`
+    ErrMsg string `json:"err_msg"`
 }
 
 func main() {
@@ -72,11 +78,39 @@ func main() {
     }
     fmt.Println("Run ID:", runInfo.RunSlug)
 
+    completedRun := waitForRun(apiKey, runInfo.RunSlug, 300*time.Second)
     results := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runInfo.RunSlug)+"/result", url.Values{
         "offset": {"0"},
         "limit":  {"20"},
     }, nil)
-    fmt.Println("Results:", string(results.Data))
+    fmt.Println("Status:", completedRun.Status, "Results:", string(results.Data))
+}
+
+func waitForRun(apiKey, runID string, timeout time.Duration) runDetail {
+    deadline := time.Now().Add(timeout)
+    delay := 2 * time.Second
+    for time.Now().Before(deadline) {
+        detail := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runID), nil, nil)
+        var run runDetail
+        if err := json.Unmarshal(detail.Data, &run); err != nil {
+            panic(err)
+        }
+        if run.Status == "succeeded" {
+            return run
+        }
+        if run.Status == "failed" || run.Status == "aborting" {
+            logs := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runID)+"/log", nil, nil)
+            panic(fmt.Sprintf("run status=%s err_msg=%s request_id=%s logs=%s", run.Status, run.ErrMsg, detail.Message, logs.Data))
+        }
+        if run.Status != "ready" && run.Status != "running" {
+            panic("Unexpected run status: " + run.Status)
+        }
+        time.Sleep(delay)
+        if delay < 15*time.Second {
+            delay *= 2
+        }
+    }
+    panic("Timed out waiting for run " + runID)
 }
 
 func coreclawRequest(apiKey, method, path string, query url.Values, body any) envelope {

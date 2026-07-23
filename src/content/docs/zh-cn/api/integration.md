@@ -5,7 +5,7 @@ sidebar:
   order: -1
 ---
 
-CoreClaw API v2 的推荐流程是：确认认证，选择运行入口，按 Worker schema 构造输入，选择异步或同步执行模式，然后用 `runId` 查询状态、日志、结果或导出文件。
+CoreClaw API v2 的推荐流程是：确认认证，选择运行入口，按 Worker schema 构造输入，选择异步或同步执行模式，保存 `data.run_slug` 和 `request_id`，然后用 `runId` 查询状态、日志、结果或导出文件。运行状态处理、退避轮询和取消语义见[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## 1. 快速认证检查
 

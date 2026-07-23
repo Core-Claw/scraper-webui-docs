@@ -33,7 +33,7 @@ A Worker run can fail for various reasons. The run status will show **FAILED** w
 **Solutions:**
 - Verify the website is accessible
 - Check if the website has changed
-- Try with Web Unlocker enabled
+- Route requests through proxies (see [Proxy Support](/developer-guide/worker-definition/platform-features/proxy-support/))
 
 ### 3. Anti-Scraping Detection
 
@@ -43,7 +43,7 @@ A Worker run can fail for various reasons. The run status will show **FAILED** w
 - IP blocked messages
 
 **Solutions:**
-- Enable Web Unlocker
+- Enable proxy support and rotate across regions
 - Use proxy rotation
 - Reduce request frequency
 
@@ -109,7 +109,7 @@ If issues persist:
 | ---------------- | ------------------------------------ |
 | Input errors     | Validate before running              |
 | Timeouts         | Use appropriate timeout settings     |
-| Anti-scraping    | Enable Web Unlocker                  |
+| Anti-scraping    | Enable proxy support, rotate regions |
 | Rate limits      | Add delays between requests          |
 
 ## Related Topics

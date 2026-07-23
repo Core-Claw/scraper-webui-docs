@@ -85,6 +85,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/rerun"
 ## 注意事项
 
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 - 传入 `callback_url` 后，CoreClaw 会在运行状态变化或结束时发送回调通知。详见[回调通知](/zh-cn/api/callbacks/)。
 
 ## HTTP 响应

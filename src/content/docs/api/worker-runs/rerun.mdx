@@ -85,6 +85,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/rerun"
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 - When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).
 
 ## HTTP Responses

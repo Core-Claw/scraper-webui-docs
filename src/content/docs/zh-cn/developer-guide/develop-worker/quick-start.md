@@ -155,7 +155,7 @@ if __name__ == "__main__":
 'use strict'
 
 const coresdk = require('./sdk')
-const { HttpsProxyAgent } = require('socks-proxy-agent')
+const { SocksProxyAgent } = require('socks-proxy-agent')
 const fetch = require('node-fetch') // 或 Node 18+ 的全局 fetch
 
 async function run() {
@@ -164,12 +164,14 @@ async function run() {
         const inputJson = await coresdk.parameter.getInputJSONObject()
         await coresdk.log.debug(`输入参数: ${JSON.stringify(inputJson)}`)
 
-        // 2. 从 PROXY_AUTH 配置 SOCKS5 代理（HTTP 必须）
+        // 2. 从 PROXY_AUTH + PROXY_DOMAIN 配置 SOCKS5 代理
         const proxyAuth = process.env.PROXY_AUTH
-        const agent = proxyAuth
-            ? new HttpsProxyAgent(`socks5://${proxyAuth}`)
-            : undefined
-        await coresdk.log.info(`已配置代理: ${Boolean(proxyAuth)}`)
+        const proxyDomain = process.env.PROXY_DOMAIN
+        const agent =
+            proxyAuth && proxyDomain
+                ? new SocksProxyAgent(`socks5://${proxyAuth}@${proxyDomain}`)
+                : undefined
+        await coresdk.log.info(`已配置代理: ${Boolean(agent)}`)
 
         // 3. 业务逻辑——经代理发真实请求
         const url = inputJson?.url

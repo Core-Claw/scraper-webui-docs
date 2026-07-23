@@ -54,11 +54,34 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/last" \
 }
 ```
 
+## Response Fields
+
+`data` contains these run fields:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `slug` | `string` | Run identifier; pass it as `runId` to detail, log, result, and export endpoints. |
+| `scraper_slug` | `string` | Identifier of the Worker that ran. |
+| `scraper_title` | `string` | Worker display name. |
+| `version` | `string` | Worker version that actually ran, for example `v1.2.8`. |
+| `status` | `string` | Run status and the primary outcome field. See [Run Lifecycle & Status](/api/run-lifecycle/) for values. |
+| `results` | `integer` | Current or final number of result rows. `0` does not mean failure. |
+| `usage` | `string` | Platform-recorded resource usage (numeric string) for observability and billing diagnostics. |
+| `traffic` | `integer` | Platform-recorded traffic diagnostic value. |
+| `origin` | `string` | Run origin, for example `api_v2`. |
+| `started_at` | `integer` | Execution start time, Unix seconds. |
+| `finished_at` | `integer` | Execution end time, Unix seconds. |
+| `duration` | `integer` | Execution duration in seconds. |
+| `err_msg` | `string` | Optional diagnostic text. It may be absent (successful runs usually omit it); use it only as supporting evidence, never as the sole success/failure signal. |
+
+> Timestamps are Unix seconds (UTC). Cancellation, queueing, or state synchronization can produce incomplete or non-intuitive timing combinations; always treat `status` as authoritative.
+
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 - This is an account-level latest-run endpoint and does not take a `workerId` path parameter; it operates on the latest run in the current account scope.
 - `last` means the latest run in the current scope. Use a concrete `runId` endpoint when the target must be explicit.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 
 ## HTTP Responses
 

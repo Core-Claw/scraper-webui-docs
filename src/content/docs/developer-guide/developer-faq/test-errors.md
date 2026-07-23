@@ -22,7 +22,7 @@ ConnectionError: Failed to establish connection
 
 **Solutions:**
 - Check URL is accessible
-- Enable Web Unlocker
+- Route requests through proxies (see [Proxy Support](/developer-guide/worker-definition/platform-features/proxy-support/))
 - Use proxy configuration
 
 ### 2. Timeout Errors
@@ -104,7 +104,7 @@ Verify environment variables:
 
 | Issue          | Prevention                    |
 | -------------- | ----------------------------- |
-| Connection     | Use Web Unlocker              |
+| Connection     | Route through proxies         |
 | Timeout        | Set appropriate timeouts      |
 | Element        | Use flexible selectors        |
 | Empty results  | Test selectors locally        |

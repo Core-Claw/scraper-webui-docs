@@ -216,16 +216,17 @@ package main
 
 import (
     "context"
-    "crypto/tls"
     "encoding/json"
     "fmt"
     "io"
+    "net"
     "net/http"
-    "net/url"
     "os"
     "strings"
-    coresdk "test/GoSdk"
     "time"
+
+    coresdk "test/GoSdk"
+    "golang.org/x/net/proxy"
 )
 
 func run() {
@@ -242,32 +243,34 @@ func run() {
     coresdk.Log.Debug(ctx, fmt.Sprintf("Input params: %s", inputJSON))
 
     // 2. Proxy configuration (read from environment variables)
+    // PROXY_DOMAIN is the proxy endpoint (host:port); PROXY_AUTH is username:password.
+    proxyDomain := os.Getenv("PROXY_DOMAIN")
     proxyAuth := os.Getenv("PROXY_AUTH")
-    coresdk.Log.Info(ctx, fmt.Sprintf("Proxy auth: %s", proxyAuth))
+    coresdk.Log.Info(ctx, fmt.Sprintf("Proxy configured: %v", proxyAuth != "" && proxyDomain != ""))
 
-    // 3. Construct proxy URL
-    var proxyURL string
-    if proxyAuth != "" {
-        proxyURL = fmt.Sprintf("socks5://%s@proxy-inner.coreclaw.com:6000", proxyAuth)
-    }
-    coresdk.Log.Info(ctx, fmt.Sprintf("Proxy URL: %s", proxyURL))
-
-    // 4. Business logic - create HTTP client with proxy
+    // 3. Business logic - create HTTP client with a SOCKS5 dialer.
+    // Go's http.Transport.Proxy does not support SOCKS5, so dial through
+    // golang.org/x/net/proxy instead. Keep TLS verification enabled.
     httpClient := &http.Client{
         Timeout: time.Second * 30,
     }
 
-    if proxyURL != "" {
-        proxyParsed, err := url.Parse(proxyURL)
+    if proxyAuth != "" && proxyDomain != "" {
+        var auth *proxy.Auth
+        if user, pass, ok := strings.Cut(proxyAuth, ":"); ok {
+            auth = &proxy.Auth{User: user, Password: pass}
+        }
+
+        dialer, err := proxy.SOCKS5("tcp", proxyDomain, auth, proxy.Direct)
         if err != nil {
-            coresdk.Log.Error(ctx, fmt.Sprintf("Failed to parse proxy URL: %v", err))
+            coresdk.Log.Error(ctx, fmt.Sprintf("Failed to create SOCKS5 dialer: %v", err))
             return
         }
 
+        contextDialer := dialer.(proxy.ContextDialer)
         httpClient.Transport = &http.Transport{
-            Proxy: http.ProxyURL(proxyParsed),
-            TLSClientConfig: &tls.Config{
-                InsecureSkipVerify: true,
+            DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+                return contextDialer.DialContext(ctx, network, addr)
             },
         }
         coresdk.Log.Info(ctx, "Proxy client configured")

@@ -56,9 +56,22 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/log" \
 }
 ```
 
+## Response Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `data.all_logs_url` | `string` | Download URL for the full log. This URL may be temporary — download promptly; contact support for retention policy. |
+| `data.list[]` | `array` | Log entries; fields are platform-defined. |
+| `data.list[].type` | `integer` | Platform-defined log type marker. |
+| `data.list[].group` | `string` | Subtask or group identifier. |
+| `data.list[].content` | `string` | Log text content. |
+| `data.list[].timestamp` | `integer` | Log timestamp in milliseconds. |
+| `data.result_count` | `integer` | Current result count. |
+
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 
 ## HTTP Responses
 

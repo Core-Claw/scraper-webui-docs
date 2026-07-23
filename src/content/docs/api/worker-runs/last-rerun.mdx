@@ -78,6 +78,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-runs/last/rerun" \
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 - This is an account-level latest-run endpoint and does not take a `workerId` path parameter; it operates on the latest run in the current account scope.
 - `last` means the latest run in the current scope. Use a concrete `runId` endpoint when the target must be explicit.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 - When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).
 
 ## HTTP Responses

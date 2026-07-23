@@ -59,3 +59,7 @@ CoreClaw retains all your Worker run records. Each run saves:
 - Logs
 
 You can view run records in the Console.
+
+## How many runs at once?
+
+The number of runs you can execute at the same time depends on your plan. See [Concurrency Limits](/user-guide/run-worker/concurrency-limits/).

@@ -63,6 +63,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result/
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
 - `filter_keys` 可用于限制导出字段，例如 `title,address`。
 - 结果列表使用 `offset` 和 `limit` 分页。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应
 

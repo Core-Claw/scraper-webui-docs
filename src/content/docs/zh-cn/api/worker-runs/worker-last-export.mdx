@@ -64,6 +64,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/las
 - 这是 Worker 级最近运行接口，`workerId` 是必填路径参数；它只会作用于该 Worker 范围内最近一次运行。
 - `last` 表示当前筛选范围内最近一次运行；如需确定目标，请使用具体 `runId` 接口。
 - `filter_keys` 可用于限制导出字段，例如 `title,address`。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应
 

@@ -100,6 +100,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
 - Read the Worker input schema first before building `input`; fields differ by Worker.
 - Use `offset` and `limit` only to control the synchronous result window; they do not change the full result set produced by the Worker.
 - `version` is optional. Omit it unless you have confirmed a concrete available version; not every Worker accepts `latest` as an explicit version value.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 - When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).
 
 ## HTTP Responses

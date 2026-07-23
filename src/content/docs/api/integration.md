@@ -5,7 +5,7 @@ sidebar:
   order: -1
 ---
 
-The recommended CoreClaw API v2 flow is: verify authentication, choose the run entry point, build input from the Worker schema, choose async or sync execution, then use `runId` to read status, logs, results, or an export file.
+The recommended CoreClaw API v2 flow is: verify authentication, choose the run entry point, build input from the Worker schema, choose async or sync execution, save `data.run_slug` and `request_id`, then use `runId` to read status, logs, results, or an export file. See [Run Lifecycle & Status](/api/run-lifecycle/) for state handling, backoff polling, and cancellation semantics.
 
 ## 1. Quick Authentication Check
 

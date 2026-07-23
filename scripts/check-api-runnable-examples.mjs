@@ -16,6 +16,8 @@ const files = [
     'src/content/docs/zh-cn/api/examples/java.md',
     'src/content/docs/zh-cn/api/examples/php.md',
     'src/content/docs/zh-cn/api/examples/go.md',
+    'src/content/docs/user-guide/run-worker/api-calls.md',
+    'src/content/docs/zh-cn/user-guide/run-worker/api-calls.md',
 ]
 
 const failures = []
@@ -44,6 +46,40 @@ for (const [name, example] of Object.entries(runWorkerExamples)) {
     }
     if (value?.input && !value.input?.parameters?.custom) {
         failures.push(`public/openapi.json run Worker example ${name} must use input.parameters.custom.`)
+    }
+}
+
+// Developer-guide proxy / quick-start runnable examples must be safe:
+// no TLS-verification bypass and no logging of proxy credentials.
+const developerExampleFiles = [
+    'src/content/docs/developer-guide/builds-and-runs.md',
+    'src/content/docs/zh-cn/developer-guide/builds-and-runs.md',
+    'src/content/docs/developer-guide/developer-faq/test-errors.md',
+    'src/content/docs/zh-cn/developer-guide/developer-faq/test-errors.md',
+    'src/content/docs/developer-guide/worker-definition/platform-features/proxy-support.md',
+    'src/content/docs/zh-cn/developer-guide/worker-definition/platform-features/proxy-support.md',
+]
+
+const forbiddenExamplePatterns = [
+    [/InsecureSkipVerify\s*:\s*true/, 'must not disable TLS verification (InsecureSkipVerify: true)'],
+    [/rejectUnauthorized\s*:\s*false/, 'must not disable TLS verification (rejectUnauthorized: false)'],
+    [/verify\s*=\s*False/, 'must not disable TLS verification (verify=False)'],
+    [/(?:print|console\.log|fmt\.Print\w*|log\.\w+|echo)\([^)]*PROXY_AUTH/, 'must not print/log PROXY_AUTH credentials'],
+    [/Web Unlocker/i, 'must not reference the undocumented "Web Unlocker" feature'],
+]
+
+for (const rel of developerExampleFiles) {
+    let text
+    try {
+        text = await readFile(path.join(root, rel), 'utf8')
+    } catch (error) {
+        if (error?.code === 'ENOENT') continue
+        throw error
+    }
+    for (const [pattern, reason] of forbiddenExamplePatterns) {
+        if (pattern.test(text)) {
+            failures.push(`${rel} ${reason}.`)
+        }
     }
 }
 

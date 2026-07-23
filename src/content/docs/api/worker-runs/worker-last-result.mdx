@@ -71,6 +71,16 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/las
 }
 ```
 
+## Response Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `data.count` | `integer` | Total number of result rows for the run. |
+| `data.headers[]` | `array` | Column definitions; each item has `key` (field name) and `label` (display name). |
+| `data.list[]` | `array` | Result rows; each row keys align with `headers[].key`. |
+
+> Result rows may include internal fields not declared in the Worker output schema (for example `__coreclaw_data_id__`); ignore them as needed. Serialization of nested or empty values depends on the export format; `filter_keys` must match `headers[].key`. Page requests with zero-based `offset` and `limit` (max `100`).
+
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
@@ -78,6 +88,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/las
 - `last` means the latest run in the current scope. Use a concrete `runId` endpoint when the target must be explicit.
 - Result lists use `offset` and `limit` pagination.
 - `offset` is zero-based; `limit` defaults to `20` and cannot exceed `100`.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 
 ## HTTP Responses
 

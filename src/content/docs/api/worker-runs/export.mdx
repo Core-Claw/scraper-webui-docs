@@ -63,6 +63,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result/
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 - `filter_keys` can limit exported fields, for example `title,address`.
 - Result lists use `offset` and `limit` pagination.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 
 ## HTTP Responses
 

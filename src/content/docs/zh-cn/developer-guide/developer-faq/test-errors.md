@@ -22,7 +22,7 @@ ConnectionError: Failed to establish connection
 
 **解决方案：**
 - 检查 URL 是否可访问
-- 启用 Web Unlocker
+- 通过代理转发请求（参见[代理支持](/zh-cn/developer-guide/worker-definition/platform-features/proxy-support/)）
 - 使用代理配置
 
 ### 2. 超时错误
@@ -104,7 +104,7 @@ CoreSDK.Log.error(f"错误: {e}")
 
 | 问题 | 预防措施 |
 | ---- | -------- |
-| 连接 | 使用 Web Unlocker |
+| 连接 | 通过代理转发 |
 | 超时 | 设置适当的超时值 |
 | 元素 | 使用灵活的选择器 |
 | 空结果 | 在本地测试选择器 |

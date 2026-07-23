@@ -55,6 +55,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/last/export?format=
 - This is an account-level latest-run endpoint and does not take a `workerId` path parameter; it operates on the latest run in the current account scope.
 - `last` means the latest run in the current scope. Use a concrete `runId` endpoint when the target must be explicit.
 - `filter_keys` can limit exported fields, for example `title,address`.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 
 ## HTTP Responses
 

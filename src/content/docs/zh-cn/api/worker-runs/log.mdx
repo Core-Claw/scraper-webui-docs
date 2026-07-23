@@ -56,9 +56,22 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/log" \
 }
 ```
 
+## 响应字段
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `data.all_logs_url` | `string` | 完整日志的下载地址。该地址可能是临时的，请及时下载；保留策略请咨询支持。 |
+| `data.list[]` | `array` | 日志条目数组，字段由平台定义。 |
+| `data.list[].type` | `integer` | 平台定义的日志类型标记。 |
+| `data.list[].group` | `string` | 子任务或分组标识。 |
+| `data.list[].content` | `string` | 日志文本内容。 |
+| `data.list[].timestamp` | `integer` | 日志时间戳（毫秒）。 |
+| `data.result_count` | `integer` | 当前结果数量。 |
+
 ## 注意事项
 
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应
 

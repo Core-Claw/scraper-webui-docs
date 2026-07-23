@@ -53,6 +53,8 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/la
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 - This is a Worker-scoped latest-run endpoint; `workerId` is required and the operation applies only to that Worker's latest run.
 - `last` means the latest run in the current scope. Use a concrete `runId` endpoint when the target must be explicit.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
+- A successful abort request only means the service accepted the cancellation operation; then read detail for the same concrete `runId`. Do not wait for or invent an undocumented `aborted` state.
 
 ## HTTP Responses
 

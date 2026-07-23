@@ -39,6 +39,31 @@ async function coreclawRequest(path, { method = "GET", query, body } = {}) {
   return payload;
 }
 
+async function waitForRun(runId, timeoutMs = 300_000) {
+  const deadline = Date.now() + timeoutMs;
+  let delayMs = 2_000;
+  while (Date.now() < deadline) {
+    const detail = await coreclawRequest(`/api/v2/worker-runs/${runId}`);
+    const runData = detail.data;
+    if (runData.status === "succeeded") return runData;
+    if (["failed", "aborting"].includes(runData.status)) {
+      const logs = await coreclawRequest(`/api/v2/worker-runs/${runId}/log`);
+      throw new Error(JSON.stringify({
+        status: runData.status,
+        err_msg: runData.err_msg,
+        request_id: detail.request_id,
+        logs: logs.data,
+      }));
+    }
+    if (!["ready", "running"].includes(runData.status)) {
+      throw new Error(`Unexpected run status: ${runData.status}`);
+    }
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+    delayMs = Math.min(delayMs * 2, 15_000);
+  }
+  throw new Error(`Timed out waiting for run ${runId}`);
+}
+
 const account = await coreclawRequest("/api/v2/users/account");
 console.log("Account:", account.data);
 
@@ -64,8 +89,10 @@ const run = await coreclawRequest(`/api/v2/workers/${WORKER_ID}/runs`, {
 const runId = run.data.run_slug;
 console.log("Run ID:", runId);
 
+const completedRun = await waitForRun(runId);
+
 const results = await coreclawRequest(`/api/v2/worker-runs/${runId}/result`, {
   query: { offset: 0, limit: 20 },
 });
-console.log(results.data);
+console.log({ status: completedRun.status, results: results.data });
 ```

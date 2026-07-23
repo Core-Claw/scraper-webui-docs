@@ -53,6 +53,8 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/la
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
 - 这是 Worker 级最近运行接口，`workerId` 是必填路径参数；它只会作用于该 Worker 范围内最近一次运行。
 - `last` 表示当前筛选范围内最近一次运行；如需确定目标，请使用具体 `runId` 接口。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
+- 取消请求成功只表示服务端已接受取消操作；随后应针对同一具体 `runId` 读取详情。不要等待或自行构造未在契约中定义的 `aborted` 状态。
 
 ## HTTP 响应
 

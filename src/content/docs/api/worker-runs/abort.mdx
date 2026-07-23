@@ -51,6 +51,8 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/abort"
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
+- A successful abort request only means the service accepted the cancellation operation; then read detail for the same concrete `runId`. Do not wait for or invent an undocumented `aborted` state.
 
 ## HTTP Responses
 

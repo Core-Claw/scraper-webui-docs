@@ -2,16 +2,20 @@
 title: Pricing Rules
 description: Pay only for the platform resources actually consumed during Worker runs, with no hidden fees.
 sidebar:
-  order: 6
+  order: 7
 ---
 
 ## Pay per usage
 
 You only pay for the platform resources **actually consumed** during Worker runs, with no hidden fees. Pricing is transparent.
 
-**Pay only for successful results. Failed requests are completely free.**
+Billing is based on successful results — you are not charged for results a run did not produce. A run that is rejected before it starts (for example, when you are at your plan's [concurrency limit](/user-guide/run-worker/concurrency-limits/)) does not deduct any balance. To see exactly what a run cost, check its cost record in Run History.
 
 View your subscription plan — different plans offer different discounts and feature support.
+
+## Subscriptions become usable balance
+
+When you pay for a subscription plan, that amount is **not** an extra fee on top of usage. It is converted into usable account balance, which is then consumed by your Worker runs based on actual resource usage. In other words, the subscription preloads the balance your scripts bill against — there is no separate subscription charge beyond what you spend on runs.
 
 ![Subscription plan](@/assets/docs/69.png)
 

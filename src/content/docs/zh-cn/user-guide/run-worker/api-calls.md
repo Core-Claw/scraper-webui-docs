@@ -2,7 +2,7 @@
 title: API 调用
 description: 通过 CoreClaw API 编程运行 Worker 与 Task 模板
 sidebar:
-  order: 5
+  order: 6
 ---
 
 了解如何使用 CoreClaw API v2 以编程方式启动 Worker、运行 Task 模板，以及查询运行记录。
@@ -49,16 +49,20 @@ POST /api/v2/workers/{workerId}/runs
 ```json
 {
   "input": {
-    "keyword": "coffee",
-    "limit": 10
+    "parameters": {
+      "custom": {
+        "keywords": ["coffee"],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
   },
   "is_async": true,
-  "version": "latest",
   "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-`is_async` 控制是否异步执行：`true` 为异步，`false` 为同步等待结果。如需 Webhook 推送结果，请提供 `callback_url`。
+`is_async` 控制运行模式：`true` 表示异步提交并立即返回；`false` 表示等待同步结果窗口。请求返回后，请同时保存 `data.run_slug`（即 `runId`）和 `request_id`，用于后续查询与排查。如需通过 Webhook 接收状态更新，请提供 `callback_url`。
 
 `input` 的结构因 Worker 而异，不是旧版的 `custom_params` JSON 字符串字段。构造请求前请先读取 Worker 输入 schema：
 
@@ -70,6 +74,7 @@ POST /api/v2/workers/{workerId}/runs
 构造 `input` 时：
 
 - 严格遵守该 Worker 的输入 schema。
+- 除非该 Worker 的 schema 明确要求其他结构，否则将 Worker 表单字段放在 `input.parameters.custom` 下。
 - 对于必填字段，必须显式提供。
 - 同步结果分页场景下，`limit` 不要超过 `100`。
 - 如果 `input` 缺失或结构不匹配，接口会返回参数校验错误。
@@ -96,6 +101,10 @@ POST /api/v2/worker-tasks/{workerTaskId}/runs
 Task 模板已经包含保存好的输入设置。如需 Webhook 推送结果，请提供 `callback_url`。响应中的 `data.run_slug` 就是后续接口使用的 `runId`。
 
 ## 查询一次运行
+
+拿到返回的 `runId` 后，使用运行接口查询。应以 `data.status` 作为主要结果判断字段；`results`、时间戳和 `err_msg` 只是辅助诊断信息，不能替代状态判断。状态为 `ready` 或 `running` 时采用有上限的退避轮询；`succeeded` 时读取结果或导出；`failed` 时保存 `request_id` 并读取详情与日志；调用取消接口后，重新读取同一个明确的 `runId`，处理契约中定义的 `aborting`，不要自行构造 `aborted`。
+
+支持的状态、真实响应形状、轮询顺序与取消注意事项，请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 拿到返回的 `runId` 后，可以继续调用以下接口：
 

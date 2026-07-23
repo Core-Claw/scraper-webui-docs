@@ -40,20 +40,20 @@ The directory structures under `src/content/docs/` and `src/content/docs/zh-cn/`
 CoreClaw uses two terms for the same concept:
 
 - **Worker** — The name used in documentation and the UI; refers to data collection scripts
-- **Scraper** — The name used in API paths and field names for backward compatibility (e.g., `scraper_slug`, `/api/v1/scraper/run`)
+- **Scraper** — The name retained in some API field names for backward compatibility (e.g., `scraper_slug`, `scraper_title`)
 
 ### API Documentation
 
-API reference is organized by endpoint groups:
+The public API is **v2**, based at `https://openapi.coreclaw.com` with paths under `/api/v2`. The reference is organized by resource:
 
-- **Worker** — `/api/v1/scraper/*` endpoints for launching, aborting, and viewing Worker runs
-- **Runs** — `/api/v1/run/*` endpoints for history, results, logs, and exports
-- **Tasks** — `/api/v1/task/*` endpoints for saved Task templates
-- **Account** — `/api/v1/account/*` endpoints for account information
+- **Workers** — `/api/v2/workers/*` for listing Workers, reading input schema, and starting runs
+- **Worker Tasks** — `/api/v2/worker-tasks/*` for saved task templates (create, read, update, delete, run)
+- **Worker Runs** — `/api/v2/worker-runs/*` for run history, detail, results, logs, exports, rerun, and abort
+- **Account / Store / Proxy** — `/api/v2/users/account`, `/api/v2/store`, `/api/v2/proxy/region`
 
 Each endpoint page documents the HTTP method, path, request parameters, response schema, and error codes. The [API index page](https://docs.coreclaw.com/api/) provides a complete endpoint quick-reference.
 
-The OpenAPI spec is at `public/openapi.json`, served at `/openapi.json`. The `openapi.swagger.json` file is for local reference only and is not version-controlled (see `.gitignore`).
+The API reference pages, `public/openapi.json`, and the language examples are **generated** by `scripts/generate-api-v2-docs.mjs` from the source OpenAPI contract — edit the generator, then regenerate, rather than editing generated pages by hand. The spec is served at `/openapi.json`.
 
 ### Sidebar Configuration
 
@@ -92,7 +92,13 @@ Navigation is defined manually via explicit `items` arrays in `astro.config.mjs`
 │   ├── pages/                      # Dynamic routes (Copy-for-LLMs .md exports)
 │   └── styles/common.css           # Global style overrides
 ├── scripts/
-│   └── check-copy-for-llms.mjs     # Post-build smoke test (.md export completeness)
+│   ├── generate-api-v2-docs.mjs        # Generates API reference + openapi.json from the source contract
+│   ├── validate-api-v2-docs.mjs        # Static API contract/doc consistency checks
+│   ├── check-api-runnable-examples.mjs # Guards example request bodies against regressions
+│   ├── check-api-playground-worker-id.mjs # Guards the API playground worker-id handling
+│   ├── verify-api-examples.mjs         # Syntax-checks the API language examples
+│   ├── check-copy-for-llms.mjs         # Post-build smoke test (.md export completeness)
+│   └── live-api-v2-*.mjs               # Opt-in authenticated live checks (not run in build)
 ├── astro.config.mjs                # Astro + Starlight configuration
 ├── package.json
 └── tsconfig.json
@@ -123,6 +129,8 @@ pnpm run preview      # Preview production build
 Run `pnpm run build` before committing to verify:
 
 - No content rendering errors
+- API v2 contract/doc consistency (`validate-api-v2-docs.mjs`)
+- Runnable API example regression guard (`check-api-runnable-examples.mjs`)
 - English and Chinese sidebar ordering match
 - English and Chinese page structures align
 - No broken links or missing asset references

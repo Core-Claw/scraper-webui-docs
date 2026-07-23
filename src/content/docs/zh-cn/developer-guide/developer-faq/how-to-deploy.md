@@ -24,23 +24,22 @@ sidebar:
 
 ### 2. 上传到 CoreClaw
 
-目前**仅支持 ZIP 压缩包**上传脚本。
+在控制台中可通过两种方式添加 Worker：上传 **ZIP 压缩包**，或从 **GitHub 导入**（并支持版本管理）。完整对比见 [部署](/zh-cn/developer-guide/deployment/)。
 
 1. 登录 CoreClaw 控制台
 2. 进入 **我的 Worker** → **创建 Worker**
-3. 将项目打包为 ZIP 文件
-4. 上传 ZIP 压缩包
-5. 点击 **创建**
+3. 将项目打包为 ZIP 文件上传，或填写 GitHub 仓库地址
+4. 点击 **创建**
 
-### 3. 构建
+### 3. 自动处理
 
-上传后，CoreClaw 自动构建 Worker：
+CoreClaw 没有 Docker 镜像构建。上传后，平台自动准备你的 Worker：
 
-1. 安装依赖
-2. 准备脚本运行环境
-3. 运行构建检查
+1. 校验项目结构（入口文件、`input_schema.json`、`output_schema.json`）
+2. 读取 `requirements.txt` / `package.json` 并解析依赖
+3. 使用你的依赖准备脚本运行环境
 
-监控构建日志以发现任何错误。
+监控日志以发现任何错误。详见 [构建与运行](/zh-cn/developer-guide/builds-and-runs/)。
 
 ### 4. 测试
 

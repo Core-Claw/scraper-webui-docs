@@ -217,16 +217,17 @@ package main
 
 import (
     "context"
-    "crypto/tls"
     "encoding/json"
     "fmt"
     "io"
+    "net"
     "net/http"
-    "net/url"
     "os"
     "strings"
-    coresdk "test/GoSdk"
     "time"
+
+    coresdk "test/GoSdk"
+    "golang.org/x/net/proxy"
 )
 
 func run() {
@@ -243,32 +244,34 @@ func run() {
     coresdk.Log.Debug(ctx, fmt.Sprintf("输入参数: %s", inputJSON))
 
     // 2. 代理配置（从环境变量读取）
+    // PROXY_DOMAIN 是代理地址（host:port），PROXY_AUTH 是 username:password。
+    proxyDomain := os.Getenv("PROXY_DOMAIN")
     proxyAuth := os.Getenv("PROXY_AUTH")
-    coresdk.Log.Info(ctx, fmt.Sprintf("代理认证信息: %s", proxyAuth))
+    coresdk.Log.Info(ctx, fmt.Sprintf("是否已配置代理: %v", proxyAuth != "" && proxyDomain != ""))
 
-    // 3. 拼接代理 URL
-    var proxyURL string
-    if proxyAuth != "" {
-        proxyURL = fmt.Sprintf("socks5://%s@proxy-inner.coreclaw.com:6000", proxyAuth)
-    }
-    coresdk.Log.Info(ctx, fmt.Sprintf("代理地址: %s", proxyURL))
-
-    // 4. 业务逻辑 - 创建带代理的 HTTP 客户端
+    // 3. 业务逻辑 - 创建带 SOCKS5 拨号器的 HTTP 客户端。
+    // Go 的 http.Transport.Proxy 不支持 SOCKS5，需改用
+    // golang.org/x/net/proxy 拨号，并保持 TLS 校验开启。
     httpClient := &http.Client{
         Timeout: time.Second * 30,
     }
 
-    if proxyURL != "" {
-        proxyParsed, err := url.Parse(proxyURL)
+    if proxyAuth != "" && proxyDomain != "" {
+        var auth *proxy.Auth
+        if user, pass, ok := strings.Cut(proxyAuth, ":"); ok {
+            auth = &proxy.Auth{User: user, Password: pass}
+        }
+
+        dialer, err := proxy.SOCKS5("tcp", proxyDomain, auth, proxy.Direct)
         if err != nil {
-            coresdk.Log.Error(ctx, fmt.Sprintf("解析代理URL失败: %v", err))
+            coresdk.Log.Error(ctx, fmt.Sprintf("创建 SOCKS5 拨号器失败: %v", err))
             return
         }
 
+        contextDialer := dialer.(proxy.ContextDialer)
         httpClient.Transport = &http.Transport{
-            Proxy: http.ProxyURL(proxyParsed),
-            TLSClientConfig: &tls.Config{
-                InsecureSkipVerify: true,
+            DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+                return contextDialer.DialContext(ctx, network, addr)
             },
         }
         coresdk.Log.Info(ctx, "已配置代理客户端")

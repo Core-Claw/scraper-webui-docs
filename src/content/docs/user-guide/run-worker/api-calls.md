@@ -2,7 +2,7 @@
 title: API Calls
 description: Run Workers and Task templates programmatically via the CoreClaw API
 sidebar:
-  order: 5
+  order: 6
 ---
 
 Learn how to launch Workers, run Task templates, and inspect runs programmatically using CoreClaw API v2.
@@ -49,16 +49,20 @@ POST /api/v2/workers/{workerId}/runs
 ```json
 {
   "input": {
-    "keyword": "coffee",
-    "limit": 10
+    "parameters": {
+      "custom": {
+        "keywords": ["coffee"],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
   },
   "is_async": true,
-  "version": "latest",
   "callback_url": "https://your-callback.example.com/webhook"
 }
 ```
 
-`is_async` controls whether the run executes asynchronously: `true` for async, `false` to wait for completion. Provide `callback_url` when you need webhook delivery of results.
+`is_async` controls whether the run executes asynchronously: `true` submits and returns immediately; `false` waits for the synchronous result window. When the request returns, save both `data.run_slug` as `runId` and `request_id` for follow-up and troubleshooting. Provide `callback_url` when you need webhook delivery of status updates.
 
 `input` varies per Worker. It is not the old `custom_params` JSON string field. Read the Worker schema before constructing the payload:
 
@@ -70,6 +74,7 @@ POST /api/v2/workers/{workerId}/runs
 When building `input`:
 
 - Follow the Worker input schema exactly.
+- Put Worker form fields under `input.parameters.custom` unless that Worker's schema explicitly says otherwise.
 - Provide every required field.
 - Keep `limit` at `100` or lower when using synchronous result pagination.
 - If `input` is missing or does not match the Worker schema, the API returns a validation error.
@@ -96,6 +101,10 @@ POST /api/v2/worker-tasks/{workerTaskId}/runs
 Task templates already contain their saved input settings. Use `callback_url` when you need webhook delivery, and use the returned `data.run_slug` as the `runId` for follow-up calls.
 
 ## Inspect a run
+
+Use the returned `runId` with the run APIs. Check `data.status` as the primary outcome field; `results`, timestamps, and `err_msg` are supporting diagnostics, not substitutes for status. Use bounded backoff while status is `ready` or `running`; on `succeeded`, read results or export; on `failed`, preserve `request_id` and inspect detail plus logs; after an abort request, re-read that same concrete `runId` and handle the documented `aborting` state rather than inventing `aborted`.
+
+For the contract-supported states, real response shapes, polling sequence, and cancellation caveats, see [Run Lifecycle & Status](/api/run-lifecycle/).
 
 Use the returned `runId` with the run APIs:
 

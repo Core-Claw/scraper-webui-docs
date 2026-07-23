@@ -60,6 +60,35 @@ function coreclaw_request(string $method, string $path, ?array $query = null, ?a
     return $payload;
 }
 
+function wait_for_run(string $runId, int $timeoutSeconds = 300): array
+{
+    $deadline = microtime(true) + $timeoutSeconds;
+    $delaySeconds = 2;
+    while (microtime(true) < $deadline) {
+        $detail = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId));
+        $runData = $detail["data"];
+        $status = $runData["status"] ?? null;
+        if ($status === "succeeded") {
+            return $runData;
+        }
+        if (in_array($status, ["failed", "aborting"], true)) {
+            $logs = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId) . "/log");
+            throw new RuntimeException(json_encode([
+                "status" => $status,
+                "err_msg" => $runData["err_msg"] ?? null,
+                "request_id" => $detail["request_id"] ?? null,
+                "logs" => $logs["data"] ?? null,
+            ]));
+        }
+        if (!in_array($status, ["ready", "running"], true)) {
+            throw new RuntimeException("Unexpected run status: " . $status);
+        }
+        sleep($delaySeconds);
+        $delaySeconds = min($delaySeconds * 2, 15);
+    }
+    throw new RuntimeException("Timed out waiting for run " . $runId);
+}
+
 $account = coreclaw_request("GET", "/api/v2/users/account");
 print_r($account["data"]);
 
@@ -81,9 +110,11 @@ $run = coreclaw_request("POST", "/api/v2/workers/" . rawurlencode($workerId) . "
 $runId = $run["data"]["run_slug"];
 echo "Run ID: " . $runId . PHP_EOL;
 
+$completedRun = wait_for_run($runId);
+
 $results = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId) . "/result", [
     "offset" => 0,
     "limit" => 20,
 ]);
-print_r($results["data"]);
+print_r(["status" => $completedRun["status"], "results" => $results["data"]]);
 ```

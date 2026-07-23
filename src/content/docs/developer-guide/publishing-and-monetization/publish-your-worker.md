@@ -72,8 +72,8 @@ The platform reviews scripts for:
 To update a published script:
 
 1. Make changes to your code
-2. Upload a new version as a ZIP archive
-3. Build and test the new version
+2. Upload a new version via ZIP archive or GitHub import
+3. Test the new version
 4. Publish the new version
 
 Previous versions remain available until you remove them.

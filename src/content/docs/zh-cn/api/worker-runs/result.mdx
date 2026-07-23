@@ -71,11 +71,22 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?
 }
 ```
 
+## 响应字段
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `data.count` | `integer` | 当前运行的结果总行数。 |
+| `data.headers[]` | `array` | 列定义，每项包含 `key`（字段名）和 `label`（展示名）。 |
+| `data.list[]` | `array` | 结果数据行；每行的键对应 `headers[].key`。 |
+
+> 结果行可能包含未在 Worker 输出 schema 中声明的内部字段（例如 `__coreclaw_data_id__`），请按需忽略。嵌套或空值的序列化方式取决于导出格式；`filter_keys` 必须匹配 `headers[].key`。分页请求使用从 0 开始的 `offset` 与 `limit`（最大 `100`）。
+
 ## 注意事项
 
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
 - 结果列表使用 `offset` 和 `limit` 分页。
 - `offset` 从 0 开始；`limit` 默认 `20`，最大 `100`。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应
 

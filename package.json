@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build && node scripts/check-api-playground-worker-id.mjs && node scripts/check-api-runnable-examples.mjs && node scripts/check-copy-for-llms.mjs",
+    "build": "astro build && node scripts/validate-api-v2-docs.mjs && node scripts/check-api-playground-worker-id.mjs && node scripts/check-api-runnable-examples.mjs && node scripts/check-copy-for-llms.mjs",
     "build:no-check": "astro build",
+    "check:api": "node scripts/validate-api-v2-docs.mjs && node scripts/check-api-playground-worker-id.mjs && node scripts/check-api-runnable-examples.mjs",
     "check:api-playground": "node scripts/check-api-playground-worker-id.mjs && node scripts/check-api-runnable-examples.mjs",
+    "check:api-examples": "node scripts/verify-api-examples.mjs",
+    "audit:api-lifecycle": "node scripts/live-api-v2-lifecycle-audit.mjs",
+    "audit:api-lifecycle:write": "node scripts/live-api-v2-lifecycle-audit.mjs",
     "check:copy-for-llms": "node scripts/check-copy-for-llms.mjs",
     "preview": "astro preview",
     "astro": "astro"

@@ -87,6 +87,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
 - 运行已保存任务时，请求体只控制执行模式、回调和同步结果窗口；任务本身的输入来自已保存的 Worker 任务配置。
 - `limit` 和 `offset` 只控制同步返回的结果窗口，不改变任务实际产生的完整结果集。
+- 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 - 传入 `callback_url` 后，CoreClaw 会在运行状态变化或结束时发送回调通知。详见[回调通知](/zh-cn/api/callbacks/)。
 
 ## HTTP 响应

@@ -19,7 +19,7 @@ import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
 ## When to use this endpoint
 
-Use this endpoint to list saved Worker task templates.
+Use this endpoint to create a new Worker task template that stores the Worker identifier, input parameters, and an optional schedule.
 
 
 ## Request Body
@@ -95,6 +95,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks" \
 - `worker_id` accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.
 - Read the Worker input schema before building `input`; form fields belong under `input.parameters.custom`. Use `GET /api/v2/workers/{workerId}/input-schema` to read the schema.
 - Schedule fields: `schedule_enabled` 1 enabled / 0 disabled; `schedule_type` 1=daily, 2=weekly, 3=monthly, 4=once; `schedule_time` is `HH:mm`; `schedule_once_date` is `YYYY-MM-DD`. Omit all schedule fields when scheduling is not needed.
+- Timezone, DST, month-end edges, missed-run, and overlapping-run behavior for schedules are platform-managed and not part of the public API contract; consult the Console or support before relying on exact schedule semantics.
 
 ## HTTP Responses
 

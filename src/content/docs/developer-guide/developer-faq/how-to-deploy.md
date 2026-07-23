@@ -24,23 +24,22 @@ Ensure your project has the required files:
 
 ### 2. Upload to CoreClaw
 
-Currently, **only ZIP archive files** are supported for uploading scripts.
+From the Console you can add a Worker in two ways: upload a **ZIP archive**, or **import from GitHub** (which also supports version management). See [Deployment](/developer-guide/deployment/) for the full comparison.
 
 1. Log in to CoreClaw Console
 2. Go to **My Workers** → **Create Worker**
-3. Package your project as a ZIP file
-4. Upload the ZIP archive
-5. Click **Create**
+3. Either package your project as a ZIP file and upload it, or provide a GitHub repository URL
+4. Click **Create**
 
-### 3. Build
+### 3. Automatic Processing
 
-After upload, CoreClaw automatically builds your Worker:
+CoreClaw has no Docker image build. After upload, the platform automatically prepares your Worker:
 
-1. Installs dependencies
-2. Sets up the script runtime environment
-3. Runs build checks
+1. Validates the project structure (entry file, `input_schema.json`, `output_schema.json`)
+2. Reads `requirements.txt` / `package.json` and resolves dependencies
+3. Prepares the script runtime with your dependencies
 
-Monitor the build logs for any errors.
+Monitor the logs for any errors. See [Builds & Runs](/developer-guide/builds-and-runs/) for details.
 
 ### 4. Test
 

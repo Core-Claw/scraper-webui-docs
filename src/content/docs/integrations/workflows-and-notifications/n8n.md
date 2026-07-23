@@ -18,7 +18,7 @@ The CoreClaw n8n integration provides a dedicated community node (`n8n-nodes-cor
 - **Proxy** — List proxy regions
 - **Account** — Get account info (balance, traffic, plan)
 
-Three operations are **composite** — `Run and Get Results`, `Rerun and Get Results`, and the task variant of `Run and Get Results`. A composite op starts the run, polls until it reaches a terminal state (up to ~4 minutes), then fetches the results in a single node — no Wait/poll loop to build by hand. On a failed/aborted run, the node's error includes the run log.
+Three operations are **composite** — `Run and Get Results`, `Rerun and Get Results`, and the task variant of `Run and Get Results`. A composite op starts the run, polls until it reaches a terminal state (up to ~4 minutes), then fetches the results in a single node — no Wait/poll loop to build by hand. On a failed or cancelled run, the node's error includes the run log.
 
 For webhook-driven flows (no polling), pair a run's `Callback URL` field with the separate **CoreClaw Trigger** node, which receives `callback_url` POSTs locally. You can also use the **HTTP Request** node to call the CoreClaw REST API directly for advanced cases.
 
@@ -172,7 +172,7 @@ The trigger exposes `POST <your-n8n-webhook-base>/webhook/callback`. Three field
 
 | Field | Default | Description |
 | --- | --- | --- |
-| **Event Filter** | `any` | `any` / `succeeded` / `failed` / `running` / `aborted`. Non-matching payloads produce no output |
+| **Event Filter** | `any` | `any` / `succeeded` / `failed` / `running` / `aborting`. Non-matching payloads produce no output |
 | **Validate Payload** | on | Require both `run_id` and `run_status` in the body, else error |
 | **Include Headers** | off | Copy request headers into `_headers` on the output item |
 

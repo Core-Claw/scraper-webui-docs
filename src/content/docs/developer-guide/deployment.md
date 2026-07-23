@@ -101,15 +101,15 @@ Some ordinary Windows compression tools can drop the Linux executable bit from t
 
 ---
 
-## Build Process
+## Automatic Processing
 
-After upload, CoreClaw automatically builds your Worker:
+CoreClaw has no Docker image build. After upload, the platform automatically prepares your Worker:
 
-1. Installs dependencies
-2. Sets up the script runtime environment
-3. Runs build checks
+1. Validates the project structure (entry file, `input_schema.json`, `output_schema.json`)
+2. Reads `requirements.txt` / `package.json` and resolves dependencies
+3. Prepares the script runtime with your dependencies
 
-Monitor the build logs for any errors.
+Monitor the logs for any errors. For the full lifecycle, see [Builds & Runs](/developer-guide/builds-and-runs/).
 
 ---
 

@@ -101,15 +101,15 @@ Go Worker 需要区分三层结构：
 
 ---
 
-## 构建流程
+## 自动处理
 
-上传后，CoreClaw 自动构建 Worker：
+CoreClaw 没有 Docker 镜像构建。上传后，平台自动准备你的 Worker：
 
-1. 安装依赖
-2. 准备脚本运行环境
-3. 运行构建检查
+1. 校验项目结构（入口文件、`input_schema.json`、`output_schema.json`）
+2. 读取 `requirements.txt` / `package.json` 并解析依赖
+3. 使用你的依赖准备脚本运行环境
 
-监控构建日志以发现任何错误。
+监控日志以发现任何错误。完整生命周期见 [构建与运行](/zh-cn/developer-guide/builds-and-runs/)。
 
 ---
 

@@ -156,7 +156,7 @@ if __name__ == "__main__":
 'use strict'
 
 const coresdk = require('./sdk')
-const { HttpsProxyAgent } = require('socks-proxy-agent')
+const { SocksProxyAgent } = require('socks-proxy-agent')
 const fetch = require('node-fetch') // or global fetch on Node 18+
 
 async function run() {
@@ -165,12 +165,14 @@ async function run() {
         const inputJson = await coresdk.parameter.getInputJSONObject()
         await coresdk.log.debug(`Input parameters: ${JSON.stringify(inputJson)}`)
 
-        // 2. Configure the SOCKS5 proxy from PROXY_AUTH (required for HTTP)
+        // 2. Configure the SOCKS5 proxy from PROXY_AUTH + PROXY_DOMAIN
         const proxyAuth = process.env.PROXY_AUTH
-        const agent = proxyAuth
-            ? new HttpsProxyAgent(`socks5://${proxyAuth}`)
-            : undefined
-        await coresdk.log.info(`Proxy configured: ${Boolean(proxyAuth)}`)
+        const proxyDomain = process.env.PROXY_DOMAIN
+        const agent =
+            proxyAuth && proxyDomain
+                ? new SocksProxyAgent(`socks5://${proxyAuth}@${proxyDomain}`)
+                : undefined
+        await coresdk.log.info(`Proxy configured: ${Boolean(agent)}`)
 
         // 3. Business logic — a real request through the proxy
         const url = inputJson?.url

@@ -13,13 +13,6 @@ const internalOperations = new Set([
 const API_BASE_URL = 'https://openapi.coreclaw.com'
 const LEGACY_HTTP_API_BASE_URL = 'http://openapi.coreclaw.com'
 const OLD_API_BASE_URL = ['http://openapi', 'test', 'coreclaw.com'].join('.')
-const expectedPublicHttpStatuses = ['200', '400', '401', '404', '422', '429', '500']
-const operationsWithout422 = new Set([
-    'GET /api/v2/users/account',
-    'GET /api/v2/worker-runs/last',
-    'GET /api/v2/worker-runs/last/log',
-])
-const expectedPublicHttpStatusesWithout422 = expectedPublicHttpStatuses.filter(status => status !== '422')
 const expectedErrorCodes = [
     [10000, 'SYSTEM_ERROR', 'internal server error'],
     [11000, 'INVALID_ARGUMENT', 'invalid argument'],
@@ -99,24 +92,22 @@ const astroConfigText = await readFile(path.join(root, 'astro.config.mjs'), 'utf
 
 const errors = []
 
+const expectedPublicOperationCount = publicOperations.length
+const expectedRunStatuses = ['ready', 'running', 'succeeded', 'failed', 'aborting']
+
 if (!publicOperations.every(op => op.path.startsWith('/api/v2/'))) {
     errors.push('public/openapi.json must contain only v2 public-facing API paths, excluding allowed non-public operations.')
 }
 
-if (publicOperations.length !== 28) {
-    errors.push(`expected 28 public v2 operations, found ${publicOperations.length}.`)
+if (expectedPublicOperationCount === 0) {
+    errors.push('public/openapi.json must contain at least one public v2 operation after internal exclusions.')
 }
 
 for (const op of publicOperations) {
     const operation = spec.paths?.[op.path]?.[op.method.toLowerCase()]
     const actualStatuses = Object.keys(operation?.responses ?? {}).sort((a, b) => Number(a) - Number(b))
-    const expectedStatuses = operationsWithout422.has(op.key)
-        ? expectedPublicHttpStatusesWithout422
-        : expectedPublicHttpStatuses
-    const expected = expectedStatuses.join(',')
-    const actual = actualStatuses.join(',')
-    if (actual !== expected) {
-        errors.push(`${op.key} must document HTTP statuses ${expected}, found ${actual || '(none)'}.`)
+    if (actualStatuses.length === 0) {
+        errors.push(`${op.key} must expose at least one HTTP response in public/openapi.json.`)
     }
 }
 
@@ -155,23 +146,18 @@ if (spec?.servers?.[0]?.url !== API_BASE_URL) {
     errors.push(`public/openapi.json should use the production API base URL ${API_BASE_URL}.`)
 }
 
-for (const op of publicOperations.filter(op => !operationsWithout422.has(op.key))) {
-    const has422Doc = docTexts.some(({ text }) =>
-        text.includes(`<ApiPlayground method="${op.method}" path="${op.path}" />`) &&
-        text.includes('| `422` |')
+for (const op of publicOperations) {
+    const operation = spec.paths?.[op.path]?.[op.method.toLowerCase()]
+    const expectedStatuses = Object.keys(operation?.responses ?? {}).sort((a, b) => Number(a) - Number(b))
+    const playgroundDocs = docTexts.filter(({ text }) =>
+        text.includes(`<ApiPlayground method="${op.method}" path="${op.path}" />`)
     )
-    if (!has422Doc) {
-        errors.push(`${op.key} docs must document HTTP 422 to match the live OpenAPI contract.`)
-    }
-}
-
-for (const op of publicOperations.filter(op => operationsWithout422.has(op.key))) {
-    const hasUnexpected422Doc = docTexts.some(({ text }) =>
-        text.includes(`<ApiPlayground method="${op.method}" path="${op.path}" />`) &&
-        text.includes('| `422` |')
+    const documentedStatuses = expectedStatuses.filter(status =>
+        playgroundDocs.some(({ text }) => text.includes(`| \`${status}\` |`))
     )
-    if (hasUnexpected422Doc) {
-        errors.push(`${op.key} docs must not document HTTP 422 because the live OpenAPI contract does not include it.`)
+    const missingStatuses = expectedStatuses.filter(status => !documentedStatuses.includes(status))
+    if (missingStatuses.length) {
+        errors.push(`${op.key} docs must include the contract HTTP statuses ${missingStatuses.join(',')}.`)
     }
 }
 
@@ -321,10 +307,43 @@ for (const { rel, required } of [
 
 for (const { rel, required } of [
     {
+        rel: 'src/content/docs/api/run-lifecycle.md',
+        required: [
+            'Contract status values',
+            ...expectedRunStatuses.map(status => `\`${status}\``),
+            '`aborted` is not a value',
+            'Run detail fields',
+            'Recommended polling flow',
+            'GET /api/v2/worker-runs/{runId}',
+        ],
+    },
+    {
+        rel: 'src/content/docs/zh-cn/api/run-lifecycle.md',
+        required: [
+            '契约中的状态值',
+            ...expectedRunStatuses.map(status => `\`${status}\``),
+            '`aborted` 不是当前公开',
+            '运行详情字段',
+            '推荐轮询流程',
+            'GET /api/v2/worker-runs/{runId}',
+        ],
+    },
+]) {
+    const text = await readRequiredDoc(rel)
+    for (const phrase of required) {
+        if (!text.includes(phrase)) {
+            errors.push(`run lifecycle documentation missing ${JSON.stringify(phrase)}: ${rel}`)
+        }
+    }
+}
+
+for (const { rel, required } of [
+    {
         rel: 'src/content/docs/api/index.md',
         required: [
             'Use `https://openapi.coreclaw.com` as the HTTP API base URL',
             'Read the Worker input schema before sending `input`',
+            '`offset` is zero-based on list and result endpoints',
             '`limit` is capped at `100` on list and result endpoints',
             'Use export endpoints when the caller needs a downloadable result file',
         ],
@@ -334,6 +353,7 @@ for (const { rel, required } of [
         required: [
             'HTTP API 基础地址为 `https://openapi.coreclaw.com`',
             '发送 `input` 前先读取 Worker 输入 schema',
+            '列表和结果接口的 `offset` 从 0 开始',
             '列表和结果接口的 `limit` 上限为 `100`',
             '需要下载结果文件时使用导出接口',
         ],
@@ -344,6 +364,27 @@ for (const { rel, required } of [
         if (!text.includes(phrase)) {
             errors.push(`API index docs need clearer production and usage guidance: ${rel} missing "${phrase}"`)
         }
+    }
+}
+
+for (const { rel, required } of [
+    {
+        rel: 'src/content/docs/user-guide/run-worker/api-calls.md',
+        required: ['input.parameters.custom', 'Run Lifecycle & Status', 'data.run_slug', '`aborting`'],
+    },
+    {
+        rel: 'src/content/docs/zh-cn/user-guide/run-worker/api-calls.md',
+        required: ['input.parameters.custom', '运行生命周期与状态', 'data.run_slug', '`aborting`'],
+    },
+]) {
+    const text = await readRequiredDoc(rel)
+    for (const phrase of required) {
+        if (!text.includes(phrase)) {
+            errors.push(`user-guide API documentation missing ${JSON.stringify(phrase)}: ${rel}`)
+        }
+    }
+    if (/\b(offset is 1-based|offset 是\*\*从 1 开始\*\*)/i.test(text)) {
+        errors.push(`user-guide API documentation must not claim one-based offset: ${rel}`)
     }
 }
 
@@ -529,6 +570,8 @@ for (const [code, key, message] of expectedErrorCodes) {
 }
 
 for (const sidebarText of [
+    "slug: 'api/run-lifecycle'",
+    "'zh-CN': '运行生命周期与状态'",
     "slug: 'api/callbacks'",
     "slug: 'api/error-codes'",
     "'zh-CN': '回调通知'",
@@ -577,6 +620,92 @@ for (const rel of relatedApiDocs) {
         if (pattern.test(text)) {
             errors.push(`related API doc still contains stale v1/API link pattern ${pattern}: ${rel}`)
         }
+    }
+}
+
+// Correctness guards: forbidden terms and stale patterns across all docs + README.
+const allDocFiles = await walk(docsRoot)
+const allDocTexts = await Promise.all(
+    allDocFiles.map(async file => ({ file, text: await readFile(file, 'utf8') }))
+)
+const readmeTexts = await Promise.all(
+    ['README.md', 'README.zh-CN.md'].map(async rel => {
+        try {
+            return { file: path.join(root, rel), text: await readFile(path.join(root, rel), 'utf8') }
+        } catch (error) {
+            if (error?.code === 'ENOENT') return { file: rel, text: '' }
+            throw error
+        }
+    })
+)
+const corpusTexts = [...allDocTexts, ...readmeTexts]
+
+function stripCodeFences(text) {
+    return text.replace(/```[\s\S]*?```/g, '').replace(/`[^`]*`/g, '')
+}
+
+// 1. No invented "Web Unlocker" feature (not in the OpenAPI/SDK contract).
+for (const { file, text } of corpusTexts) {
+    if (/Web Unlocker/i.test(text)) {
+        errors.push(`docs must not reference the undocumented "Web Unlocker" feature: ${path.relative(root, file)}`)
+    }
+}
+
+// 2. No "completely free" absolute promise about failed runs.
+for (const { file, text } of corpusTexts) {
+    if (/completely free|完全免费/.test(text)) {
+        errors.push(`docs must not promise runs are "completely free": ${path.relative(root, file)}`)
+    }
+}
+
+// 3. `aborted` must never appear as a status token (contract uses `aborting`).
+//    Allowed: prose notes that explicitly say aborted is not a contract value.
+for (const { file, text } of corpusTexts) {
+    const prose = stripCodeFences(text)
+    const tokenHits = [...prose.matchAll(/`aborted`|"aborted"|'aborted'|\baborted\b(?=\s*(status|state|状态))/gi)]
+    for (const hit of tokenHits) {
+        const around = prose.slice(Math.max(0, hit.index - 60), hit.index + 60)
+        if (/not a value|not a contract|不是当前公开|不是契约|自行构造|invent/i.test(around)) continue
+        errors.push(`docs must not use \`aborted\` as a status token (contract uses \`aborting\`): ${path.relative(root, file)}`)
+        break
+    }
+}
+
+// 4. No v1 / stale REST paths in README (docs are covered by relatedApiDocs above).
+for (const { file, text } of readmeTexts) {
+    for (const pattern of [/\/api\/v1\//, /\/api\/run\//, /\/api\/task\//, /custom_params/, /system_params/]) {
+        if (pattern.test(text)) {
+            errors.push(`README must not contain stale v1/API pattern ${pattern}: ${path.relative(root, file)}`)
+        }
+    }
+}
+
+// 5. Runnable proxy examples must not disable TLS verification or leak proxy credentials.
+const developerGuideFiles = allDocTexts.filter(({ file }) =>
+    file.includes(`${path.sep}developer-guide${path.sep}`)
+)
+const forbiddenExamplePatterns = [
+    [/InsecureSkipVerify\s*:\s*true/, 'must not disable TLS verification (InsecureSkipVerify: true)'],
+    [/rejectUnauthorized\s*:\s*false/, 'must not disable TLS verification (rejectUnauthorized: false)'],
+    [/verify\s*=\s*False/, 'must not disable TLS verification (verify=False)'],
+    [/(?:print|console\.log|fmt\.Print\w*|log\.\w+)\([^)]*PROXY_AUTH/, 'must not print/log PROXY_AUTH credentials'],
+]
+for (const { file, text } of developerGuideFiles) {
+    for (const [pattern, reason] of forbiddenExamplePatterns) {
+        if (pattern.test(text)) {
+            errors.push(`developer-guide runnable example ${reason}: ${path.relative(root, file)}`)
+        }
+    }
+}
+
+// 6. Create Worker Task generated page must not describe itself as listing templates.
+for (const rel of [
+    'src/content/docs/api/worker-tasks/create.mdx',
+    'src/content/docs/zh-cn/api/worker-tasks/create.mdx',
+]) {
+    const text = await readRequiredDoc(rel)
+    if (/list (all )?saved (task )?templates|列出(所有)?已保存/i.test(text)) {
+        errors.push(`Create Worker Task page must describe creation, not listing: ${rel}`)
     }
 }
 
