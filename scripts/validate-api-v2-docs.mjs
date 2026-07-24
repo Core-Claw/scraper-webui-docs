@@ -681,9 +681,17 @@ for (const { file, text } of readmeTexts) {
 }
 
 // 5. Runnable proxy examples must not disable TLS verification or leak proxy credentials.
+//    Inspect only fenced code blocks so prose that names a forbidden pattern is allowed.
 const developerGuideFiles = allDocTexts.filter(({ file }) =>
     file.includes(`${path.sep}developer-guide${path.sep}`)
 )
+function codeBlocksOnly(text) {
+    const blocks = []
+    for (const match of text.matchAll(/```[^\n]*\n([\s\S]*?)```/g)) {
+        blocks.push(match[1])
+    }
+    return blocks.join('\n')
+}
 const forbiddenExamplePatterns = [
     [/InsecureSkipVerify\s*:\s*true/, 'must not disable TLS verification (InsecureSkipVerify: true)'],
     [/rejectUnauthorized\s*:\s*false/, 'must not disable TLS verification (rejectUnauthorized: false)'],
@@ -691,8 +699,9 @@ const forbiddenExamplePatterns = [
     [/(?:print|console\.log|fmt\.Print\w*|log\.\w+)\([^)]*PROXY_AUTH/, 'must not print/log PROXY_AUTH credentials'],
 ]
 for (const { file, text } of developerGuideFiles) {
+    const codeText = codeBlocksOnly(text)
     for (const [pattern, reason] of forbiddenExamplePatterns) {
-        if (pattern.test(text)) {
+        if (pattern.test(codeText)) {
             errors.push(`developer-guide runnable example ${reason}: ${path.relative(root, file)}`)
         }
     }

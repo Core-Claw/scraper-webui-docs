@@ -61,3 +61,5 @@ Once you confirm the data structure is correct, proceed with a production run.
 - Test data may only be retained for a limited time.
 - Test runs may also consume a small amount of resources.
 - If failures occur frequently, check log information or contact technical support.
+
+Once a run passes in the test environment, confirm it against the [Worker Development & Submission Standards](/developer-guide/worker-standards/) before submitting for review.

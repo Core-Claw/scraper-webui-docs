@@ -58,6 +58,8 @@ const developerExampleFiles = [
     'src/content/docs/zh-cn/developer-guide/developer-faq/test-errors.md',
     'src/content/docs/developer-guide/worker-definition/platform-features/proxy-support.md',
     'src/content/docs/zh-cn/developer-guide/worker-definition/platform-features/proxy-support.md',
+    'src/content/docs/developer-guide/worker-standards.md',
+    'src/content/docs/zh-cn/developer-guide/worker-standards.md',
 ]
 
 const forbiddenExamplePatterns = [
@@ -68,6 +70,16 @@ const forbiddenExamplePatterns = [
     [/Web Unlocker/i, 'must not reference the undocumented "Web Unlocker" feature'],
 ]
 
+// Inspect only fenced code blocks — prose that *names* a forbidden pattern
+// (e.g. "do not use verify=False") must not trip the runnable-example guard.
+function codeBlocksOnly(text) {
+    const blocks = []
+    for (const match of text.matchAll(/```[^\n]*\n([\s\S]*?)```/g)) {
+        blocks.push(match[1])
+    }
+    return blocks.join('\n')
+}
+
 for (const rel of developerExampleFiles) {
     let text
     try {
@@ -76,8 +88,9 @@ for (const rel of developerExampleFiles) {
         if (error?.code === 'ENOENT') continue
         throw error
     }
+    const codeText = codeBlocksOnly(text)
     for (const [pattern, reason] of forbiddenExamplePatterns) {
-        if (pattern.test(text)) {
+        if (pattern.test(codeText)) {
             failures.push(`${rel} ${reason}.`)
         }
     }

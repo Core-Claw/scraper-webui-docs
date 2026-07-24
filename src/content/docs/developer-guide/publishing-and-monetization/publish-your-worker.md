@@ -57,6 +57,8 @@ The platform reviews scripts for:
 - **Output format** — Is the data structure correct?
 - **Description** — Is the description accurate and helpful?
 
+For the full pre-submission checklist and behaviors that cause rejection, see [Worker Development & Submission Standards](/developer-guide/worker-standards/).
+
 ---
 
 ## Configuration Tips

@@ -424,6 +424,13 @@ export default defineConfig({
                             },
                         },
                         {
+                            label: 'Dev & Submission Standards',
+                            slug: 'developer-guide/worker-standards',
+                            translations: {
+                                'zh-CN': '开发与上传规范',
+                            },
+                        },
+                        {
                             label: 'Publishing & Monetization',
                             collapsed: true,
                             translations: {
