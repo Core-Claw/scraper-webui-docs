@@ -1,5 +1,5 @@
 ---
-title: 'Migrate from API V1 to V2'
+title: 'API Migration Guide'
 description: 'A step-by-step guide for moving an existing CoreClaw API V1 integration to V2'
 sidebar:
     order: 1

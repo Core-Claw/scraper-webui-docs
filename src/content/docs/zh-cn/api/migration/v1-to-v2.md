@@ -1,5 +1,5 @@
 ---
-title: '从 API V1 迁移到 V2'
+title: 'API 迁移指南'
 description: '将现有 CoreClaw API V1 集成迁移到 V2 的分步指南'
 sidebar:
     order: 1

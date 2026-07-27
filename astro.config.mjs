@@ -498,14 +498,14 @@ export default defineConfig({
                             translations: { 'zh-CN': 'API 集成指南' },
                         },
                         {
-                            label: 'Migrate from V1',
+                            label: 'API Migration',
                             collapsed: false,
-                            translations: { 'zh-CN': '从 V1 迁移' },
+                            translations: { 'zh-CN': 'API 迁移' },
                             items: [
                                 {
-                                    label: 'Migration Guide',
+                                    label: 'API Migration Guide',
                                     slug: 'api/migration/v1-to-v2',
-                                    translations: { 'zh-CN': '迁移指南' },
+                                    translations: { 'zh-CN': 'API 迁移指南' },
                                 },
                                 {
                                     label: 'Endpoint Mapping',
