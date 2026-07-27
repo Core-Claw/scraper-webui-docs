@@ -53,7 +53,9 @@ The public API is **v2**, based at `https://openapi.coreclaw.com` with paths und
 
 Each endpoint page documents the HTTP method, path, request parameters, response schema, and error codes. The [API index page](https://docs.coreclaw.com/api/) provides a complete endpoint quick-reference.
 
-The API reference pages, `public/openapi.json`, and the language examples are **generated** by `scripts/generate-api-v2-docs.mjs` from the source OpenAPI contract — edit the generator, then regenerate, rather than editing generated pages by hand. The spec is served at `/openapi.json`.
+Existing V1 consumers should start with the [V1 to V2 migration guide](https://docs.coreclaw.com/api/migration/v1-to-v2/), then use the endpoint mapping and five-language migration examples in the same section.
+
+The API reference pages, `public/openapi.json`, and the canonical language examples are **generated** by `scripts/generate-api-v2-docs.mjs` from the source OpenAPI contract — edit the generator, then regenerate, rather than editing generated pages by hand. Editorial pages under `api/migration/` are maintained manually and preserved by the generator. The spec is served at `/openapi.json`.
 
 ### Sidebar Configuration
 

@@ -305,6 +305,64 @@ for (const { rel, required } of [
     }
 }
 
+const v1Operations = [
+    'GET /api/scraper',
+    'GET /api/store',
+    'GET /api/proxy/region',
+    'POST /api/v1/run/result/list',
+    'POST /api/v1/run/detail',
+    'POST /api/v1/scraper/run',
+    'POST /api/v1/rerun',
+    'POST /api/v1/run/result/export',
+    'POST /api/v1/task/run',
+    'POST /api/v1/run/list',
+    'POST /api/v1/run/last/log',
+    'POST /api/v1/scraper/abort',
+    'POST /api/v1/account/info',
+]
+
+for (const rel of [
+    'src/content/docs/api/migration/endpoint-mapping.md',
+    'src/content/docs/zh-cn/api/migration/endpoint-mapping.md',
+]) {
+    const text = await readRequiredDoc(rel)
+    for (const operation of v1Operations) {
+        if (!text.includes(operation)) {
+            errors.push(`V1 to V2 endpoint mapping is incomplete: ${rel} missing ${operation}`)
+        }
+    }
+}
+
+for (const { rel, required } of [
+    {
+        rel: 'src/content/docs/api/migration/v1-to-v2.md',
+        required: ['Migrate production integrations as soon as possible', '13 operations', '34 public operations', 'other 21', 'offset = (page_index - 1) * page_size', 'request_id'],
+    },
+    {
+        rel: 'src/content/docs/zh-cn/api/migration/v1-to-v2.md',
+        required: ['请尽快迁移生产集成', '13 个接口', '34 个公开接口', '其余 21 个', 'offset = (page_index - 1) * page_size', 'request_id'],
+    },
+]) {
+    const text = await readRequiredDoc(rel)
+    for (const phrase of required) {
+        if (!text.includes(phrase)) {
+            errors.push(`V1 to V2 migration guide is missing ${JSON.stringify(phrase)}: ${rel}`)
+        }
+    }
+}
+
+for (const rel of [
+    'src/content/docs/api/migration/examples.md',
+    'src/content/docs/zh-cn/api/migration/examples.md',
+]) {
+    const text = await readRequiredDoc(rel)
+    for (const language of ['## Python', '## Node.js', '## Java', '## PHP', '## Go']) {
+        if (!text.includes(language)) {
+            errors.push(`V1 to V2 migration examples are incomplete: ${rel} missing ${language}`)
+        }
+    }
+}
+
 for (const { rel, required } of [
     {
         rel: 'src/content/docs/api/run-lifecycle.md',
@@ -570,6 +628,9 @@ for (const [code, key, message] of expectedErrorCodes) {
 }
 
 for (const sidebarText of [
+    "slug: 'api/migration/v1-to-v2'",
+    "slug: 'api/migration/endpoint-mapping'",
+    "slug: 'api/migration/examples'",
     "slug: 'api/run-lifecycle'",
     "'zh-CN': '运行生命周期与状态'",
     "slug: 'api/callbacks'",

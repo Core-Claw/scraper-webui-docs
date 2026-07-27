@@ -45,7 +45,9 @@ CoreClaw 平台对同一概念使用两个术语：
 
 每个端点页面记录了 HTTP 方法、路径、请求参数、响应 schema 和错误码。[API 索引页](https://docs.coreclaw.com/zh-cn/api/) 提供了完整的端点速查表。
 
-API 参考页面、`public/openapi.json` 与各语言示例均由 `scripts/generate-api-v2-docs.mjs` 依据源 OpenAPI 契约**生成** —— 请修改生成器后重新生成，不要手工编辑生成页面。规范通过 `/openapi.json` 对外提供。
+现有 V1 调用方应先阅读 [V1 到 V2 迁移指南](https://docs.coreclaw.com/zh-cn/api/migration/v1-to-v2/)，再查看同一栏目中的接口对照和五种语言迁移示例。
+
+API 参考页面、`public/openapi.json` 与标准语言示例均由 `scripts/generate-api-v2-docs.mjs` 依据源 OpenAPI 契约**生成** —— 请修改生成器后重新生成，不要手工编辑生成页面。`api/migration/` 下的迁移内容为手工维护页面，生成器会保留它们。规范通过 `/openapi.json` 对外提供。
 
 ### 侧边栏配置
 

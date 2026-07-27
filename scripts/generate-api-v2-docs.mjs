@@ -152,8 +152,19 @@ console.log(`Generated ${operations.length} API v2 public operation pages per lo
 
 async function resetApiDir(rel) {
     const dir = path.join(root, 'src/content/docs', rel)
-    await rm(dir, { recursive: true, force: true })
     await mkdir(dir, { recursive: true })
+    const generatedFiles = [
+        'index.md',
+        'integration.md',
+        'run-lifecycle.md',
+        'callbacks.md',
+        'error-codes.md',
+        'examples',
+        ...Object.values(pageMeta).map(([slug]) => `${slug}.mdx`),
+    ]
+    await Promise.all(
+        generatedFiles.map(file => rm(path.join(dir, file), { recursive: true, force: true }))
+    )
 }
 
 async function writeFileEnsured(file, text) {
@@ -827,6 +838,10 @@ function indexPage(lang) {
         API_BASE_URL,
         '```',
         '',
+        '## 从 V1 迁移',
+        '',
+        'API V1 已计划停用，请尽快完成迁移。先阅读[迁移指南](/zh-cn/api/migration/v1-to-v2/)，再通过[接口对照与变更说明](/zh-cn/api/migration/endpoint-mapping/)逐项替换旧调用；Python、Node.js、Java、PHP 和 Go 的改写方式见[迁移代码示例](/zh-cn/api/migration/examples/)。',
+        '',
         '## 认证方式',
         '',
         '需要认证的接口支持三种 token 传递方式。推荐优先使用 Bearer token，同时兼容旧版 `api-key` 请求头和 query token：',
@@ -877,6 +892,10 @@ function indexPage(lang) {
         '```',
         API_BASE_URL,
         '```',
+        '',
+        '## Migrating from V1',
+        '',
+        'API V1 is scheduled for retirement, so migrate as soon as possible. Start with the [migration guide](/api/migration/v1-to-v2/), replace each old call with the [endpoint mapping and change notes](/api/migration/endpoint-mapping/), and use the [Python, Node.js, Java, PHP, and Go migration examples](/api/migration/examples/).',
         '',
         '## Authentication',
         '',

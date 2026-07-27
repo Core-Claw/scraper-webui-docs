@@ -13,6 +13,10 @@ HTTP API 基础地址为 `https://openapi.coreclaw.com`。所有 v2 接口路径
 https://openapi.coreclaw.com
 ```
 
+## 从 V1 迁移
+
+API V1 已计划停用，请尽快完成迁移。先阅读[迁移指南](/zh-cn/api/migration/v1-to-v2/)，再通过[接口对照与变更说明](/zh-cn/api/migration/endpoint-mapping/)逐项替换旧调用；Python、Node.js、Java、PHP 和 Go 的改写方式见[迁移代码示例](/zh-cn/api/migration/examples/)。
+
 ## 认证方式
 
 需要认证的接口支持三种 token 传递方式。推荐优先使用 Bearer token，同时兼容旧版 `api-key` 请求头和 query token：

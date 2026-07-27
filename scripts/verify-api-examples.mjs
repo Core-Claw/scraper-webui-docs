@@ -61,6 +61,47 @@ const examples = {
             [tools.go, ['test', 'coreclaw_example.go']],
         ],
     },
+    'migration-python': {
+        file: 'src/content/docs/api/migration/examples.md',
+        fence: 'python',
+        out: 'coreclaw_migration.py',
+        verify: [
+            [tools.python, ['-m', 'py_compile', 'coreclaw_migration.py']],
+        ],
+    },
+    'migration-nodejs': {
+        file: 'src/content/docs/api/migration/examples.md',
+        fence: 'js',
+        out: 'coreclaw-migration.mjs',
+        verify: [
+            [tools.node, ['--check', 'coreclaw-migration.mjs']],
+        ],
+    },
+    'migration-java': {
+        file: 'src/content/docs/api/migration/examples.md',
+        fence: 'java',
+        out: 'CoreClawV2Migration.java',
+        verify: [
+            [tools.javac, ['CoreClawV2Migration.java']],
+        ],
+    },
+    'migration-php': {
+        file: 'src/content/docs/api/migration/examples.md',
+        fence: 'php',
+        out: 'coreclaw-migration.php',
+        verify: [
+            [tools.php, ['-l', 'coreclaw-migration.php']],
+        ],
+    },
+    'migration-go': {
+        file: 'src/content/docs/api/migration/examples.md',
+        fence: 'go',
+        out: 'coreclaw_migration.go',
+        verify: [
+            [tools.go, ['fmt', 'coreclaw_migration.go']],
+            [tools.go, ['test', 'coreclaw_migration.go']],
+        ],
+    },
 }
 
 const errors = []
@@ -91,7 +132,7 @@ if (errors.length) {
     process.exit(1)
 }
 
-console.log('API example verification passed: Python, Node.js, Java, PHP, and Go snippets are syntactically valid.')
+console.log('API example verification passed: canonical and V1-to-V2 migration snippets for Python, Node.js, Java, PHP, and Go are syntactically valid.')
 
 function extractFence(text, language) {
     const pattern = new RegExp(`\\\`\\\`\\\`${language}\\n([\\s\\S]*?)\\n\\\`\\\`\\\``)

@@ -13,6 +13,10 @@ Use `https://openapi.coreclaw.com` as the HTTP API base URL. Every v2 endpoint p
 https://openapi.coreclaw.com
 ```
 
+## Migrating from V1
+
+API V1 is scheduled for retirement, so migrate as soon as possible. Start with the [migration guide](/api/migration/v1-to-v2/), replace each old call with the [endpoint mapping and change notes](/api/migration/endpoint-mapping/), and use the [Python, Node.js, Java, PHP, and Go migration examples](/api/migration/examples/).
+
 ## Authentication
 
 Authenticated endpoints support three token transport modes. Prefer Bearer tokens, while keeping compatibility with the legacy `api-key` header and query token:
