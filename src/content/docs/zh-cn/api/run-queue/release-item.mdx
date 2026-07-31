@@ -1,0 +1,82 @@
+---
+title: "释放单个运行队列项"
+description: "释放单个运行队列项 API 参考"
+sidebar:
+  order: 48
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `POST`
+
+**端点:** `/api/v2/run-queue/items/{queueId}/release`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v2/run-queue/items/{queueId}/release" />
+
+## 什么时候使用这个接口
+
+用于按 `queueId` 释放单个队列项。它是批量 [释放运行队列项](/zh-cn/api/run-queue/release-items/) 的单项版本——当你已持有某个 `queue_ref` 且无需构造批量数组时更方便。
+
+## 路径参数
+
+| 参数 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `queueId` | 是 | `string` | 队列项 ID。传入 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 返回的 `queue_ref`。 |
+
+## 请求体
+
+使用 `Content-Type: application/json` 发送请求体。
+
+| 字段 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `reason` | 否 | `string` | 可选的释放原因，用于诊断记录。 |
+
+### JSON 示例
+
+```json
+{
+  "reason": "cancelled by user"
+}
+```
+
+## 请求示例
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/123456/release" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"reason":"cancelled by user"}'
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "data": {},
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 说明
+
+- API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
+- 如需一次释放多个项，推荐使用批量 [释放运行队列项](/zh-cn/api/run-queue/release-items/) 接口。
+- 状态处理与取消行为可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
+
+## HTTP 响应
+
+| HTTP 状态码 | 应用码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

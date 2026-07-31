@@ -1,0 +1,77 @@
+---
+title: "查询运行队列项"
+description: "查询运行队列项 API 参考"
+sidebar:
+  order: 45
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `GET`
+
+**端点:** `/api/v2/run-queue/items`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="GET" path="/api/v2/run-queue/items" />
+
+## 什么时候使用这个接口
+
+用于查看运行队列——包括等待激活的项以及已变为 inactive 的项。它是激活与释放操作的查询入口，适合监控队列积压情况，并决定下一步要激活或释放哪些项。
+
+## 查询参数
+
+| 参数 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `offset` | 否 | `integer` | 分页偏移，从 0 开始。约束：默认 `0`；最小 0。 |
+| `limit` | 否 | `integer` | 每页数量，列表接口上限 `100`。约束：默认 `20`；范围 1-100。 |
+| `status` | 否 | `string` | 队列状态过滤。允许值：`waiting`、`inactive`。 |
+
+## 请求示例
+
+```bash
+curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=0&limit=20&status=waiting" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "data": {
+    "count": 1,
+    "list": [
+      {
+        "queue_ref": "123456",
+        "queue_status": "waiting",
+        "worker_id": "demo-worker"
+      }
+    ]
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+> `data.list[]` 内的具体字段以平台实际返回的队列项结构为准。请把 `queue_ref` 作为传给激活与释放接口的标识符。
+
+## 说明
+
+- API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
+- 这里返回的 `queue_ref` 即为 [激活运行队列项](/zh-cn/api/run-queue/activate-items/)、[释放运行队列项](/zh-cn/api/run-queue/release-items/)、[释放单个运行队列项](/zh-cn/api/run-queue/release-item/) 所使用的 ID。
+- 队列项代表尚未被激活的运行，背景状态可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
+
+## HTTP 响应
+
+| HTTP 状态码 | 应用码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

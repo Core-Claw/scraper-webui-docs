@@ -1,0 +1,113 @@
+---
+title: "排队运行 Worker"
+description: "排队运行 Worker API 参考"
+sidebar:
+  order: 49
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `POST`
+
+**端点:** `/api/v2/workers/{workerId}/queued-runs`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v2/workers/{workerId}/queued-runs" />
+
+## 什么时候使用这个接口
+
+用于把一次 Worker 运行提交到运行队列，而不是立即执行。与 [运行 Worker](/zh-cn/api/workers/run/)（`POST /api/v2/workers/{workerId}/runs`）相比，排队版本不会立刻执行，而是返回 `queue_ref`，之后可通过运行队列接口激活或释放。适合需要暂存运行并控制其启动时机的场景。
+
+## 标识符说明
+
+- `workerId` / `worker_id` 支持 Worker slug，也支持把路径 `owner/name` 写成 `owner~name`。
+
+## 路径参数
+
+| 参数 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `workerId` | 是 | `string` | Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。 |
+
+## 请求体
+
+使用 `Content-Type: application/json` 发送请求体。表格中的必填/选填描述字段本身是否必须提供；整个请求体是否必填以在线试用区的 Request Body 标记为准。
+
+| 字段 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `callback_url` | 否 | `string` | 回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。 |
+| `input` | 否 | `any` | Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。 |
+| `is_async` | 否 | `boolean` | `true` 表示异步提交，不等待执行结果；`false` 表示等待执行结果，直到运行完成。默认 `true`。 |
+| `limit` | 否 | `integer` | 同步响应中返回的结果窗口大小；仅影响同步响应中附带的结果数量，不影响完整结果集。约束：默认 `20`；范围 1-100。 |
+| `offset` | 否 | `integer` | 同步响应中返回结果窗口的起始偏移；从 0 开始。约束：默认 `0`；最小 0。 |
+| `version` | 否 | `string` | 可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。 |
+
+### JSON 示例
+
+```json
+{
+  "callback_url": "https://client.example.com/openapi/callback",
+  "input": {
+    "keyword": "coffee",
+    "limit": 10
+  },
+  "is_async": true,
+  "limit": 20,
+  "offset": 0,
+  "version": "latest"
+}
+```
+
+## 请求示例
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/queued-runs" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"callback_url":"https://client.example.com/openapi/callback","input":{"keyword":"coffee","limit":10},"is_async":true,"limit":20,"offset":0,"version":"latest"}'
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "data": {
+    "queue_ref": "123456",
+    "queue_status": "waiting",
+    "queued": true
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 响应字段
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `queue_ref` | `string` | 队列项 ID。可用于 [激活](/zh-cn/api/run-queue/activate-items/)、[批量释放](/zh-cn/api/run-queue/release-items/)、[单项释放](/zh-cn/api/run-queue/release-item/) 接口。 |
+| `queue_status` | `string` | 队列项状态，例如 `waiting`。 |
+| `queued` | `boolean` | 该运行是否已成功进入队列。 |
+
+## 说明
+
+- API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
+- 构造 `input` 前应先读取该 Worker 的 input schema；不同 Worker 字段不同。
+- `version` 为可选项。除非已确认存在具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。
+- 状态处理、轮询、失败诊断与取消行为可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
+- 传入 `callback_url` 后，CoreClaw 会在状态变化或完成时发送回调通知，详见 [回调通知](/zh-cn/api/callbacks/)。
+
+## HTTP 响应
+
+| HTTP 状态码 | 应用码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

@@ -616,6 +616,18 @@ export default defineConfig({
                             ],
                         },
                         {
+                            label: 'Run Queue',
+                            collapsed: true,
+                            translations: { 'zh-CN': '运行队列' },
+                            items: [
+                                { label: 'List Run Queue Items', slug: 'api/run-queue/list-items', translations: { 'zh-CN': '查询运行队列项' } },
+                                { label: 'Activate Run Queue Items', slug: 'api/run-queue/activate-items', translations: { 'zh-CN': '激活运行队列项' } },
+                                { label: 'Release Run Queue Items', slug: 'api/run-queue/release-items', translations: { 'zh-CN': '释放运行队列项' } },
+                                { label: 'Release One Run Queue Item', slug: 'api/run-queue/release-item', translations: { 'zh-CN': '释放单个运行队列项' } },
+                                { label: 'Queue Worker Run', slug: 'api/run-queue/queued-run', translations: { 'zh-CN': '排队运行 Worker' } },
+                            ],
+                        },
+                        {
                             label: 'Code Examples',
                             collapsed: true,
                             translations: { 'zh-CN': '代码示例' },

@@ -333,6 +333,58 @@
           }
         },
         "type": "object"
+      },
+      "QueueRefsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "queue_refs": {
+            "description": "Queue item IDs",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "queue_refs"
+        ],
+        "type": "object"
+      },
+      "ReleaseItemsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "queue_refs": {
+            "description": "Queue item IDs",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "reason": {
+            "description": "Release reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "queue_refs"
+        ],
+        "type": "object"
+      },
+      "ReleaseOneRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "description": "Release reason",
+            "type": "string"
+          }
+        },
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -7247,6 +7299,1045 @@
         "summary": "List worker last run results",
         "tags": [
           "worker-runs"
+        ]
+      }
+    },
+    "/api/v2/run-queue/items": {
+      "get": {
+        "operationId": "listRunQueueItems",
+        "parameters": [
+          {
+            "description": "Result offset",
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "default": 0,
+              "description": "Result offset",
+              "format": "int64",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Result limit",
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 20,
+              "description": "Result limit",
+              "format": "int64",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Queue status: waiting or inactive",
+            "explode": false,
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "description": "Queue status: waiting or inactive",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "data": {},
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "List run queue items",
+        "tags": [
+          "run-queue"
+        ]
+      }
+    },
+    "/api/v2/run-queue/items/activate": {
+      "post": {
+        "operationId": "activateRunQueueItems",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueueRefsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "data": {},
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Activate run queue items",
+        "tags": [
+          "run-queue"
+        ]
+      }
+    },
+    "/api/v2/run-queue/items/release": {
+      "post": {
+        "operationId": "releaseRunQueueItems",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseItemsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "data": {},
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Release run queue items",
+        "tags": [
+          "run-queue"
+        ]
+      }
+    },
+    "/api/v2/run-queue/items/{queueId}/release": {
+      "post": {
+        "operationId": "releaseRunQueueItem",
+        "parameters": [
+          {
+            "description": "Queue item ID",
+            "in": "path",
+            "name": "queueId",
+            "required": true,
+            "schema": {
+              "description": "Queue item ID",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseOneRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "data": {},
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Release one run queue item",
+        "tags": [
+          "run-queue"
+        ]
+      }
+    },
+    "/api/v2/workers/{workerId}/queued-runs": {
+      "post": {
+        "callbacks": {
+          "run_status_callback": {
+            "{$request.body#/callback_url}": {
+              "post": {
+                "description": "This service sends this request to the requester callback_url when a run status changes or finishes.",
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "examples": {
+                        "succeeded": {
+                          "summary": "Successful run callback",
+                          "value": {
+                            "error_message": "",
+                            "execution_end_timestamp": 1782091210,
+                            "execution_start_timestamp": 1782091200,
+                            "result_count": 1,
+                            "result_message": "done",
+                            "run_slug": "01KKDXV2G26BT7NH4ZQR2R4NPZ",
+                            "run_status": "succeeded",
+                            "running_duration": 10
+                          }
+                        }
+                      },
+                      "schema": {
+                        "properties": {
+                          "error_message": {
+                            "description": "Run error message",
+                            "type": "string"
+                          },
+                          "execution_end_timestamp": {
+                            "description": "Execution end timestamp",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "execution_start_timestamp": {
+                            "description": "Execution start timestamp",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "result_count": {
+                            "description": "Result count",
+                            "format": "int32",
+                            "type": "integer"
+                          },
+                          "result_message": {
+                            "description": "Result message",
+                            "type": "string"
+                          },
+                          "run_slug": {
+                            "description": "Open API run slug",
+                            "type": "string"
+                          },
+                          "run_status": {
+                            "description": "Run status matching worker run detail",
+                            "type": "string"
+                          },
+                          "running_duration": {
+                            "description": "Running duration in seconds",
+                            "format": "int64",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "run_slug",
+                          "run_status",
+                          "error_message",
+                          "execution_start_timestamp",
+                          "execution_end_timestamp",
+                          "running_duration",
+                          "result_count",
+                          "result_message"
+                        ],
+                        "type": "object"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "The requester accepted the callback."
+                  }
+                },
+                "summary": "Run status callback"
+              }
+            }
+          }
+        },
+        "operationId": "queuedRunWorker",
+        "parameters": [
+          {
+            "description": "Worker slug or path. Use owner~name for path values.",
+            "in": "path",
+            "name": "workerId",
+            "required": true,
+            "schema": {
+              "description": "Worker slug or path. Use owner~name for path values.",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "async_run": {
+                  "summary": "Asynchronous queued run with callback",
+                  "value": {
+                    "callback_url": "https://client.example.com/openapi/callback",
+                    "input": {
+                      "keyword": "coffee",
+                      "limit": 10
+                    },
+                    "is_async": true,
+                    "limit": 20,
+                    "offset": 0,
+                    "version": "latest"
+                  }
+                },
+                "sync_run": {
+                  "summary": "Synchronous queued run",
+                  "value": {
+                    "input": {
+                      "keyword": "coffee",
+                      "limit": 10
+                    },
+                    "is_async": false,
+                    "limit": 20,
+                    "offset": 0,
+                    "version": "latest"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/RunWorkerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "success": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "data": {
+                        "queue_ref": "123456",
+                        "queue_status": "waiting",
+                        "queued": true
+                      },
+                      "message": "success",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Unauthorized",
+                    "value": {
+                      "code": 12001,
+                      "message": "authentication required",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Not Found",
+                    "value": {
+                      "code": 11004,
+                      "message": "not found",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Bad Request",
+                    "value": {
+                      "code": 11000,
+                      "message": "invalid argument",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Too Many Requests",
+                    "value": {
+                      "code": 13000,
+                      "message": "too many requests",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "error": {
+                    "summary": "Internal Server Error",
+                    "value": {
+                      "code": 10000,
+                      "message": "internal server error",
+                      "request_id": "req-123"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          },
+          {
+            "QueryTokenAuth": []
+          },
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Queue worker run",
+        "tags": [
+          "run-queue"
         ]
       }
     }

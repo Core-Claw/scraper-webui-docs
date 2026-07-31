@@ -1,0 +1,113 @@
+---
+title: "Queue Worker Run"
+description: "Queue Worker Run API reference"
+sidebar:
+  order: 49
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `POST`
+
+**Endpoint:** `/api/v2/workers/{workerId}/queued-runs`
+
+**Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v2/workers/{workerId}/queued-runs" />
+
+## When to use this endpoint
+
+Use this endpoint to submit a Worker run into the Run Queue instead of starting it immediately. Compared with [Run Worker](/api/workers/run/) (`POST /api/v2/workers/{workerId}/runs`), the queued variant does not execute right away — it returns a `queue_ref` you can later activate or release via the Run Queue endpoints. Use it when you want to stage runs and control when they start.
+
+## Identifier Notes
+
+- `workerId` / `worker_id` accepts a Worker slug or a path encoded as `owner~name` from `owner/name`.
+
+## Path Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `workerId` | Yes | `string` | Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values. |
+
+## Request Body
+
+Send the request body with `Content-Type: application/json`. Required/Optional describes each field; the Try it Request Body badge shows whether the body itself is required.
+
+| Field | Required | Type | Description |
+| --- | --- | --- | --- |
+| `callback_url` | No | `string` | Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes. |
+| `input` | No | `any` | Worker input payload. Worker form fields usually belong under `input.parameters.custom`; read the Worker input schema first and build this object from that schema. |
+| `is_async` | No | `boolean` | `true` submits asynchronously without waiting for results; `false` waits for the run to finish. Defaults to `true`. |
+| `limit` | No | `integer` | Synchronous result window size. It only controls how many result rows are included in the synchronous response, not the full result set. Constraints: default `20`; range 1-100. |
+| `offset` | No | `integer` | Zero-based offset for the synchronous result window. Constraints: default `0`; minimum 0. |
+| `version` | No | `string` | Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest` as an explicit version value. |
+
+### JSON Example
+
+```json
+{
+  "callback_url": "https://client.example.com/openapi/callback",
+  "input": {
+    "keyword": "coffee",
+    "limit": 10
+  },
+  "is_async": true,
+  "limit": 20,
+  "offset": 0,
+  "version": "latest"
+}
+```
+
+## Request Example
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/queued-runs" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"callback_url":"https://client.example.com/openapi/callback","input":{"keyword":"coffee","limit":10},"is_async":true,"limit":20,"offset":0,"version":"latest"}'
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {
+    "queue_ref": "123456",
+    "queue_status": "waiting",
+    "queued": true
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Response Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `queue_ref` | `string` | Queue item ID. Use it with [Activate](/api/run-queue/activate-items/), [batch release](/api/run-queue/release-items/), and [single release](/api/run-queue/release-item/) endpoints. |
+| `queue_status` | `string` | Queue status of the item, for example `waiting`. |
+| `queued` | `boolean` | Whether the run was accepted into the queue. |
+
+## Notes
+
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- Read the Worker input schema first before building `input`; fields differ by Worker.
+- `version` is optional. Omit it unless you have confirmed a concrete available version; not every Worker accepts `latest` as an explicit version value.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
+- When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

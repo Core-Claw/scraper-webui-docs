@@ -1,0 +1,78 @@
+---
+title: "Release Run Queue Items"
+description: "Release Run Queue Items API reference"
+sidebar:
+  order: 47
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `POST`
+
+**Endpoint:** `/api/v2/run-queue/items/release`
+
+**Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v2/run-queue/items/release" />
+
+## When to use this endpoint
+
+Use this endpoint to release one or more queued items in a single batch call. Releasing an item removes it from the queue without running it — useful for cancelling pending work. Collect `queue_ref` values from [List Run Queue Items](/api/run-queue/list-items/) first. To release a single item by its path ID, use [Release One Run Queue Item](/api/run-queue/release-item/) instead.
+
+## Request Body
+
+Send the request body with `Content-Type: application/json`.
+
+| Field | Required | Type | Description |
+| --- | --- | --- | --- |
+| `queue_refs` | Yes | `array<string>` | Queue item IDs to release. Pass the `queue_ref` values from [List Run Queue Items](/api/run-queue/list-items/). May be `null`/empty, but to release items you must populate it. |
+| `reason` | No | `string` | Optional release reason, recorded for diagnostics. |
+
+### JSON Example
+
+```json
+{
+  "queue_refs": ["123456", "123457"],
+  "reason": "cancelled by user"
+}
+```
+
+## Request Example
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"queue_refs":["123456","123457"],"reason":"cancelled by user"}'
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {},
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- This is a batch operation; every `queue_ref` in the array is released. To activate items instead, use [Activate Run Queue Items](/api/run-queue/activate-items/).
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling and cancellation behavior.
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

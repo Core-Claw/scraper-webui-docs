@@ -1,0 +1,82 @@
+---
+title: "Release One Run Queue Item"
+description: "Release One Run Queue Item API reference"
+sidebar:
+  order: 48
+---
+
+import ApiPlayground from '../../../../components/ApiPlayground.astro'
+
+**Method:** `POST`
+
+**Endpoint:** `/api/v2/run-queue/items/{queueId}/release`
+
+**Authentication:** Supports `Authorization: Bearer <YOUR_API_KEY>`, `api-key: <YOUR_API_KEY>`, and `?token=<YOUR_API_KEY>`. Prefer Bearer token.
+
+## Try it
+
+<ApiPlayground method="POST" path="/api/v2/run-queue/items/{queueId}/release" />
+
+## When to use this endpoint
+
+Use this endpoint to release a single queued item by its `queueId`. It is the single-item counterpart to the batch [Release Run Queue Items](/api/run-queue/release-items/) endpoint — convenient when you already hold one `queue_ref` and do not need to build a batch array.
+
+## Path Parameters
+
+| Parameter | Required | Type | Description |
+| --- | --- | --- | --- |
+| `queueId` | Yes | `string` | Queue item ID. Pass the `queue_ref` value from [List Run Queue Items](/api/run-queue/list-items/). |
+
+## Request Body
+
+Send the request body with `Content-Type: application/json`.
+
+| Field | Required | Type | Description |
+| --- | --- | --- | --- |
+| `reason` | No | `string` | Optional release reason, recorded for diagnostics. |
+
+### JSON Example
+
+```json
+{
+  "reason": "cancelled by user"
+}
+```
+
+## Request Example
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/123456/release" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"reason":"cancelled by user"}'
+```
+
+## Response Example
+
+```json
+{
+  "code": 0,
+  "data": {},
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## Notes
+
+- API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- To release multiple items at once, prefer the batch [Release Run Queue Items](/api/run-queue/release-items/) endpoint.
+- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling and cancellation behavior.
+
+## HTTP Responses
+
+| HTTP Status | Application Code | Meaning |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |

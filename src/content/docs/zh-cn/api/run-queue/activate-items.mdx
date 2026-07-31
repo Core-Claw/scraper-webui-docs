@@ -1,0 +1,76 @@
+---
+title: "激活运行队列项"
+description: "激活运行队列项 API 参考"
+sidebar:
+  order: 46
+---
+
+import ApiPlayground from '../../../../../components/ApiPlayground.astro'
+
+**方法:** `POST`
+
+**端点:** `/api/v2/run-queue/items/activate`
+
+**认证:** 支持 `Authorization: Bearer <YOUR_API_KEY>`、`api-key: <YOUR_API_KEY>` 和 `?token=<YOUR_API_KEY>`。推荐优先使用 Bearer token。
+
+## 在线试用
+
+<ApiPlayground method="POST" path="/api/v2/run-queue/items/activate" />
+
+## 什么时候使用这个接口
+
+用于一次性批量激活一个或多个队列项。激活后，项会从等待状态进入执行流程。请先通过 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 获取 `queue_ref`。
+
+## 请求体
+
+使用 `Content-Type: application/json` 发送请求体。
+
+| 字段 | 必填 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `queue_refs` | 是 | `array<string>` | 要激活的队列项 ID。传入 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 返回的 `queue_ref`。可为 `null`/空，但要激活项就必须填入。 |
+
+### JSON 示例
+
+```json
+{
+  "queue_refs": ["123456", "123457"]
+}
+```
+
+## 请求示例
+
+```bash
+curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/activate" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data '{"queue_refs":["123456","123457"]}'
+```
+
+## 响应示例
+
+```json
+{
+  "code": 0,
+  "data": {},
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+## 说明
+
+- API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
+- 该接口为批量操作，数组中的每个 `queue_ref` 都会被激活。如需释放项，请改用 [释放运行队列项](/zh-cn/api/run-queue/release-items/)。
+- 激活后的状态处理与轮询可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
+
+## HTTP 响应
+
+| HTTP 状态码 | 应用码 | 含义 |
+| --- | --- | --- |
+| `200` | `0` | OK |
+| `400` | `11000` | Bad Request |
+| `401` | `12001` | Unauthorized |
+| `404` | `11004` | Not Found |
+| `422` | `11000` | Unprocessable Entity |
+| `429` | `13000` | Too Many Requests |
+| `500` | `10000` | Internal Server Error |
