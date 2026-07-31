@@ -19,7 +19,9 @@ import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
 ## When to use this endpoint
 
-Use this endpoint to activate one or more queued items in a single batch call. Activating an item moves it from the waiting state toward execution. Collect `queue_ref` values from [List Run Queue Items](/api/run-queue/list-items/) first.
+Use this endpoint to start one or more runs that are sitting in the Run Queue. Items normally enter the queue in the `waiting` state — for example, when a run was submitted but the account balance was insufficient at the time, the run is held in `waiting` instead of executing. Once the blocking condition is resolved (e.g. you topped up the balance), call this endpoint to actually start the run.
+
+First call [List Run Queue Items](/api/run-queue/list-items/) to get the `queue_ref` of the items you want to activate.
 
 ## Request Body
 
@@ -27,7 +29,7 @@ Send the request body with `Content-Type: application/json`.
 
 | Field | Required | Type | Description |
 | --- | --- | --- | --- |
-| `queue_refs` | Yes | `array<string>` | Queue item IDs to activate. Pass the `queue_ref` values from [List Run Queue Items](/api/run-queue/list-items/). May be `null`/empty, but to activate items you must populate it. |
+| `queue_refs` | Yes | `array<string>` | The queue item IDs to activate. Copy these from the `queue_ref` values returned by [List Run Queue Items](/api/run-queue/list-items/). |
 
 ### JSON Example
 
@@ -60,8 +62,9 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/activate" \
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
-- This is a batch operation; every `queue_ref` in the array is activated. To release items instead, use [Release Run Queue Items](/api/run-queue/release-items/).
-- See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling and polling after activation.
+- This is a batch operation: every `queue_ref` in the array is activated in one call.
+- To remove items from the queue instead of running them, use [Release Run Queue Items](/api/run-queue/release-items/).
+- After activation, poll the run status via the run detail/log/result endpoints. See [Run Lifecycle & Status](/api/run-lifecycle/).
 
 ## HTTP Responses
 

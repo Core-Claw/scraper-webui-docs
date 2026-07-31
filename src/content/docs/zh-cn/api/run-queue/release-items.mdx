@@ -19,7 +19,9 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 ## 什么时候使用这个接口
 
-用于一次性批量释放一个或多个队列项。释放后，项会从队列中移除且不会执行，适合取消待处理的工作。请先通过 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 获取 `queue_ref`。如只需按路径 ID 释放单个项，请改用 [释放单个运行队列项](/zh-cn/api/run-queue/release-item/)。
+用于把一个或多个运行从运行队列移除，使其不再执行——比如某个等待中的运行你已经不需要了。这是批量版本：一次调用传入多个 `queue_ref`。如果只释放一个项，请改用 [释放单个运行队列项](/zh-cn/api/run-queue/release-item/)。
+
+请先调用 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 获取要释放项的 `queue_ref`。
 
 ## 请求体
 
@@ -27,15 +29,15 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 字段 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `queue_refs` | 是 | `array<string>` | 要释放的队列项 ID。传入 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 返回的 `queue_ref`。可为 `null`/空，但要释放项就必须填入。 |
-| `reason` | 否 | `string` | 可选的释放原因，用于诊断记录。 |
+| `queue_refs` | 是 | `array<string>` | 要释放的队列项 ID。从 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 返回的 `queue_ref` 复制。 |
+| `reason` | 否 | `string` | 可选的释放原因，用于事后查阅。 |
 
 ### JSON 示例
 
 ```json
 {
   "queue_refs": ["123456", "123457"],
-  "reason": "cancelled by user"
+  "reason": "no longer needed"
 }
 ```
 
@@ -45,7 +47,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"queue_refs":["123456","123457"],"reason":"cancelled by user"}'
+  --data '{"queue_refs":["123456","123457"],"reason":"no longer needed"}'
 ```
 
 ## 响应示例
@@ -62,7 +64,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
 ## 说明
 
 - API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
-- 该接口为批量操作，数组中的每个 `queue_ref` 都会被释放。如需激活项，请改用 [激活运行队列项](/zh-cn/api/run-queue/activate-items/)。
+- 释放是不可逆的：项会从队列移除且不会执行。如果想让运行执行，请改用 [激活运行队列项](/zh-cn/api/run-queue/activate-items/)。
 - 状态处理与取消行为可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应

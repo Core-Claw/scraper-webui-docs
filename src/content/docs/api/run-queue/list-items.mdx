@@ -19,7 +19,12 @@ import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
 ## When to use this endpoint
 
-Use this endpoint to inspect the Run Queue — items waiting to be activated or items that have become inactive. It is the read-side companion to the activate and release operations, useful for monitoring queue depth and deciding which items to activate or release next.
+Use this endpoint to see what is currently in the Run Queue. Each item represents a Worker run you submitted via [Queue Worker Run](/api/run-queue/queued-run/) that has not started executing yet — for example, a run that is waiting because the account balance was insufficient at submit time.
+
+Typical uses:
+
+- Check how many runs are waiting before you decide what to do next.
+- Find the `queue_ref` of items you want to [activate](/api/run-queue/activate-items/) (start running) or [release](/api/run-queue/release-items/) (give up and remove).
 
 ## Query Parameters
 
@@ -27,7 +32,7 @@ Use this endpoint to inspect the Run Queue — items waiting to be activated or 
 | --- | --- | --- | --- |
 | `offset` | No | `integer` | Pagination offset, starting from 0. Constraints: default `0`; minimum 0. |
 | `limit` | No | `integer` | Page size. `limit` is capped at `100` on list endpoints. Constraints: default `20`; range 1-100. |
-| `status` | No | `string` | Queue status filter. Allowed values: `waiting`, `inactive`. |
+| `status` | No | `string` | Filter by queue status. Allowed values: `waiting` (the run is held in the queue and not running yet) and `inactive`. |
 
 ## Request Example
 
@@ -46,8 +51,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=0&limit=
     "list": [
       {
         "queue_ref": "123456",
-        "queue_status": "waiting",
-        "worker_id": "demo-worker"
+        "queue_status": "waiting"
       }
     ]
   },
@@ -56,13 +60,13 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=0&limit=
 }
 ```
 
-> The exact fields inside `data.list[]` depend on the queue item shape returned by the platform. Treat `queue_ref` as the identifier you pass to the activate and release endpoints.
+> The exact fields inside `data.list[]` follow the platform's queue item shape. The one you will use most is `queue_ref` — copy it to activate or release the item.
 
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
-- `queue_ref` values returned here are the IDs used by [Activate Run Queue Items](/api/run-queue/activate-items/), [Release Run Queue Items](/api/run-queue/release-items/), and [Release One Run Queue Item](/api/run-queue/release-item/).
-- See [Run Lifecycle & Status](/api/run-lifecycle/) for background on run states; queue items represent runs that have not yet been activated.
+- `queue_ref` is the identifier you pass to [Activate Run Queue Items](/api/run-queue/activate-items/), [Release Run Queue Items](/api/run-queue/release-items/), and [Release One Run Queue Item](/api/run-queue/release-item/).
+- For background on run states, see [Run Lifecycle & Status](/api/run-lifecycle/).
 
 ## HTTP Responses
 

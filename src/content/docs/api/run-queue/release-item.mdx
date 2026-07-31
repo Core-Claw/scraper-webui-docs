@@ -19,13 +19,13 @@ import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
 ## When to use this endpoint
 
-Use this endpoint to release a single queued item by its `queueId`. It is the single-item counterpart to the batch [Release Run Queue Items](/api/run-queue/release-items/) endpoint — convenient when you already hold one `queue_ref` and do not need to build a batch array.
+Use this endpoint to remove a single run from the Run Queue so it never executes. It does the same thing as the batch [Release Run Queue Items](/api/run-queue/release-items/) endpoint, but takes the `queue_ref` directly in the URL — handy when you only have one item to release.
 
 ## Path Parameters
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `queueId` | Yes | `string` | Queue item ID. Pass the `queue_ref` value from [List Run Queue Items](/api/run-queue/list-items/). |
+| `queueId` | Yes | `string` | The queue item ID. Copy this from the `queue_ref` returned by [List Run Queue Items](/api/run-queue/list-items/). |
 
 ## Request Body
 
@@ -33,13 +33,13 @@ Send the request body with `Content-Type: application/json`.
 
 | Field | Required | Type | Description |
 | --- | --- | --- | --- |
-| `reason` | No | `string` | Optional release reason, recorded for diagnostics. |
+| `reason` | No | `string` | Optional reason for releasing, recorded for your later reference. |
 
 ### JSON Example
 
 ```json
 {
-  "reason": "cancelled by user"
+  "reason": "no longer needed"
 }
 ```
 
@@ -49,7 +49,7 @@ Send the request body with `Content-Type: application/json`.
 curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/123456/release" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"reason":"cancelled by user"}'
+  --data '{"reason":"no longer needed"}'
 ```
 
 ## Response Example
@@ -66,7 +66,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/123456/release
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
-- To release multiple items at once, prefer the batch [Release Run Queue Items](/api/run-queue/release-items/) endpoint.
+- Releasing is permanent: the item is removed from the queue and will not run. To release several items at once, use the batch [Release Run Queue Items](/api/run-queue/release-items/) endpoint.
 - See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling and cancellation behavior.
 
 ## HTTP Responses

@@ -19,13 +19,13 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 ## 什么时候使用这个接口
 
-用于按 `queueId` 释放单个队列项。它是批量 [释放运行队列项](/zh-cn/api/run-queue/release-items/) 的单项版本——当你已持有某个 `queue_ref` 且无需构造批量数组时更方便。
+用于把单个运行从运行队列移除，使其不再执行。它的作用和批量 [释放运行队列项](/zh-cn/api/run-queue/release-items/) 一样，区别是 `queue_ref` 直接写在 URL 里——当你只释放一个项时更方便。
 
 ## 路径参数
 
 | 参数 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `queueId` | 是 | `string` | 队列项 ID。传入 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 返回的 `queue_ref`。 |
+| `queueId` | 是 | `string` | 队列项 ID。从 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 返回的 `queue_ref` 复制。 |
 
 ## 请求体
 
@@ -33,13 +33,13 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 字段 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `reason` | 否 | `string` | 可选的释放原因，用于诊断记录。 |
+| `reason` | 否 | `string` | 可选的释放原因，用于事后查阅。 |
 
 ### JSON 示例
 
 ```json
 {
-  "reason": "cancelled by user"
+  "reason": "no longer needed"
 }
 ```
 
@@ -49,7 +49,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/123456/release" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"reason":"cancelled by user"}'
+  --data '{"reason":"no longer needed"}'
 ```
 
 ## 响应示例
@@ -66,7 +66,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/123456/release
 ## 说明
 
 - API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
-- 如需一次释放多个项，推荐使用批量 [释放运行队列项](/zh-cn/api/run-queue/release-items/) 接口。
+- 释放是不可逆的：项会从队列移除且不会执行。如需一次释放多个项，请改用批量 [释放运行队列项](/zh-cn/api/run-queue/release-items/) 接口。
 - 状态处理与取消行为可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应

@@ -19,7 +19,9 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 ## 什么时候使用这个接口
 
-用于一次性批量激活一个或多个队列项。激活后，项会从等待状态进入执行流程。请先通过 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 获取 `queue_ref`。
+用于把停留在运行队列里的一个或多个运行真正启动起来。队列项默认进入 `waiting` 状态——比如提交运行时账户余额不足，运行会被暂时挂起而不是直接执行。等阻塞条件解决后（例如已充值补足余额），调用本接口即可开始执行。
+
+请先调用 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 获取要激活项的 `queue_ref`。
 
 ## 请求体
 
@@ -27,7 +29,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 字段 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `queue_refs` | 是 | `array<string>` | 要激活的队列项 ID。传入 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 返回的 `queue_ref`。可为 `null`/空，但要激活项就必须填入。 |
+| `queue_refs` | 是 | `array<string>` | 要激活的队列项 ID。从 [查询运行队列项](/zh-cn/api/run-queue/list-items/) 返回的 `queue_ref` 复制。 |
 
 ### JSON 示例
 
@@ -60,8 +62,9 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/activate" \
 ## 说明
 
 - API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
-- 该接口为批量操作，数组中的每个 `queue_ref` 都会被激活。如需释放项，请改用 [释放运行队列项](/zh-cn/api/run-queue/release-items/)。
-- 激活后的状态处理与轮询可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
+- 该接口为批量操作：数组里的每个 `queue_ref` 都会在一次调用中激活。
+- 如果你想把项从队列移除、不让它执行，请改用 [释放运行队列项](/zh-cn/api/run-queue/release-items/)。
+- 激活后，通过运行查询接口轮询运行状态、日志和结果，详见 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应
 

@@ -19,7 +19,9 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 ## 什么时候使用这个接口
 
-用于把一次 Worker 运行提交到运行队列，而不是立即执行。与 [运行 Worker](/zh-cn/api/workers/run/)（`POST /api/v2/workers/{workerId}/runs`）相比，排队版本不会立刻执行，而是返回 `queue_ref`，之后可通过运行队列接口激活或释放。适合需要暂存运行并控制其启动时机的场景。
+用于把一次 Worker 运行提交到运行队列。和 [运行 Worker](/zh-cn/api/workers/run/)（`POST /api/v2/workers/{workerId}/runs`，立即开始执行）不同，排队版本会把运行放进队列并返回一个 `queue_ref`，由你决定这次运行何时（以及是否）真正开始。
+
+常见的结果是运行进入 `waiting` 状态后并不会自动开始——比如提交时账户余额不足，运行会被挂起而不是被拒绝。你解决条件后（例如充值补足余额），再用 [激活运行队列项](/zh-cn/api/run-queue/activate-items/) 手动启动这次运行。如果决定不跑了，用 [释放运行队列项](/zh-cn/api/run-queue/release-items/) 把它移除。
 
 ## 标识符说明
 
@@ -88,8 +90,8 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/queued-
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `queue_ref` | `string` | 队列项 ID。可用于 [激活](/zh-cn/api/run-queue/activate-items/)、[批量释放](/zh-cn/api/run-queue/release-items/)、[单项释放](/zh-cn/api/run-queue/release-item/) 接口。 |
-| `queue_status` | `string` | 队列项状态，例如 `waiting`。 |
+| `queue_ref` | `string` | 队列项 ID。之后可用它来 [激活](/zh-cn/api/run-queue/activate-items/) 或 [释放](/zh-cn/api/run-queue/release-items/) 这次运行。 |
+| `queue_status` | `string` | 该项在队列中的状态，例如 `waiting`。处于 `waiting` 的项暂存在队列里，在你激活之前不会开始执行。 |
 | `queued` | `boolean` | 该运行是否已成功进入队列。 |
 
 ## 说明
@@ -97,6 +99,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/queued-
 - API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
 - 构造 `input` 前应先读取该 Worker 的 input schema；不同 Worker 字段不同。
 - `version` 为可选项。除非已确认存在具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。
+- 如果运行进入 `waiting`（例如余额不足），它不会自动开始——解决条件后请调用 [激活运行队列项](/zh-cn/api/run-queue/activate-items/)。
 - 状态处理、轮询、失败诊断与取消行为可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 - 传入 `callback_url` 后，CoreClaw 会在状态变化或完成时发送回调通知，详见 [回调通知](/zh-cn/api/callbacks/)。
 

@@ -19,7 +19,9 @@ import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
 ## When to use this endpoint
 
-Use this endpoint to submit a Worker run into the Run Queue instead of starting it immediately. Compared with [Run Worker](/api/workers/run/) (`POST /api/v2/workers/{workerId}/runs`), the queued variant does not execute right away — it returns a `queue_ref` you can later activate or release via the Run Queue endpoints. Use it when you want to stage runs and control when they start.
+Use this endpoint to submit a Worker run into the Run Queue. Unlike [Run Worker](/api/workers/run/) (`POST /api/v2/workers/{workerId}/runs`), which starts executing right away, the queued version places the run in the queue and returns a `queue_ref`. You then decide when (and whether) the run actually starts.
+
+A common outcome is that the run lands in `waiting` and does not start on its own — for example, when the account balance is insufficient at submit time, the run is held instead of rejected. You resolve the condition (e.g. top up the balance) and then start the run yourself with [Activate Run Queue Items](/api/run-queue/activate-items/). If you decide not to run it, remove it with [Release Run Queue Items](/api/run-queue/release-items/).
 
 ## Identifier Notes
 
@@ -88,8 +90,8 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/queued-
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `queue_ref` | `string` | Queue item ID. Use it with [Activate](/api/run-queue/activate-items/), [batch release](/api/run-queue/release-items/), and [single release](/api/run-queue/release-item/) endpoints. |
-| `queue_status` | `string` | Queue status of the item, for example `waiting`. |
+| `queue_ref` | `string` | The queue item ID. Use it to [activate](/api/run-queue/activate-items/) or [release](/api/run-queue/release-items/) the run later. |
+| `queue_status` | `string` | Status of the item in the queue, for example `waiting`. A `waiting` item is held in the queue and will not start until you activate it. |
 | `queued` | `boolean` | Whether the run was accepted into the queue. |
 
 ## Notes
@@ -97,6 +99,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/queued-
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
 - Read the Worker input schema first before building `input`; fields differ by Worker.
 - `version` is optional. Omit it unless you have confirmed a concrete available version; not every Worker accepts `latest` as an explicit version value.
+- If the run lands in `waiting` (for example due to insufficient balance), it will not start on its own — call [Activate Run Queue Items](/api/run-queue/activate-items/) after resolving the condition.
 - See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 - When `callback_url` is provided, CoreClaw sends callback notifications after status changes or completion. See [Callback Notifications](/api/callbacks/).
 

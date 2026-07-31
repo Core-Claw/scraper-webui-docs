@@ -19,7 +19,9 @@ import ApiPlayground from '../../../../components/ApiPlayground.astro'
 
 ## When to use this endpoint
 
-Use this endpoint to release one or more queued items in a single batch call. Releasing an item removes it from the queue without running it — useful for cancelling pending work. Collect `queue_ref` values from [List Run Queue Items](/api/run-queue/list-items/) first. To release a single item by its path ID, use [Release One Run Queue Item](/api/run-queue/release-item/) instead.
+Use this endpoint to remove one or more runs from the Run Queue so they never execute — for example, when you no longer need a waiting run. This is the batch version: pass multiple `queue_ref` values in one call. To release just one item, use [Release One Run Queue Item](/api/run-queue/release-item/) instead.
+
+First call [List Run Queue Items](/api/run-queue/list-items/) to get the `queue_ref` of the items you want to release.
 
 ## Request Body
 
@@ -27,15 +29,15 @@ Send the request body with `Content-Type: application/json`.
 
 | Field | Required | Type | Description |
 | --- | --- | --- | --- |
-| `queue_refs` | Yes | `array<string>` | Queue item IDs to release. Pass the `queue_ref` values from [List Run Queue Items](/api/run-queue/list-items/). May be `null`/empty, but to release items you must populate it. |
-| `reason` | No | `string` | Optional release reason, recorded for diagnostics. |
+| `queue_refs` | Yes | `array<string>` | The queue item IDs to release. Copy these from the `queue_ref` values returned by [List Run Queue Items](/api/run-queue/list-items/). |
+| `reason` | No | `string` | Optional reason for releasing, recorded for your later reference. |
 
 ### JSON Example
 
 ```json
 {
   "queue_refs": ["123456", "123457"],
-  "reason": "cancelled by user"
+  "reason": "no longer needed"
 }
 ```
 
@@ -45,7 +47,7 @@ Send the request body with `Content-Type: application/json`.
 curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"queue_refs":["123456","123457"],"reason":"cancelled by user"}'
+  --data '{"queue_refs":["123456","123457"],"reason":"no longer needed"}'
 ```
 
 ## Response Example
@@ -62,7 +64,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
-- This is a batch operation; every `queue_ref` in the array is released. To activate items instead, use [Activate Run Queue Items](/api/run-queue/activate-items/).
+- Releasing is permanent: the item is removed from the queue and will not run. If you want the run to execute instead, use [Activate Run Queue Items](/api/run-queue/activate-items/).
 - See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling and cancellation behavior.
 
 ## HTTP Responses

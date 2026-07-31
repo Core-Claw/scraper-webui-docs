@@ -19,7 +19,12 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 ## 什么时候使用这个接口
 
-用于查看运行队列——包括等待激活的项以及已变为 inactive 的项。它是激活与释放操作的查询入口，适合监控队列积压情况，并决定下一步要激活或释放哪些项。
+用于查看运行队列里目前有哪些项。每一项都是你通过 [排队运行 Worker](/zh-cn/api/run-queue/queued-run/) 提交、但尚未开始执行的运行——比如提交时账户余额不足，运行就会停在队列里等待。
+
+常见用途：
+
+- 决定下一步之前，先看看队列里积压了多少运行。
+- 找到要 [激活](/zh-cn/api/run-queue/activate-items/)（开始执行）或 [释放](/zh-cn/api/run-queue/release-items/)（放弃并移除）的项的 `queue_ref`。
 
 ## 查询参数
 
@@ -27,7 +32,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 | --- | --- | --- | --- |
 | `offset` | 否 | `integer` | 分页偏移，从 0 开始。约束：默认 `0`；最小 0。 |
 | `limit` | 否 | `integer` | 每页数量，列表接口上限 `100`。约束：默认 `20`；范围 1-100。 |
-| `status` | 否 | `string` | 队列状态过滤。允许值：`waiting`、`inactive`。 |
+| `status` | 否 | `string` | 按队列状态过滤。允许值：`waiting`（运行暂存在队列、尚未开始执行）和 `inactive`。 |
 
 ## 请求示例
 
@@ -46,8 +51,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=0&limit=
     "list": [
       {
         "queue_ref": "123456",
-        "queue_status": "waiting",
-        "worker_id": "demo-worker"
+        "queue_status": "waiting"
       }
     ]
   },
@@ -56,13 +60,13 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=0&limit=
 }
 ```
 
-> `data.list[]` 内的具体字段以平台实际返回的队列项结构为准。请把 `queue_ref` 作为传给激活与释放接口的标识符。
+> `data.list[]` 内的具体字段以平台实际返回的队列项结构为准。最常用的是 `queue_ref`——把它复制出来用于后续激活或释放。
 
 ## 说明
 
 - API v2 支持 Bearer token、旧版 `api-key` 请求头和 query token。新集成推荐使用 Bearer token。
-- 这里返回的 `queue_ref` 即为 [激活运行队列项](/zh-cn/api/run-queue/activate-items/)、[释放运行队列项](/zh-cn/api/run-queue/release-items/)、[释放单个运行队列项](/zh-cn/api/run-queue/release-item/) 所使用的 ID。
-- 队列项代表尚未被激活的运行，背景状态可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
+- `queue_ref` 是传给 [激活运行队列项](/zh-cn/api/run-queue/activate-items/)、[释放运行队列项](/zh-cn/api/run-queue/release-items/)、[释放单个运行队列项](/zh-cn/api/run-queue/release-item/) 的标识符。
+- 运行状态的背景可参考 [运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应
 
