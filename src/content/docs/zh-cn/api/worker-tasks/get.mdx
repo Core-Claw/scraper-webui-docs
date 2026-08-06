@@ -44,16 +44,29 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_I
 {
   "code": 0,
   "data": {
-    "description": "Daily demo task",
-    "id": 2001,
-    "schedule_enabled": 1,
-    "schedule_time": "09:30",
-    "schedule_type": 1,
-    "slug": "demo-task",
-    "title": "Demo Task",
-    "version": "latest",
-    "worker_path": "owner~demo-worker",
-    "worker_slug": "demo-worker"
+    "id": 1786001196232214890,
+    "slug": "01KZAZF168TD9P37RY3RBN6YJ0",
+    "worker_id": 32708435341606912,
+    "worker_title": "Instagram Profiles By Profile URL",
+    "worker_slug": "01KPD6M5YVHWCNQCRK3YQN5WQD",
+    "worker_path": "coreclaw/instagram-profile-scraper",
+    "version": "v1.0.2",
+    "platform_actors_id": 32701213409607680,
+    "title": "Instagram Scraper (Task)",
+    "input": {
+      "parameters": {
+        "custom": {
+          "profile_url": [{ "url": "https://www.instagram.com/nasa/" }]
+        }
+      }
+    },
+    "run_times": 0,
+    "last_run_id": 0,
+    "last_modified_at": 1782091200,
+    "schedule_enabled": 0,
+    "schedule_type": 0,
+    "created_at": 1782091000,
+    "updated_at": 1782091200
   },
   "message": "success",
   "request_id": "req-123"

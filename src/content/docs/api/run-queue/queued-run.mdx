@@ -41,9 +41,9 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 | --- | --- | --- | --- |
 | `callback_url` | No | `string` | Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes. |
 | `input` | No | `any` | Worker input payload. Worker form fields usually belong under `input.parameters.custom`; read the Worker input schema first and build this object from that schema. |
-| `is_async` | No | `boolean` | `true` submits asynchronously without waiting for results; `false` waits for the run to finish. Defaults to `true`. |
-| `limit` | No | `integer` | Synchronous result window size. It only controls how many result rows are included in the synchronous response, not the full result set. Constraints: default `20`; range 1-100. |
-| `offset` | No | `integer` | Zero-based offset for the synchronous result window. Constraints: default `0`; minimum 0. |
+| `is_async` | No | `boolean` | Accepted for API consistency but has no effect: a queued run is always placed in the queue and the response returns a `queue_ref`, never a synchronous run result. To run synchronously, use [Run Worker](/api/workers/run/) instead. |
+| `limit` | No | `integer` | Accepted for API consistency but has no effect on the queued-run response, which returns a `queue_ref` rather than a result window. Constraints: default `20`; range 1-100. |
+| `offset` | No | `integer` | Accepted for API consistency but has no effect on the queued-run response. Constraints: default `0`; minimum 0. |
 | `version` | No | `string` | Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest` as an explicit version value. |
 
 ### JSON Example
@@ -52,12 +52,16 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 {
   "callback_url": "https://client.example.com/openapi/callback",
   "input": {
-    "keyword": "coffee",
-    "limit": 10
+    "parameters": {
+      "custom": {
+        "keywords": [
+          "coffee"
+        ],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
   },
-  "is_async": true,
-  "limit": 20,
-  "offset": 0,
   "version": "latest"
 }
 ```
@@ -68,7 +72,7 @@ Send the request body with `Content-Type: application/json`. Required/Optional d
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/queued-runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"callback_url":"https://client.example.com/openapi/callback","input":{"keyword":"coffee","limit":10},"is_async":true,"limit":20,"offset":0,"version":"latest"}'
+  --data '{"callback_url":"https://client.example.com/openapi/callback","input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"version":"latest"}'
 ```
 
 ## Response Example

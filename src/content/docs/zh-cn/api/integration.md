@@ -42,7 +42,7 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 ## 3. 选择执行模式
 
 - `is_async: true` 表示异步提交，不等待执行结果。响应会返回 `data.run_slug`，后续异步运行使用 `runId` 轮询详情、日志和结果。
-- `is_async: false` 表示等待执行结果，相当于 run-and-wait，会等待运行完成。`offset` / `limit` 只控制同步响应中附带的结果窗口，不影响完整结果集。
+- `is_async: false` 表示等待执行结果，相当于 run-and-wait，会等待运行完成。同步响应会直接返回 `run_status`、`running_duration` 和分页 `results` 结果窗口——运行在等待时限内完成时无需轮询。`offset` / `limit` 只控制同步响应中附带的结果窗口，不影响完整结果集。完整字段列表见[运行 Worker](/zh-cn/api/workers/run/) 的同步响应小节。
 
 > **⚠️ 同步等待上限：5 分钟。** 当 `is_async: false` 时，平台**最多等待 5 分钟**。若运行在 5 分钟内未完成，请求仍会返回，运行会在后台继续执行——此时必须改用运行**查询接口**按 `runId` 轮询状态、日志和结果。预计运行可能超过 5 分钟时，建议使用 `is_async: true`。
 - `callback_url` 可用于接收状态变化或结束通知，但回调不能替代结果接口。需要完整数据时仍应按 `runId` 查询或导出。
@@ -91,7 +91,7 @@ curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-`offset` 从 0 开始；列表和结果接口的 `limit` 默认 `20`，最大 `100`。长时间轮询时应使用退避策略，避免触发 `429`。
+`offset` 为从 1 开始的页码（`offset=1` 为第 1 页，`offset=0` 兼容作为第 1 页）；列表和结果接口的 `limit` 默认 `20`，最大 `100`。长时间轮询时应使用退避策略，避免触发 `429`。
 
 ## 5. 下载文件使用导出接口
 

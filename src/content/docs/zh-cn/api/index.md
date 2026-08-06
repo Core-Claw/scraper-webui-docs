@@ -37,8 +37,8 @@ API V1 已计划停用，请尽快完成迁移。先阅读[迁移指南](/zh-cn/
 
 - 发送 `input` 前先读取 Worker 输入 schema；不同 Worker 的输入字段不一定相同。
 - 直接运行 Worker 时使用 `POST /api/v2/workers/{workerId}/runs`；运行已保存任务时使用 `POST /api/v2/worker-tasks/{workerTaskId}/runs`。
-- `is_async: true` 表示提交后立即返回，再用 `runId` 查询详情、日志和结果；`is_async: false` 表示等待执行完成并返回同步结果窗口。
-- 列表和结果接口的 `offset` 从 0 开始；列表和结果接口的 `limit` 上限为 `100`。
+- `is_async: true` 表示提交后立即返回，再用 `runId` 查询详情、日志和结果；`is_async: false` 表示等待执行完成并返回同步响应（含 `run_status`、`running_duration` 和分页 `results` 结果窗口），详见[运行 Worker](/zh-cn/api/workers/run/) 的同步响应小节。
+- 列表和结果接口的 `offset` 为从 1 开始的页码（`offset=1` 为第 1 页，`offset=0` 兼容作为第 1 页）；列表和结果接口的 `limit` 上限为 `100`。
 - 需要下载结果文件时使用导出接口，不要在前端逐页拉取全部结果。
 
 ## 响应结构

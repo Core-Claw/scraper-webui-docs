@@ -994,6 +994,28 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "description": "Run created_at start time, Unix seconds",
+            "explode": false,
+            "in": "query",
+            "name": "start_time",
+            "schema": {
+              "description": "Run created_at start time, Unix seconds",
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Run created_at end date, Unix seconds at 00:00:00. The server includes the whole end date by adding 86400 seconds before querying.",
+            "explode": false,
+            "in": "query",
+            "name": "end_time",
+            "schema": {
+              "description": "Run created_at end date, Unix seconds at 00:00:00. The server includes the whole end date by adding 86400 seconds before querying.",
+              "format": "int64",
+              "type": "integer"
+            }
           }
         ],
         "responses": {
@@ -1023,9 +1045,7 @@
                             "usage": "1.00",
                             "version": "latest"
                           }
-                        ],
-                        "page_index": 1,
-                        "page_size": 20
+                        ]
                       },
                       "message": "success",
                       "request_id": "req-123"

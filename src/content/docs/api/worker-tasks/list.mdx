@@ -29,7 +29,7 @@ Use this endpoint to list saved Worker task templates.
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `offset` | No | `integer` | Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window. Constraints: default `0`; minimum 0. |
+| `offset` | No | `integer` | Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list. Constraints: default `0`; minimum 0. |
 | `limit` | No | `integer` | Page size. `limit` is capped at `100` on list and result endpoints. Constraints: default `20`; range 1-100. |
 | `worker_id` | No | `string` | Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values. |
 | `keyword` | No | `string` | Keyword for task title or slug |
@@ -50,11 +50,29 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-tasks?offset=0&limit=20&
     "count": 1,
     "list": [
       {
-        "id": 2001,
-        "slug": "demo-task",
-        "title": "Demo Task",
-        "version": "latest",
-        "worker_slug": "demo-worker"
+        "slug": "01KX4ZM5DE8Y8GAZQ7R0KYZ3FD",
+        "worker_title": "Google Maps Scraper",
+        "worker_slug": "01KPD6M5YQADCQKGVKPDZVYC63",
+        "worker_path": "coreclaw/google-maps-scraper",
+        "version": "v1.2.6",
+        "platform_actors_id": 32684270703149056,
+        "title": "Google Maps Scraper (Task)",
+        "description": "Scrape Google Maps business records on a schedule.",
+        "input": {
+          "parameters": {
+            "custom": {
+              "keywords": [{ "keyword": "coffee" }],
+              "max_results": 10
+            }
+          }
+        },
+        "run_times": 3,
+        "last_run_id": 0,
+        "last_modified_at": 1782091200,
+        "schedule_enabled": 0,
+        "schedule_type": 0,
+        "created_at": 1782000000,
+        "updated_at": 1782091200
       }
     ],
     "page_index": 1,

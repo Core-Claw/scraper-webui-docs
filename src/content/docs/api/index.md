@@ -37,8 +37,8 @@ Public endpoints do not require a token, including proxy region lookup and Store
 
 - Read the Worker input schema before sending `input`; fields differ by Worker.
 - Use `POST /api/v2/workers/{workerId}/runs` for a direct Worker run, or `POST /api/v2/worker-tasks/{workerTaskId}/runs` for a saved task run.
-- `is_async: true` returns immediately; use `runId` to read details, logs, and results. `is_async: false` waits for completion and returns a synchronous result window.
-- `offset` is zero-based on list and result endpoints; `limit` is capped at `100` on list and result endpoints.
+- `is_async: true` returns immediately; use `runId` to read details, logs, and results. `is_async: false` waits for completion and returns a synchronous response with `run_status`, `running_duration`, and a paginated `results` window — see the [Run Worker](/api/workers/run/) sync response section for details.
+- `offset` is a 1-based page number on list and result endpoints (`offset=1` is page 1, `offset=0` is accepted as page 1); `limit` is capped at `100` on list and result endpoints.
 - Use export endpoints when the caller needs a downloadable result file instead of fetching every page in a browser.
 
 ## Response Envelope

@@ -35,7 +35,7 @@ Use this endpoint to read paginated result rows for previews or tables.
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `offset` | No | `integer` | Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window. Constraints: default `0`; minimum 0. |
+| `offset` | No | `integer` | Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list. Constraints: default `0`; minimum 0. |
 | `limit` | No | `integer` | Page size. `limit` is capped at `100` on list and result endpoints. Constraints: default `20`; range 1-100. |
 
 ## Request Example
@@ -79,7 +79,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/las
 | `data.headers[]` | `array` | Column definitions; each item has `key` (field name) and `label` (display name). |
 | `data.list[]` | `array` | Result rows; each row keys align with `headers[].key`. |
 
-> Result rows may include internal fields not declared in the Worker output schema (for example `__coreclaw_data_id__`); ignore them as needed. Serialization of nested or empty values depends on the export format; `filter_keys` must match `headers[].key`. Page requests with zero-based `offset` and `limit` (max `100`).
+> Result rows may include internal fields not declared in the Worker output schema (for example `__coreclaw_data_id__`); ignore them as needed. Serialization of nested or empty values depends on the export format; `filter_keys` must match `headers[].key`. Page requests use 1-based `offset` (page number) and `limit` (max `100`).
 
 ## Notes
 
@@ -87,7 +87,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/las
 - This is a Worker-scoped latest-run endpoint; `workerId` is required and the operation applies only to that Worker's latest run.
 - `last` means the latest run in the current scope. Use a concrete `runId` endpoint when the target must be explicit.
 - Result lists use `offset` and `limit` pagination.
-- `offset` is zero-based; `limit` defaults to `20` and cannot exceed `100`.
+- `offset` is a 1-based page number (`offset=1` is page 1, `offset=0` is accepted as page 1); `limit` defaults to `20` and cannot exceed `100`.
 - See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 
 ## HTTP Responses

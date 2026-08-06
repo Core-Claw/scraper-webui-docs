@@ -423,8 +423,8 @@ function responseFieldsSection(op, zh) {
             '| `data.list[]` | `array` | Result rows; each row keys align with `headers[].key`. |',
         ]
         const note = zh
-            ? '> 结果行可能包含未在 Worker 输出 schema 中声明的内部字段（例如 `__coreclaw_data_id__`），请按需忽略。嵌套或空值的序列化方式取决于导出格式；`filter_keys` 必须匹配 `headers[].key`。分页请求使用从 0 开始的 `offset` 与 `limit`（最大 `100`）。'
-            : '> Result rows may include internal fields not declared in the Worker output schema (for example `__coreclaw_data_id__`); ignore them as needed. Serialization of nested or empty values depends on the export format; `filter_keys` must match `headers[].key`. Page requests with zero-based `offset` and `limit` (max `100`).'
+            ? '> 结果行可能包含未在 Worker 输出 schema 中声明的内部字段（例如 `__coreclaw_data_id__`），请按需忽略。嵌套或空值的序列化方式取决于导出格式；`filter_keys` 必须匹配 `headers[].key`。分页请求使用从 1 开始的 `offset`（页码）与 `limit`（最大 `100`）。'
+            : '> Result rows may include internal fields not declared in the Worker output schema (for example `__coreclaw_data_id__`); ignore them as needed. Serialization of nested or empty values depends on the export format; `filter_keys` must match `headers[].key`. Page requests use 1-based `offset` (page number) and `limit` (max `100`).'
         return [`## ${heading}`, '', ...rows, '', note, ''].join('\n')
     }
 
@@ -489,7 +489,7 @@ function notesFor(op, zh) {
         notes.push(zh ? '`version` 是可选字段；除非已经确认具体版本可用，否则建议省略。并非所有 Worker 都接受 `latest` 作为显式版本值。' : '`version` is optional. Omit it unless you have confirmed a concrete available version; not every Worker accepts `latest` as an explicit version value.')
     }
     if (op.path.endsWith('/result')) {
-        notes.push(zh ? '`offset` 从 0 开始；`limit` 默认 `20`，最大 `100`。' : '`offset` is zero-based; `limit` defaults to `20` and cannot exceed `100`.')
+        notes.push(zh ? '`offset` 为从 1 开始的页码（`offset=1` 为第 1 页，`offset=0` 兼容作为第 1 页）；`limit` 默认 `20`，最大 `100`。' : '`offset` is a 1-based page number (`offset=1` is page 1, `offset=0` is accepted as page 1); `limit` defaults to `20` and cannot exceed `100`.')
     }
     if (op.path === '/api/v2/worker-tasks' && op.method === 'POST') {
         notes.push(zh ? '`worker_id` 接受 Worker slug，也支持把 `owner/name` 写成 `owner~name`。' : '`worker_id` accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.')
@@ -508,6 +508,10 @@ function notesFor(op, zh) {
     if (op.path === '/api/v2/worker-tasks/{workerTaskId}/runs') {
         notes.push(zh ? '运行已保存任务时，请求体只控制执行模式、回调和同步结果窗口；任务本身的输入来自已保存的 Worker 任务配置。' : 'When running a saved task, the request body controls execution mode, callback, and synchronous result window; the task input comes from the saved Worker task configuration.')
         notes.push(zh ? '`limit` 和 `offset` 只控制同步返回的结果窗口，不改变任务实际产生的完整结果集。' : 'Use `limit` and `offset` only to control the synchronous result window; they do not change the full result set produced by the task.')
+    }
+    if (op.method === 'GET' && op.path === '/api/v2/worker-runs') {
+        notes.push(zh ? '不传 `start_time`/`end_time` 时，本接口只返回当月运行记录。同时传入 `start_time` 和 `end_time`（Unix 秒，同一自然月）可查询历史归档记录；跨月范围会返回 `code:11000 "run list time range cannot cross months"`。' : 'Without `start_time`/`end_time`, this endpoint only returns runs from the current month. Pass both `start_time` and `end_time` (Unix seconds, same calendar month) to list archived runs from a prior month; cross-month ranges are rejected with `code:11000 "run list time range cannot cross months"`.')
+        notes.push(zh ? '`end_time` 按某日 `00:00:00` 解释：服务端查询前会 +86400 秒以包含该日全天。当结束日为某月最后一天时，请传该日 `00:00:00` 整（北京时间 UTC+8）——该日任意更晚时刻都会使 +86400 后的上界跨入下月，导致请求被拒绝。' : '`end_time` is interpreted as a day boundary at `00:00:00`: the server adds 86400 seconds before querying so the entire end day is included. When the end day is the last day of a month, pass it at `00:00:00` exactly (Beijing time, UTC+8) — any later time on that day causes the +86400 upper bound to cross into the next month and the request is rejected.')
     }
     if (op.path.includes('/worker-runs') || op.path.includes('/runs')) {
         notes.push(zh ? '运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。' : 'See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.')
@@ -590,7 +594,7 @@ function fieldDescription(field, zh) {
         if (field.name === 'callback_url') return '回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。'
         if (field.name === 'input') return 'Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。'
         if (field.name === 'limit') return withConstraints('同步运行或重跑时返回的结果窗口大小；仅影响同步响应中附带的结果数量，不影响完整结果集。', field.schema, zh)
-        if (field.name === 'offset') return withConstraints('同步运行或重跑时返回结果窗口的起始偏移；从 0 开始。', field.schema, zh)
+        if (field.name === 'offset') return withConstraints('同步运行或重跑时返回结果窗口的起始偏移。', field.schema, zh)
         if (field.name === 'version') return '可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。'
     }
     if (field.name === 'worker_id') return 'Worker identifier. Accepts a Worker slug, or an `owner/name` path encoded as `owner~name`.'
@@ -605,7 +609,7 @@ function fieldDescription(field, zh) {
     if (field.name === 'callback_url') return 'Callback URL. When provided, CoreClaw sends a `POST` request after the run status changes or finishes.'
     if (field.name === 'input') return 'Worker input payload. Worker form fields usually belong under `input.parameters.custom`; read the Worker input schema first and build this object from that schema.'
     if (field.name === 'limit') return withConstraints('Synchronous result window size for runs or reruns. It only controls how many result rows are included in the synchronous response, not the full result set.', field.schema, zh)
-    if (field.name === 'offset') return withConstraints('Zero-based offset for the synchronous result window returned by runs or reruns.', field.schema, zh)
+    if (field.name === 'offset') return withConstraints('Offset for the synchronous result window returned by runs or reruns.', field.schema, zh)
     if (field.name === 'version') return 'Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest` as an explicit version value.'
     return withConstraints(field.description || '-', field.schema, zh)
 }
@@ -614,11 +618,13 @@ function paramDescription(param, zh) {
     const schema = param.schema ?? {}
     const name = param.name
     if (zh) {
-        if (name === 'offset') return withConstraints('分页偏移量，从 0 开始；用于结果预览、列表翻页或导出前确认数据窗口。', schema, zh)
+        if (name === 'offset') return withConstraints('页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。', schema, zh)
         if (name === 'limit') return withConstraints('每页返回数量；列表和结果接口的 `limit` 上限为 `100`。', schema, zh)
         if (name === 'filter_keys') return '逗号分隔的字段名列表，用于限制导出字段，例如 `title,address`。'
         if (name === 'format') return withConstraints('导出格式，支持 `csv`、`json`、`jsonl`、`xlsx`、`xls`、`xml`、`html`、`rss`（大小写不敏感）。默认 `csv`。', schema, zh)
         if (name === 'status') return withConstraints('运行状态筛选。', schema, zh)
+        if (name === 'start_time') return withConstraints('按 `created_at` 起始时间筛选，Unix 秒。传入时必须同时传 `end_time`，且两者必须落在同一个自然月内。', schema, zh)
+        if (name === 'end_time') return withConstraints('按 `created_at` 结束日期筛选，Unix 秒。传该日 `00:00:00`；服务端会 +86400 秒以包含整个结束日。必须与 `start_time` 在同一个自然月内。', schema, zh)
         if (name === 'keyword') return param.description === 'Keyword for task title or slug' ? '按任务标题或 slug 搜索。' : '按标题、slug 或 path 搜索。'
         if (name === 'worker_id') return 'Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。'
         if (name === 'workerId') return 'Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。'
@@ -626,11 +632,13 @@ function paramDescription(param, zh) {
         if (name === 'workerTaskId') return '已保存 Worker 任务模板的 slug，可从 `GET /api/v2/worker-tasks` 响应的 `data.list[].slug` 获取。'
         if (name === 'language') return withConstraints('代理区域名称语言。', schema, zh)
     } else {
-        if (name === 'offset') return withConstraints('Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window.', schema, zh)
+        if (name === 'offset') return withConstraints('Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list.', schema, zh)
         if (name === 'limit') return withConstraints('Page size. `limit` is capped at `100` on list and result endpoints.', schema, zh)
         if (name === 'filter_keys') return 'Comma-separated field keys used to limit exported fields, for example `title,address`.'
         if (name === 'format') return withConstraints('Export format. Supports `csv`, `json`, `jsonl`, `xlsx`, `xls`, `xml`, `html`, `rss` (case-insensitive). Defaults to `csv`.', schema, zh)
         if (name === 'status') return withConstraints('Run status filter.', schema, zh)
+        if (name === 'start_time') return withConstraints('Filter runs by `created_at` start time, Unix seconds. When provided, `end_time` is also required, and both must fall in the same calendar month.', schema, zh)
+        if (name === 'end_time') return withConstraints('Filter runs by `created_at` end date, Unix seconds. Pass the day at `00:00:00`; the server adds 86400 seconds to include the whole day. Must be in the same calendar month as `start_time`.', schema, zh)
         if (name === 'worker_id') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values.'
         if (name === 'workerId') return 'Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for path values.'
         if (name === 'runId') return 'Run slug returned as `data.run_slug` from start or rerun responses.'
@@ -863,7 +871,7 @@ function indexPage(lang) {
         '- 发送 `input` 前先读取 Worker 输入 schema；不同 Worker 的输入字段不一定相同。',
         '- 直接运行 Worker 时使用 `POST /api/v2/workers/{workerId}/runs`；运行已保存任务时使用 `POST /api/v2/worker-tasks/{workerTaskId}/runs`。',
         '- `is_async: true` 表示提交后立即返回，再用 `runId` 查询详情、日志和结果；`is_async: false` 表示等待执行完成并返回同步结果窗口。',
-        '- 列表和结果接口的 `offset` 从 0 开始；列表和结果接口的 `limit` 上限为 `100`。',
+        '- 列表和结果接口的 `offset` 为从 1 开始的页码（`offset=1` 为第 1 页，`offset=0` 兼容作为第 1 页）；列表和结果接口的 `limit` 上限为 `100`。',
         '- 需要下载结果文件时使用导出接口，不要在前端逐页拉取全部结果。',
         '',
         '## 响应结构',
@@ -918,7 +926,7 @@ function indexPage(lang) {
         '- Read the Worker input schema before sending `input`; fields differ by Worker.',
         '- Use `POST /api/v2/workers/{workerId}/runs` for a direct Worker run, or `POST /api/v2/worker-tasks/{workerTaskId}/runs` for a saved task run.',
         '- `is_async: true` returns immediately; use `runId` to read details, logs, and results. `is_async: false` waits for completion and returns a synchronous result window.',
-        '- `offset` is zero-based on list and result endpoints; `limit` is capped at `100` on list and result endpoints.',
+        '- `offset` is a 1-based page number on list and result endpoints (`offset=1` is page 1, `offset=0` is accepted as page 1); `limit` is capped at `100` on list and result endpoints.',
         '- Use export endpoints when the caller needs a downloadable result file instead of fetching every page in a browser.',
         '',
         '## Response Envelope',
@@ -1183,7 +1191,7 @@ function integrationPage(lang) {
         '  -H "Authorization: Bearer YOUR_API_KEY"',
         '```',
         '',
-        '`offset` 从 0 开始；列表和结果接口的 `limit` 默认 `20`，最大 `100`。长时间轮询时应使用退避策略，避免触发 `429`。',
+        '`offset` 为从 1 开始的页码（`offset=1` 为第 1 页，`offset=0` 兼容作为第 1 页）；列表和结果接口的 `limit` 默认 `20`，最大 `100`。长时间轮询时应使用退避策略，避免触发 `429`。',
         '',
         '## 5. 下载文件使用导出接口',
         '',
@@ -1286,7 +1294,7 @@ function integrationPage(lang) {
         '  -H "Authorization: Bearer YOUR_API_KEY"',
         '```',
         '',
-        '`offset` is zero-based. List and result endpoints default `limit` to `20` and cap it at `100`. Poll long-running jobs with backoff to avoid `429` responses.',
+        '`offset` is a 1-based page number (`offset=1` is page 1, `offset=0` is accepted as page 1). List and result endpoints default `limit` to `20` and cap it at `100`. Poll long-running jobs with backoff to avoid `429` responses.',
         '',
         '## 5. Use export endpoints for downloads',
         '',

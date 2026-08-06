@@ -141,7 +141,7 @@ function describeBodyField(name: string, schema: any = {}): string {
         return appendSchemaDetails(schema.description || 'Result limit for synchronous runs or reruns.', schema)
     }
     if (name === 'offset') {
-        return appendSchemaDetails(schema.description || 'Result offset for synchronous runs or reruns.', schema)
+        return appendSchemaDetails(schema.description || 'Page number for the synchronous result window, 1-based. `offset=1` is page 1; `offset=0` is accepted as page 1. Only affects the sync response result window, not the full result set.', schema)
     }
     if (name === 'version') {
         return appendSchemaDetails('Optional Worker version. Omit it unless you have confirmed a concrete available version for this Worker; not every Worker accepts `latest`.', schema)
@@ -164,7 +164,7 @@ function describeParam(param: any): string {
     if (name === 'workerTaskId') {
         return 'Saved Worker task template slug. Get it from the `data.list[].slug` field of `GET /api/v2/worker-tasks`. The playground prefills a sample slug; replace it with your own.'
     }
-    if (name === 'offset') return appendSchemaDetails('Pagination offset, starting from 0.', schema)
+    if (name === 'offset') return appendSchemaDetails('Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list.', schema)
     if (name === 'limit') return appendSchemaDetails('Page size.', schema)
     if (name === 'format') return appendSchemaDetails('Export format. Supports csv, json, jsonl, xlsx, xls, xml, html, rss (case-insensitive).', schema)
     if (name === 'filter_keys') {

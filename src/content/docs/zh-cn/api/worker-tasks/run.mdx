@@ -40,7 +40,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 | `callback_url` | 否 | `string` | 回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。 |
 | `is_async` | 否 | `boolean` | `true` 表示异步提交，不等待执行结果；`false` 表示等待执行结果，直到运行完成。默认 `true`。**同步模式最多等待 5 分钟；超过 5 分钟仍未完成时，请求会先返回，需要改用运行查询接口轮询状态。** |
 | `limit` | 否 | `integer` | 同步运行或重跑时返回的结果窗口大小；仅影响同步响应中附带的结果数量，不影响完整结果集。 约束：默认 `20`；范围 1-100。 |
-| `offset` | 否 | `integer` | 同步运行或重跑时返回结果窗口的起始偏移；从 0 开始。 约束：默认 `0`；最小 0。 |
+| `offset` | 否 | `integer` | 同步响应结果窗口的页码，从 1 开始。`offset=1` 为第 1 页；`offset=0` 兼容作为第 1 页。仅影响同步响应附带的结果数量，不影响完整结果集。 约束：默认 `0`；最小 0。 |
 
 ### JSON 示例
 
@@ -69,7 +69,9 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_
   --data '{"callback_url":"https://client.example.com/openapi/callback","is_async":true,"limit":20,"offset":0}'
 ```
 
-## 响应示例
+## 响应示例（异步）
+
+当 `is_async: true`（默认）时，响应立即返回 `run_slug`：
 
 ```json
 {
@@ -81,6 +83,53 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/worker-tasks/YOUR_WORKER_TASK_
   "request_id": "req-123"
 }
 ```
+
+## 响应示例（同步）
+
+当 `is_async: false` 时，响应会等待运行完成，并返回运行状态、时间信息和一个分页结果窗口。`results` 对象的结构与 `GET /api/v2/worker-runs/{runId}/result` 一致：
+
+```json
+{
+  "code": 0,
+  "data": {
+    "run_slug": "01KZAZV8F0ERXVTQF6Z7ZMWKAB",
+    "run_status": "succeeded",
+    "error_message": "",
+    "execution_start_timestamp": 1786001200,
+    "execution_end_timestamp": 1786001207,
+    "running_duration": 7,
+    "result_message": "",
+    "results": {
+      "count": 1,
+      "headers": [
+        { "key": "title", "label": "Title" }
+      ],
+      "list": [
+        { "title": "Example result" }
+      ],
+      "page_index": 1,
+      "page_size": 20
+    }
+  },
+  "message": "success",
+  "request_id": "req-123"
+}
+```
+
+### 同步响应字段
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `data.run_slug` | `string` | 运行标识。用于读取详情、日志、结果和导出。 |
+| `data.run_status` | `string` | 运行状态，例如 `succeeded` 或 `failed`。详见[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。 |
+| `data.error_message` | `string` | 运行失败时的错误信息；无错误时为空字符串。 |
+| `data.execution_start_timestamp` | `integer` | 执行开始时间，Unix 秒。 |
+| `data.execution_end_timestamp` | `integer` | 执行结束时间，Unix 秒。 |
+| `data.running_duration` | `integer` | 运行时长，秒。 |
+| `data.result_message` | `string` | 结果摘要或运行消息；不适用时为空字符串。 |
+| `data.results` | `object` | 分页结果窗口。结构与结果接口一致：`count`、`headers`、`list`、`page_index`、`page_size`。详见[查询运行结果](/zh-cn/api/worker-runs/result/)。 |
+
+> `run_status` 是权威状态。即使同步等待返回了最终状态，如需确认权威状态仍可重新读取运行详情。
 
 ## 注意事项
 

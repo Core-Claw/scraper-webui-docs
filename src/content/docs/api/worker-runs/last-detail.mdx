@@ -36,7 +36,6 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/last" \
   "code": 0,
   "data": {
     "duration": 10,
-    "err_msg": "",
     "finished_at": 1782091210,
     "origin": "openapi",
     "results": 1,
@@ -72,9 +71,8 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/last" \
 | `started_at` | `integer` | Execution start time, Unix seconds. |
 | `finished_at` | `integer` | Execution end time, Unix seconds. |
 | `duration` | `integer` | Execution duration in seconds. |
-| `err_msg` | `string` | Optional diagnostic text. It may be absent (successful runs usually omit it); use it only as supporting evidence, never as the sole success/failure signal. |
 
-> Timestamps are Unix seconds (UTC). Cancellation, queueing, or state synchronization can produce incomplete or non-intuitive timing combinations; always treat `status` as authoritative.
+> Timestamps are Unix seconds (UTC). Cancellation, queueing, or state synchronization can produce incomplete or non-intuitive timing combinations; always treat `status` as authoritative. This endpoint does not return `err_msg`; for failure diagnostics, read the run [log](/api/worker-runs/last-log/) or check the list endpoint which surfaces `err_msg` on failed runs.
 
 ## Notes
 

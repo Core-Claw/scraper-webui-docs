@@ -24,7 +24,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" \
   --data '{"scraper_slug":"YOUR_SCRAPER_SLUG","version":"latest","input":{"parameters":{"custom":{"keywords":["coffee"]}}},"is_async":true,"page_index":1,"page_size":20}'
 ```
 
-V2 需要先确认 Worker 标识并放入 URL，推荐使用 Bearer 认证，分页改为从 0 开始的 `offset` 和 `limit`：
+V2 需要先确认 Worker 标识并放入 URL，推荐使用 Bearer 认证，分页改为 `offset` 和 `limit`：
 
 ```bash
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
@@ -76,11 +76,11 @@ V1 几乎把所有参数都放在 JSON 请求体中。V2 改为：
 V1 分页按以下公式转换：
 
 ```text
-offset = (page_index - 1) * page_size
+offset = page_index
 limit  = page_size
 ```
 
-V2 `offset` 从 `0` 开始，列表和结果接口的 `limit` 最大为 `100`。V1 运行接口的 `page_size` 最大可到 `1000`，因此较大页面必须改为多次分页或使用导出接口。
+V2 `offset` 为从 1 开始的页码（`offset=1` 为第 1 页，`offset=0` 兼容作为第 1 页），列表和结果接口的 `limit` 最大为 `100`。V1 运行接口的 `page_size` 最大可到 `1000`，因此较大页面必须改为多次分页或使用导出接口。
 
 ### 5. 更新运行状态判断
 
@@ -130,7 +130,7 @@ V2 运行请求的外层结构已经统一，但 `input.parameters.custom` 仍�
 - `/api/v1`、`/api/scraper`、`/api/store` 和 `/api/proxy/region` 下的全部旧版 URL 均已替换。
 - 已在 V2 中验证 Worker 和任务标识符。
 - 新代码使用 Bearer token 认证。
-- 分页使用从 0 开始的 `offset`，且 `limit <= 100`。
+- 分页使用从 1 开始的 `offset`（页码），且 `limit <= 100`。
 - 数字状态判断已替换为 V2 字符串。
 - 客户端同时检查 HTTP 状态和业务 `code`，并记录 `request_id`。
 - 异步调用方会在轮询前持久化 `data.run_slug`。

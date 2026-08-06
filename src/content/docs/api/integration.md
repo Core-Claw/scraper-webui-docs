@@ -42,7 +42,7 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 ## 3. Choose the execution mode
 
 - `is_async: true` submits asynchronously and does not wait for execution results. The response returns `data.run_slug`; Poll by `runId` when the run is asynchronous.
-- `is_async: false` waits for completion, equivalent to run-and-wait behavior. `offset` / `limit` only control the result window included in the synchronous response; they do not change the full result set.
+- `is_async: false` waits for completion, equivalent to run-and-wait behavior. The sync response returns `run_status`, `running_duration`, and a paginated `results` window directly — no polling needed when the run finishes within the wait limit. `offset` / `limit` control the result window included in the sync response; they do not change the full result set. See the [Run Worker](/api/workers/run/) sync response section for the full field list.
 
 > **⚠️ Sync wait limit: 5 minutes.** When `is_async: false`, the platform waits for the run for **up to 5 minutes at most**. If the run has not finished within 5 minutes, the request returns anyway and the run keeps executing in the background — you must then use the run **query endpoint** to poll status, logs, and results by `runId`. For runs that may exceed 5 minutes, prefer `is_async: true`.
 - `callback_url` can receive status-change or completion notifications, but callbacks do not replace result endpoints. Use `runId` to read or export complete data.
@@ -91,7 +91,7 @@ curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-`offset` is zero-based. List and result endpoints default `limit` to `20` and cap it at `100`. Poll long-running jobs with backoff to avoid `429` responses.
+`offset` is a 1-based page number (`offset=1` is page 1, `offset=0` is accepted as page 1). List and result endpoints default `limit` to `20` and cap it at `100`. Poll long-running jobs with backoff to avoid `429` responses.
 
 ## 5. Use export endpoints for downloads
 

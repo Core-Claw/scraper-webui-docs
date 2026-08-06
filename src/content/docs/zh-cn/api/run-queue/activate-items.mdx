@@ -53,11 +53,24 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/activate" \
 ```json
 {
   "code": 0,
-  "data": {},
+  "data": {
+    "results": [
+      { "queue_ref": "123456", "success": true },
+      { "queue_ref": "123457", "success": false }
+    ]
+  },
   "message": "success",
   "request_id": "req-123"
 }
 ```
+
+### 响应字段
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `data.results[]` | `array` | 每个提交项的激活结果，一个 `queue_ref` 一条。 |
+| `data.results[].queue_ref` | `string` | 该结果对应的队列项 ID。 |
+| `data.results[].success` | `boolean` | 是否激活成功。当项已不在 `waiting` 状态（例如已执行或已释放）时为 `false`。 |
 
 ## 说明
 

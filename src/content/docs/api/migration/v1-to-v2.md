@@ -24,7 +24,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v1/scraper/run" \
   --data '{"scraper_slug":"YOUR_SCRAPER_SLUG","version":"latest","input":{"parameters":{"custom":{"keywords":["coffee"]}}},"is_async":true,"page_index":1,"page_size":20}'
 ```
 
-In V2, resolve the Worker identifier first, put it in the URL, prefer Bearer authentication, and use zero-based `offset` plus `limit`:
+In V2, resolve the Worker identifier first, put it in the URL, prefer Bearer authentication, and use `offset` plus `limit` in the request body:
 
 ```bash
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
@@ -76,11 +76,11 @@ V1 sent almost every argument in a JSON body. V2 uses:
 V1 pagination converts as follows:
 
 ```text
-offset = (page_index - 1) * page_size
+offset = page_index
 limit  = page_size
 ```
 
-V2 `offset` starts at `0`, and list/result `limit` cannot exceed `100`. V1 allowed a run `page_size` up to `1000`, so callers requesting larger pages must paginate or use an export endpoint.
+V2 `offset` is a 1-based page number (`offset=1` is page 1, `offset=0` is accepted as page 1), and list/result `limit` cannot exceed `100`. V1 allowed a run `page_size` up to `1000`, so callers requesting larger pages must paginate or use an export endpoint.
 
 ### 5. Update run status handling
 
@@ -130,7 +130,7 @@ See [Run Lifecycle & Status](/api/run-lifecycle/) and [Callbacks](/api/callbacks
 - Every legacy URL under `/api/v1`, `/api/scraper`, `/api/store`, and `/api/proxy/region` has been replaced.
 - Worker and task identifiers have been verified in V2.
 - Authentication uses Bearer tokens in new code.
-- Pagination uses zero-based `offset` and `limit <= 100`.
+- Pagination uses 1-based `offset` (page number) and `limit <= 100`.
 - Numeric status comparisons have been replaced with V2 strings.
 - The client checks HTTP status and application `code`, and logs `request_id`.
 - Async callers persist `data.run_slug` before polling.

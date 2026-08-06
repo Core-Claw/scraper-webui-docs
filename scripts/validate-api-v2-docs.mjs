@@ -336,11 +336,11 @@ for (const rel of [
 for (const { rel, required } of [
     {
         rel: 'src/content/docs/api/migration/v1-to-v2.md',
-        required: ['Migrate production integrations as soon as possible', '13 operations', '34 public operations', 'other 21', 'offset = (page_index - 1) * page_size', 'request_id'],
+        required: ['Migrate production integrations as soon as possible', '13 operations', '34 public operations', 'other 21', 'offset = page_index', 'request_id'],
     },
     {
         rel: 'src/content/docs/zh-cn/api/migration/v1-to-v2.md',
-        required: ['请尽快迁移生产集成', '13 个接口', '34 个公开接口', '其余 21 个', 'offset = (page_index - 1) * page_size', 'request_id'],
+        required: ['请尽快迁移生产集成', '13 个接口', '34 个公开接口', '其余 21 个', 'offset = page_index', 'request_id'],
     },
 ]) {
     const text = await readRequiredDoc(rel)
@@ -401,7 +401,7 @@ for (const { rel, required } of [
         required: [
             'Use `https://openapi.coreclaw.com` as the HTTP API base URL',
             'Read the Worker input schema before sending `input`',
-            '`offset` is zero-based on list and result endpoints',
+            '`offset` is a 1-based page number on list and result endpoints',
             '`limit` is capped at `100` on list and result endpoints',
             'Use export endpoints when the caller needs a downloadable result file',
         ],
@@ -411,7 +411,7 @@ for (const { rel, required } of [
         required: [
             'HTTP API 基础地址为 `https://openapi.coreclaw.com`',
             '发送 `input` 前先读取 Worker 输入 schema',
-            '列表和结果接口的 `offset` 从 0 开始',
+            '列表和结果接口的 `offset` 为从 1 开始的页码',
             '列表和结果接口的 `limit` 上限为 `100`',
             '需要下载结果文件时使用导出接口',
         ],
@@ -506,14 +506,14 @@ for (const { rel, required } of [
     {
         rel: 'src/content/docs/api/worker-runs/result.mdx',
         required: [
-            '`offset` is zero-based',
+            '`offset` is a 1-based page number',
             '`limit` defaults to `20` and cannot exceed `100`',
         ],
     },
     {
         rel: 'src/content/docs/zh-cn/api/worker-runs/result.mdx',
         required: [
-            '`offset` 从 0 开始',
+            '`offset` 为从 1 开始的页码',
             '`limit` 默认 `20`，最大 `100`',
         ],
     },

@@ -46,8 +46,18 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/las
   "data": {
     "all_logs_url": "https://storage.example.com/runs/01KKDXV2G26BT7NH4ZQR2R4NPZ/logs.txt",
     "list": [
-      "Run started",
-      "Run finished"
+      {
+        "type": 2,
+        "group": "49763990997368832",
+        "content": "SYSTEM: Preparing the execution environment.",
+        "timestamp": 1782091200351
+      },
+      {
+        "type": 2,
+        "group": "49763990997368832",
+        "content": "SYSTEM: Running...",
+        "timestamp": 1782091201000
+      }
     ],
     "result_count": 1
   },

@@ -41,9 +41,9 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 | --- | --- | --- | --- |
 | `callback_url` | 否 | `string` | 回调地址。传入后，CoreClaw 会在运行状态变化或结束时向该地址发送 `POST` 请求。 |
 | `input` | 否 | `any` | Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。 |
-| `is_async` | 否 | `boolean` | `true` 表示异步提交，不等待执行结果；`false` 表示等待执行结果，直到运行完成。默认 `true`。 |
-| `limit` | 否 | `integer` | 同步响应中返回的结果窗口大小；仅影响同步响应中附带的结果数量，不影响完整结果集。约束：默认 `20`；范围 1-100。 |
-| `offset` | 否 | `integer` | 同步响应中返回结果窗口的起始偏移；从 0 开始。约束：默认 `0`；最小 0。 |
+| `is_async` | 否 | `boolean` | 出于 API 一致性而接受，但对排队运行无效：排队运行始终进入队列，响应返回 `queue_ref`，不会返回同步运行结果。如需同步运行，请改用[运行 Worker](/zh-cn/api/workers/run/)。 |
+| `limit` | 否 | `integer` | 出于 API 一致性而接受，但对排队运行响应无效——响应返回 `queue_ref` 而非结果窗口。约束：默认 `20`；范围 1-100。 |
+| `offset` | 否 | `integer` | 出于 API 一致性而接受，但对排队运行响应无效。约束：默认 `0`；最小 0。 |
 | `version` | 否 | `string` | 可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。 |
 
 ### JSON 示例
@@ -52,12 +52,16 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 {
   "callback_url": "https://client.example.com/openapi/callback",
   "input": {
-    "keyword": "coffee",
-    "limit": 10
+    "parameters": {
+      "custom": {
+        "keywords": [
+          "coffee"
+        ],
+        "base_location": "New York,USA",
+        "max_results": 1
+      }
+    }
   },
-  "is_async": true,
-  "limit": 20,
-  "offset": 0,
   "version": "latest"
 }
 ```
@@ -68,7 +72,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/queued-runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"callback_url":"https://client.example.com/openapi/callback","input":{"keyword":"coffee","limit":10},"is_async":true,"limit":20,"offset":0,"version":"latest"}'
+  --data '{"callback_url":"https://client.example.com/openapi/callback","input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"version":"latest"}'
 ```
 
 ## 响应示例

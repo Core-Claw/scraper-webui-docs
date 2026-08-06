@@ -29,10 +29,12 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 参数 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `offset` | 否 | `integer` | 分页偏移量，从 0 开始；用于结果预览、列表翻页或导出前确认数据窗口。 约束：默认 `0`；最小 0。 |
+| `offset` | 否 | `integer` | 页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。 约束：默认 `0`；最小 0。 |
 | `limit` | 否 | `integer` | 每页返回数量；列表和结果接口的 `limit` 上限为 `100`。 约束：默认 `20`；范围 1-100。 |
 | `worker_id` | 否 | `string` | Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。 |
 | `status` | 否 | `enum: ready, running, succeeded, failed, aborting` | 运行状态筛选。 约束：可选值：`ready`、`running`、`succeeded`、`failed`、`aborting`。 |
+| `start_time` | 否 | `integer`（Unix 秒） | 按 `created_at` 起始时间筛选，Unix 秒。传入时必须同时传 `end_time`，且两者必须落在同一个自然月内。 |
+| `end_time` | 否 | `integer`（Unix 秒） | 按 `created_at` 结束日期筛选，Unix 秒。传该日 `00:00:00`；服务端会 +86400 秒以包含整个结束日。必须与 `start_time` 在同一个自然月内。 |
 
 ## 请求示例
 
@@ -51,7 +53,6 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&w
     "list": [
       {
         "duration": 10,
-        "err_msg": "",
         "finished_at": 1782091210,
         "origin": "openapi",
         "results": 1,
@@ -64,9 +65,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&w
         "usage": "1.00",
         "version": "latest"
       }
-    ],
-    "page_index": 1,
-    "page_size": 20
+    ]
   },
   "message": "success",
   "request_id": "req-123"
@@ -98,6 +97,8 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&w
 ## 注意事项
 
 - API v2 同时支持 Bearer token、旧版 `api-key` 请求头和 query token；新集成建议优先使用 Bearer token。
+- 不传 `start_time`/`end_time` 时，本接口只返回当月运行记录。同时传入 `start_time` 和 `end_time`（Unix 秒，同一自然月）可查询历史归档记录；跨月范围会返回 `code:11000 "run list time range cannot cross months"`。
+- `end_time` 按某日 `00:00:00` 解释：服务端查询前会 +86400 秒以包含该日全天。当结束日为某月最后一天时，请传该日 `00:00:00` 整（北京时间 UTC+8）——该日任意更晚时刻都会使 +86400 后的上界跨入下月，导致请求被拒绝。
 - 运行状态、轮询、失败诊断和取消处理请参阅[运行生命周期与状态](/zh-cn/api/run-lifecycle/)。
 
 ## HTTP 响应

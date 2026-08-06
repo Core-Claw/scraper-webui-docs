@@ -12,7 +12,7 @@ V1 时期的公开 API 文档共收录 13 个接口：10 个位于 `/api/v1` 下
 | V1 接口                          | V2 替代接口                                                                                                                                         | 必须修改的内容                                                                                                                                                     |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `GET /api/scraper`               | [`GET /api/v2/workers/{workerId}`](/zh-cn/api/workers/detail/) 和 [`GET /api/v2/workers/{workerId}/input-schema`](/zh-cn/api/workers/input-schema/) | 把 `slug` query 值移入 `{workerId}`，并将 `owner/name` 编码为 `owner~name`。Worker 详情接口现在需要认证；只需要输入契约时可调用公开的 input-schema 接口。          |
-| `GET /api/store`                 | [`GET /api/v2/store`](/zh-cn/api/store/list/)                                                                                                       | 把 `search` 改为 `keyword`；分页时增加从 0 开始的 `offset`。`limit` 默认值改为 20，最大为 100。                                                                    |
+| `GET /api/store`                 | [`GET /api/v2/store`](/zh-cn/api/store/list/)                                                                                                       | 把 `search` 改为 `keyword`；分页时增加从 1 开始的 `offset`（页码）。`limit` 默认值改为 20，最大为 100。                                                                    |
 | `GET /api/proxy/region`          | [`GET /api/v2/proxy/region`](/zh-cn/api/proxy/region/)                                                                                              | 在路径中增加 `/v2`；V2 还提供可选的 `language` query 参数。                                                                                                        |
 | `POST /api/v1/run/result/list`   | [`GET /api/v2/worker-runs/{runId}/result`](/zh-cn/api/worker-runs/result/)                                                                          | 把 `run_slug` 移入 `{runId}`；把 `page_index`、`page_size` 转换为 query 中的 `offset`、`limit`。                                                                   |
 | `POST /api/v1/run/detail`        | [`GET /api/v2/worker-runs/{runId}`](/zh-cn/api/worker-runs/detail/)                                                                                 | 把 `run_slug` 从请求体移入 `{runId}`，删除 JSON 请求体。                                                                                                           |
@@ -32,7 +32,7 @@ V1 时期的公开 API 文档共收录 13 个接口：10 个位于 `/api/v1` 下
 | 认证          | `api-key` 请求头                              | 推荐 Bearer；也支持旧版请求头和 query token                      | 发送 `Authorization: Bearer YOUR_API_KEY`。                   |
 | 资源名称      | 请求概念使用 `scraper`                        | 路径和请求概念使用 `worker`                                      | 重命名客户端模型和变量，但保留文档中的 `scraper_*` 响应字段。 |
 | 标识符        | 放在 JSON 请求体中                            | `workerId`、`workerTaskId`、`runId` 放在路径中                   | URL 编码路径值，并验证 V2 Worker 标识。                       |
-| 分页          | `page_index` 从 1 开始，使用 `page_size`      | `offset` 从 0 开始，`limit` 最大 100                             | 使用 `offset = (page_index - 1) * page_size`。                |
+| 分页          | `page_index` 从 1 开始，使用 `page_size`      | `offset` 为从 1 开始的页码，`limit` 最大 100                             | 使用 `offset = page_index`。                |
 | 运行状态      | 整数 `1` 到 `5`；筛选时 `0` 表示全部          | 字符串 `ready`、`running`、`succeeded`、`failed`、`aborting`     | 替换数字判断；查询全部状态时不发送筛选值。                    |
 | 导出字段      | JSON 数组 `filter_keys`                       | query 中逗号分隔的 `filter_keys`                                 | 用逗号连接字段名并进行 URL 编码。                             |
 | 导出格式      | 文档列出 `csv`、`json`                        | 支持 `csv`、`json`、`jsonl`、`xlsx`、`xls`、`xml`、`html`、`rss` | 使用允许的小写值，不要沿用 V1 校验逻辑。                      |
@@ -51,7 +51,7 @@ V1 时期的公开 API 文档共收录 13 个接口：10 个位于 `/api/v1` 下
 ```
 
 ```http
-GET /api/v2/worker-runs/RUN_ID/result?offset=40&limit=20
+GET /api/v2/worker-runs/RUN_ID/result?offset=3&limit=20
 ```
 
 ### 筛选运行记录

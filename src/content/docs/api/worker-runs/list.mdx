@@ -29,10 +29,12 @@ Use this endpoint to list run history in the account scope, optionally filtered 
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `offset` | No | `integer` | Pagination offset, starting from 0. Use it for result previews, list paging, or choosing a result window. Constraints: default `0`; minimum 0. |
+| `offset` | No | `integer` | Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list. Constraints: default `0`; minimum 0. |
 | `limit` | No | `integer` | Page size. `limit` is capped at `100` on list and result endpoints. Constraints: default `20`; range 1-100. |
 | `worker_id` | No | `string` | Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values. |
 | `status` | No | `enum: ready, running, succeeded, failed, aborting` | Run status filter. Constraints: allowed values: `ready`, `running`, `succeeded`, `failed`, `aborting`. |
+| `start_time` | No | `integer` (Unix seconds) | Filter runs by `created_at` start time, Unix seconds. When provided, `end_time` is also required, and both must fall in the same calendar month. |
+| `end_time` | No | `integer` (Unix seconds) | Filter runs by `created_at` end date, Unix seconds. Pass the day at `00:00:00`; the server adds 86400 seconds to include the whole day. Must be in the same calendar month as `start_time`. |
 
 ## Request Example
 
@@ -51,7 +53,6 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&w
     "list": [
       {
         "duration": 10,
-        "err_msg": "",
         "finished_at": 1782091210,
         "origin": "openapi",
         "results": 1,
@@ -64,9 +65,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&w
         "usage": "1.00",
         "version": "latest"
       }
-    ],
-    "page_index": 1,
-    "page_size": 20
+    ]
   },
   "message": "success",
   "request_id": "req-123"
@@ -98,6 +97,8 @@ Each run record in `data.list[]` contains these fields (`data.count` is the tota
 ## Notes
 
 - API v2 supports Bearer token, the legacy `api-key` header, and query token. Prefer Bearer token for new integrations.
+- Without `start_time`/`end_time`, this endpoint only returns runs from the current month. Pass both `start_time` and `end_time` (Unix seconds, same calendar month) to list archived runs from a prior month; cross-month ranges are rejected with `code:11000 "run list time range cannot cross months"`.
+- `end_time` is interpreted as a day boundary at `00:00:00`: the server adds 86400 seconds before querying so the entire end day is included. When the end day is the last day of a month, pass it at `00:00:00` exactly (Beijing time, UTC+8) — any later time on that day causes the +86400 upper bound to cross into the next month and the request is rejected.
 - See [Run Lifecycle & Status](/api/run-lifecycle/) for status handling, polling, failure diagnosis, and cancellation behavior.
 
 ## HTTP Responses

@@ -29,7 +29,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 参数 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `offset` | 否 | `integer` | 分页偏移量，从 0 开始；用于结果预览、列表翻页或导出前确认数据窗口。 约束：默认 `0`；最小 0。 |
+| `offset` | 否 | `integer` | 页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。 约束：默认 `0`；最小 0。 |
 | `limit` | 否 | `integer` | 每页返回数量；列表和结果接口的 `limit` 上限为 `100`。 约束：默认 `20`；范围 1-100。 |
 | `worker_id` | 否 | `string` | Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。 |
 | `keyword` | 否 | `string` | 按任务标题或 slug 搜索。 |
@@ -50,11 +50,29 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-tasks?offset=0&limit=20&
     "count": 1,
     "list": [
       {
-        "id": 2001,
-        "slug": "demo-task",
-        "title": "Demo Task",
-        "version": "latest",
-        "worker_slug": "demo-worker"
+        "slug": "01KX4ZM5DE8Y8GAZQ7R0KYZ3FD",
+        "worker_title": "Google Maps Scraper",
+        "worker_slug": "01KPD6M5YQADCQKGVKPDZVYC63",
+        "worker_path": "coreclaw/google-maps-scraper",
+        "version": "v1.2.6",
+        "platform_actors_id": 32684270703149056,
+        "title": "Google Maps Scraper (Task)",
+        "description": "Scrape Google Maps business records on a schedule.",
+        "input": {
+          "parameters": {
+            "custom": {
+              "keywords": [{ "keyword": "coffee" }],
+              "max_results": 10
+            }
+          }
+        },
+        "run_times": 3,
+        "last_run_id": 0,
+        "last_modified_at": 1782091200,
+        "schedule_enabled": 0,
+        "schedule_type": 0,
+        "created_at": 1782000000,
+        "updated_at": 1782091200
       }
     ],
     "page_index": 1,

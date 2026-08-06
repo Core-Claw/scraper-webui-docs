@@ -45,7 +45,6 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID" \
   "code": 0,
   "data": {
     "duration": 10,
-    "err_msg": "",
     "finished_at": 1782091210,
     "origin": "openapi",
     "results": 1,
@@ -81,9 +80,8 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID" \
 | `started_at` | `integer` | 执行开始时间，Unix 秒。 |
 | `finished_at` | `integer` | 执行结束时间，Unix 秒。 |
 | `duration` | `integer` | 执行耗时，秒。 |
-| `err_msg` | `string` | 可选诊断信息。可能缺失（例如成功运行时通常不返回该字段）；仅作辅助排障，不要单独用它判断成败。 |
 
-> 时间戳为 Unix 秒（UTC）。取消、排队或状态同步时，时间字段可能出现不完整或不直观的组合；请始终以 `status` 为准。
+> 时间戳为 Unix 秒（UTC）。取消、排队或状态同步时，时间字段可能出现不完整或不直观的组合；请始终以 `status` 为准。详情接口不返回 `err_msg`；如需失败诊断，请读取运行[日志](/zh-cn/api/worker-runs/log/)，或在列表接口中查看失败运行是否返回 `err_msg`。
 
 ## 注意事项
 
