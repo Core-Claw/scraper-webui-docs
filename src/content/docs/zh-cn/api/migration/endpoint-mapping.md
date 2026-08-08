@@ -5,7 +5,7 @@ sidebar:
     order: 2
 ---
 
-V1 时期的公开 API 文档共收录 13 个接口：10 个位于 `/api/v1` 下，另外 3 个公开接口没有版本前缀。下表已将全部 13 个旧接口映射到 V2。V2 对外共提供 34 个公开接口，其余 21 个属于没有旧版直接对应项的新增能力。V1 的一个请求体通常会拆分成 V2 路径、query 和更精简的 JSON 请求体。
+V1 时期的公开 API 文档共收录 13 个接口：10 个位于 `/api/v1` 下，另外 3 个公开接口没有版本前缀。下表已将全部 13 个旧接口映射到 V2。V2 对外共提供 39 个公开接口，其余 26 个属于没有旧版直接对应项的新增能力。V1 的一个请求体通常会拆分成 V2 路径、query 和更精简的 JSON 请求体。
 
 ## 完整接口对照
 
@@ -62,7 +62,7 @@ GET /api/v2/worker-runs/RUN_ID/result?offset=3&limit=20
 ```
 
 ```http
-GET /api/v2/worker-runs?offset=0&limit=20&status=succeeded&worker_id=WORKER_ID
+GET /api/v2/worker-runs?offset=1&limit=20&status=succeeded&worker_id=WORKER_ID
 ```
 
 ### 导出指定字段

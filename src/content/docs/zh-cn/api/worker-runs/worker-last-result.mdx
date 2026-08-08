@@ -35,13 +35,13 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 参数 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `offset` | 否 | `integer` | 页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。 约束：默认 `0`；最小 0。 |
+| `offset` | 否 | `integer` | 页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。 约束：默认 `1`；最小 0。 |
 | `limit` | 否 | `integer` | 每页返回数量；列表和结果接口的 `limit` 上限为 `100`。 约束：默认 `20`；范围 1-100。 |
 
 ## 请求示例
 
 ```bash
-curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/last/result?offset=0&limit=20" \
+curl -X GET "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs/last/result?offset=1&limit=20" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 

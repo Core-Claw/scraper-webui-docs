@@ -58,7 +58,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
   "data": {
     "results": [
       { "queue_ref": "123456", "success": true },
-      { "queue_ref": "123457", "success": false }
+      { "queue_ref": "123457", "success": false, "error": "item is not in waiting state" }
     ]
   },
   "message": "success",
@@ -73,6 +73,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
 | `data.results[]` | `array` | Per-item release outcomes, one entry per `queue_ref` you submitted. |
 | `data.results[].queue_ref` | `string` | The queue item ID this result refers to. |
 | `data.results[].success` | `boolean` | Whether the item was released. `false` when the item was no longer in a releasable state (for example it already ran or was activated). |
+| `data.results[].error` | `string` | Optional. Present only when `success` is `false`, with a short reason why the item could not be released. |
 
 ## Notes
 

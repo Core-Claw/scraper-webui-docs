@@ -67,7 +67,7 @@ func main() {
             },
         },
         "is_async": true,
-        "offset": 0,
+        "offset": 1,
         "limit": 20,
     }
     run := coreclawRequest(apiKey, "POST", "/api/v2/workers/"+url.PathEscape(workerID)+"/runs", nil, runPayload)
@@ -80,7 +80,7 @@ func main() {
 
     completedRun := waitForRun(apiKey, runInfo.RunSlug, 300*time.Second)
     results := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runInfo.RunSlug)+"/result", url.Values{
-        "offset": {"0"},
+        "offset": {"1"},
         "limit":  {"20"},
     }, nil)
     fmt.Println("Status:", completedRun.Status, "Results:", string(results.Data))

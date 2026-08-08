@@ -21,6 +21,7 @@ CoreClaw API uses HTTP status codes for the request layer and the response body 
 | `13000` | `RATE_LIMITED` | too many requests |
 | `14000` | `DATABASE_ERROR` | database error |
 | `30001` | `INSUFFICIENT_BALANCE` | account balance is insufficient |
+| `30003` | `PLAN_CONCURRENCY_LIMITED` | the current running tasks have reached the plan limit |
 | `50001` | `WORKER_NOT_FOUND` | worker does not exist |
 | `50002` | `WORKER_RUN_FAILED` | worker run failed |
 | `50003` | `WORKER_VERSION_UNAVAILABLE` | the worker version is not available |
@@ -34,5 +35,6 @@ CoreClaw API uses HTTP status codes for the request layer and the response body 
 1. `12001` and `12002` usually require checking Bearer token, the `api-key` header, or query token.
 2. `13000` means the request is rate limited; reduce request frequency and retry with backoff.
 3. `30001` means the account balance is insufficient.
-4. `50001`, `50003`, `60001`, and `70001` usually mean the Worker, task, version, or run ID does not exist or is unavailable.
-5. `10000`, `14000`, and `16000` indicate server-side or capability-state issues. Keep `request_id` for troubleshooting.
+4. `30003` means the plan concurrency limit is reached; wait for existing tasks to finish before submitting more.
+5. `50001`, `50003`, `60001`, and `70001` usually mean the Worker, task, version, or run ID does not exist or is unavailable.
+6. `10000`, `14000`, and `16000` indicate server-side or capability-state issues. Keep `request_id` for troubleshooting.

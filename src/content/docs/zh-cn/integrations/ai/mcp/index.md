@@ -200,7 +200,7 @@ MCP 服务会把 `input_json` 包装为 CoreClaw 使用的 `input.parameters.cus
 curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
   -H "Content-Type: application/json" \
   -H "api-key: YOUR_CORECLAW_API_KEY" \
-  -d '{"keyword":"amazon","offset":0,"limit":5}'
+  -d '{"keyword":"amazon","offset":1,"limit":5}'
 ```
 
 更多 JSON-RPC 和 REST 示例见 [通用 HTTP 客户端](/zh-cn/integrations/ai/mcp/generic-http/)。

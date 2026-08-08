@@ -28,7 +28,7 @@ CoreClaw has two common run entry points. Direct Worker run is for callers that 
 ### Search or list Workers
 
 ```bash
-curl "https://openapi.coreclaw.com/api/v2/store?keyword=coffee&offset=0&limit=20"
+curl "https://openapi.coreclaw.com/api/v2/store?keyword=coffee&offset=1&limit=20"
 ```
 
 ### Read the input schema
@@ -42,9 +42,7 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 ## 3. Choose the execution mode
 
 - `is_async: true` submits asynchronously and does not wait for execution results. The response returns `data.run_slug`; Poll by `runId` when the run is asynchronous.
-- `is_async: false` waits for completion, equivalent to run-and-wait behavior. The sync response returns `run_status`, `running_duration`, and a paginated `results` window directly — no polling needed when the run finishes within the wait limit. `offset` / `limit` control the result window included in the sync response; they do not change the full result set. See the [Run Worker](/api/workers/run/) sync response section for the full field list.
-
-> **⚠️ Sync wait limit: 5 minutes.** When `is_async: false`, the platform waits for the run for **up to 5 minutes at most**. If the run has not finished within 5 minutes, the request returns anyway and the run keeps executing in the background — you must then use the run **query endpoint** to poll status, logs, and results by `runId`. For runs that may exceed 5 minutes, prefer `is_async: true`.
+- `is_async: false` waits for completion, equivalent to run-and-wait behavior. `offset` / `limit` only control the result window included in the synchronous response; they do not change the full result set.
 - `callback_url` can receive status-change or completion notifications, but callbacks do not replace result endpoints. Use `runId` to read or export complete data.
 
 ### Direct Worker run
@@ -53,7 +51,7 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}'
+  --data '{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":1}'
 ```
 
 ### Saved Worker task run
@@ -87,7 +85,7 @@ curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID" \
 curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/log" \
   -H "Authorization: Bearer YOUR_API_KEY"
 
-curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=0&limit=20" \
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=1&limit=20" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -108,4 +106,3 @@ curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result/export?
 2. `401` usually means the token is missing or invalid. `422` usually means a field value, pagination range, or request semantic failed validation.
 3. Store `request_id` for troubleshooting failed requests.
 4. Retry `429` responses with backoff instead of replaying immediately at high frequency.
-5. Each plan also caps how many runs can execute **at once**; a start request beyond that cap is rejected with no run created and no balance charged. See [Concurrency Limits](/user-guide/run-worker/concurrency-limits/) and queue runs client-side for batch workloads.

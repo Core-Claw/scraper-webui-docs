@@ -20,6 +20,7 @@ const internalOperations = new Set([
     'GET /api/v2/workers/{workerId}/internal',
     'POST /api/v2/workers/{workerId}/versions',
     'PUT /api/v2/workers/{workerId}/versions/{version}',
+    'GET /api/v2/queued-worker-runs',
 ])
 
 const pageMeta = {
@@ -58,6 +59,14 @@ const pageMeta = {
     'POST /api/v2/workers/{workerId}/runs/last/rerun': ['worker-runs/worker-last-rerun', 84, 'Rerun Worker Last Run', '重跑某 Worker 最近一次运行'],
     'GET /api/v2/workers/{workerId}/runs/last/result': ['worker-runs/worker-last-result', 85, 'List Worker Last Run Results', '查询某 Worker 最近一次运行结果'],
 }
+
+const handAuthoredIndexEntries = [
+    ['POST', '/api/v2/workers/{workerId}/queued-runs', 'run-queue/queued-run', 'Queue Worker Run', '排队提交 Worker 运行'],
+    ['GET', '/api/v2/run-queue/items', 'run-queue/list-items', 'List Run Queue Items', '查询运行队列项目'],
+    ['POST', '/api/v2/run-queue/items/activate', 'run-queue/activate-items', 'Activate Run Queue Items', '激活运行队列项目'],
+    ['POST', '/api/v2/run-queue/items/release', 'run-queue/release-items', 'Release Run Queue Items', '批量释放运行队列项目'],
+    ['POST', '/api/v2/run-queue/items/{queueId}/release', 'run-queue/release-item', 'Release One Run Queue Item', '释放单个运行队列项目'],
+]
 
 const sourceSpec = JSON.parse(await readFile(sourceSpecPath, 'utf8'))
 const spec = structuredClone(sourceSpec)
@@ -148,7 +157,7 @@ for (const [name, order] of [['python', 1], ['nodejs', 2], ['java', 3], ['php', 
     await writeFileEnsured(path.join(root, 'src/content/docs/zh-cn/api/examples', `${name}.md`), examplePage(name, order, 'zh'))
 }
 
-console.log(`Generated ${operations.length} API v2 public operation pages per locale.`)
+console.log(`Generated ${operations.length} API v2 operation pages per locale; indexed ${operations.length + handAuthoredIndexEntries.length} public operations including hand-authored pages.`)
 
 async function resetApiDir(rel) {
     const dir = path.join(root, 'src/content/docs', rel)
@@ -183,7 +192,11 @@ function collectOperations(openapi) {
         for (const [method, operation] of Object.entries(item ?? {})) {
             if (!methods.has(method)) continue
             const key = `${method.toUpperCase()} ${apiPath}`
-            if (!pageMeta[key]) throw new Error(`Missing page metadata for ${key}`)
+            if (!pageMeta[key]) {
+                // Hand-authored pages (e.g. Run Queue) are maintained outside the generator.
+                console.warn(`Skipping ${key}: no pageMeta entry (hand-authored page).`)
+                continue
+            }
             out.push({ method: method.toUpperCase(), path: apiPath, operation, key })
         }
     }
@@ -711,13 +724,16 @@ function requestExampleFor(op) {
 }
 
 function sanitizeRequestExample(op, value) {
-    if (op.path !== '/api/v2/workers/{workerId}/runs' || value === null || typeof value !== 'object' || Array.isArray(value)) {
-        return value
-    }
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) return value
     const out = { ...value }
-    delete out.callback_url
-    delete out.version
-    out.input = directWorkerInput()
+    if (op.path === '/api/v2/workers/{workerId}/runs') {
+        delete out.callback_url
+        delete out.version
+        out.input = directWorkerInput()
+    }
+    // Canonicalize pagination regardless of what the upstream spec example says
+    // (the published sync_run examples still carry the legacy offset:0).
+    if (out.offset === 0) out.offset = 1
     return out
 }
 
@@ -744,7 +760,9 @@ function directWorkerRunExample(extra = {}) {
         input: directWorkerInput(),
         is_async: true,
         limit: 20,
-        offset: 0,
+        // offset is a 1-based page number (offset=1 is page 1); 0 is accepted
+        // only as a legacy alias for page 1, so examples show the canonical form.
+        offset: 1,
         ...extra,
     }
 }
@@ -764,7 +782,7 @@ function sampleValue(name, schema = {}) {
     if (name === 'input') return { parameters: { custom: { ...sampleDirectWorkerCustomInput } } }
     if (name === 'is_async') return true
     if (name === 'limit') return 20
-    if (name === 'offset') return 0
+    if (name === 'offset') return 1
     if (name === 'worker_id') return 'coreclaw~google-maps-scraper'
     if (name === 'title') return 'Google Maps Scraper (Task)'
     if (name === 'description') return 'Scrape Google Maps business records on a schedule.'
@@ -830,10 +848,13 @@ function authText(op, zh) {
 
 function indexPage(lang) {
     const zh = lang === 'zh'
-    const rows = operations.map((op, i) => {
+    const generatedRows = operations.map(op => {
         const m = meta(op)
-        const href = zh ? `/zh-cn/api/${m.slug}/` : `/api/${m.slug}/`
-        return `| ${i + 1} | \`${op.method}\` | \`${op.path}\` | [${zh ? m.zhTitle : m.title}](${href}) |`
+        return [op.method, op.path, m.slug, m.title, m.zhTitle]
+    })
+    const rows = [...generatedRows, ...handAuthoredIndexEntries].map(([method, apiPath, slug, title, zhTitle], i) => {
+        const href = zh ? `/zh-cn/api/${slug}/` : `/api/${slug}/`
+        return `| ${i + 1} | \`${method}\` | \`${apiPath}\` | [${zh ? zhTitle : title}](${href}) |`
     }).join('\n')
     const title = zh ? '基础 URL 与认证' : 'Base URL & Authentication'
     const desc = zh ? 'CoreClaw API v2 的基础地址、认证方式和公开接口清单' : 'CoreClaw API v2 base URL, authentication, and public endpoint reference'
@@ -1076,8 +1097,9 @@ function errorCodesPage(lang) {
         '1. `12001` 和 `12002` 通常需要检查 Bearer token、`api-key` 请求头或 query token。',
         '2. `13000` 表示触发限流，应降低请求频率并做退避重试。',
         '3. `30001` 表示账户余额不足，应先处理账户余额或额度。',
-        '4. `50001`、`50003`、`60001`、`70001` 通常与 Worker、任务、版本或运行 ID 不存在或不可用有关。',
-        '5. `10000`、`14000`、`16000` 属于服务端或能力状态问题，请记录 `request_id` 后再排查。',
+        '4. `30003` 表示计划并发上限已达上限，应等待已有任务完成后再提交。',
+        '5. `50001`、`50003`、`60001`、`70001` 通常与 Worker、任务、版本或运行 ID 不存在或不可用有关。',
+        '6. `10000`、`14000`、`16000` 属于服务端或能力状态问题，请记录 `request_id` 后再排查。',
         '',
     ] : [
         'CoreClaw API uses HTTP status codes for the request layer and the response body `code` for the business layer.',
@@ -1095,8 +1117,9 @@ function errorCodesPage(lang) {
         '1. `12001` and `12002` usually require checking Bearer token, the `api-key` header, or query token.',
         '2. `13000` means the request is rate limited; reduce request frequency and retry with backoff.',
         '3. `30001` means the account balance is insufficient.',
-        '4. `50001`, `50003`, `60001`, and `70001` usually mean the Worker, task, version, or run ID does not exist or is unavailable.',
-        '5. `10000`, `14000`, and `16000` indicate server-side or capability-state issues. Keep `request_id` for troubleshooting.',
+        '4. `30003` means the plan concurrency limit is reached; wait for existing tasks to finish before submitting more.',
+        '5. `50001`, `50003`, `60001`, and `70001` usually mean the Worker, task, version, or run ID does not exist or is unavailable.',
+        '6. `10000`, `14000`, and `16000` indicate server-side or capability-state issues. Keep `request_id` for troubleshooting.',
         '',
     ]
     return frontmatter(title, desc, 2) + lines.join('\n')
@@ -1130,7 +1153,7 @@ function integrationPage(lang) {
         '### 搜索或列出 Worker',
         '',
         '```bash',
-        `curl "${API_BASE_URL}/api/v2/store?keyword=coffee&offset=0&limit=20"`,
+        `curl "${API_BASE_URL}/api/v2/store?keyword=coffee&offset=1&limit=20"`,
         '```',
         '',
         '### 读取输入 schema',
@@ -1153,7 +1176,7 @@ function integrationPage(lang) {
         `curl -X POST "${API_BASE_URL}/api/v2/workers/YOUR_WORKER_ID/runs" \\`,
         '  -H "Authorization: Bearer YOUR_API_KEY" \\',
         '  -H "Content-Type: application/json" \\',
-        '  --data \'{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}\'',
+        '  --data \'{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":1}\'',
         '```',
         '',
         '### 运行已保存的 Worker 任务',
@@ -1187,7 +1210,7 @@ function integrationPage(lang) {
         `curl "${API_BASE_URL}/api/v2/worker-runs/YOUR_RUN_ID/log" \\`,
         '  -H "Authorization: Bearer YOUR_API_KEY"',
         '',
-        `curl "${API_BASE_URL}/api/v2/worker-runs/YOUR_RUN_ID/result?offset=0&limit=20" \\`,
+        `curl "${API_BASE_URL}/api/v2/worker-runs/YOUR_RUN_ID/result?offset=1&limit=20" \\`,
         '  -H "Authorization: Bearer YOUR_API_KEY"',
         '```',
         '',
@@ -1233,7 +1256,7 @@ function integrationPage(lang) {
         '### Search or list Workers',
         '',
         '```bash',
-        `curl "${API_BASE_URL}/api/v2/store?keyword=coffee&offset=0&limit=20"`,
+        `curl "${API_BASE_URL}/api/v2/store?keyword=coffee&offset=1&limit=20"`,
         '```',
         '',
         '### Read the input schema',
@@ -1256,7 +1279,7 @@ function integrationPage(lang) {
         `curl -X POST "${API_BASE_URL}/api/v2/workers/YOUR_WORKER_ID/runs" \\`,
         '  -H "Authorization: Bearer YOUR_API_KEY" \\',
         '  -H "Content-Type: application/json" \\',
-        '  --data \'{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}\'',
+        '  --data \'{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":1}\'',
         '```',
         '',
         '### Saved Worker task run',
@@ -1290,7 +1313,7 @@ function integrationPage(lang) {
         `curl "${API_BASE_URL}/api/v2/worker-runs/YOUR_RUN_ID/log" \\`,
         '  -H "Authorization: Bearer YOUR_API_KEY"',
         '',
-        `curl "${API_BASE_URL}/api/v2/worker-runs/YOUR_RUN_ID/result?offset=0&limit=20" \\`,
+        `curl "${API_BASE_URL}/api/v2/worker-runs/YOUR_RUN_ID/result?offset=1&limit=20" \\`,
         '  -H "Authorization: Bearer YOUR_API_KEY"',
         '```',
         '',
@@ -1512,7 +1535,7 @@ run = coreclaw_request(
             }
         },
         "is_async": True,
-        "offset": 0,
+        "offset": 1,
         "limit": 20,
     },
 )
@@ -1523,7 +1546,7 @@ completed_run = wait_for_run(run_id)
 results = coreclaw_request(
     "GET",
     f"/api/v2/worker-runs/{run_id}/result",
-    params={"offset": 0, "limit": 20},
+    params={"offset": 1, "limit": 20},
 )
 print({"status": completed_run["status"], "results": results["data"]})`],
         nodejs: ['js', `const API_BASE_URL = "${API_BASE_URL}";
@@ -1595,7 +1618,7 @@ const run = await coreclawRequest(\`/api/v2/workers/\${WORKER_ID}/runs\`, {
       },
     },
     is_async: true,
-    offset: 0,
+    offset: 1,
     limit: 20,
   },
 });
@@ -1606,7 +1629,7 @@ console.log("Run ID:", runId);
 const completedRun = await waitForRun(runId);
 
 const results = await coreclawRequest(\`/api/v2/worker-runs/\${runId}/result\`, {
-  query: { offset: 0, limit: 20 },
+  query: { offset: 1, limit: 20 },
 });
 console.log({ status: completedRun.status, results: results.data });`],
         java: ['java', javaExample()],
@@ -1702,7 +1725,7 @@ $run = coreclaw_request("POST", "/api/v2/workers/" . rawurlencode($workerId) . "
         ],
     ],
     "is_async" => true,
-    "offset" => 0,
+    "offset" => 1,
     "limit" => 20,
 ]);
 $runId = $run["data"]["run_slug"];
@@ -1711,7 +1734,7 @@ echo "Run ID: " . $runId . PHP_EOL;
 $completedRun = wait_for_run($runId);
 
 $results = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId) . "/result", [
-    "offset" => 0,
+    "offset" => 1,
     "limit" => 20,
 ]);
 print_r(["status" => $completedRun["status"], "results" => $results["data"]]);`],
@@ -1770,7 +1793,7 @@ func main() {
             },
         },
         "is_async": true,
-        "offset": 0,
+        "offset": 1,
         "limit": 20,
     }
     run := coreclawRequest(apiKey, "POST", "/api/v2/workers/"+url.PathEscape(workerID)+"/runs", nil, runPayload)
@@ -1783,7 +1806,7 @@ func main() {
 
     completedRun := waitForRun(apiKey, runInfo.RunSlug, 300*time.Second)
     results := coreclawRequest(apiKey, "GET", "/api/v2/worker-runs/"+url.PathEscape(runInfo.RunSlug)+"/result", url.Values{
-        "offset": {"0"},
+        "offset": {"1"},
         "limit":  {"20"},
     }, nil)
     fmt.Println("Status:", completedRun.Status, "Results:", string(results.Data))
@@ -1901,7 +1924,7 @@ function javaExample() {
         '            + "\\"max_results\\":1"',
         '            + "}}},"',
         '            + "\\"is_async\\":true,"',
-        '            + "\\"offset\\":0,"',
+        '            + "\\"offset\\":1,"',
         '            + "\\"limit\\":20"',
         '            + "}";',
         '        String run = request("POST", "/api/v2/workers/" + encode(WORKER_ID) + "/runs", null, runBody);',
@@ -1909,7 +1932,7 @@ function javaExample() {
         '',
         '        String runId = extract(run, "\\\\\\"run_slug\\\\\\"\\\\s*:\\\\s*\\\\\\"([^\\\\\\"]+)\\\\\\"");',
         '        String completedRun = waitForRun(runId, 300_000);',
-        '        String results = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/result", Map.of("offset", "0", "limit", "20"), null);',
+        '        String results = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/result", Map.of("offset", "1", "limit", "20"), null);',
         '        System.out.println("status=" + extract(completedRun, "\\\"status\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"") + " results=" + results);',
         '    }',
         '',

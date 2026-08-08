@@ -28,7 +28,7 @@ sidebar:
   },
   "is_async": true,
   "limit": 20,
-  "offset": 0,
+  "offset": 1,
   "callback_url": "https://example.com/coreclaw/callbacks"
 }
 ```
@@ -62,5 +62,3 @@ CoreClaw 发送的回调请求使用 `POST` 方法，Body 为 JSON：
 2. 根据运行标识做幂等处理，避免重复通知造成重复写入。
 3. 收到回调后，如需完整结果，请继续调用运行详情、日志、结果或导出接口读取。
 4. 不要把 API key 放进 `callback_url`；如需校验来源，请在自己的回调服务中使用独立签名或随机路径。
-
-> 公开 API 契约未定义回调签名、重试策略、投递顺序或至少一次投递保证。请将接收端设计为按 `run_slug` 幂等，并始终重新读取运行详情以确认权威的 `status`。如需明确的投递保证，请联系 [support@coreclaw.com](mailto:support@coreclaw.com)。

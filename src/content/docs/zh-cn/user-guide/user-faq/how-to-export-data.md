@@ -54,7 +54,7 @@ sidebar:
 ### 获取运行结果
 
 ```bash
-GET /api/v2/worker-runs/{runId}/result?offset=0&limit=20
+GET /api/v2/worker-runs/{runId}/result?offset=1&limit=20
 ```
 
 ### 导出运行结果
@@ -73,7 +73,7 @@ GET /api/v2/worker-runs/{runId}/result/export?format=csv&filter_keys=title%2Cpri
 
 推荐流程：
 
-1. 调用 `GET /api/v2/worker-runs?offset=0&limit=100` 分页获取 Run 列表。`limit` 最大为 `100`，如果有 12,000 个 Run，大约需要请求 120 页。
+1. 调用 `GET /api/v2/worker-runs?offset=1&limit=100` 分页获取 Run 列表。`limit` 最大为 `100`，如果有 12,000 个 Run，大约需要请求 120 页。
 2. 从列表响应中收集每个 Run ID。列表接口返回项里的 `slug` 字段就是后续导出接口要用的 `runId`。
 3. 对每个 `runId` 调用 `GET /api/v2/worker-runs/{runId}/result/export?format=csv` 或 `format=json`。
 4. 读取导出响应里的 `data.download_url`，再下载对应文件。

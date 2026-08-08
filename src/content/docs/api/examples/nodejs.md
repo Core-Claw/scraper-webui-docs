@@ -81,7 +81,7 @@ const run = await coreclawRequest(`/api/v2/workers/${WORKER_ID}/runs`, {
       },
     },
     is_async: true,
-    offset: 0,
+    offset: 1,
     limit: 20,
   },
 });
@@ -92,7 +92,7 @@ console.log("Run ID:", runId);
 const completedRun = await waitForRun(runId);
 
 const results = await coreclawRequest(`/api/v2/worker-runs/${runId}/result`, {
-  query: { offset: 0, limit: 20 },
+  query: { offset: 1, limit: 20 },
 });
 console.log({ status: completedRun.status, results: results.data });
 ```

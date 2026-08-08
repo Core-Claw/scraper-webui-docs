@@ -43,7 +43,7 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 | `input` | 否 | `any` | Worker 输入参数。Worker 表单字段通常放在 `input.parameters.custom` 下；应先读取该 Worker 的 input schema，再按 schema 构造。 |
 | `is_async` | 否 | `boolean` | 出于 API 一致性而接受，但对排队运行无效：排队运行始终进入队列，响应返回 `queue_ref`，不会返回同步运行结果。如需同步运行，请改用[运行 Worker](/zh-cn/api/workers/run/)。 |
 | `limit` | 否 | `integer` | 出于 API 一致性而接受，但对排队运行响应无效——响应返回 `queue_ref` 而非结果窗口。约束：默认 `20`；范围 1-100。 |
-| `offset` | 否 | `integer` | 出于 API 一致性而接受，但对排队运行响应无效。约束：默认 `0`；最小 0。 |
+| `offset` | 否 | `integer` | 出于 API 一致性而接受，但对排队运行响应无效。约束：默认 `1`；最小 0。 |
 | `version` | 否 | `string` | 可选 Worker 版本。除非已经确认该 Worker 存在某个具体可用版本，否则建议省略；并非所有 Worker 都接受 `latest` 作为显式版本值。 |
 
 ### JSON 示例

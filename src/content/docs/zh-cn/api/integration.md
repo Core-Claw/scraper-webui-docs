@@ -28,7 +28,7 @@ CoreClaw 有两类常见运行入口。直接运行 Worker 适合调用方每次
 ### 搜索或列出 Worker
 
 ```bash
-curl "https://openapi.coreclaw.com/api/v2/store?keyword=coffee&offset=0&limit=20"
+curl "https://openapi.coreclaw.com/api/v2/store?keyword=coffee&offset=1&limit=20"
 ```
 
 ### 读取输入 schema
@@ -42,9 +42,7 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 ## 3. 选择执行模式
 
 - `is_async: true` 表示异步提交，不等待执行结果。响应会返回 `data.run_slug`，后续异步运行使用 `runId` 轮询详情、日志和结果。
-- `is_async: false` 表示等待执行结果，相当于 run-and-wait，会等待运行完成。同步响应会直接返回 `run_status`、`running_duration` 和分页 `results` 结果窗口——运行在等待时限内完成时无需轮询。`offset` / `limit` 只控制同步响应中附带的结果窗口，不影响完整结果集。完整字段列表见[运行 Worker](/zh-cn/api/workers/run/) 的同步响应小节。
-
-> **⚠️ 同步等待上限：5 分钟。** 当 `is_async: false` 时，平台**最多等待 5 分钟**。若运行在 5 分钟内未完成，请求仍会返回，运行会在后台继续执行——此时必须改用运行**查询接口**按 `runId` 轮询状态、日志和结果。预计运行可能超过 5 分钟时，建议使用 `is_async: true`。
+- `is_async: false` 表示等待执行结果，相当于 run-and-wait，会等待运行完成。`offset` / `limit` 只控制同步响应中附带的结果窗口，不影响完整结果集。
 - `callback_url` 可用于接收状态变化或结束通知，但回调不能替代结果接口。需要完整数据时仍应按 `runId` 查询或导出。
 
 ### 直接运行 Worker
@@ -53,7 +51,7 @@ curl "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/input-schema"
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":0}'
+  --data '{"input":{"parameters":{"custom":{"keywords":["coffee"],"base_location":"New York,USA","max_results":1}}},"is_async":true,"limit":20,"offset":1}'
 ```
 
 ### 运行已保存的 Worker 任务
@@ -87,7 +85,7 @@ curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID" \
 curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/log" \
   -H "Authorization: Bearer YOUR_API_KEY"
 
-curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=0&limit=20" \
+curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result?offset=1&limit=20" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -108,4 +106,3 @@ curl "https://openapi.coreclaw.com/api/v2/worker-runs/YOUR_RUN_ID/result/export?
 2. `401` 通常表示 token 缺失或无效；`422` 通常表示字段值、分页范围或请求语义不符合契约。
 3. 保存 `request_id`，用于排查失败请求。
 4. 对 `429` 做退避重试，不要立即高频重放请求。
-5. 每个套餐还限制**同时**执行的运行数量；超过上限的启动请求会被拒绝，且不创建运行、不扣余额。详见[并发运行限制](/zh-cn/user-guide/run-worker/concurrency-limits/)；批量任务请在客户端自行排队。

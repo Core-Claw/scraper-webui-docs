@@ -30,14 +30,14 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 参数 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `offset` | 否 | `integer` | 页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。约束：默认 `0`；最小 0。 |
+| `offset` | 否 | `integer` | 页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。约束：默认 `1`；最小 0。 |
 | `limit` | 否 | `integer` | 每页数量，列表接口上限 `100`。约束：默认 `20`；范围 1-100。 |
 | `status` | 否 | `string` | 按队列状态过滤。允许值：`waiting`（运行暂存在队列、尚未开始执行）和 `inactive`。 |
 
 ## 请求示例
 
 ```bash
-curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=0&limit=20&status=waiting" \
+curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=1&limit=20&status=waiting" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 

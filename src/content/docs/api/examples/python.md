@@ -84,7 +84,7 @@ run = coreclaw_request(
             }
         },
         "is_async": True,
-        "offset": 0,
+        "offset": 1,
         "limit": 20,
     },
 )
@@ -95,7 +95,7 @@ completed_run = wait_for_run(run_id)
 results = coreclaw_request(
     "GET",
     f"/api/v2/worker-runs/{run_id}/result",
-    params={"offset": 0, "limit": 20},
+    params={"offset": 1, "limit": 20},
 )
 print({"status": completed_run["status"], "results": results["data"]})
 ```

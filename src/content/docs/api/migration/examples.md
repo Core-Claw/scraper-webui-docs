@@ -50,7 +50,7 @@ run_response = requests.post(
             }
         },
         "is_async": True,
-        "offset": 0,
+        "offset": 1,
         "limit": 20,
     },
     timeout=60,
@@ -64,7 +64,7 @@ run_id = run_payload["data"]["run_slug"]
 result_response = requests.get(
     f"{base_url}/api/v2/worker-runs/{run_id}/result",
     headers=headers,
-    params={"offset": 0, "limit": 20},
+    params={"offset": 1, "limit": 20},
     timeout=60,
 )
 result_response.raise_for_status()
@@ -98,7 +98,7 @@ const runResponse = await fetch(
         body: JSON.stringify({
             input: { parameters: { custom: { keywords: ['coffee'] } } },
             is_async: true,
-            offset: 0,
+            offset: 1,
             limit: 20,
         }),
     }
@@ -113,7 +113,7 @@ const runId = runPayload.data.run_slug
 const resultUrl = new URL(
     `${baseUrl}/api/v2/worker-runs/${encodeURIComponent(runId)}/result`
 )
-resultUrl.search = new URLSearchParams({ offset: '0', limit: '20' })
+resultUrl.search = new URLSearchParams({ offset: '1', limit: '20' })
 const resultResponse = await fetch(resultUrl, {
     headers: { Authorization: `Bearer ${apiKey}` },
 })
@@ -150,7 +150,7 @@ public class CoreClawV2Migration {
 
         String body = "{\"input\":{\"parameters\":{\"custom\":{"
             + "\"keywords\":[\"coffee\"]}}},"
-            + "\"is_async\":true,\"offset\":0,\"limit\":20}";
+            + "\"is_async\":true,\"offset\":1,\"limit\":20}";
 
         HttpRequest runRequest = HttpRequest.newBuilder()
             .uri(URI.create(BASE_URL + "/api/v2/workers/" + encode(workerId) + "/runs"))
@@ -163,7 +163,7 @@ public class CoreClawV2Migration {
         String runId = extract(runResponse.body(), "\\\"run_slug\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"");
 
         String resultUrl = BASE_URL + "/api/v2/worker-runs/" + encode(runId)
-            + "/result?offset=0&limit=20";
+            + "/result?offset=1&limit=20";
         HttpRequest resultRequest = HttpRequest.newBuilder()
             .uri(URI.create(resultUrl))
             .header("Authorization", "Bearer " + apiKey)
@@ -242,12 +242,12 @@ function request(string $method, string $url, string $apiKey, ?array $body = nul
 $run = request("POST", $baseUrl . "/api/v2/workers/" . rawurlencode($workerId) . "/runs", $apiKey, [
     "input" => ["parameters" => ["custom" => ["keywords" => ["coffee"]]]],
     "is_async" => true,
-    "offset" => 0,
+    "offset" => 1,
     "limit" => 20,
 ]);
 $runId = $run["data"]["run_slug"];
 
-$query = http_build_query(["offset" => 0, "limit" => 20]);
+$query = http_build_query(["offset" => 1, "limit" => 20]);
 $results = request(
     "GET",
     $baseUrl . "/api/v2/worker-runs/" . rawurlencode($runId) . "/result?" . $query,
@@ -298,7 +298,7 @@ func main() {
             },
         },
         "is_async": true,
-        "offset":   0,
+        "offset":   1,
         "limit":    20,
     }
     run := request("POST", baseURL+"/api/v2/workers/"+url.PathEscape(workerID)+"/runs", apiKey, runBody)
@@ -307,7 +307,7 @@ func main() {
         panic(err)
     }
 
-    query := url.Values{"offset": {"0"}, "limit": {"20"}}
+    query := url.Values{"offset": {"1"}, "limit": {"20"}}
     resultURL := baseURL + "/api/v2/worker-runs/" + url.PathEscape(info.RunSlug) + "/result?" + query.Encode()
     results := request("GET", resultURL, apiKey, nil)
     fmt.Println(string(results.Data))

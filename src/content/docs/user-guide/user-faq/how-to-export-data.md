@@ -50,7 +50,7 @@ For automated data retrieval, use the API. The export endpoint works on one Work
 ### Get Run Results
 
 ```bash
-GET /api/v2/worker-runs/{runId}/result?offset=0&limit=20
+GET /api/v2/worker-runs/{runId}/result?offset=1&limit=20
 ```
 
 ### Export Run Result
@@ -69,7 +69,7 @@ If each Task execution creates a separate Run, there is no single API call that 
 
 Recommended flow:
 
-1. Use `GET /api/v2/worker-runs?offset=0&limit=100` to list Runs. The maximum `limit` is `100`, so 12,000 Runs requires about 120 pages.
+1. Use `GET /api/v2/worker-runs?offset=1&limit=100` to list Runs. The maximum `limit` is `100`, so 12,000 Runs requires about 120 pages.
 2. Collect each Run ID from the list response. In the list API response, use the `slug` field as the `runId`.
 3. For each `runId`, call `GET /api/v2/worker-runs/{runId}/result/export?format=csv` or `format=json`.
 4. Read `data.download_url` from the export response and download the file.

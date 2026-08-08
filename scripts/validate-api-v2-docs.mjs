@@ -336,11 +336,11 @@ for (const rel of [
 for (const { rel, required } of [
     {
         rel: 'src/content/docs/api/migration/v1-to-v2.md',
-        required: ['Migrate production integrations as soon as possible', '13 operations', '34 public operations', 'other 21', 'offset = page_index', 'request_id'],
+        required: ['Migrate production integrations as soon as possible', '13 operations', '39 public operations', 'other 26', 'offset = page_index', 'request_id'],
     },
     {
         rel: 'src/content/docs/zh-cn/api/migration/v1-to-v2.md',
-        required: ['请尽快迁移生产集成', '13 个接口', '34 个公开接口', '其余 21 个', 'offset = page_index', 'request_id'],
+        required: ['请尽快迁移生产集成', '13 个接口', '39 个公开接口', '其余 26 个', 'offset = page_index', 'request_id'],
     },
 ]) {
     const text = await readRequiredDoc(rel)
@@ -422,6 +422,27 @@ for (const { rel, required } of [
         if (!text.includes(phrase)) {
             errors.push(`API index docs need clearer production and usage guidance: ${rel} missing "${phrase}"`)
         }
+    }
+}
+
+for (const rel of [
+    'src/content/docs/api/index.md',
+    'src/content/docs/zh-cn/api/index.md',
+]) {
+    const text = await readRequiredDoc(rel)
+    const indexedRows = [...text.matchAll(/^\| \d+ \| `([A-Z]+)` \| `([^`]+)` \|/gm)]
+        .map(match => `${match[1]} ${match[2]}`)
+    const indexedOperations = new Set(indexedRows)
+    const expectedOperations = new Set(publicOperations.map(op => op.key))
+
+    if (indexedRows.length !== indexedOperations.size) {
+        errors.push(`${rel} must not contain duplicate endpoint rows.`)
+    }
+    for (const key of expectedOperations) {
+        if (!indexedOperations.has(key)) errors.push(`${rel} is missing public operation ${key}.`)
+    }
+    for (const key of indexedOperations) {
+        if (!expectedOperations.has(key)) errors.push(`${rel} lists a non-public operation ${key}.`)
     }
 }
 
@@ -776,6 +797,19 @@ for (const rel of [
     const text = await readRequiredDoc(rel)
     if (/list (all )?saved (task )?templates|列出(所有)?已保存/i.test(text)) {
         errors.push(`Create Worker Task page must describe creation, not listing: ${rel}`)
+    }
+}
+
+// 7. Examples must use canonical 1-based pagination (offset=1 is page 1;
+//    offset=0 is only a legacy alias). Catches generator regressions like the
+//    old offset:0 defaults in directWorkerRunExample / sampleValue.
+for (const doc of docTexts) {
+    const codeBlocks = [...doc.text.matchAll(/```json\n([\s\S]*?)```/g)]
+    for (const [, code] of codeBlocks) {
+        const offsetMatch = code.match(/"offset"\s*:\s*(\d+)/)
+        if (offsetMatch && offsetMatch[1] === '0') {
+            errors.push(`example uses non-canonical "offset": 0 (should be 1): ${doc.file}`)
+        }
     }
 }
 

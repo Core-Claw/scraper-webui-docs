@@ -29,17 +29,17 @@ import ApiPlayground from '../../../../../components/ApiPlayground.astro'
 
 | 参数 | 必填 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `offset` | 否 | `integer` | 页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。 约束：默认 `0`；最小 0。 |
+| `offset` | 否 | `integer` | 页码，从 1 开始。`offset=1` 为第 1 页，`offset=2` 为第 2 页；`offset=0` 兼容作为第 1 页。超出总页数时返回空列表。 约束：默认 `1`；最小 0。 |
 | `limit` | 否 | `integer` | 每页返回数量；列表和结果接口的 `limit` 上限为 `100`。 约束：默认 `20`；范围 1-100。 |
 | `worker_id` | 否 | `string` | Worker slug 或 path；如果使用 `owner/name` 路径，请写成 `owner~name`。 |
 | `status` | 否 | `enum: ready, running, succeeded, failed, aborting` | 运行状态筛选。 约束：可选值：`ready`、`running`、`succeeded`、`failed`、`aborting`。 |
-| `start_time` | 否 | `integer`（Unix 秒） | 按 `created_at` 起始时间筛选，Unix 秒。传入时必须同时传 `end_time`，且两者必须落在同一个自然月内。 |
-| `end_time` | 否 | `integer`（Unix 秒） | 按 `created_at` 结束日期筛选，Unix 秒。传该日 `00:00:00`；服务端会 +86400 秒以包含整个结束日。必须与 `start_time` 在同一个自然月内。 |
+| `start_time` | 否 | `integer` | 按 `created_at` 起始时间筛选，Unix 秒。传入时必须同时传 `end_time`，且两者必须落在同一个自然月内。 |
+| `end_time` | 否 | `integer` | 按 `created_at` 结束日期筛选，Unix 秒。传该日 `00:00:00`；服务端会 +86400 秒以包含整个结束日。必须与 `start_time` 在同一个自然月内。 |
 
 ## 请求示例
 
 ```bash
-curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&worker_id=YOUR_WORKER_ID&status=running" \
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=1&limit=20&worker_id=YOUR_WORKER_ID&status=running" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -53,6 +53,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&w
     "list": [
       {
         "duration": 10,
+        "err_msg": "",
         "finished_at": 1782091210,
         "origin": "openapi",
         "results": 1,

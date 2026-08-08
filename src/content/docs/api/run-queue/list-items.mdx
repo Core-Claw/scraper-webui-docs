@@ -30,14 +30,14 @@ Typical uses:
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `offset` | No | `integer` | Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list. Constraints: default `0`; minimum 0. |
+| `offset` | No | `integer` | Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list. Constraints: default `1`; minimum 0. |
 | `limit` | No | `integer` | Page size. `limit` is capped at `100` on list endpoints. Constraints: default `20`; range 1-100. |
 | `status` | No | `string` | Filter by queue status. Allowed values: `waiting` (the run is held in the queue and not running yet) and `inactive`. |
 
 ## Request Example
 
 ```bash
-curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=0&limit=20&status=waiting" \
+curl -X GET "https://openapi.coreclaw.com/api/v2/run-queue/items?offset=1&limit=20&status=waiting" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 

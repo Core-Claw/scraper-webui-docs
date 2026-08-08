@@ -21,6 +21,7 @@ CoreClaw API 使用 HTTP 状态码表达请求层结果，并使用响应体中�
 | `13000` | `RATE_LIMITED` | too many requests |
 | `14000` | `DATABASE_ERROR` | database error |
 | `30001` | `INSUFFICIENT_BALANCE` | account balance is insufficient |
+| `30003` | `PLAN_CONCURRENCY_LIMITED` | the current running tasks have reached the plan limit |
 | `50001` | `WORKER_NOT_FOUND` | worker does not exist |
 | `50002` | `WORKER_RUN_FAILED` | worker run failed |
 | `50003` | `WORKER_VERSION_UNAVAILABLE` | the worker version is not available |
@@ -34,5 +35,6 @@ CoreClaw API 使用 HTTP 状态码表达请求层结果，并使用响应体中�
 1. `12001` 和 `12002` 通常需要检查 Bearer token、`api-key` 请求头或 query token。
 2. `13000` 表示触发限流，应降低请求频率并做退避重试。
 3. `30001` 表示账户余额不足，应先处理账户余额或额度。
-4. `50001`、`50003`、`60001`、`70001` 通常与 Worker、任务、版本或运行 ID 不存在或不可用有关。
-5. `10000`、`14000`、`16000` 属于服务端或能力状态问题，请记录 `request_id` 后再排查。
+4. `30003` 表示计划并发上限已达上限，应等待已有任务完成后再提交。
+5. `50001`、`50003`、`60001`、`70001` 通常与 Worker、任务、版本或运行 ID 不存在或不可用有关。
+6. `10000`、`14000`、`16000` 属于服务端或能力状态问题，请记录 `request_id` 后再排查。

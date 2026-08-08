@@ -200,7 +200,7 @@ In addition to the standard MCP endpoint at `/mcp`, the server exposes a REST co
 curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
   -H "Content-Type: application/json" \
   -H "api-key: YOUR_CORECLAW_API_KEY" \
-  -d '{"keyword":"amazon","offset":0,"limit":5}'
+  -d '{"keyword":"amazon","offset":1,"limit":5}'
 ```
 
 See [Generic HTTP Client](/integrations/ai/mcp/generic-http/) for JSON-RPC and REST examples.

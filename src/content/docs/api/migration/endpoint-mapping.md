@@ -5,7 +5,7 @@ sidebar:
     order: 2
 ---
 
-The V1-era public API documented 13 operations: ten under `/api/v1` and three public operations without a version prefix. The table below maps all 13 to V2. V2 exposes 34 public operations in total; the other 21 are new capabilities without a direct V1 equivalent. A single V1 body often becomes a combination of a V2 path, query string, and smaller JSON body.
+The V1-era public API documented 13 operations: ten under `/api/v1` and three public operations without a version prefix. The table below maps all 13 to V2. V2 exposes 39 public operations in total; the other 26 are new capabilities without a direct V1 equivalent. A single V1 body often becomes a combination of a V2 path, query string, and smaller JSON body.
 
 ## Complete endpoint comparison
 
@@ -62,7 +62,7 @@ GET /api/v2/worker-runs/RUN_ID/result?offset=3&limit=20
 ```
 
 ```http
-GET /api/v2/worker-runs?offset=0&limit=20&status=succeeded&worker_id=WORKER_ID
+GET /api/v2/worker-runs?offset=1&limit=20&status=succeeded&worker_id=WORKER_ID
 ```
 
 ### Export selected fields

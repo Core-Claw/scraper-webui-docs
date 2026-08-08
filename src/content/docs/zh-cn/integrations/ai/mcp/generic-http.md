@@ -43,7 +43,7 @@ POST https://mcp.coreclaw.com/mcp/<tool_name>
 curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
   -H "Content-Type: application/json" \
   -H "api-key: YOUR_CORECLAW_API_KEY" \
-  -d '{"keyword":"amazon","offset":0,"limit":5}'
+  -d '{"keyword":"amazon","offset":1,"limit":5}'
 ```
 
 需要认证的运行示例：
@@ -129,7 +129,7 @@ curl -X POST https://mcp.coreclaw.com/mcp \
     "method": "tools/call",
     "params": {
       "name": "list_store_workers",
-      "arguments": {"keyword": "amazon", "offset": 0, "limit": 5}
+      "arguments": {"keyword": "amazon", "offset": 1, "limit": 5}
     }
   }'
 ```

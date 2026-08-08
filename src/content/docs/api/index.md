@@ -37,7 +37,7 @@ Public endpoints do not require a token, including proxy region lookup and Store
 
 - Read the Worker input schema before sending `input`; fields differ by Worker.
 - Use `POST /api/v2/workers/{workerId}/runs` for a direct Worker run, or `POST /api/v2/worker-tasks/{workerTaskId}/runs` for a saved task run.
-- `is_async: true` returns immediately; use `runId` to read details, logs, and results. `is_async: false` waits for completion and returns a synchronous response with `run_status`, `running_duration`, and a paginated `results` window — see the [Run Worker](/api/workers/run/) sync response section for details.
+- `is_async: true` returns immediately; use `runId` to read details, logs, and results. `is_async: false` waits for completion and returns a synchronous result window.
 - `offset` is a 1-based page number on list and result endpoints (`offset=1` is page 1, `offset=0` is accepted as page 1); `limit` is capped at `100` on list and result endpoints.
 - Use export endpoints when the caller needs a downloadable result file instead of fetching every page in a browser.
 
@@ -91,3 +91,8 @@ Most JSON responses include `code`, `message`, `request_id`, and `data`. HTTP st
 | 32 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [Get Worker Last Run Log](/api/worker-runs/worker-last-log/) |
 | 33 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [Rerun Worker Last Run](/api/worker-runs/worker-last-rerun/) |
 | 34 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [List Worker Last Run Results](/api/worker-runs/worker-last-result/) |
+| 35 | `POST` | `/api/v2/workers/{workerId}/queued-runs` | [Queue Worker Run](/api/run-queue/queued-run/) |
+| 36 | `GET` | `/api/v2/run-queue/items` | [List Run Queue Items](/api/run-queue/list-items/) |
+| 37 | `POST` | `/api/v2/run-queue/items/activate` | [Activate Run Queue Items](/api/run-queue/activate-items/) |
+| 38 | `POST` | `/api/v2/run-queue/items/release` | [Release Run Queue Items](/api/run-queue/release-items/) |
+| 39 | `POST` | `/api/v2/run-queue/items/{queueId}/release` | [Release One Run Queue Item](/api/run-queue/release-item/) |

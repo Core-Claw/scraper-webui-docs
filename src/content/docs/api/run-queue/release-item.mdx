@@ -74,6 +74,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/123456/release
 | `data.results[]` | `array` | Per-item release outcome. The single item result mirrors the batch [Release Run Queue Items](/api/run-queue/release-items/) response. |
 | `data.results[].queue_ref` | `string` | The queue item ID this result refers to. |
 | `data.results[].success` | `boolean` | Whether the item was released. `false` when the item was no longer in a releasable state. |
+| `data.results[].error` | `string` | Optional. Present only when `success` is `false`, with a short reason why the item could not be released. |
 
 ## Notes
 

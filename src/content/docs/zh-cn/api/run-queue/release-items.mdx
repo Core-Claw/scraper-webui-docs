@@ -58,7 +58,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
   "data": {
     "results": [
       { "queue_ref": "123456", "success": true },
-      { "queue_ref": "123457", "success": false }
+      { "queue_ref": "123457", "success": false, "error": "item is not in waiting state" }
     ]
   },
   "message": "success",
@@ -73,6 +73,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/release" \
 | `data.results[]` | `array` | 每个提交项的释放结果，一个 `queue_ref` 一条。 |
 | `data.results[].queue_ref` | `string` | 该结果对应的队列项 ID。 |
 | `data.results[].success` | `boolean` | 是否释放成功。当项已不在可释放状态（例如已执行或已激活）时为 `false`。 |
+| `data.results[].error` | `string` | 可选。仅当 `success` 为 `false` 时出现，说明该队列项无法释放的简短原因。 |
 
 ## 说明
 

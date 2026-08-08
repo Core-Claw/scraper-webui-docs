@@ -74,6 +74,7 @@ curl -X POST "https://openapi.coreclaw.com/api/v2/run-queue/items/123456/release
 | `data.results[]` | `array` | 单项释放结果，结构与批量 [释放运行队列项](/zh-cn/api/run-queue/release-items/) 响应一致。 |
 | `data.results[].queue_ref` | `string` | 该结果对应的队列项 ID。 |
 | `data.results[].success` | `boolean` | 是否释放成功。当项已不在可释放状态时为 `false`。 |
+| `data.results[].error` | `string` | 可选。仅当 `success` 为 `false` 时出现，说明该队列项无法释放的简短原因。 |
 
 ## 说明
 

@@ -9,7 +9,7 @@ API V1 已计划停用。请尽快迁移生产集成。
 
 V2 不只是替换路径前缀。它把动作式 `POST` 接口改为资源化 URL，将标识符移入路径、筛选条件移入 query，运行状态改为字符串，并在响应 envelope 中增加 `request_id`。
 
-V1 时期的公开 API 文档共收录 13 个接口：10 个位于 `/api/v1` 下，另外 3 个公开接口没有版本前缀。接口对照表覆盖全部 13 个旧接口。V2 对外提供 34 个公开接口，其余 21 个是没有旧版直接对应项的新增能力。
+V1 时期的公开 API 文档共收录 13 个接口：10 个位于 `/api/v1` 下，另外 3 个公开接口没有版本前缀。接口对照表覆盖全部 13 个旧接口。V2 对外提供 39 个公开接口，其余 26 个是没有旧版直接对应项的新增能力。
 
 更新每个调用时请配合查看[接口对照表](/zh-cn/api/migration/endpoint-mapping/)；[迁移代码示例](/zh-cn/api/migration/examples/)覆盖 Python、Node.js、Java、PHP 和 Go。
 
@@ -30,7 +30,7 @@ V2 需要先确认 Worker 标识并放入 URL，推荐使用 Bearer 认证，分
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"version":"latest","input":{"parameters":{"custom":{"keywords":["coffee"]}}},"is_async":true,"offset":0,"limit":20}'
+  --data '{"version":"latest","input":{"parameters":{"custom":{"keywords":["coffee"]}}},"is_async":true,"offset":1,"limit":20}'
 ```
 
 响应仍通过 `data.run_slug` 返回运行标识。后续把这个值作为 V2 URL 中的 `{runId}`。

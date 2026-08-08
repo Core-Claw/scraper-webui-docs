@@ -9,7 +9,7 @@ API V1 is scheduled for retirement. Migrate production integrations as soon as p
 
 V2 is not a path-only upgrade. It replaces action-style `POST` endpoints with resource-oriented URLs, moves identifiers into paths, moves filters into query parameters, uses string run statuses, and adds `request_id` to the response envelope.
 
-The V1-era public API documented 13 operations: ten under `/api/v1` and three public operations without a version prefix. The endpoint comparison covers all 13. V2 exposes 34 public operations; the other 21 provide new capabilities without a direct V1 equivalent.
+The V1-era public API documented 13 operations: ten under `/api/v1` and three public operations without a version prefix. The endpoint comparison covers all 13. V2 exposes 39 public operations; the other 26 provide new capabilities without a direct V1 equivalent.
 
 Use the [endpoint mapping](/api/migration/endpoint-mapping/) while updating each call. The [migration examples](/api/migration/examples/) cover Python, Node.js, Java, PHP, and Go.
 
@@ -30,7 +30,7 @@ In V2, resolve the Worker identifier first, put it in the URL, prefer Bearer aut
 curl -X POST "https://openapi.coreclaw.com/api/v2/workers/YOUR_WORKER_ID/runs" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  --data '{"version":"latest","input":{"parameters":{"custom":{"keywords":["coffee"]}}},"is_async":true,"offset":0,"limit":20}'
+  --data '{"version":"latest","input":{"parameters":{"custom":{"keywords":["coffee"]}}},"is_async":true,"offset":1,"limit":20}'
 ```
 
 The response still returns the run identifier as `data.run_slug`. Use that value as `{runId}` in V2 URLs.

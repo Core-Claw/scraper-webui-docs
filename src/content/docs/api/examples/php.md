@@ -104,7 +104,7 @@ $run = coreclaw_request("POST", "/api/v2/workers/" . rawurlencode($workerId) . "
         ],
     ],
     "is_async" => true,
-    "offset" => 0,
+    "offset" => 1,
     "limit" => 20,
 ]);
 $runId = $run["data"]["run_slug"];
@@ -113,7 +113,7 @@ echo "Run ID: " . $runId . PHP_EOL;
 $completedRun = wait_for_run($runId);
 
 $results = coreclaw_request("GET", "/api/v2/worker-runs/" . rawurlencode($runId) . "/result", [
-    "offset" => 0,
+    "offset" => 1,
     "limit" => 20,
 ]);
 print_r(["status" => $completedRun["status"], "results" => $results["data"]]);

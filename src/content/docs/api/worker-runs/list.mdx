@@ -29,17 +29,17 @@ Use this endpoint to list run history in the account scope, optionally filtered 
 
 | Parameter | Required | Type | Description |
 | --- | --- | --- | --- |
-| `offset` | No | `integer` | Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list. Constraints: default `0`; minimum 0. |
+| `offset` | No | `integer` | Page number, 1-based. `offset=1` is page 1, `offset=2` is page 2; `offset=0` is accepted as page 1. Out-of-range pages return an empty list. Constraints: default `1`; minimum 0. |
 | `limit` | No | `integer` | Page size. `limit` is capped at `100` on list and result endpoints. Constraints: default `20`; range 1-100. |
 | `worker_id` | No | `string` | Worker slug or path. You may paste `owner/name`; the playground sends it as `owner~name` for query values. |
 | `status` | No | `enum: ready, running, succeeded, failed, aborting` | Run status filter. Constraints: allowed values: `ready`, `running`, `succeeded`, `failed`, `aborting`. |
-| `start_time` | No | `integer` (Unix seconds) | Filter runs by `created_at` start time, Unix seconds. When provided, `end_time` is also required, and both must fall in the same calendar month. |
-| `end_time` | No | `integer` (Unix seconds) | Filter runs by `created_at` end date, Unix seconds. Pass the day at `00:00:00`; the server adds 86400 seconds to include the whole day. Must be in the same calendar month as `start_time`. |
+| `start_time` | No | `integer` | Filter runs by `created_at` start time, Unix seconds. When provided, `end_time` is also required, and both must fall in the same calendar month. |
+| `end_time` | No | `integer` | Filter runs by `created_at` end date, Unix seconds. Pass the day at `00:00:00`; the server adds 86400 seconds to include the whole day. Must be in the same calendar month as `start_time`. |
 
 ## Request Example
 
 ```bash
-curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&worker_id=YOUR_WORKER_ID&status=running" \
+curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=1&limit=20&worker_id=YOUR_WORKER_ID&status=running" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -53,6 +53,7 @@ curl -X GET "https://openapi.coreclaw.com/api/v2/worker-runs?offset=0&limit=20&w
     "list": [
       {
         "duration": 10,
+        "err_msg": "",
         "finished_at": 1782091210,
         "origin": "openapi",
         "results": 1,

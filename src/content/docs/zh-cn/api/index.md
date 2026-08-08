@@ -37,7 +37,7 @@ API V1 已计划停用，请尽快完成迁移。先阅读[迁移指南](/zh-cn/
 
 - 发送 `input` 前先读取 Worker 输入 schema；不同 Worker 的输入字段不一定相同。
 - 直接运行 Worker 时使用 `POST /api/v2/workers/{workerId}/runs`；运行已保存任务时使用 `POST /api/v2/worker-tasks/{workerTaskId}/runs`。
-- `is_async: true` 表示提交后立即返回，再用 `runId` 查询详情、日志和结果；`is_async: false` 表示等待执行完成并返回同步响应（含 `run_status`、`running_duration` 和分页 `results` 结果窗口），详见[运行 Worker](/zh-cn/api/workers/run/) 的同步响应小节。
+- `is_async: true` 表示提交后立即返回，再用 `runId` 查询详情、日志和结果；`is_async: false` 表示等待执行完成并返回同步结果窗口。
 - 列表和结果接口的 `offset` 为从 1 开始的页码（`offset=1` 为第 1 页，`offset=0` 兼容作为第 1 页）；列表和结果接口的 `limit` 上限为 `100`。
 - 需要下载结果文件时使用导出接口，不要在前端逐页拉取全部结果。
 
@@ -91,3 +91,8 @@ API V1 已计划停用，请尽快完成迁移。先阅读[迁移指南](/zh-cn/
 | 32 | `GET` | `/api/v2/workers/{workerId}/runs/last/log` | [获取某 Worker 最近一次运行日志](/zh-cn/api/worker-runs/worker-last-log/) |
 | 33 | `POST` | `/api/v2/workers/{workerId}/runs/last/rerun` | [重跑某 Worker 最近一次运行](/zh-cn/api/worker-runs/worker-last-rerun/) |
 | 34 | `GET` | `/api/v2/workers/{workerId}/runs/last/result` | [查询某 Worker 最近一次运行结果](/zh-cn/api/worker-runs/worker-last-result/) |
+| 35 | `POST` | `/api/v2/workers/{workerId}/queued-runs` | [排队提交 Worker 运行](/zh-cn/api/run-queue/queued-run/) |
+| 36 | `GET` | `/api/v2/run-queue/items` | [查询运行队列项目](/zh-cn/api/run-queue/list-items/) |
+| 37 | `POST` | `/api/v2/run-queue/items/activate` | [激活运行队列项目](/zh-cn/api/run-queue/activate-items/) |
+| 38 | `POST` | `/api/v2/run-queue/items/release` | [批量释放运行队列项目](/zh-cn/api/run-queue/release-items/) |
+| 39 | `POST` | `/api/v2/run-queue/items/{queueId}/release` | [释放单个运行队列项目](/zh-cn/api/run-queue/release-item/) |

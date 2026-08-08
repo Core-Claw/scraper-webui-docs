@@ -43,7 +43,7 @@ public class CoreClawExample {
             + "\"max_results\":1"
             + "}}},"
             + "\"is_async\":true,"
-            + "\"offset\":0,"
+            + "\"offset\":1,"
             + "\"limit\":20"
             + "}";
         String run = request("POST", "/api/v2/workers/" + encode(WORKER_ID) + "/runs", null, runBody);
@@ -51,7 +51,7 @@ public class CoreClawExample {
 
         String runId = extract(run, "\\\"run_slug\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"");
         String completedRun = waitForRun(runId, 300_000);
-        String results = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/result", Map.of("offset", "0", "limit", "20"), null);
+        String results = request("GET", "/api/v2/worker-runs/" + encode(runId) + "/result", Map.of("offset", "1", "limit", "20"), null);
         System.out.println("status=" + extract(completedRun, "\"status\"\s*:\s*\"([^\"]+)\"") + " results=" + results);
     }
 
