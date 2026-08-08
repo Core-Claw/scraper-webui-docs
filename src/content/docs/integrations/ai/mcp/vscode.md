@@ -32,7 +32,7 @@ VS Code with Copilot supports MCP via **Streamable HTTP** transport. Configure i
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "YOUR_CORECLAW_API_KEY"
+        "Authorization": "Bearer YOUR_CORECLAW_API_KEY"
       }
     }
   }

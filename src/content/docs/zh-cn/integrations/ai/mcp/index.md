@@ -38,7 +38,7 @@ https://mcp.coreclaw.com/mcp
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "YOUR_CORECLAW_API_KEY"
+        "Authorization": "Bearer YOUR_CORECLAW_API_KEY"
       }
     }
   }
@@ -49,11 +49,11 @@ https://mcp.coreclaw.com/mcp
 
 ## 认证方式
 
-托管 MCP 服务支持以下任一请求头：
+托管 MCP 服务使用 `Authorization: Bearer <token>` 认证——与 CoreClaw OpenAPI v2 相同的请求头。为兼容旧集成，`api-key` 和 `X-API-Key` 请求头仍被接受：
 
-- `api-key: YOUR_CORECLAW_API_KEY`
-- `X-API-Key: YOUR_CORECLAW_API_KEY`
-- `Authorization: Bearer YOUR_CORECLAW_API_KEY`
+- `Authorization: Bearer YOUR_CORECLAW_API_KEY`（推荐）
+- `api-key: YOUR_CORECLAW_API_KEY`（旧版）
+- `X-API-Key: YOUR_CORECLAW_API_KEY`（旧版）
 
 MCP 服务会把认证信息转发给 CoreClaw OpenAPI v2，上游请求统一使用 `Authorization: Bearer <token>`。
 
@@ -61,7 +61,7 @@ MCP 服务会把认证信息转发给 CoreClaw OpenAPI v2，上游请求统一�
 
 ## 可用工具
 
-CoreClaw MCP 服务公开 **37 个工具**——34 个 OpenAPI v2 操作（1:1）加 3 个编排助手。Worker 版本创建/更新接口和 Worker internal 详情接口属于内部接口，不会通过 MCP 暴露。
+CoreClaw MCP 服务公开 **42 个工具**——39 个 OpenAPI v2 操作（1:1）加 3 个编排助手。Worker 版本创建/更新接口和 Worker internal 详情接口属于内部接口，不会通过 MCP 暴露。
 
 ### 发现与预检查
 
@@ -104,6 +104,16 @@ CoreClaw MCP 服务公开 **37 个工具**——34 个 OpenAPI v2 操作（1:1�
 |------|------|---------|
 | `run_worker` | 使用临时 JSON 输入运行 Worker | `POST /api/v2/workers/{workerId}/runs` |
 | `run_worker_task` | 运行已保存的 Worker 任务 | `POST /api/v2/worker-tasks/{workerTaskId}/runs` |
+
+### 运行队列
+
+| 工具 | 说明 | 对应 API |
+|------|------|---------|
+| `queue_worker_run` | 将运行加入队列，等待显式激活而不是立即执行 | `POST /api/v2/workers/{workerId}/queued-runs` |
+| `list_run_queue_items` | 列出等待激活的排队运行 | `GET /api/v2/run-queue/items` |
+| `activate_run_queue_items` | 激活排队运行以执行 | `POST /api/v2/run-queue/items/activate` |
+| `release_run_queue_items` | 将排队运行释放回队列 | `POST /api/v2/run-queue/items/release` |
+| `release_run_queue_item` | 释放单个排队运行 | `POST /api/v2/run-queue/items/{queueId}/release` |
 
 ### 运行查询
 
@@ -199,7 +209,7 @@ MCP 服务会把 `input_json` 包装为 CoreClaw 使用的 `input.parameters.cus
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{"keyword":"amazon","offset":1,"limit":5}'
 ```
 

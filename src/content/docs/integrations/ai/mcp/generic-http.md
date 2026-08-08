@@ -20,7 +20,7 @@ Connect any client that supports **Streamable HTTP MCP** to the hosted CoreClaw 
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "YOUR_CORECLAW_API_KEY"
+        "Authorization": "Bearer YOUR_CORECLAW_API_KEY"
       }
     }
   }
@@ -42,7 +42,7 @@ Pass the tool arguments as a JSON object in the request body:
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{"keyword":"amazon","offset":1,"limit":5}'
 ```
 
@@ -51,7 +51,7 @@ Authenticated example:
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp/run_worker \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{"worker_id":"YOUR_WORKER_ID","version":"latest","input_json":"{\"keyword\":\"coffee\",\"limit\":10}","is_async":true}'
 ```
 
@@ -95,7 +95,7 @@ Initialize the MCP session:
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
@@ -113,7 +113,7 @@ List available tools:
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
 ```
 
@@ -122,7 +122,7 @@ Call a tool through MCP JSON-RPC:
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{
     "jsonrpc": "2.0",
     "id": 3,
@@ -155,7 +155,7 @@ curl -X POST https://mcp.coreclaw.com/mcp \
 
 ### Authentication errors
 
-- Ensure one supported auth header is present: `api-key`, `X-API-Key`, or `Authorization: Bearer ...`.
+- Ensure one supported auth header is present: `Authorization: Bearer ...` (preferred), `api-key`, or `X-API-Key`.
 - Verify your key is active in the [Console](https://console.coreclaw.com/settings/integrations).
 
 ### Tool errors

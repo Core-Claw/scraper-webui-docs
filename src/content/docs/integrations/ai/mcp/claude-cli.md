@@ -26,7 +26,7 @@ Create a file named `claude-mcp.json` in your project directory, or use your pre
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "YOUR_CORECLAW_API_KEY"
+        "Authorization": "Bearer YOUR_CORECLAW_API_KEY"
       }
     }
   }

@@ -38,7 +38,7 @@ Add this server to your MCP client:
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "YOUR_CORECLAW_API_KEY"
+        "Authorization": "Bearer YOUR_CORECLAW_API_KEY"
       }
     }
   }
@@ -49,11 +49,11 @@ After saving the configuration, restart or reload your MCP client if it requires
 
 ## Authentication
 
-The hosted MCP service accepts any of these request headers:
+The hosted MCP service authenticates requests with `Authorization: Bearer <token>` — the same header the CoreClaw OpenAPI v2 uses. For backward compatibility the legacy `api-key` and `X-API-Key` headers are also accepted:
 
-- `api-key: YOUR_CORECLAW_API_KEY`
-- `X-API-Key: YOUR_CORECLAW_API_KEY`
-- `Authorization: Bearer YOUR_CORECLAW_API_KEY`
+- `Authorization: Bearer YOUR_CORECLAW_API_KEY` (preferred)
+- `api-key: YOUR_CORECLAW_API_KEY` (legacy)
+- `X-API-Key: YOUR_CORECLAW_API_KEY` (legacy)
 
 The MCP server forwards authentication to CoreClaw OpenAPI v2 as `Authorization: Bearer <token>`.
 
@@ -61,7 +61,7 @@ The MCP server forwards authentication to CoreClaw OpenAPI v2 as `Authorization:
 
 ## Available Tools
 
-CoreClaw MCP Server exposes **37 tools** — 34 OpenAPI v2 operations (1:1) plus three orchestration helpers. Internal worker-version create/update APIs and internal worker detail APIs are intentionally not exposed.
+CoreClaw MCP Server exposes **42 tools** — 39 OpenAPI v2 operations (1:1) plus three orchestration helpers. Internal worker-version create/update APIs and internal worker detail APIs are intentionally not exposed.
 
 ### Discovery and Preflight
 
@@ -104,6 +104,16 @@ Three convenience tools that wrap multiple API calls into a single tool invocati
 |------|-------------|--------------|
 | `run_worker` | Run a worker with ad-hoc JSON input | `POST /api/v2/workers/{workerId}/runs` |
 | `run_worker_task` | Run a saved worker task | `POST /api/v2/worker-tasks/{workerTaskId}/runs` |
+
+### Run Queue
+
+| Tool | Description | CoreClaw API |
+|------|-------------|--------------|
+| `queue_worker_run` | Queue a run for explicit activation instead of executing immediately | `POST /api/v2/workers/{workerId}/queued-runs` |
+| `list_run_queue_items` | List queued runs waiting for activation | `GET /api/v2/run-queue/items` |
+| `activate_run_queue_items` | Activate queued runs so they execute | `POST /api/v2/run-queue/items/activate` |
+| `release_run_queue_items` | Release queued runs back to the queue | `POST /api/v2/run-queue/items/release` |
+| `release_run_queue_item` | Release a single queued run | `POST /api/v2/run-queue/items/{queueId}/release` |
 
 ### Run Lookup
 
@@ -199,7 +209,7 @@ In addition to the standard MCP endpoint at `/mcp`, the server exposes a REST co
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{"keyword":"amazon","offset":1,"limit":5}'
 ```
 

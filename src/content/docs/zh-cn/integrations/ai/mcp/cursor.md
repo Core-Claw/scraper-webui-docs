@@ -38,7 +38,7 @@ Cursor 通过 **Streamable HTTP** 传输协议支持 MCP。您可以在项目或
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "YOUR_CORECLAW_API_KEY"
+        "Authorization": "Bearer YOUR_CORECLAW_API_KEY"
       }
     }
   }

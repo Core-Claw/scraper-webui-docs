@@ -20,7 +20,7 @@ sidebar:
     "coreclaw": {
       "url": "https://mcp.coreclaw.com/mcp",
       "headers": {
-        "api-key": "YOUR_CORECLAW_API_KEY"
+        "Authorization": "Bearer YOUR_CORECLAW_API_KEY"
       }
     }
   }
@@ -42,7 +42,7 @@ POST https://mcp.coreclaw.com/mcp/<tool_name>
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{"keyword":"amazon","offset":1,"limit":5}'
 ```
 
@@ -51,7 +51,7 @@ curl -X POST https://mcp.coreclaw.com/mcp/list_store_workers \
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp/run_worker \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{"worker_id":"YOUR_WORKER_ID","version":"latest","input_json":"{\"keyword\":\"coffee\",\"limit\":10}","is_async":true}'
 ```
 
@@ -95,7 +95,7 @@ curl -X POST https://mcp.coreclaw.com/mcp/run_worker \
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
@@ -113,7 +113,7 @@ curl -X POST https://mcp.coreclaw.com/mcp \
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
 ```
 
@@ -122,7 +122,7 @@ curl -X POST https://mcp.coreclaw.com/mcp \
 ```bash
 curl -X POST https://mcp.coreclaw.com/mcp \
   -H "Content-Type: application/json" \
-  -H "api-key: YOUR_CORECLAW_API_KEY" \
+  -H "Authorization: Bearer YOUR_CORECLAW_API_KEY" \
   -d '{
     "jsonrpc": "2.0",
     "id": 3,
@@ -155,7 +155,7 @@ curl -X POST https://mcp.coreclaw.com/mcp \
 
 ### 认证错误
 
-- 确认已设置任一支持的认证头：`api-key`、`X-API-Key` 或 `Authorization: Bearer ...`。
+- 确认已设置任一支持的认证头：`Authorization: Bearer ...`（推荐）、`api-key` 或 `X-API-Key`。
 - 在 [控制台](https://console.coreclaw.com/settings/integrations) 验证密钥是否有效。
 
 ### 工具错误
