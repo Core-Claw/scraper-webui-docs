@@ -2,7 +2,7 @@
 title: Worker 输出配置 (Output Schema)
 description: Worker 输出配置 (Output Schema) 使用手册
 sidebar:
-  order: 4
+    order: 4
 ---
 
 这份文档旨在指导开发者如何配置 **output_schema.json** 文件。这个文件定义了 Worker 运行后展示给用户的**输出数据表结构**（列标题）。
@@ -19,21 +19,21 @@ sidebar:
 
 ```json
 [
-  {
-    "name": "title",
-    "type": "string",
-    "description": "标题"
-  },
-  {
-    "name": "publish_time",
-    "type": "string",
-    "description": "时间"
-  },
-  {
-    "name": "category",
-    "type": "string",
-    "description": "分类"
-  }
+    {
+        "name": "title",
+        "type": "string",
+        "description": "标题"
+    },
+    {
+        "name": "publish_time",
+        "type": "string",
+        "description": "时间"
+    },
+    {
+        "name": "category",
+        "type": "string",
+        "description": "分类"
+    }
 ]
 ```
 
@@ -41,11 +41,11 @@ sidebar:
 
 每个列定义包含以下属性：
 
-| 属性           | 是否必填 | 说明                                                       |
-| -------------- | -------- | ---------------------------------------------------------- |
-| **name**       | 是       | 列标识符。必须与 `push_data` 中使用的键名一致。必须唯一。 |
-| **type**       | 是       | 列的数据类型。支持：`string`、`number`、`integer`、`boolean`、`array`、`object` |
-| **description**| 否       | 列描述。在 UI 中作为列标题标签显示。                       |
+| 属性            | 是否必填 | 说明                                                                            |
+| --------------- | -------- | ------------------------------------------------------------------------------- |
+| **name**        | 是       | 列标识符。必须与 `push_data` 中使用的键名一致。必须唯一。                       |
+| **type**        | 是       | 列的数据类型。支持：`string`、`number`、`integer`、`boolean`、`array`、`object` |
+| **description** | 否       | 列描述。在 UI 中作为列标题标签显示。                                            |
 
 ## 与 SDK 的关系
 
@@ -66,11 +66,13 @@ CoreSDK.Result.push_data(json.dumps({
 ### Node.js
 
 ```javascript
-coresdk.result.pushData(JSON.stringify({
-    title: "示例标题",
-    publish_time: "2024-01-01",
-    category: "新闻"
-}));
+coresdk.result.pushData(
+    JSON.stringify({
+        title: '示例标题',
+        publish_time: '2024-01-01',
+        category: '新闻',
+    })
+)
 ```
 
 ### Go
@@ -89,7 +91,7 @@ coresdk.Result.PushData(ctx, string(data))
 `output_schema.json` 和 `set_table_header` 都定义输出表结构，但用途不同：
 
 - **`output_schema.json`**：在运行前声明。定义 UI 中展示的输出列，让用户在脚本启动前就能预览数据结构。
-- **`set_table_header`**：在脚本运行时调用。以编程方式定义表头。
+- **`set_table_header`**：在脚本运行时调用。以编程方式定义表头及数据渲染类型。([format 类型](/zh-cn/developer-guide/worker-standards/#%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E4%B8%8E-set_table_header-%E6%A0%BC%E5%BC%8F%E7%9A%84%E6%98%A0%E5%B0%84))。
 
 建议以 `output_schema.json` 作为定义输出结构的主要方式，确保 UI 在脚本启动前就显示正确的列布局。
 
@@ -110,20 +112,21 @@ coresdk.Result.PushData(ctx, string(data))
 
 ```json
 [
-  {
-    "name": "id",
-    "type": "string",
-    "description": "唯一 ID"
-  },
-  {
-    "name": "title",
-    "type": "string",
-    "description": "标题"
-  }
+    {
+        "name": "id",
+        "type": "string",
+        "description": "唯一 ID"
+    },
+    {
+        "name": "title",
+        "type": "string",
+        "description": "标题"
+    }
 ]
 ```
 
 **要点**：
+
 - 唯一键（如 `"id"`）必须作为列存在于 `output_schema.json` 中
 - 每个传给 `upsert_data` 的数据对象都必须包含该唯一键值
 - 适用于所有三种语言：Python（`upsert_data`）、Node.js（`upsertData`）和 Go（`UpsertData`）

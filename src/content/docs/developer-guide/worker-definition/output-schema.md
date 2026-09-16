@@ -2,7 +2,7 @@
 title: Worker Output Configuration (Output Schema)
 description: Worker output configuration (Output Schema) user guide
 sidebar:
-  order: 4
+    order: 4
 ---
 
 This document explains how developers should configure the **output_schema.json** file. This file defines the **output data table structure** (column headers) displayed to users after a Worker run.
@@ -19,21 +19,21 @@ This document explains how developers should configure the **output_schema.json*
 
 ```json
 [
-  {
-    "name": "title",
-    "type": "string",
-    "description": "Title"
-  },
-  {
-    "name": "publish_time",
-    "type": "string",
-    "description": "Time"
-  },
-  {
-    "name": "category",
-    "type": "string",
-    "description": "Category"
-  }
+    {
+        "name": "title",
+        "type": "string",
+        "description": "Title"
+    },
+    {
+        "name": "publish_time",
+        "type": "string",
+        "description": "Time"
+    },
+    {
+        "name": "category",
+        "type": "string",
+        "description": "Category"
+    }
 ]
 ```
 
@@ -41,11 +41,11 @@ This document explains how developers should configure the **output_schema.json*
 
 Each column definition contains the following properties:
 
-| Property       | Required | Description                                                                                   |
-| -------------- | -------- | --------------------------------------------------------------------------------------------- |
-| **name**       | Yes      | Column identifier. Must match the key name used in `push_data`. Must be unique.              |
-| **type**       | Yes      | Data type of the column. Supported values: `string`, `number`, `integer`, `boolean`, `array`, `object` |
-| **description**| No       | Column description. Displayed as the column header label in the UI.                          |
+| Property        | Required | Description                                                                                            |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------ |
+| **name**        | Yes      | Column identifier. Must match the key name used in `push_data`. Must be unique.                        |
+| **type**        | Yes      | Data type of the column. Supported values: `string`, `number`, `integer`, `boolean`, `array`, `object` |
+| **description** | No       | Column description. Displayed as the column header label in the UI.                                    |
 
 ## Relationship with SDK
 
@@ -66,11 +66,13 @@ CoreSDK.Result.push_data(json.dumps({
 ### Node.js
 
 ```javascript
-coresdk.result.pushData(JSON.stringify({
-    title: "Example Title",
-    publish_time: "2024-01-01",
-    category: "News"
-}));
+coresdk.result.pushData(
+    JSON.stringify({
+        title: 'Example Title',
+        publish_time: '2024-01-01',
+        category: 'News',
+    })
+)
 ```
 
 ### Go
@@ -89,7 +91,7 @@ coresdk.Result.PushData(ctx, string(data))
 `output_schema.json` and `set_table_header` both define the output table structure, but they serve different purposes:
 
 - **`output_schema.json`**: Declared before the run. Defines the output columns displayed in the UI, giving users a clear preview of the data structure.
-- **`set_table_header`**: Called at runtime within the script. Defines the table headers programmatically.
+- **`set_table_header`**: Called at runtime within the script. Defines the table headers programmatically and data rendering types. (see [format types](/developer-guide/worker-standards/#map-field-types-to-set_table_header-formats)).
 
 It is recommended to use `output_schema.json` as the primary way to define output structure, ensuring the UI displays the correct column layout before the script starts.
 
@@ -110,20 +112,21 @@ If your script uses `upsert_data(data, "id")`, your `output_schema.json` should 
 
 ```json
 [
-  {
-    "name": "id",
-    "type": "string",
-    "description": "Unique ID"
-  },
-  {
-    "name": "title",
-    "type": "string",
-    "description": "Title"
-  }
+    {
+        "name": "id",
+        "type": "string",
+        "description": "Unique ID"
+    },
+    {
+        "name": "title",
+        "type": "string",
+        "description": "Title"
+    }
 ]
 ```
 
 **Key points**:
+
 - The unique key (e.g., `"id"`) must exist as a column in `output_schema.json`
 - The unique key value must be present in every data object passed to `upsert_data`
 - This applies to all three languages: Python (`upsert_data`), Node.js (`upsertData`), and Go (`UpsertData`)
