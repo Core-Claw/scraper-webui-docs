@@ -2,7 +2,7 @@
 title: Worker 开发与上传规范
 description: 每个 Worker 上传前必须满足的质量标准——默认参数可运行、输出干净、失败安全、版本可追溯
 sidebar:
-  order: 11
+    order: 11
 ---
 
 本规范定义一个可投产的 CoreClaw Worker 在上传前必须满足的要求。其目的是保证每个已发布的 Worker 开箱即用、返回干净数据、计费准确且可维护。违反本规范的 Worker 可能在审核阶段被拒绝，或在发布后被下架。
@@ -13,10 +13,10 @@ sidebar:
 
 CoreClaw 支持多任务执行，且一次运行可通过 `input_schema.json` 拆分为多个任务。请注意不要混淆两层并发：
 
-| 层级 | 控制对象 | 配置位置 |
-| --- | --- | --- |
-| 平台任务拆分 | 一次运行如何拆分为并行任务 | `input_schema.json` → `concurrency.fields`（见[输入 Schema](/zh-cn/developer-guide/worker-definition/input-schema/)） |
-| 脚本内部请求并发 | 代码同时发出多少个 HTTP 请求 | 脚本内部——必须自行限制 |
+| 层级             | 控制对象                     | 配置位置                                                                                                              |
+| ---------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| 平台任务拆分     | 一次运行如何拆分为并行任务   | `input_schema.json` → `concurrency.fields`（见[输入 Schema](/zh-cn/developer-guide/worker-definition/input-schema/)） |
+| 脚本内部请求并发 | 代码同时发出多少个 HTTP 请求 | 脚本内部——必须自行限制                                                                                                |
 
 你**必须**限制脚本内部的请求并发与请求速率。无节制的请求会触发目标网站封禁、平台限流或 `429` 响应。
 
@@ -86,11 +86,11 @@ CoreSDK.Log.error(f"处理 {url} 失败: {e}")
 
 输出字段的形态直接影响平台如何渲染、筛选和导出数据。遵循以下原则：
 
-| 字段类型 | 原则 | 示例 |
-| --- | --- | --- |
-| 简单字段 | 使用基础数据类型，平台直接展示为表格列 | 名称、URL、数字、日期 |
-| 长文本 | 返回完整内容，平台负责截断展示并提供详情查看 | 简介、描述、评论 |
-| 数组字段 | 保持原始数组结构，不要拼接成字符串 | 多个标签、帖子、评论 |
+| 字段类型   | 原则                                                                           | 示例                      |
+| ---------- | ------------------------------------------------------------------------------ | ------------------------- |
+| 简单字段   | 使用基础数据类型，平台直接展示为表格列                                         | 名称、URL、数字、日期     |
+| 长文本     | 返回完整内容，平台负责截断展示并提供详情查看                                   | 简介、描述、评论          |
+| 数组字段   | 保持原始数组结构，不要拼接成字符串                                             | 多个标签、帖子、评论      |
 | 结构化字段 | 用户需要筛选/导出/单独使用的拆为独立字段；仅用于详情查看的复杂数据可保留为对象 | address → street/city/zip |
 
 ### 字段类型与 `set_table_header` 格式的映射
@@ -98,13 +98,14 @@ CoreSDK.Log.error(f"处理 {url} 失败: {e}")
 每个输出字段类型应与 `set_table_header` 的 `format` 对应（见 [SDK 模块](/zh-cn/developer-guide/worker-definition/sdk-modules/) 与[输出 Schema](/zh-cn/developer-guide/worker-definition/output-schema/)）：
 
 | Schema `type` | Header `format` |
-| --- | --- |
-| `string` | `text` |
-| `number` | `number` |
-| `integer` | `integer` |
-| `boolean` | `boolean` |
-| `array` | `array` |
-| `object` | `object` |
+| ------------- | --------------- |
+| `string`      | `text`          |
+| `number`      | `number`        |
+| `integer`     | `integer`       |
+| `boolean`     | `boolean`       |
+| `array`       | `array`         |
+| `object`      | `object`        |
+| `html`        | `html`          |
 
 ### 字段输出示例
 
@@ -112,18 +113,18 @@ CoreSDK.Log.error(f"处理 {url} 失败: {e}")
 
 ```json
 {
-  "profile_name": "LinkedIn",
-  "followers": 4659188,
-  "profile_url": "https://linkedin.com/company/linkedin",
-  "categories": ["Technology", "Software"]
+    "profile_name": "LinkedIn",
+    "followers": 4659188,
+    "profile_url": "https://linkedin.com/company/linkedin",
+    "categories": ["Technology", "Software"]
 }
 ```
 
 平台展示：
 
 | Profile Name | Followers | Profile URL | Categories |
-| --- | --- | --- | --- |
-| LinkedIn | 4659188 | 链接 | 2 items |
+| ------------ | --------- | ----------- | ---------- |
+| LinkedIn     | 4659188   | 链接        | 2 items    |
 
 ## 5. 异常处理
 

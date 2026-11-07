@@ -41,11 +41,11 @@ This document explains how developers should configure the **output_schema.json*
 
 Each column definition contains the following properties:
 
-| Property        | Required | Description                                                                                            |
-| --------------- | -------- | ------------------------------------------------------------------------------------------------------ |
-| **name**        | Yes      | Column identifier. Must match the key name used in `push_data`. Must be unique.                        |
-| **type**        | Yes      | Data type of the column. Supported values: `string`, `number`, `integer`, `boolean`, `array`, `object` |
-| **description** | No       | Column description. Displayed as the column header label in the UI.                                    |
+| Property        | Required | Description                                                                                                    |
+| --------------- | -------- | -------------------------------------------------------------------------------------------------------------- |
+| **name**        | Yes      | Column identifier. Must match the key name used in `push_data`. Must be unique.                                |
+| **type**        | Yes      | Data type of the column. Supported values: `string`, `number`, `integer`, `boolean`, `array`, `object`, `html` |
+| **description** | No       | Column description. Displayed as the column header label in the UI.                                            |
 
 ## Relationship with SDK
 

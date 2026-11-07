@@ -2,7 +2,7 @@
 title: Worker Development & Submission Standards
 description: Quality standards every Worker must meet before upload — runnable defaults, clean output, safe failures, and versioning
 sidebar:
-  order: 11
+    order: 11
 ---
 
 These standards define what a production-ready CoreClaw Worker must satisfy before you upload it. They exist so that every published Worker runs out-of-the-box, returns clean data, bills accurately, and stays maintainable. Workers that violate these standards may be rejected during review or removed after publication.
@@ -13,10 +13,10 @@ This page is the quality gate between [Test Your Worker](/developer-guide/test-y
 
 CoreClaw supports running multiple tasks, and a single run can be split into multiple tasks via `input_schema.json`. Be careful not to confuse two separate layers of concurrency:
 
-| Layer | What it controls | Where it is configured |
-| --- | --- | --- |
-| Platform task splitting | How one run is split into parallel tasks | `input_schema.json` → `concurrency.fields` (see [Input Schema](/developer-guide/worker-definition/input-schema/)) |
-| In-script request concurrency | How many HTTP requests your code issues at the same time | Inside your script — you must limit this yourself |
+| Layer                         | What it controls                                         | Where it is configured                                                                                            |
+| ----------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Platform task splitting       | How one run is split into parallel tasks                 | `input_schema.json` → `concurrency.fields` (see [Input Schema](/developer-guide/worker-definition/input-schema/)) |
+| In-script request concurrency | How many HTTP requests your code issues at the same time | Inside your script — you must limit this yourself                                                                 |
 
 You **must** limit in-script request concurrency and request rate. Unbounded requests trigger target-site bans, platform rate limits, or `429` responses.
 
@@ -86,11 +86,11 @@ Defaults are your Worker's first impression. If a user runs defaults and gets ze
 
 How you shape output fields directly affects how the platform renders, filters, and exports data. Follow these principles:
 
-| Field type | Principle | Example |
-| --- | --- | --- |
-| Simple fields | Use primitive types; the platform renders them as table columns | name, URL, number, date |
-| Long text | Return the full content; the platform truncates for display and offers a detail view | description, reviews |
-| Arrays | Keep the original array structure; do not join into a string | tags, categories |
+| Field type        | Principle                                                                                                       | Example                   |
+| ----------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| Simple fields     | Use primitive types; the platform renders them as table columns                                                 | name, URL, number, date   |
+| Long text         | Return the full content; the platform truncates for display and offers a detail view                            | description, reviews      |
+| Arrays            | Keep the original array structure; do not join into a string                                                    | tags, categories          |
 | Structured fields | Split into independent columns when users need to filter or export; keep as an object only for detail-only data | address → street/city/zip |
 
 ### Map field types to `set_table_header` formats
@@ -98,13 +98,14 @@ How you shape output fields directly affects how the platform renders, filters, 
 Each output field's type should pair with the `format` used in `set_table_header` (see [SDK Modules](/developer-guide/worker-definition/sdk-modules/) and [Output Schema](/developer-guide/worker-definition/output-schema/)):
 
 | Schema `type` | Header `format` |
-| --- | --- |
-| `string` | `text` |
-| `number` | `number` |
-| `integer` | `integer` |
-| `boolean` | `boolean` |
-| `array` | `array` |
-| `object` | `object` |
+| ------------- | --------------- |
+| `string`      | `text`          |
+| `number`      | `number`        |
+| `integer`     | `integer`       |
+| `boolean`     | `boolean`       |
+| `array`       | `array`         |
+| `object`      | `object`        |
+| `html`        | `html`          |
 
 ### Example
 
@@ -112,18 +113,18 @@ Recommended output:
 
 ```json
 {
-  "profile_name": "LinkedIn",
-  "followers": 4659188,
-  "profile_url": "https://linkedin.com/company/linkedin",
-  "categories": ["Technology", "Software"]
+    "profile_name": "LinkedIn",
+    "followers": 4659188,
+    "profile_url": "https://linkedin.com/company/linkedin",
+    "categories": ["Technology", "Software"]
 }
 ```
 
 Platform display:
 
 | Profile Name | Followers | Profile URL | Categories |
-| --- | --- | --- | --- |
-| LinkedIn | 4659188 | link | 2 items |
+| ------------ | --------- | ----------- | ---------- |
+| LinkedIn     | 4659188   | link        | 2 items    |
 
 ## 5. Exception handling
 
