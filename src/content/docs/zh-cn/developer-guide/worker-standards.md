@@ -99,13 +99,12 @@ CoreSDK.Log.error(f"处理 {url} 失败: {e}")
 
 | Schema `type` | Header `format` |
 | ------------- | --------------- |
-| `string`      | `text`          |
+| `string`      | `text` / `html` |
 | `number`      | `number`        |
 | `integer`     | `integer`       |
 | `boolean`     | `boolean`       |
 | `array`       | `array`         |
 | `object`      | `object`        |
-| `html`        | `html`          |
 
 ### 字段输出示例
 

@@ -99,13 +99,12 @@ Each output field's type should pair with the `format` used in `set_table_header
 
 | Schema `type` | Header `format` |
 | ------------- | --------------- |
-| `string`      | `text`          |
+| `string`      | `text` / `html` |
 | `number`      | `number`        |
 | `integer`     | `integer`       |
 | `boolean`     | `boolean`       |
 | `array`       | `array`         |
 | `object`      | `object`        |
-| `html`        | `html`          |
 
 ### Example
 
